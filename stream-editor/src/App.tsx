@@ -36,6 +36,7 @@ export default function App() {
   const [preset, setPreset] = useState<Preset>(PRESETS[0])
   const [thumb, setThumb] = useState<ThumbState>(emptyThumb)
   const [playhead, setPlayhead] = useState(0)
+  const [restore, setRestore] = useState<{ clips: Clip[]; thumb?: ThumbState } | null>(null)
   const abort = useRef<AbortController | null>(null)
 
   /** `coalesce`: repeated edits with the same key (e.g. dragging a trim slider) make one undo step. */
@@ -78,12 +79,7 @@ export default function App() {
       setThumb(emptyThumb())
       try {
         const saved = JSON.parse(localStorage.getItem(saveKey(src.file)) ?? 'null')
-        if (saved?.clips?.length && confirm('Welcome back! Restore your last edit of this video?')) {
-          resetClips(saved.clips)
-          if (saved.thumb) setThumb(saved.thumb)
-          setStep('edit')
-          return
-        }
+        setRestore(saved?.clips?.length ? saved : null)
       } catch {
         /* storage unavailable */
       }
@@ -134,6 +130,20 @@ export default function App() {
       </header>
 
       <main className="content">
+        {restore && step === 'auto' && (
+          <div className="card restore">
+            <strong>Welcome back! You edited this video before.</strong>
+            <div className="chips">
+              <button className="primary" onClick={() => {
+                resetClips(restore.clips)
+                if (restore.thumb) setThumb(restore.thumb)
+                setRestore(null)
+                setStep('edit')
+              }}>Restore my edit</button>
+              <button onClick={() => setRestore(null)}>Start fresh</button>
+            </div>
+          </div>
+        )}
         {step === 'auto' && (
           <AutoEdit
             source={source}

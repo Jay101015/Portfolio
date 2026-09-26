@@ -6,6 +6,7 @@ import { canExport, exportVideo, type ExportResult } from '../lib/exporter'
 import { renderThumbnail } from '../lib/thumbnail'
 import { totalLength } from '../lib/autoEdit'
 import { fmtDur } from '../lib/format'
+import { hostedOnClaude, saveFile } from '../lib/save'
 
 type Props = { source: Source; clips: Clip[]; thumb: ThumbState; vertical: boolean; onEditThumb: () => void }
 
@@ -25,6 +26,7 @@ export default function Export({ source, clips, thumb, vertical, onEditThumb }: 
   const [state, setState] = useState<{ p: number; label: string } | null>(null)
   const [result, setResult] = useState<(ExportResult & { url: string }) | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [saveMsg, setSaveMsg] = useState<string | null>(null)
   const ctrl = useRef<AbortController | null>(null)
 
   const length = totalLength(clips) + introSec
@@ -84,7 +86,13 @@ export default function Export({ source, clips, thumb, vertical, onEditThumb }: 
     }
   }
 
-  const canShare = !!result && typeof navigator.canShare === 'function' &&
+  const save = async () => {
+    if (!result) return
+    const out = await saveFile(`${baseName}-edit.${result.ext}`, result.blob)
+    setSaveMsg(out === 'saved' ? 'Saved ✔' : out === 'declined' ? null : 'Couldn’t save on this device. Try another browser.')
+  }
+
+  const canShare = !hostedOnClaude && !!result && typeof navigator.canShare === 'function' &&
     navigator.canShare({ files: [new File([], `x.${result.ext}`, { type: result.blob.type })] })
 
   return (
@@ -157,9 +165,10 @@ export default function Export({ source, clips, thumb, vertical, onEditThumb }: 
           <h3>✅ Done!</h3>
           <video className="result" src={result.url} controls playsInline />
           <div className="chips">
-            <a className="button primary" href={result.url} download={`${baseName}-edit.${result.ext}`}>⬇ Save video</a>
+            <button className="primary" onClick={save}>⬇ Save video</button>
             {canShare && <button onClick={share}>📤 Share to app</button>}
           </div>
+          {saveMsg && <p className="small">{saveMsg}</p>}
           {result.ext === 'webm' && (
             <p className="muted small">Saved as WebM — YouTube accepts it directly. For TikTok/Instagram, Safari exports MP4.</p>
           )}

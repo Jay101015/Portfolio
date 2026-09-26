@@ -29,6 +29,7 @@ type Props = {
 export default function Editor({ source, analysis, clips, setClips, canUndo, undo, playhead, setPlayhead, onReAuto }: Props) {
   const video = useRef<HTMLVideoElement>(null)
   const [openId, setOpenId] = useState<string | null>(null)
+  const [hint, setHint] = useState<string | null>(null)
   /** When set, the player walks through these clips in order. */
   const [queue, setQueue] = useState<{ ids: string[]; i: number } | null>(null)
   const clipsRef = useRef(clips)
@@ -96,7 +97,11 @@ export default function Editor({ source, analysis, clips, setClips, canUndo, und
 
   const splitAtPlayhead = () => {
     const c = clips.find((c) => playhead > c.start + 0.5 && playhead < c.end - 0.5)
-    if (!c) return alert('Move the playhead inside a clip to split it.')
+    if (!c) {
+      setHint('Move the playhead inside a clip to split it.')
+      return
+    }
+    setHint(null)
     setClips((cs) =>
       cs.flatMap((x) => (x.id === c.id ? [{ ...x, end: playhead }, { id: uid(), start: playhead, end: x.end }] : [x])),
     )
@@ -132,6 +137,8 @@ export default function Editor({ source, analysis, clips, setClips, canUndo, und
         <button onClick={undo} disabled={!canUndo}>↶ Undo</button>
         <button onClick={onReAuto}>✨ Redo auto</button>
       </div>
+
+      {hint && <div className="warn small">{hint}</div>}
 
       <div className="summary">
         <span><b>{clips.length}</b> clips</span>

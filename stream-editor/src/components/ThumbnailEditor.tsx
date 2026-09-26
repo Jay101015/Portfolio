@@ -7,6 +7,7 @@ import {
   COLORS, FONTS, STICKERS, THUMB_H, THUMB_W, buildBackground, drawLayers, hitTest, loadImage, renderThumbnail,
 } from '../lib/thumbnail'
 import { clamp, fmt } from '../lib/format'
+import { saveFile } from '../lib/save'
 
 type Props = {
   source: Source
@@ -52,6 +53,7 @@ export default function ThumbnailEditor({ source, analysis, thumb, setThumb, pla
   const imgInput = useRef<HTMLInputElement>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [saveMsg, setSaveMsg] = useState<string | null>(null)
   const [bgVersion, setBgVersion] = useState(0)
   const [fontsReady, setFontsReady] = useState(false)
 
@@ -169,10 +171,10 @@ export default function ThumbnailEditor({ source, analysis, thumb, setThumb, pla
 
   const download = async () => {
     const c = await renderThumbnail(thumb)
-    const a = document.createElement('a')
-    a.href = c.toDataURL('image/png')
-    a.download = `${source.file.name.replace(/\.[^.]+$/, '')}-thumbnail.png`
-    a.click()
+    const blob = await new Promise<Blob | null>((r) => c.toBlob(r, 'image/png'))
+    if (!blob) return
+    const res = await saveFile(`${source.file.name.replace(/\.[^.]+$/, '')}-thumbnail.png`, blob)
+    setSaveMsg(res === 'saved' ? 'Thumbnail saved ✔' : res === 'failed' ? 'Couldn’t save on this device. Try another browser.' : null)
   }
 
   const addImage = (file?: File) => {
@@ -307,6 +309,7 @@ export default function ThumbnailEditor({ source, analysis, thumb, setThumb, pla
       </section>
 
       <button className="primary wide" onClick={download}>⬇ Download thumbnail (1280×720 PNG)</button>
+      {saveMsg && <p className="small center">{saveMsg}</p>}
     </div>
   )
 }
