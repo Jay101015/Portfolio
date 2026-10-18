@@ -47,8 +47,8 @@
           <h2>Cast</h2>
           <div id="castEmpty" class="hint">Paste a script to detect characters.</div>
           <div id="castPanel" hidden>
-            <label class="field">
-              <span>I'm playing</span>
+            <label class="field role">
+              <span>Who are you playing?</span>
               <select id="mySelect"></select>
             </label>
             <div id="readerList"></div>
@@ -109,6 +109,10 @@
 
     <!-- STAGE -->
     <section id="view-stage" class="view">
+      <div class="rolebar card">
+        <label>You're playing <select id="stageRole"></select></label>
+        <span id="stageReads" class="hint"></span>
+      </div>
       <div class="stage">
         <div class="camwrap">
           <video id="preview" autoplay muted playsinline></video>
