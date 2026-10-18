@@ -133,30 +133,57 @@ It does to me.`;
   let voices = [];
   const hasTTS = 'speechSynthesis' in window;
 
+  // Robotic/novelty voices that ship with Apple devices; never pick these for a scene partner.
+  const NOVELTY = /^(albert|bad news|bahh|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|fred|junior|kathy|ralph|grandma|grandpa|eddy|flo|reed|rocko|sandy|shelley)\b/i;
+  const FEMALE = /\b(female|woman|samantha|karen|moira|tessa|victoria|allison|ava|susan|zoe|nicky|joelle|noelle|serena|martha|catherine|kate|fiona|veena|siri female|aria|jenny|michelle|sonia|libby|natasha|clara|emma|ana|ashley|amber|sara|nancy|jane|monica|elizabeth|hazel|zira|heera|neerja|google us english|google uk english female|en-us-x-(sfg|tpc|iob|iog)|en-gb-x-(gba|gbc|gbg))\b/i;
+  const MALE = /\b(male|man|daniel|alex|aaron|arthur|evan|nathan|tom|gordon|lee|oliver|rishi|thomas|siri male|guy|davis|tony|jason|christopher|eric|ryan|brian|andrew|william|george|james|mark|david|ravi|prabhat|google uk english male|en-us-x-(iol|iom|tpd)|en-gb-x-(gbb|gbd|rjs))\b/i;
+
+  const voiceGender = (v) => (MALE.test(v.name) && !/female/i.test(v.name) ? 'm' : FEMALE.test(v.name) ? 'f' : '');
+  function voiceScore(v) {
+    let s = 0;
+    if (/premium/i.test(v.name)) s += 60;
+    else if (/enhanced|neural|natural|wavenet|studio/i.test(v.name)) s += 50;
+    if (/siri/i.test(v.name)) s += 45;
+    if (/^google/i.test(v.name) || /^microsoft .*online/i.test(v.name)) s += 35;
+    if (/en-(us|gb)-x-/i.test(v.voiceURI)) s += 30; // Android network voices
+    if (/^en[-_]US/i.test(v.lang)) s += 12; else if (/^en[-_](GB|AU|IE|CA)/i.test(v.lang)) s += 10; else if (/^en/i.test(v.lang)) s += 6;
+    if (voiceGender(v)) s += 4;
+    if (v.default) s += 2;
+    if (NOVELTY.test(v.name)) s -= 200;
+    return s;
+  }
+
   function refreshVoices() {
     if (!hasTTS) return;
-    voices = speechSynthesis.getVoices().slice().sort((a, b) => {
-      const ae = a.lang.startsWith('en') ? 0 : 1, be = b.lang.startsWith('en') ? 0 : 1;
-      return ae - be || a.name.localeCompare(b.name);
-    });
+    const all = speechSynthesis.getVoices();
+    const en = all.filter((v) => /^en/i.test(v.lang));
+    voices = (en.length ? en : all).filter((v) => !NOVELTY.test(v.name))
+      .sort((a, b) => voiceScore(b) - voiceScore(a) || a.name.localeCompare(b.name));
     renderCast();
   }
 
   function readerFor(name) {
-    if (!state.readers[name]) state.readers[name] = { voiceURI: '', rate: 1, pitch: 1 };
+    if (!state.readers[name]) state.readers[name] = { voiceURI: '', gender: '', rate: 1, pitch: 1 };
     return state.readers[name];
   }
 
+  function bestVoice(gender, exclude) {
+    const pool = voices.filter((v) => !gender || voiceGender(v) === gender);
+    return pool.find((v) => !exclude.has(v.voiceURI)) || pool[0] || voices[0] || null;
+  }
+
+  // Give every reader character its own good voice, alternating female/male unless the actor chose.
   function autoAssignVoices() {
-    const en = voices.filter((v) => v.lang.startsWith('en'));
-    const pool = en.length ? en : voices;
-    let k = 0;
-    state.characters.filter((c) => c !== state.me).forEach((c) => {
+    const used = new Set();
+    state.characters.filter((c) => c !== state.me).forEach((c, k) => {
       const r = readerFor(c);
-      if (!r.voiceURI || !voices.some((v) => v.voiceURI === r.voiceURI)) {
-        r.voiceURI = pool.length ? pool[(k * 3) % pool.length].voiceURI : '';
+      if (!r.gender) r.gender = k % 2 ? 'm' : 'f';
+      const current = voices.find((v) => v.voiceURI === r.voiceURI);
+      if (!current || used.has(current.voiceURI)) {
+        const v = bestVoice(r.gender, used);
+        r.voiceURI = v ? v.voiceURI : '';
       }
-      k++;
+      used.add(r.voiceURI);
     });
   }
 
@@ -167,7 +194,7 @@ It does to me.`;
     const seen = [];
     state.lines.forEach((l) => { if (l.type === 'dialogue' && !seen.includes(l.character)) seen.push(l.character); });
     state.characters = seen;
-    if (!seen.includes(state.me)) state.me = seen[0] || '';
+    if (!seen.includes(state.me)) state.me = ''; // the actor chooses their role; never guess
     state.startIndex = 0;
     renderCast();
     renderLines();
@@ -178,30 +205,62 @@ It does to me.`;
     const has = state.characters.length > 0;
     $('#castEmpty').hidden = has;
     $('#castPanel').hidden = !has;
-    $('#toStage').disabled = !has;
+    $('#toStage').disabled = !has || !state.me;
+    $('#toStage').textContent = state.me ? `Tape as ${state.me} →` : 'Choose who you\'re playing';
+    renderRolePickers();
     if (!has) return;
-
-    const sel = $('#mySelect');
-    sel.innerHTML = state.characters.map((c) => `<option ${c === state.me ? 'selected' : ''}>${esc(c)}</option>`).join('');
 
     autoAssignVoices();
     const others = state.characters.filter((c) => c !== state.me);
     const voiceOpts = (uri) => voices.length
-      ? voices.map((v) => `<option value="${esc(v.voiceURI)}" ${v.voiceURI === uri ? 'selected' : ''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')
+      ? voices.map((v) => `<option value="${esc(v.voiceURI)}" ${v.voiceURI === uri ? 'selected' : ''}>${voiceScore(v) >= 40 ? '★ ' : ''}${esc(v.name.replace(/\s*\(.*\)$/, ''))} · ${esc(v.lang)}</option>`).join('')
       : '<option value="">Default voice</option>';
 
-    $('#readerList').innerHTML = others.length ? others.map((c) => {
+    if (!state.me) {
+      $('#readerList').innerHTML = '<p class="hint">Pick your character above — I\'ll voice everyone else.</p>';
+      save();
+      return;
+    }
+    $('#readerList').innerHTML = (others.length ? `<p class="hint">I'll voice ${others.map(esc).join(', ')}.</p>` : '') + (others.length ? others.map((c) => {
       const r = readerFor(c);
       return `<div class="reader" data-char="${esc(c)}">
-        <div class="reader-top"><span>${esc(c)}</span><button class="btn ghost sm" data-act="test">▶ Test</button></div>
+        <div class="reader-top"><span>${esc(c)}</span>
+          <span class="reader-acts">
+            <span class="seg"><button data-act="gender" data-g="f" class="${r.gender === 'f' ? 'on' : ''}">Female</button><button data-act="gender" data-g="m" class="${r.gender === 'm' ? 'on' : ''}">Male</button></span>
+            <button class="btn ghost sm" data-act="test">▶ Test</button>
+          </span></div>
         <select data-k="voiceURI">${voiceOpts(r.voiceURI)}</select>
         <div class="row" style="margin-top:6px">
           <label>Speed<input type="range" data-k="rate" min="0.6" max="1.5" step="0.05" value="${r.rate}"></label>
           <label>Pitch<input type="range" data-k="pitch" min="0.6" max="1.5" step="0.05" value="${r.pitch}"></label>
         </div>
       </div>`;
-    }).join('') : '<p class="hint">No other characters — it\'s a monologue. The reader stays quiet.</p>';
+    }).join('') : '<p class="hint">No other characters — it\'s a monologue. The reader stays quiet.</p>');
+    if (hasTTS && others.length && !voices.some((v) => voiceScore(v) >= 40)) {
+      $('#readerList').insertAdjacentHTML('beforeend', /iP(hone|ad|od)|Macintosh/.test(navigator.userAgent)
+        ? '<p class="hint tip">Tip: for much more natural reader voices, download free Enhanced or Premium voices — Settings → Accessibility → Spoken Content → Voices → English (try Ava, Zoe, Evan or Nathan). Then reopen Cue.</p>'
+        : '<p class="hint tip">Tip: for more natural reader voices, install a high-quality voice in your phone\'s Text-to-speech settings (Settings → Accessibility → Text-to-speech), or use Chrome/Edge.</p>');
+    }
     if (!hasTTS) $('#readerList').insertAdjacentHTML('afterbegin', '<p class="hint">This browser has no text-to-speech; reader lines will be shown and timed instead.</p>');
+    save();
+  }
+
+  function renderRolePickers() {
+    const opts = '<option value="">Choose your character…</option>' +
+      state.characters.map((c) => `<option value="${esc(c)}" ${c === state.me ? 'selected' : ''}>${esc(c)}</option>`).join('');
+    $('#mySelect').innerHTML = opts;
+    $('#stageRole').innerHTML = opts;
+    const others = state.characters.filter((c) => c !== state.me);
+    $('#stageReads').textContent = !state.me ? 'Pick your role to start.' : others.length ? `I'll read ${others.join(', ')}` : 'Monologue — no reader lines';
+    $('#rehearseBtn').disabled = $('#recordBtn').disabled = !state.me || !!run;
+  }
+
+  function setMe(name) {
+    if (run) return;
+    state.me = name;
+    state.startIndex = 0;
+    renderCast();
+    renderLines();
     save();
   }
 
@@ -248,8 +307,8 @@ It does to me.`;
     const list = $('#lineList');
     list.innerHTML = state.lines.map((l, i) => {
       const cls = [l.type === 'action' ? 'action' : '', l.character === state.me ? 'mine' : '', i === state.startIndex ? 'start' : ''].join(' ');
-      const who = l.type === 'dialogue' ? `<span class="who">${esc(l.character)}${l.character === state.me ? ' · you' : ''}</span>` : '';
-      return `<li class="${cls}" data-i="${i}">${who}${displayText(l)}</li>`;
+      const who = l.type === 'dialogue' ? `<span class="who">${esc(l.character)}</span>${l.character === state.me ? '<span class="tag me">YOU</span>' : '<span class="tag">READER</span>'}` : '';
+      return `<li class="${cls}" data-i="${i}">${who}${l.type === 'dialogue' ? `<div>${displayText(l)}</div>` : displayText(l)}</li>`;
     }).join('') || '<li class="action">No script yet.</li>';
   }
 
@@ -270,7 +329,7 @@ It does to me.`;
     if (!l || l.type !== 'dialogue') { p.hidden = true; return; }
     p.hidden = false;
     p.classList.toggle('me', l.character === state.me);
-    p.innerHTML = `<span class="who">${esc(l.character)}${l.character === state.me ? ' · you' : ''}</span>${displayText(l)}`;
+    p.innerHTML = `<span class="who">${l.character === state.me ? 'You · ' : ''}${esc(l.character)}</span>${displayText(l)}`;
   }
 
   // ---------- media ----------
@@ -568,8 +627,8 @@ It does to me.`;
   }
 
   function setRunning(on, record) {
-    $('#rehearseBtn').disabled = on;
-    $('#recordBtn').disabled = on;
+    $('#rehearseBtn').disabled = $('#recordBtn').disabled = on || !state.me;
+    $('#stageRole').disabled = on;
     $('#nextBtn').disabled = !on;
     $('#stopBtn').disabled = !on;
     $$('.tab').forEach((t) => { if (t.dataset.view !== 'stage') t.disabled = on && record; });
@@ -577,7 +636,7 @@ It does to me.`;
   const status = (msg) => { $('#status').textContent = msg || ''; };
 
   async function runScene(record) {
-    if (run || !state.lines.length) return;
+    if (run || !state.lines.length || !state.me) return;
     // iOS only lets speech start from a user gesture: prime the engine before any await.
     if (hasTTS) speechSynthesis.speak(new SpeechSynthesisUtterance(''));
     unlockAudio();
@@ -849,7 +908,8 @@ It does to me.`;
       e.target.value = '';
       if (files.length) importVideos(files);
     });
-    $('#mySelect').addEventListener('change', (e) => { state.me = e.target.value; state.startIndex = 0; renderCast(); renderLines(); save(); });
+    $('#mySelect').addEventListener('change', (e) => setMe(e.target.value));
+    $('#stageRole').addEventListener('change', (e) => setMe(e.target.value));
 
     $('#readerList').addEventListener('input', (e) => {
       const box = e.target.closest('.reader');
@@ -859,6 +919,15 @@ It does to me.`;
       save();
     });
     $('#readerList').addEventListener('click', (e) => {
+      if (e.target.dataset.act === 'gender') {
+        const r = readerFor(e.target.closest('.reader').dataset.char);
+        r.gender = e.target.dataset.g;
+        const used = new Set(Object.entries(state.readers).filter(([n]) => n !== e.target.closest('.reader').dataset.char && state.characters.includes(n) && n !== state.me).map(([, x]) => x.voiceURI));
+        const v = bestVoice(r.gender, used);
+        r.voiceURI = v ? v.voiceURI : '';
+        renderCast();
+        return;
+      }
       if (e.target.dataset.act !== 'test') return;
       const name = e.target.closest('.reader').dataset.char;
       const line = state.lines.find((l) => l.character === name) || { character: name, text: 'Hi, I\'ll be reading with you today.' };
