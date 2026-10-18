@@ -568,9 +568,10 @@ It does to me.`;
     try { return (await tx('readonly', (s) => s.getAll())).sort((a, b) => b.created - a.created); }
     catch { return memTakes.slice().sort((a, b) => b.created - a.created); }
   }
-  async function saveTake(blob, duration) {
+  async function saveTake(blob, duration, name) {
     const n = (await allTakes()).length + 1;
-    const take = { id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()), name: `${state.me || 'Take'} — Take ${n}`, created: Date.now(), duration, mime: blob.type, blob };
+    const id = crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random());
+    const take = { id, name: name || `${state.me || 'Take'} — Take ${n}`, created: Date.now(), duration, mime: blob.type, blob };
     try { await tx('readwrite', (s) => s.put(take)); } catch { memTakes.push(take); }
     renderTakes();
   }
@@ -604,11 +605,12 @@ It does to me.`;
     $('#takesGrid').innerHTML = takes.map((t) => {
       const url = URL.createObjectURL(t.blob);
       takeUrls.push(url);
-      const ext = (t.mime || '').includes('mp4') ? 'mp4' : 'webm';
+      const mime = t.mime || '';
+      const ext = mime.includes('mp4') ? 'mp4' : mime.includes('quicktime') ? 'mov' : mime.includes('webm') ? 'webm' : (t.ext || 'mp4');
       const file = t.name.replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '_') + '.' + ext;
       return `<div class="card take" data-id="${t.id}">
         <video src="${url}" controls playsinline preload="metadata"></video>
-        <div class="meta"><div style="flex:1;min-width:0"><input value="${esc(t.name)}" aria-label="Take name"><small>${new Date(t.created).toLocaleString()} · ${fmtDur(t.duration)}</small></div></div>
+        <div class="meta"><div style="flex:1;min-width:0"><input value="${esc(t.name)}" aria-label="Take name"><small>${new Date(t.created).toLocaleString()}${t.duration ? ' · ' + fmtDur(t.duration) : ''}</small></div></div>
         <div class="acts"><a class="btn primary sm" href="${url}" download="${esc(file)}">⬇ Download</a><button class="btn ghost sm" data-act="del">Delete</button></div>
       </div>`;
     }).join('');
@@ -617,6 +619,103 @@ It does to me.`;
   function fmtDur(sec) {
     sec = Math.max(0, Math.round(sec || 0));
     return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+  }
+
+
+  // ---------- imports from the camera roll ----------
+  function videoDuration(blob) {
+    return new Promise((resolve) => {
+      const v = document.createElement('video');
+      const url = URL.createObjectURL(blob);
+      const done = (d) => { URL.revokeObjectURL(url); resolve(Number.isFinite(d) ? d : 0); };
+      v.preload = 'metadata';
+      v.onloadedmetadata = () => done(v.duration);
+      v.onerror = () => done(0);
+      setTimeout(() => done(0), 8000);
+      v.src = url;
+    });
+  }
+
+  async function importVideos(files) {
+    const st = $('#importStatus');
+    let k = 0;
+    for (const f of files) {
+      st.textContent = `Importing ${++k} of ${files.length}…`;
+      const duration = await videoDuration(f);
+      const name = f.name.replace(/\.[^.]+$/, '') || 'Imported take';
+      await saveTake(f, duration, name);
+    }
+    st.textContent = files.length ? `Imported ${files.length} video${files.length > 1 ? 's' : ''}.` : '';
+  }
+
+  let ocrWorker = null;
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src; s.onload = resolve; s.onerror = () => reject(new Error('Could not load ' + src));
+      document.head.appendChild(s);
+    });
+  }
+  async function getOcrWorker(onProgress) {
+    if (ocrWorker) return ocrWorker;
+    const base = new URL('vendor/tesseract/', location.href).href;
+    if (!window.Tesseract) await loadScript(base + 'tesseract.min.js');
+    ocrWorker = await Tesseract.createWorker('eng', 1, {
+      workerPath: base + 'worker.min.js',
+      corePath: base,
+      langPath: base,
+      logger: (m) => onProgress && onProgress(m),
+    });
+    return ocrWorker;
+  }
+
+  // Undo the common ways OCR mangles screenplay pages.
+  function cleanOcr(text) {
+    const lines = text
+      .replace(/[“”]/g, '"').replace(/[‘’]/g, "'")
+      .split('\n').map((l) => l.trim())
+      .filter((l) => !/^\d+\.?$/.test(l)); // page numbers
+    // OCR loses screenplay indentation and adds blank lines after character names:
+    // put each name on a fresh block, directly above its dialogue.
+    const out = [];
+    let afterCue = false;
+    for (const l of lines) {
+      if (!l) { if (!afterCue) out.push(''); continue; }
+      const cueLike = l.length <= 40 && /[A-Z]/.test(l) && l === l.toUpperCase() && !SCENE_HEADING.test(l) && !l.endsWith(':') && !/[.!?]$/.test(normName(l));
+      if (cueLike && out.length && out[out.length - 1] !== '') out.push('');
+      out.push(l);
+      afterCue = cueLike;
+    }
+    return out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  }
+
+  async function importPhotos(files) {
+    const st = $('#ocrStatus');
+    st.hidden = false;
+    const pages = [];
+    try {
+      let k = 0;
+      for (const f of files) {
+        k++;
+        st.textContent = `Reading page ${k} of ${files.length}…`;
+        const w = await getOcrWorker((m) => {
+          if (m.status === 'recognizing text') st.textContent = `Reading page ${k} of ${files.length}… ${Math.round(m.progress * 100)}%`;
+          else if (!ocrWorker) st.textContent = 'Loading text reader (first time only)…';
+        });
+        const { data } = await w.recognize(f);
+        pages.push(cleanOcr(data.text));
+      }
+      const text = pages.join('\n\n');
+      const box = $('#scriptInput');
+      const existing = box.value.trim();
+      const replace = !existing || existing === SAMPLE.trim() || confirm('Replace the current script? (Cancel adds the photos to the end.)');
+      box.value = replace ? text : existing + '\n\n' + text;
+      onScriptChange();
+      st.textContent = `Read ${files.length} page${files.length > 1 ? 's' : ''}. Check the text and fix any typos before taping.`;
+    } catch (err) {
+      console.error(err);
+      st.textContent = 'Could not read that image: ' + (err.message || err);
+    }
   }
 
   // ---------- wiring ----------
@@ -649,6 +748,16 @@ It does to me.`;
       $('#scriptInput').value = await f.text();
       onScriptChange();
       e.target.value = '';
+    });
+    $('#photoInput').addEventListener('change', (e) => {
+      const files = [...e.target.files];
+      e.target.value = '';
+      if (files.length) importPhotos(files);
+    });
+    $('#videoInput').addEventListener('change', (e) => {
+      const files = [...e.target.files];
+      e.target.value = '';
+      if (files.length) importVideos(files);
     });
     $('#mySelect').addEventListener('change', (e) => { state.me = e.target.value; state.startIndex = 0; renderCast(); renderLines(); save(); });
 
