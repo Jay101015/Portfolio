@@ -229,7 +229,7 @@ It does to me.`;
 
   // Give every reader character its own good voice, alternating female/male unless the actor chose.
   function autoAssignVoices() {
-    const used = new Set(), usedEl = new Set();
+    const used = new Set(), usedStudio = new Set();
     state.characters.filter((c) => c !== state.me).forEach((c, k) => {
       const r = readerFor(c);
       if (!r.gender) r.gender = k % 2 ? 'm' : 'f';
@@ -239,14 +239,13 @@ It does to me.`;
         r.voiceURI = v ? v.voiceURI : '';
       }
       used.add(r.voiceURI);
-      if (elConnected()) {
-        if (!r.engine) r.engine = 'eleven';
-        if (!el.voices.some((v) => v.id === r.elVoiceId) || usedEl.has(r.elVoiceId)) {
-          const v = bestElVoice(r.gender, usedEl);
-          r.elVoiceId = v ? v.id : '';
-        }
-        usedEl.add(r.elVoiceId);
+      if (!STUDIO_VOICES.some((v) => v.id === r.studioVoice) || usedStudio.has(r.studioVoice)) {
+        // Prefer an unused voice of the right gender, alternating US/UK accents across the cast.
+        const pool = STUDIO_VOICES.filter((v) => v.gender === r.gender);
+        const v = pool.find((x) => !usedStudio.has(x.id)) || pool[k % pool.length];
+        r.studioVoice = v.id;
       }
+      usedStudio.add(r.studioVoice);
     });
   }
 
@@ -293,7 +292,7 @@ It does to me.`;
     $('#toStage').textContent = state.me ? `Tape as ${state.me} →` : 'Choose who you\'re playing';
     renderRolePickers();
     renderNameFixer();
-    renderElPanel();
+    renderStudioPanel();
     if (!has) return;
 
     autoAssignVoices();
@@ -315,17 +314,17 @@ It does to me.`;
             <span class="seg"><button data-act="gender" data-g="f" class="${r.gender === 'f' ? 'on' : ''}">Female</button><button data-act="gender" data-g="m" class="${r.gender === 'm' ? 'on' : ''}">Male</button></span>
             <button class="btn ghost sm" data-act="test">▶ Test</button>
           </span></div>
-        ${elConnected() ? `<span class="seg engine"><button data-act="engine" data-e="eleven" class="${usesEleven(r) ? 'on' : ''}">ElevenLabs</button><button data-act="engine" data-e="device" class="${usesEleven(r) ? '' : 'on'}">Phone voice</button></span>` : ''}
-        ${usesEleven(r)
-          ? `<select data-k="elVoiceId">${el.voices.map((v) => `<option value="${esc(v.id)}" ${v.id === r.elVoiceId ? 'selected' : ''}>${esc(v.name)}${v.desc ? ' · ' + esc(v.desc) : ''}</option>`).join('')}</select>`
+        ${studio.downloaded && studioSupported ? `<span class="seg engine"><button data-act="engine" data-e="studio" class="${usesStudio(r) ? 'on' : ''}">Studio voice</button><button data-act="engine" data-e="device" class="${usesStudio(r) ? '' : 'on'}">Phone voice</button></span>` : ''}
+        ${usesStudio(r)
+          ? `<select data-k="studioVoice">${STUDIO_VOICES.map((v) => `<option value="${v.id}" ${v.id === r.studioVoice ? 'selected' : ''}>${v.name} · ${v.accent} ${v.gender === 'f' ? 'female' : 'male'}</option>`).join('')}</select>`
           : `<select data-k="voiceURI">${voiceOpts(r.voiceURI)}</select>`}
         <div class="row" style="margin-top:6px">
           <label>Speed<input type="range" data-k="rate" min="0.6" max="1.5" step="0.05" value="${r.rate}"></label>
-          ${usesEleven(r) ? '' : `<label>Pitch<input type="range" data-k="pitch" min="0.6" max="1.5" step="0.05" value="${r.pitch}"></label>`}
+          ${usesStudio(r) ? '' : `<label>Pitch<input type="range" data-k="pitch" min="0.6" max="1.5" step="0.05" value="${r.pitch}"></label>`}
         </div>
       </div>`;
     }).join('') : '<p class="hint">No other characters — it\'s a monologue. The reader stays quiet.</p>');
-    if (hasTTS && others.length && !elConnected() && !voices.some((v) => voiceScore(v) >= 40)) {
+    if (hasTTS && others.length && !studio.downloaded && !voices.some((v) => voiceScore(v) >= 40)) {
       $('#readerList').insertAdjacentHTML('beforeend', /iP(hone|ad|od)|Macintosh/.test(navigator.userAgent)
         ? '<p class="hint tip">Tip: for much more natural reader voices, download free Enhanced or Premium voices — Settings → Accessibility → Spoken Content → Voices → English (try Ava, Zoe, Evan or Nathan). Then reopen Cue.</p>'
         : '<p class="hint tip">Tip: for more natural reader voices, install a high-quality voice in your phone\'s Text-to-speech settings (Settings → Accessibility → Text-to-speech), or use Chrome/Edge.</p>');
@@ -334,36 +333,28 @@ It does to me.`;
     save();
   }
 
-  function readerChars() {
-    let n = 0;
-    state.lines.forEach((l) => { if (l.type === 'dialogue' && l.character !== state.me) n += spokenText(l.text).length; });
-    return n;
-  }
-
-  function renderElPanel() {
-    const p = $('#elPanel');
+  function renderStudioPanel() {
+    const p = $('#studioPanel');
     if (!p) return;
-    if (!elConnected()) {
-      p.innerHTML = `<p class="hint">Use lifelike AI voices from your own <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">ElevenLabs API key</a>. The key stays on this phone and is only sent to ElevenLabs.</p>
-        <div class="row el-connect"><input id="elKey" type="password" placeholder="Paste API key" autocomplete="off" spellcheck="false"><button class="btn primary sm" data-act="el-connect">Connect</button></div>
-        <p id="elMsg" class="hint"></p>`;
+    if (!studioSupported) {
+      p.innerHTML = '<p class="hint">Studio voices need a newer browser. Your phone\'s built-in voices are used instead.</p>';
       return;
     }
-    p.innerHTML = `<p class="hint ok">✓ Connected · ${el.voices.length} voices</p>
-      <label class="field"><span>Voice model</span>
-        <select data-act="el-model">
-          <option value="quality" ${el.model === 'quality' ? 'selected' : ''}>Most expressive (Multilingual v2)</option>
-          <option value="fast" ${el.model === 'fast' ? 'selected' : ''}>Fastest, half the credits (Flash v2.5)</option>
-        </select></label>
-      <p class="hint">${state.me ? `This scene's reader lines ≈ ${readerChars().toLocaleString()} characters of credit, charged once — ` : 'Pick who you\'re playing above to choose a voice for each character. '}Lines are saved on this phone and replay free.</p>
-      <p id="elMsg" class="hint"></p>
-      <div class="row"><button class="btn ghost sm" data-act="el-clear">Clear saved voice audio</button><button class="btn ghost sm" data-act="el-disconnect">Disconnect</button></div>`;
-  }
-
-  function alertEl(msg) {
-    status(msg);
-    const m = $('#elMsg');
-    if (m) m.textContent = msg;
+    const pct = Math.round(studio.progress * 100);
+    const voicesList = STUDIO_VOICES.map((v) => `<span class="vchip">${v.name} <small>${v.accent} ${v.gender === 'f' ? 'F' : 'M'}</small></span>`).join('');
+    let body;
+    if (studio.status === 'loading') {
+      body = `<p class="hint">${studio.downloaded ? 'Starting studio voices…' : `Downloading studio voices… ${pct}%`}</p><div class="bar"><i style="width:${studio.downloaded ? 100 : pct}%"></i></div>`;
+    } else if (studio.status === 'error') {
+      body = `<p class="hint err">Couldn't load studio voices: ${esc(studio.error)}</p><button class="btn primary sm" data-act="studio-load">Try again</button>`;
+    } else if (studio.downloaded) {
+      body = `<p class="hint ok">✓ Studio voices on this phone${studioReady() ? '' : ' (they start when you rehearse)'}</p>
+        <div class="row"><button class="btn ghost sm" data-act="studio-clear">Clear saved lines</button></div>`;
+    } else {
+      body = `<p class="hint">Natural, human-sounding reader voices that run on your phone — free, no account. One-time download of about 115 MB (use Wi-Fi), then they work offline.</p>
+        <button class="btn primary sm" data-act="studio-load">Download studio voices</button>`;
+    }
+    p.innerHTML = `<div class="vchips">${voicesList}</div>${body}<p id="studioMsg" class="hint"></p>`;
   }
 
   function renderNameFixer() {
@@ -403,6 +394,7 @@ It does to me.`;
     renderCast();
     renderLines();
     save();
+    prepareInBackground();
   }
 
   function bindSettings() {
@@ -606,11 +598,11 @@ It does to me.`;
     const text = spokenText(line.text);
     if (!text) return;
     const r = readerFor(line.character);
-    if (usesEleven(r)) {
-      try { return await speakEleven(line, signal); } catch (e) {
+    if (usesStudio(r)) {
+      try { return await speakStudio(line, signal); } catch (e) {
         if (e.name === 'AbortError') throw e;
         console.warn(e);
-        if (!elWarned) { elWarned = true; alertEl(e.message + ' Using the phone voice instead.'); }
+        if (!studioWarned) { studioWarned = true; studioNotice('Studio voice failed (' + e.message + '). Using the phone voice instead.'); }
       }
     }
     if (!hasTTS) return sleep(1000 + wordCount(text) * 400 / r.rate, signal);
@@ -642,93 +634,122 @@ It does to me.`;
     });
   }
 
-  // ---------- ElevenLabs studio voices (optional, uses the actor's own API key) ----------
-  const EL_KEY = 'cue:elevenlabs';
-  const EL_API = 'https://api.elevenlabs.io';
-  const EL_MODELS = { quality: 'eleven_multilingual_v2', fast: 'eleven_flash_v2_5' };
-  const el = { apiKey: '', model: 'quality', voices: [] };
-  try { Object.assign(el, JSON.parse(localStorage.getItem(EL_KEY) || '{}')); } catch { /* ignore */ }
-  const elConnected = () => !!el.apiKey && el.voices.length > 0;
-  function saveEl() { try { localStorage.setItem(EL_KEY, JSON.stringify(el)); } catch { /* ignore */ } }
+  // ---------- studio voices: Kokoro neural TTS running on the device ----------
+  const STUDIO_VOICES = [
+    { id: 'af_heart', name: 'Heart', accent: 'US', gender: 'f' },
+    { id: 'am_michael', name: 'Michael', accent: 'US', gender: 'm' },
+    { id: 'bf_emma', name: 'Emma', accent: 'UK', gender: 'f' },
+    { id: 'bm_george', name: 'George', accent: 'UK', gender: 'm' },
+  ];
+  const STUDIO_KEY = 'cue:studio';
+  const studioSupported = typeof Worker !== 'undefined' && typeof WebAssembly === 'object';
+  const studio = { downloaded: false, status: 'idle', progress: 0, error: '' };
+  try { studio.downloaded = !!JSON.parse(localStorage.getItem(STUDIO_KEY) || '{}').downloaded; } catch { /* ignore */ }
+  try { localStorage.removeItem('cue:elevenlabs'); } catch { /* old ElevenLabs key: don't keep it around */ }
+  const studioReady = () => studio.status === 'ready';
+  const usesStudio = (r) => studioSupported && studio.downloaded && studio.status !== 'error' && r.engine !== 'device' && STUDIO_VOICES.some((v) => v.id === r.studioVoice);
 
-  async function elError(res) {
-    let msg = '';
-    try { const j = await res.json(); msg = (j.detail && (j.detail.message || j.detail.status || j.detail)) || j.message || ''; } catch { /* not JSON */ }
-    if (res.status === 401) return new Error('ElevenLabs rejected the API key' + (msg ? ` (${msg})` : '.'));
-    if (res.status === 429) return new Error('ElevenLabs is busy or your plan limit was hit — try again shortly.');
-    return new Error(`ElevenLabs error ${res.status}${msg ? ': ' + msg : ''}`);
+  let worker = null, workerSeq = 0;
+  const pending = new Map();
+  function studioWorker() {
+    if (worker) return worker;
+    worker = new Worker('voice-worker.js', { type: 'module' });
+    worker.onmessage = ({ data }) => {
+      if (data.type === 'progress') {
+        studio.progress = data.total ? data.loaded / data.total : 0;
+        renderStudioPanel();
+        return;
+      }
+      const p = pending.get(data.id);
+      if (!p) return;
+      pending.delete(data.id);
+      if (data.type === 'error') p.reject(new Error(data.message));
+      else p.resolve(data);
+    };
+    worker.onerror = (e) => {
+      pending.forEach((p) => p.reject(new Error(e.message || 'Voice engine failed to start')));
+      pending.clear();
+      worker = null;
+    };
+    return worker;
+  }
+  function callWorker(msg) {
+    return new Promise((resolve, reject) => {
+      const id = ++workerSeq;
+      pending.set(id, { resolve, reject });
+      studioWorker().postMessage(Object.assign({ id }, msg));
+    });
   }
 
-  async function elConnect(apiKey) {
-    const res = await fetch(EL_API + '/v1/voices', { headers: { 'xi-api-key': apiKey } });
-    if (!res.ok) throw await elError(res);
-    const data = await res.json();
-    el.apiKey = apiKey;
-    el.voices = (data.voices || []).map((v) => ({
-      id: v.voice_id,
-      name: v.name,
-      gender: /female|woman/i.test((v.labels && v.labels.gender) || '') ? 'f' : /male|man/i.test((v.labels && v.labels.gender) || '') ? 'm' : '',
-      desc: [v.labels && v.labels.accent, v.labels && v.labels.age].filter(Boolean).join(', '),
-    })).sort((a, b) => a.name.localeCompare(b.name));
-    if (!el.voices.length) throw new Error('No voices found on this ElevenLabs account.');
-    saveEl();
-    // Switch every reader to a studio voice.
-    Object.values(state.readers).forEach((r) => { r.engine = 'eleven'; });
+  let loadPromise = null;
+  function studioLoad() {
+    if (!loadPromise) {
+      studio.status = 'loading';
+      studio.error = '';
+      renderStudioPanel();
+      loadPromise = callWorker({ type: 'load' }).then(() => {
+        studio.status = 'ready';
+        if (!studio.downloaded) {
+          studio.downloaded = true;
+          try { localStorage.setItem(STUDIO_KEY, JSON.stringify({ downloaded: true })); } catch { /* ignore */ }
+          Object.values(state.readers).forEach((r) => { if (r.engine !== 'device') r.engine = 'studio'; });
+        }
+        renderCast();
+        prepareInBackground();
+      }, (err) => {
+        studio.status = 'error';
+        studio.error = err.message || String(err);
+        loadPromise = null;
+        renderStudioPanel();
+        throw err;
+      });
+    }
+    return loadPromise;
   }
 
-  function elDisconnect() {
-    el.apiKey = ''; el.voices = [];
-    saveEl();
-    Object.values(state.readers).forEach((r) => { r.engine = 'device'; });
-  }
-
-  function bestElVoice(gender, exclude) {
-    const pool = el.voices.filter((v) => !gender || v.gender === gender);
-    return pool.find((v) => !exclude.has(v.id)) || pool[0] || el.voices[0] || null;
-  }
-  const usesEleven = (r) => elConnected() && r.engine !== 'device' && el.voices.some((v) => v.id === r.elVoiceId);
-
-  // Generated lines are cached on the phone, so rehearsing the same scene again costs nothing.
-  const elInflight = new Map();
-  function elAudioFor(line) {
+  function studioKey(line) {
     const r = readerFor(line.character);
-    const i = state.lines.indexOf(line);
-    const prev = state.lines.slice(0, i).reverse().find((l) => l.type === 'dialogue');
-    const text = spokenText(line.text);
-    const speed = Math.min(1.2, Math.max(0.7, r.rate));
-    const model = EL_MODELS[el.model] || EL_MODELS.quality;
-    const key = [model, r.elVoiceId, speed, prev ? spokenText(prev.text) : '', text].join('|');
-    if (elInflight.has(key)) return elInflight.get(key);
+    return ['kokoro', r.studioVoice, Math.round(r.rate * 100), spokenText(line.text)].join('|');
+  }
+
+  // Generated lines are saved on the phone, so each one is only ever made once.
+  const inflight = new Map();
+  function studioAudioFor(line) {
+    const key = studioKey(line);
+    if (inflight.has(key)) return inflight.get(key);
+    const r = readerFor(line.character);
     const p = (async () => {
       const cached = await cacheGet(key);
       if (cached) return cached;
-      const res = await fetch(`${EL_API}/v1/text-to-speech/${encodeURIComponent(r.elVoiceId)}?output_format=mp3_44100_128`, {
-        method: 'POST',
-        headers: { 'xi-api-key': el.apiKey, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
-        body: JSON.stringify({
-          text,
-          model_id: model,
-          previous_text: prev ? spokenText(prev.text) : undefined,
-          voice_settings: { stability: 0.4, similarity_boost: 0.75, use_speaker_boost: true, speed },
-        }),
-      });
-      if (!res.ok) throw await elError(res);
-      const blob = await res.blob();
+      await studioLoad();
+      const { wav } = await callWorker({ type: 'speak', chunks: chunkText(spokenText(line.text)), voice: r.studioVoice, speed: Math.min(1.5, Math.max(0.6, r.rate)) });
+      const blob = new Blob([wav], { type: 'audio/wav' });
       cachePut(key, blob);
       return blob;
     })();
-    elInflight.set(key, p);
-    p.catch(() => elInflight.delete(key));
+    inflight.set(key, p);
+    p.then(() => inflight.delete(key), () => inflight.delete(key));
     return p;
   }
 
-  // Fetch upcoming reader lines in the background so there's no pause before each cue.
-  async function prefetchEleven(from, signal) {
-    for (let i = from; i < state.lines.length && !signal.aborted; i++) {
-      const l = state.lines[i];
-      if (l.type !== 'dialogue' || l.character === state.me || !spokenText(l.text) || !usesEleven(readerFor(l.character))) continue;
-      try { await elAudioFor(l); } catch { return; }
+  function studioLinesFrom(from) {
+    return state.lines.slice(from).filter((l) => l.type === 'dialogue' && l.character !== state.me && spokenText(l.text) && usesStudio(readerFor(l.character)));
+  }
+
+  // Generate every reader line before the scene starts, so the reader never keeps you waiting mid-take.
+  async function prepareScene(from, signal, onProgress) {
+    const lines = studioLinesFrom(from);
+    for (let k = 0; k < lines.length; k++) {
+      if (signal && signal.aborted) throw abortError();
+      onProgress && onProgress(k, lines.length);
+      await studioAudioFor(lines[k]);
     }
+  }
+
+  let bgPrep = null;
+  function prepareInBackground() {
+    if (!studioReady() || !state.me || bgPrep) return;
+    bgPrep = prepareScene(0).catch(() => {}).finally(() => { bgPrep = null; });
   }
 
   // One shared <audio>: iOS only lets an element play after a tap has "unlocked" it.
@@ -736,17 +757,14 @@ It does to me.`;
   player.setAttribute('playsinline', '');
   const SILENT = 'data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//NwwAAAAAAAAAAAAEluZm8AAAAPAAAABAAAAlgAenp6enp6enp6enp6enp6enp6enp6enp6pqampqampqampqampqampqampqampqamptPT09PT09PT09PT09PT09PT09PT09PT09P/////////////////////////////////AAAAAExhdmM2MC4zMQAAAAAAAAAAAAAAACQCcQAAAAAAAAJY+/rsqgAAAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV';
   function unlockPlayer() {
-    if (!elConnected()) return;
     try { player.src = SILENT; player.play().catch(() => {}); } catch { /* ignore */ }
   }
 
-  let elWarned = false;
-  async function speakEleven(line, signal) {
+  async function speakStudio(line, signal) {
     let blob = null, err = null;
-    status(`${line.character} is reading…`);
-    await step(signal, (done) => { elAudioFor(line).then((b) => { blob = b; done(); }, (e) => { err = e; done(); }); });
+    await step(signal, (done) => { studioAudioFor(line).then((b) => { blob = b; done(); }, (e) => { err = e; done(); }); });
     if (err) throw err;
-    if (!blob) return; // skipped with Next while loading
+    if (!blob) return; // skipped with Next while it was generating
     await step(signal, (done, onClean) => {
       const url = URL.createObjectURL(blob);
       onClean(() => { player.onended = player.onerror = null; player.pause(); URL.revokeObjectURL(url); });
@@ -755,6 +773,13 @@ It does to me.`;
       player.src = url;
       player.play().catch(() => done());
     });
+  }
+
+  let studioWarned = false;
+  function studioNotice(msg) {
+    status(msg);
+    const m = $('#studioMsg');
+    if (m) m.textContent = msg;
   }
 
   // ---------- following the actor's words ----------
@@ -909,7 +934,16 @@ It does to me.`;
     setRunning(true, record);
     let recorder = null;
     try {
-      if (elConnected()) prefetchEleven(state.startIndex, ac.signal);
+      if (studio.downloaded && studioLinesFrom(state.startIndex).length) {
+        try {
+          await prepareScene(state.startIndex, ac.signal, (k, n) => status(`Preparing reader voices ${k + 1}/${n}…`));
+          status('');
+        } catch (e) {
+          if (e.name === 'AbortError') throw e;
+          studioWarned = true;
+          studioNotice('Studio voices unavailable (' + e.message + '). Using the phone voice instead.');
+        }
+      }
       if (record) await ensureMedia({ requireVideo: true });
       else if (state.settings.advanceMode === 'voice') {
         try { await ensureMedia(); } catch { status('No mic — press Space after your lines.'); }
@@ -1149,6 +1183,7 @@ It does to me.`;
     $$('.tab').forEach((t) => t.classList.toggle('active', t.dataset.view === name));
     $$('.view').forEach((v) => v.classList.toggle('active', v.id === 'view-' + name));
     if (name === 'takes') renderTakes();
+    if (name === 'stage' && studio.downloaded && studioSupported) studioLoad().catch(() => {});
   }
 
   function init() {
@@ -1210,7 +1245,7 @@ It does to me.`;
       if (e.target.dataset.act === 'gender') {
         const r = readerFor(e.target.closest('.reader').dataset.char);
         r.gender = e.target.dataset.g;
-        r.voiceURI = r.elVoiceId = ''; // let autoAssignVoices pick the best unused voice of that type
+        r.voiceURI = r.studioVoice = ''; // let autoAssignVoices pick the best unused voice of that type
         renderCast();
         return;
       }
@@ -1224,24 +1259,10 @@ It does to me.`;
       speakLine(line, tmp.ac.signal).catch(() => {}).finally(() => { if (run === tmp) run = prev; });
     });
 
-    $('#elPanel').addEventListener('click', async (e) => {
+    $('#studioPanel').addEventListener('click', async (e) => {
       const act = e.target.dataset.act;
-      if (act === 'el-connect') {
-        const key = $('#elKey').value.trim();
-        if (!key) return;
-        e.target.disabled = true;
-        alertEl('Connecting…');
-        try { await elConnect(key); renderCast(); alertEl(''); }
-        catch (err) { alertEl(err.message || String(err)); e.target.disabled = false; }
-      } else if (act === 'el-disconnect') {
-        if (confirm('Disconnect ElevenLabs and remove the API key from this phone?')) { elDisconnect(); renderCast(); }
-      } else if (act === 'el-clear') {
-        await cacheClear();
-        alertEl('Saved voice audio cleared.');
-      }
-    });
-    $('#elPanel').addEventListener('change', (e) => {
-      if (e.target.dataset.act === 'el-model') { el.model = e.target.value; saveEl(); }
+      if (act === 'studio-load') studioLoad().catch(() => {});
+      else if (act === 'studio-clear') { await cacheClear(); studioNotice('Saved lines cleared.'); }
     });
     $$('.tab').forEach((t) => t.addEventListener('click', () => showView(t.dataset.view)));
     $('#toStage').addEventListener('click', () => showView('stage'));
