@@ -58,7 +58,7 @@
           <label class="field">
             <span>Advance after my lines</span>
             <select id="advanceMode">
-              <option value="voice">When I stop speaking (mic)</option>
+              <option value="voice">When I finish my line (listens to me)</option>
               <option value="manual">When I tap / press Space</option>
               <option value="timed">Timed by word count</option>
             </select>
@@ -70,6 +70,14 @@
           <label class="field" data-show="voice">
             <span>Mic sensitivity</span>
             <input id="sensitivity" type="range" min="1" max="10" step="1" />
+          </label>
+          <label class="field" data-show="voice">
+            <span>Follow my words (lets me pause mid-line)</span>
+            <select id="matchWords">
+              <option value="rehearse">When rehearsing</option>
+              <option value="always">Always — check your first take has sound</option>
+              <option value="off">Off — just listen for silence</option>
+            </select>
           </label>
           <label class="field">
             <span>Gap between lines <b id="gapVal"></b></span>

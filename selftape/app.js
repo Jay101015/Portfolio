@@ -52,6 +52,7 @@ It does to me.`;
       advanceMode: 'voice',
       silenceMs: 1000,
       sensitivity: 5,
+      matchWords: 'rehearse',
       gapMs: 300,
       countdown: '3',
       myLineDisplay: 'full',
@@ -68,6 +69,7 @@ It does to me.`;
         state.me = saved.me || '';
         state.readers = saved.readers || {};
         Object.assign(state.settings, saved.settings || {});
+        if (typeof state.settings.matchWords !== 'string') state.settings.matchWords = 'rehearse';
       }
     } catch { /* storage unavailable: start fresh */ }
   }
@@ -213,7 +215,7 @@ It does to me.`;
       renderLines();
       save();
     };
-    ['advanceMode', 'silenceMs', 'sensitivity', 'gapMs', 'countdown', 'myLineDisplay', 'mirror'].forEach((k) => {
+    ['advanceMode', 'silenceMs', 'sensitivity', 'matchWords', 'gapMs', 'countdown', 'myLineDisplay', 'mirror'].forEach((k) => {
       const el = $('#' + k);
       if (el.type === 'checkbox') el.checked = !!s[k]; else el.value = s[k];
       el.addEventListener('input', () => {
@@ -302,10 +304,17 @@ It does to me.`;
     return s;
   }
 
-  function setupMeter(s) {
+  // iOS keeps an AudioContext silent unless it is created/resumed inside a tap, so call this first thing in click handlers.
+  function unlockAudio() {
     try {
       audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (audioCtx.state !== 'running') audioCtx.resume();
+    } catch { /* no Web Audio */ }
+  }
+
+  function setupMeter(s) {
+    try {
+      unlockAudio();
       const src = audioCtx.createMediaStreamSource(s);
       analyser = audioCtx.createAnalyser();
       analyser.fftSize = 1024;
@@ -323,7 +332,15 @@ It does to me.`;
     for (let i = 0; i < levelBuf.length; i++) sum += levelBuf[i] * levelBuf[i];
     return Math.sqrt(sum / levelBuf.length);
   }
-  const threshold = () => 0.2 * Math.pow(0.7, state.settings.sensitivity);
+  // Speech must clear both the sensitivity setting and the room's background noise.
+  let noiseFloor = 0.005;
+  const threshold = () => Math.max(0.2 * Math.pow(0.7, state.settings.sensitivity), noiseFloor * 2.5);
+  function trackNoise(level) {
+    if (run && run.readerSpeaking) return; // the reader's voice through the speaker isn't room noise
+    if (level < noiseFloor) noiseFloor += (level - noiseFloor) * 0.1;
+    else if (level < threshold()) noiseFloor += (level - noiseFloor) * 0.01;
+    noiseFloor = Math.min(Math.max(noiseFloor, 0.001), 0.05);
+  }
 
   let meterRunning = false;
   function meterLoop() {
@@ -332,6 +349,7 @@ It does to me.`;
     const bar = $('#meter i'), meter = $('#meter');
     const tick = () => {
       currentLevel = readLevel();
+      trackNoise(currentLevel);
       bar.style.height = Math.min(100, Math.sqrt(currentLevel) * 220) + '%';
       meter.classList.toggle('speaking', currentLevel > threshold());
       requestAnimationFrame(tick);
@@ -417,24 +435,95 @@ It does to me.`;
     });
   }
 
+  // ---------- following the actor's words ----------
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let speechRecBroken = false; // set after a permission/network failure so we stop retrying every line
+
+  const toWords = (s) => spokenText(s).toLowerCase()
+    .replace(/[’']/g, '').replace(/[^a-z0-9]+/g, ' ').split(' ').filter(Boolean);
+
+  function similar(a, b) {
+    if (a === b) return true;
+    if (a.length >= 4 && b.length >= 4 && (a.startsWith(b.slice(0, 4)) || b.startsWith(a.slice(0, 4)))) return true;
+    return false;
+  }
+
+  // How far through the expected line the heard words have got, matching in order and tolerating skipped words.
+  function lineProgress(expected, heard) {
+    let pos = 0, matched = 0, last = -1;
+    for (const w of heard) {
+      for (let j = pos; j < Math.min(expected.length, pos + 4); j++) {
+        if (similar(expected[j], w)) { matched++; last = j; pos = j + 1; break; }
+      }
+    }
+    const n = expected.length || 1;
+    return { ratio: matched / n, matched, atEnd: last >= n - Math.min(2, n) };
+  }
+
+  function startListening(onWords) {
+    const m = state.settings.matchWords;
+    // Recognition can take the mic away from the recorder on some phones, so by default it's rehearsal-only.
+    if (!SpeechRec || speechRecBroken || m === 'off' || (m !== 'always' && run && run.recording)) return null;
+    let stopped = false, finalText = '';
+    const rec = new SpeechRec();
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.lang = 'en-US';
+    rec.onresult = (e) => {
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) finalText += ' ' + e.results[i][0].transcript;
+        else interim += ' ' + e.results[i][0].transcript;
+      }
+      onWords(toWords(finalText + ' ' + interim));
+    };
+    rec.onerror = (e) => {
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed' || e.error === 'network') speechRecBroken = true;
+    };
+    rec.onend = () => { if (!stopped && !speechRecBroken) { try { rec.start(); } catch { /* already restarting */ } } };
+    try { rec.start(); } catch { return null; }
+    return () => { stopped = true; try { rec.abort(); } catch { /* ignore */ } };
+  }
+
   function waitForMe(line, signal) {
     const mode = state.settings.advanceMode;
     if (mode === 'timed') return sleep(1200 + wordCount(line.text) * 420, signal);
-    if (mode === 'voice' && analyser) {
-      return step(signal, (done, onClean) => {
-        const start = performance.now();
-        let voicedMs = 0, lastVoice = 0, prev = start;
-        const iv = setInterval(() => {
-          const now = performance.now();
-          const dt = now - prev; prev = now;
-          if (now - start < 300) return; // ignore the tail of the reader's audio
-          if (readLevel() > threshold()) { voicedMs += dt; lastVoice = now; }
-          else if (voicedMs > 250 && now - lastVoice > state.settings.silenceMs) done();
-        }, 40);
-        onClean(() => clearInterval(iv));
+    if (mode !== 'voice') return step(signal, () => {}); // manual: only Next advances
+
+    const expected = toWords(line.text);
+    return step(signal, (done, onClean) => {
+      const start = performance.now();
+      let voicedMs = 0, lastVoice = 0, prev = start;
+      let progress = { ratio: 0, matched: 0, atEnd: false }, lastHeard = 0;
+      const stopListening = startListening((heard) => {
+        progress = lineProgress(expected, heard);
+        lastHeard = performance.now();
+        status(`Listening… ${progress.matched}/${expected.length} words`);
       });
-    }
-    return step(signal, () => {}); // manual: only Next advances
+      if (stopListening) onClean(stopListening);
+      status(stopListening ? 'Listening for your line…' : (analyser ? 'Your line — I\'ll cue when you finish.' : 'Your line — press Space when done.'));
+
+      const iv = setInterval(() => {
+        const now = performance.now();
+        const dt = now - prev; prev = now;
+        if (now - start < 300) return; // ignore the tail of the reader's audio
+        const hasMic = !!analyser;
+        if (hasMic && readLevel() > threshold()) { voicedMs += dt; lastVoice = now; }
+        const quietFor = hasMic && voicedMs > 250 ? now - lastVoice : 0;
+        const following = stopListening && !speechRecBroken && lastHeard > 0;
+
+        if (following && progress.atEnd && progress.ratio >= 0.5) {
+          // Reached the last words: cue once they stop talking.
+          if (!hasMic ? now - lastHeard > 700 : quietFor > Math.min(state.settings.silenceMs, 600)) done();
+        } else if (following) {
+          // Mid-line pause: only cue on a long silence, in case recognition missed the ending.
+          if (quietFor > Math.max(state.settings.silenceMs * 2.5, 2500)) done();
+        } else if (quietFor > state.settings.silenceMs) {
+          done(); // no recognition available: fall back to silence detection
+        }
+      }, 40);
+      onClean(() => clearInterval(iv));
+    });
   }
 
   async function countdown(n, signal) {
@@ -491,12 +580,12 @@ It does to me.`;
     if (run || !state.lines.length) return;
     // iOS only lets speech start from a user gesture: prime the engine before any await.
     if (hasTTS) speechSynthesis.speak(new SpeechSynthesisUtterance(''));
+    unlockAudio();
     const ac = new AbortController();
-    run = { ac, skip: null };
+    run = { ac, skip: null, recording: record };
     setRunning(true, record);
     let recorder = null;
     try {
-      if (hasTTS && audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
       if (record) await ensureMedia({ requireVideo: true });
       else if (state.settings.advanceMode === 'voice') {
         try { await ensureMedia(); } catch { status('No mic — press Space after your lines.'); }
@@ -512,11 +601,12 @@ It does to me.`;
         if (l.type !== 'dialogue') continue;
         setCurrent(i);
         if (l.character === state.me) {
-          status(state.settings.advanceMode === 'voice' && analyser ? 'Your line — I\'ll cue when you finish.' : 'Your line — press Space when done.');
+          if (state.settings.advanceMode !== 'voice') status('Your line — press Space when done.');
           await waitForMe(l, ac.signal);
         } else {
           status(`${l.character} is reading…`);
-          await speakLine(l, ac.signal);
+          run.readerSpeaking = true;
+          try { await speakLine(l, ac.signal); } finally { if (run) run.readerSpeaking = false; }
         }
         if (state.settings.gapMs) await sleep(state.settings.gapMs, ac.signal);
       }
@@ -782,6 +872,7 @@ It does to me.`;
     $('#toStage').addEventListener('click', () => showView('stage'));
 
     $('#enableCam').addEventListener('click', async () => {
+      unlockAudio();
       try { await ensureMedia({ requireVideo: true }); status(''); }
       catch (err) { status('Camera blocked: ' + (err.message || err.name) + '. Allow camera access in your browser settings.'); }
     });
