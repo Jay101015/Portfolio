@@ -591,8 +591,12 @@ It does to me.`;
   }
 
   let takeUrls = [];
+  let renderSeq = 0;
   async function renderTakes() {
+    const seq = ++renderSeq;
     const takes = await allTakes();
+    if (seq !== renderSeq) return; // a newer render is on its way
+    $$('#takesGrid video').forEach((v) => { v.removeAttribute('src'); v.load(); });
     takeUrls.forEach((u) => URL.revokeObjectURL(u));
     takeUrls = [];
     $('#takeCount').textContent = takes.length;
@@ -623,6 +627,8 @@ It does to me.`;
   }
 
   function init() {
+    // Ask the browser not to evict saved scripts and takes under storage pressure.
+    if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
     load();
     $('#scriptInput').value = state.script || SAMPLE;
     onScriptChange();
