@@ -8,7 +8,7 @@ A small Raft-style app for rehearsing and recording acting self-tapes, entirely 
 - Record takes with your camera; takes are stored locally in your browser (IndexedDB) and can be downloaded.
 - Memorisation modes: show only the first words of your lines, or hide them.
 
-No build step and no backend — it's three static files.
+No build step and no backend — just static files. On a phone, use **Add to Home Screen** so it runs like an app and the browser keeps your saved takes.
 
 ## Deploy on Vercel
 
