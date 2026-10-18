@@ -111,6 +111,10 @@ input[type=range] { accent-color: var(--me); }
 .seg button.on { background: var(--me); color: #00151d; font-weight: 600; }
 .reader-top { gap: 8px; flex-wrap: wrap; }
 .reader-acts { display: flex; align-items: center; gap: 6px; }
+.el-connect input { flex: 1; min-width: 0; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; }
+.hint.ok { color: var(--ok); }
+.hint a { color: var(--me); }
+.seg.engine { margin-bottom: 6px; }
 .tip { color: var(--text); background: var(--panel2); border-radius: 8px; padding: 8px 10px; }
 .controls { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; align-items: center; }
 .status { color: var(--muted); font-size: 13px; margin-left: auto; }
