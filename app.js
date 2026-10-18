@@ -216,6 +216,7 @@ It does to me.`;
     $('#toStage').disabled = !has || !state.me;
     $('#toStage').textContent = state.me ? `Tape as ${state.me} →` : 'Choose who you\'re playing';
     renderRolePickers();
+    renderElPanel();
     if (!has) return;
 
     autoAssignVoices();
@@ -247,7 +248,6 @@ It does to me.`;
         </div>
       </div>`;
     }).join('') : '<p class="hint">No other characters — it\'s a monologue. The reader stays quiet.</p>');
-    renderElPanel();
     if (hasTTS && others.length && !elConnected() && !voices.some((v) => voiceScore(v) >= 40)) {
       $('#readerList').insertAdjacentHTML('beforeend', /iP(hone|ad|od)|Macintosh/.test(navigator.userAgent)
         ? '<p class="hint tip">Tip: for much more natural reader voices, download free Enhanced or Premium voices — Settings → Accessibility → Spoken Content → Voices → English (try Ava, Zoe, Evan or Nathan). Then reopen Cue.</p>'
@@ -278,7 +278,7 @@ It does to me.`;
           <option value="quality" ${el.model === 'quality' ? 'selected' : ''}>Most expressive (Multilingual v2)</option>
           <option value="fast" ${el.model === 'fast' ? 'selected' : ''}>Fastest, half the credits (Flash v2.5)</option>
         </select></label>
-      <p class="hint">This scene's reader lines ≈ ${readerChars().toLocaleString()} characters of credit, charged once — lines are saved on this phone and replay free.</p>
+      <p class="hint">${state.me ? `This scene's reader lines ≈ ${readerChars().toLocaleString()} characters of credit, charged once — ` : 'Pick who you\'re playing above to choose a voice for each character. '}Lines are saved on this phone and replay free.</p>
       <p id="elMsg" class="hint"></p>
       <div class="row"><button class="btn ghost sm" data-act="el-clear">Clear saved voice audio</button><button class="btn ghost sm" data-act="el-disconnect">Disconnect</button></div>`;
   }
@@ -1142,6 +1142,10 @@ It does to me.`;
     });
     $$('.tab').forEach((t) => t.addEventListener('click', () => showView(t.dataset.view)));
     $('#toStage').addEventListener('click', () => showView('stage'));
+    $('#voicesLink').addEventListener('click', () => {
+      showView('script');
+      $('#voices').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
 
     $('#enableCam').addEventListener('click', async () => {
       unlockAudio();
