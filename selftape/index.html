@@ -34,10 +34,12 @@
             <h2>Your sides</h2>
             <div class="row">
               <button id="loadSample" class="btn ghost sm">Sample scene</button>
+              <label class="btn ghost sm">Photo of sides<input id="photoInput" type="file" accept="image/*" multiple hidden /></label>
               <label class="btn ghost sm">Upload .txt<input id="fileInput" type="file" accept=".txt,.fountain,text/plain" hidden /></label>
             </div>
           </div>
           <p class="hint">Paste your scene. Use <code>NAME: line</code>, or standard screenplay format (character name in CAPS on its own line, dialogue underneath). Parentheticals like <code>(beat)</code> are shown but not read.</p>
+          <p id="ocrStatus" class="hint ocr" hidden></p>
           <textarea id="scriptInput" spellcheck="false" placeholder="SARAH: Where were you last night?&#10;TOM: Out.&#10;SARAH: (quietly) That's not an answer."></textarea>
         </div>
 
@@ -133,7 +135,11 @@
 
     <!-- TAKES -->
     <section id="view-takes" class="view">
-      <div id="takesEmpty" class="card empty">No takes yet. Record one from the Tape tab.</div>
+      <div class="takes-bar">
+        <label class="btn sm">⬆ Import from camera roll<input id="videoInput" type="file" accept="video/*" multiple hidden /></label>
+        <span id="importStatus" class="hint"></span>
+      </div>
+      <div id="takesEmpty" class="card empty">No takes yet. Record one from the Tape tab, or import a video.</div>
       <div id="takesGrid" class="takes"></div>
     </section>
   </main>
