@@ -118,6 +118,13 @@ input[type=range] { accent-color: var(--me); }
 .hint.ok { color: var(--ok); }
 .hint a { color: var(--me); }
 .seg.engine { margin-bottom: 6px; }
+.fixer { margin-bottom: 14px; background: var(--panel2); border-radius: 8px; padding: 8px 10px; }
+.fixer summary { cursor: pointer; color: var(--me); font-size: 13px; }
+.fixer .hint { margin: 6px 0; }
+.fixrow { display: flex; align-items: center; gap: 8px; justify-content: space-between; padding: 4px 0; border-top: 1px solid var(--line); }
+.fixrow span { font-weight: 600; font-size: 13px; min-width: 0; overflow-wrap: anywhere; }
+.fixrow small { color: var(--muted); font-weight: 400; }
+.fixrow select { width: auto; max-width: 55%; padding: 5px; font-size: 13px; }
 .tip { color: var(--text); background: var(--panel2); border-radius: 8px; padding: 8px 10px; }
 .controls { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; align-items: center; }
 .status { color: var(--muted); font-size: 13px; margin-left: auto; }

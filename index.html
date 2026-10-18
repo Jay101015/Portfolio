@@ -47,6 +47,12 @@
           <h2>Cast</h2>
           <div id="castEmpty" class="hint">Paste a script to detect characters.</div>
           <div id="castPanel" hidden>
+            <p id="castSummary" class="hint"></p>
+            <details class="fixer">
+              <summary>Wrong or duplicate names? Fix characters</summary>
+              <p class="hint">Merge spellings of the same person, or mark headings that aren't people.</p>
+              <div id="nameFix"></div>
+            </details>
             <label class="field role">
               <span>Who are you playing?</span>
               <select id="mySelect"></select>

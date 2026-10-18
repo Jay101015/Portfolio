@@ -48,6 +48,8 @@ It does to me.`;
     characters: [],
     me: '',
     readers: {},
+    aliases: {},
+    nameInfo: { counts: {}, auto: {}, resolve: (n) => n },
     settings: {
       advanceMode: 'voice',
       silenceMs: 1000,
@@ -68,6 +70,7 @@ It does to me.`;
         state.script = saved.script || '';
         state.me = saved.me || '';
         state.readers = saved.readers || {};
+        state.aliases = saved.aliases || {};
         Object.assign(state.settings, saved.settings || {});
         if (typeof state.settings.matchWords !== 'string') state.settings.matchWords = 'rehearse';
       }
@@ -76,7 +79,7 @@ It does to me.`;
   function save() {
     try {
       localStorage.setItem(STORE_KEY, JSON.stringify({
-        script: state.script, me: state.me, readers: state.readers, settings: state.settings,
+        script: state.script, me: state.me, readers: state.readers, aliases: state.aliases, settings: state.settings,
       }));
     } catch { /* ignore */ }
   }
@@ -85,17 +88,66 @@ It does to me.`;
   const SCENE_HEADING = /^(INT|EXT|INT\.?\/EXT|I\/E)[.\s]/i;
   const TRANSITION = /(TO:|^FADE (IN|OUT)|^CUT TO|^DISSOLVE|^THE END)/;
 
+  // Screenplay extensions that follow a character name and aren't part of it.
+  const NAME_EXT = /\b(CONT'?D|CONTD|CONT|CONTINUING|CONTINUED|V\s*\.?\s*O|O\s*\.?\s*S|O\s*\.?\s*C|PRE-?LAP|ON PHONE|INTO PHONE|ON SCREEN|ON TV|ON RADIO|FILTERED|SUBTITLED|OFF|OS|VO)\b\.?/g;
+  // All-caps lines that are page furniture or directions, never a character.
+  const NOT_CUE = /^(MORE|CONTINUED|CONTINUOUS|THE END|END|END OF SCENE|END SCENE|SIDES|SCENE|SCENES|PAGE|PAGES|INTERCUT|INTERCUT WITH|MONTAGE|END MONTAGE|SERIES OF SHOTS|BACK TO SCENE|BACK TO|LATER|MOMENTS LATER|FLASHBACK|END FLASHBACK|TITLE|TITLE CARD|SUPER|BLACK|BLACKOUT|BLACK SCREEN|FADE|FADE IN|FADE OUT|FADE TO BLACK|CUT|CUT TO|CUT TO BLACK|SMASH CUT|MATCH CUT|DISSOLVE|OMITTED|START|BEAT|PAUSE|SILENCE|NOTE|SOUND|SFX|ANGLE ON|CLOSE ON|CLOSE UP|POV|INSERT|WIDE|ESTABLISHING|DAY|NIGHT|MORNING|EVENING|TOP OF SCENE|DRAFT|REVISED|REVISIONS|FINAL DRAFT|SHOOTING SCRIPT)$/;
+
   function normName(s) {
-    return s.replace(/\([^)]*\)/g, '').replace(/\s+/g, ' ').trim().toUpperCase();
+    return s.toUpperCase()
+      .replace(/[’‘`´]/g, "'")
+      .replace(/\([^)]*\)?/g, ' ').replace(/\[[^\]]*\]?/g, ' ') // (V.O.), (CONT'D), even if OCR lost the ")"
+      .replace(NAME_EXT, ' ')
+      .replace(/^\s*\d+[A-Z]?\.?\s+/, '').replace(/\s+\d+[A-Z]?\.?\s*$/, '') // scene numbers either side
+      .replace(/[^A-Z0-9#'&\- ]/g, ' ') // stray OCR marks: . : * " |
+      .replace(/\s+/g, ' ').trim()
+      .replace(/^['\-]+|['\-]+$/g, '');
   }
   function isBracketed(t) {
     return /^\(.*\)$/.test(t) || /^\[.*\]$/.test(t);
   }
   function isCue(t, next) {
     if (!next || !next.trim()) return false;
-    if (t.length > 40 || !/[A-Z]/.test(t) || t !== t.toUpperCase()) return false;
-    if (SCENE_HEADING.test(t) || TRANSITION.test(t) || t.endsWith(':')) return false;
-    return normName(t).length > 0;
+    const letters = t.replace(/[^A-Za-z]/g, '');
+    if (t.length > 40 || !letters) return false;
+    // Mostly capitals (allows an OCR slip like "ADONlS").
+    if (letters.replace(/[^A-Z]/g, '').length / letters.length < 0.8) return false;
+    if (SCENE_HEADING.test(t) || TRANSITION.test(t)) return false;
+    const bare = t.replace(/\([^)]*\)?/g, '').trim();
+    if (/[!?,;]$/.test(bare)) return false; // shouted action like "BANG!"
+    if (/\.$/.test(bare) && !/\b(V\.?O|O\.?S|O\.?C|CONT'?D)\.$/i.test(bare)) return false;
+    if (/\d+\/\d+/.test(t)) return false; // revision dates in page headers
+    const name = normName(t);
+    return !!name && name.split(' ').length <= 4 && /[A-Z]/.test(name) && !NOT_CUE.test(name);
+  }
+
+  function editDistance(a, b) {
+    if (Math.abs(a.length - b.length) > 2) return 9;
+    const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+    for (let j = 1; j <= b.length; j++) d[0][j] = j;
+    for (let i = 1; i <= a.length; i++) {
+      for (let j = 1; j <= b.length; j++) {
+        d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      }
+    }
+    return d[a.length][b.length];
+  }
+
+  // Suggest folding misspelt/variant names (OCR typos, "ADONIS JR" leftovers) into the main spelling.
+  function autoMerges(counts) {
+    const names = Object.keys(counts).sort((x, y) => counts[y] - counts[x]);
+    const map = {};
+    names.forEach((n, i) => {
+      for (const m of names.slice(0, i)) {
+        if (map[m] || counts[m] < counts[n]) continue;
+        const digits = (s) => s.replace(/\D/g, '');
+        if (digits(n) !== digits(m)) continue; // COP 1 vs COP 2 are different people
+        const close = n.length >= 4 && editDistance(n, m) <= (n.length >= 7 ? 2 : 1) && counts[n] <= Math.max(2, counts[m] / 3);
+        const compact = n.replace(/[^A-Z0-9]/g, '') === m.replace(/[^A-Z0-9]/g, ''); // "O BRIEN" vs "O'BRIEN"
+        if (close || compact) { map[n] = m; break; }
+      }
+    });
+    return map;
   }
 
   function parseScript(text) {
@@ -105,6 +157,9 @@ It does to me.`;
     for (let i = 0; i < raw.length; i++) {
       const t = raw[i].trim();
       if (!t) { speaker = null; continue; }
+      // Page-break furniture: skip it without ending the current speech.
+      if (/^\(?\s*(MORE|CONTINUED|CONT'?D|CONTINUED\s*\(\d+\))\s*:?\s*\)?$/i.test(t.replace(/[’‘]/g, "'"))) continue;
+      if (/\d+\/\d+(\/\d+)?/.test(t) && /\b(rev\.?|revised|revision|draft|pink|blue|yellow|green|goldenrod|white|salmon|cherry|buff|tan)\b/i.test(t)) continue;
 
       const m = t.match(/^([A-Z][A-Za-z0-9 .'\-]{0,30}?)\s*(\([^)]*\))?\s*:\s*(.+)$/);
       if (m && !SCENE_HEADING.test(t) && !TRANSITION.test(t)) {
@@ -198,7 +253,28 @@ It does to me.`;
   // ---------- cast / settings UI ----------
   function onScriptChange() {
     state.script = $('#scriptInput').value;
-    state.lines = parseScript(state.script);
+    const parsed = parseScript(state.script);
+    const counts = {};
+    parsed.forEach((l) => { if (l.type === 'dialogue') counts[l.character] = (counts[l.character] || 0) + 1; });
+    const auto = autoMerges(counts);
+    const resolve = (n) => {
+      const user = state.aliases[n];
+      const to = user === undefined ? (auto[n] || n) : user;
+      return to === n || to === 'action' || !counts[to] ? to : (state.aliases[to] === 'action' ? 'action' : to);
+    };
+    state.nameInfo = { counts, auto, resolve };
+    state.lines = parsed.map((l) => {
+      if (l.type !== 'dialogue') return l;
+      const to = resolve(l.character);
+      return to === 'action' ? { type: 'action', text: l.text } : Object.assign({}, l, { character: to });
+    });
+    // Merge back-to-back speeches that now belong to the same character.
+    state.lines = state.lines.reduce((acc, l) => {
+      const prev = acc[acc.length - 1];
+      if (prev && l.type === 'dialogue' && prev.type === 'dialogue' && prev.character === l.character && l.fromCue && prev.fromCue) prev.text += ' ' + l.text;
+      else acc.push(l);
+      return acc;
+    }, []);
     const seen = [];
     state.lines.forEach((l) => { if (l.type === 'dialogue' && !seen.includes(l.character)) seen.push(l.character); });
     state.characters = seen;
@@ -216,6 +292,7 @@ It does to me.`;
     $('#toStage').disabled = !has || !state.me;
     $('#toStage').textContent = state.me ? `Tape as ${state.me} →` : 'Choose who you\'re playing';
     renderRolePickers();
+    renderNameFixer();
     renderElPanel();
     if (!has) return;
 
@@ -287,6 +364,26 @@ It does to me.`;
     status(msg);
     const m = $('#elMsg');
     if (m) m.textContent = msg;
+  }
+
+  function renderNameFixer() {
+    const box = $('#nameFix');
+    if (!box) return;
+    const { counts, auto } = state.nameInfo;
+    const names = Object.keys(counts).sort((x, y) => counts[y] - counts[x]);
+    $('#castSummary').textContent = state.characters.length
+      ? `Found ${state.characters.length} character${state.characters.length > 1 ? 's' : ''}: ${state.characters.map((c) => `${c} (${state.lines.filter((l) => l.character === c).length})`).join(', ')}`
+      : '';
+    box.innerHTML = names.map((n) => {
+      const cur = state.aliases[n] === undefined ? (auto[n] || n) : state.aliases[n];
+      const targets = names.filter((m) => m !== n);
+      return `<div class="fixrow" data-name="${esc(n)}"><span>${esc(n)} <small>${counts[n]} line${counts[n] > 1 ? 's' : ''}</small></span>
+        <select data-act="alias">
+          <option value="${esc(n)}" ${cur === n ? 'selected' : ''}>Character</option>
+          ${targets.map((m) => `<option value="${esc(m)}" ${cur === m ? 'selected' : ''}>Same as ${esc(m)}${auto[n] === m && state.aliases[n] === undefined ? ' (auto)' : ''}</option>`).join('')}
+          <option value="action" ${cur === 'action' ? 'selected' : ''}>Not a character</option>
+        </select></div>`;
+    }).join('');
   }
 
   function renderRolePickers() {
@@ -1010,7 +1107,7 @@ It does to me.`;
     let afterCue = false;
     for (const l of lines) {
       if (!l) { if (!afterCue) out.push(''); continue; }
-      const cueLike = l.length <= 40 && /[A-Z]/.test(l) && l === l.toUpperCase() && !SCENE_HEADING.test(l) && !l.endsWith(':') && !/[.!?]$/.test(normName(l));
+      const cueLike = isCue(l, 'x');
       if (cueLike && out.length && out[out.length - 1] !== '') out.push('');
       out.push(l);
       afterCue = cueLike;
@@ -1089,6 +1186,12 @@ It does to me.`;
       if (files.length) importVideos(files);
     });
     $('#mySelect').addEventListener('change', (e) => setMe(e.target.value));
+    $('#nameFix').addEventListener('change', (e) => {
+      if (e.target.dataset.act !== 'alias') return;
+      const n = e.target.closest('.fixrow').dataset.name;
+      state.aliases[n] = e.target.value;
+      onScriptChange();
+    });
     $('#stageRole').addEventListener('change', (e) => setMe(e.target.value));
 
     $('#readerList').addEventListener('input', (e) => {
