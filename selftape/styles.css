@@ -114,6 +114,12 @@ input[type=range] { accent-color: var(--me); }
 .elbox { scroll-margin-top: 120px; margin-top: 20px; padding: 12px; border: 1px solid var(--me); border-radius: 10px; background: rgba(77, 212, 255, .06); }
 .elbox h2 { color: var(--text); }
 .rolebar #voicesLink { margin-left: auto; }
+.vchips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.vchip { background: var(--panel2); border-radius: 99px; padding: 2px 10px; font-size: 13px; font-weight: 600; }
+.vchip small { color: var(--muted); font-weight: 400; }
+.bar { height: 6px; background: var(--panel2); border-radius: 3px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--me); transition: width .2s; }
+.hint.err { color: var(--accent); }
 .el-connect input { flex: 1; min-width: 0; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; }
 .hint.ok { color: var(--ok); }
 .hint a { color: var(--me); }
