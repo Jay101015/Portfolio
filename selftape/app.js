@@ -393,6 +393,15 @@ It does to me.`;
     save();
   }
 
+  function qualityPicker() {
+    const gpu = typeof navigator !== 'undefined' && !!navigator.gpu;
+    return `<label class="field"><span>Quality</span>
+      <select data-act="studio-quality">
+        <option value="best" ${studio.quality !== 'standard' ? 'selected' : ''}>Best — full model on the GPU, ~330 MB${gpu ? '' : ' (this browser has no GPU access; falls back to standard)'}</option>
+        <option value="standard" ${studio.quality === 'standard' ? 'selected' : ''}>Standard — compact model, ~115 MB, any phone</option>
+      </select></label>`;
+  }
+
   function renderStudioPanel() {
     const p = $('#studioPanel');
     if (!p) return;
@@ -408,10 +417,14 @@ It does to me.`;
     } else if (studio.status === 'error') {
       body = `<p class="hint err">Couldn't load studio voices: ${esc(studio.error)}</p><button class="btn primary sm" data-act="studio-load">Try again</button>`;
     } else if (studio.downloaded) {
-      body = `<p class="hint ok">✓ Studio voices on this phone${studioReady() ? '' : ' (they start when you rehearse)'}</p>
-        <div class="row"><button class="btn ghost sm" data-act="studio-clear">Clear saved lines</button></div>`;
+      const running = studio.device === 'webgpu' ? 'full-quality model on the GPU' : studio.device === 'wasm' ? 'compact model on the CPU' : '';
+      body = `<p class="hint ok">✓ Studio voices on this phone${studioReady() ? (running ? ' · ' + running : '') : ' (they start when you rehearse)'}</p>
+        ${studio.note ? `<p class="hint">${esc(studio.note)}</p>` : ''}
+        ${qualityPicker()}
+        <div class="row"><button class="btn ghost sm" data-act="studio-test">▶ Test a line</button><button class="btn ghost sm" data-act="studio-clear">Clear saved lines</button></div>`;
     } else {
-      body = `<p class="hint">Natural, human-sounding reader voices that run on your phone — free, no account. One-time download of about 115 MB (use Wi-Fi), then they work offline.</p>
+      body = `<p class="hint">Natural, human-sounding reader voices that run on your phone — free, no account, nothing leaves the phone. One-time download (use Wi-Fi), then they work offline.</p>
+        ${qualityPicker()}
         <button class="btn primary sm" data-act="studio-load">Download studio voices</button>`;
     }
     p.innerHTML = `<div class="vchips">${voicesList}</div>${body}<p id="studioMsg" class="hint"></p>`;
@@ -742,8 +755,10 @@ It does to me.`;
   const APP_VERSION = '1.4.0';
   const STUDIO_KEY = 'cue:studio';
   const studioSupported = typeof Worker !== 'undefined' && typeof WebAssembly === 'object';
-  const studio = { downloaded: false, status: 'idle', progress: 0, error: '' };
-  try { studio.downloaded = !!JSON.parse(localStorage.getItem(STUDIO_KEY) || '{}').downloaded; } catch { /* ignore */ }
+  const studio = { downloaded: false, status: 'idle', progress: 0, error: '', quality: 'best', device: '', note: '' };
+  try { Object.assign(studio, JSON.parse(localStorage.getItem(STUDIO_KEY) || '{}')); } catch { /* ignore */ }
+  studio.status = 'idle'; studio.progress = 0; studio.error = ''; studio.note = '';
+  const saveStudio = () => { try { localStorage.setItem(STUDIO_KEY, JSON.stringify({ downloaded: studio.downloaded, quality: studio.quality, device: studio.device })); } catch { /* ignore */ } };
   try { localStorage.removeItem('cue:elevenlabs'); } catch { /* old ElevenLabs key: don't keep it around */ }
   const studioReady = () => studio.status === 'ready';
   const usesStudio = (r) => studioSupported && studio.downloaded && studio.status !== 'error' && r.engine !== 'device' && STUDIO_VOICES.some((v) => v.id === r.studioVoice);
@@ -760,6 +775,7 @@ It does to me.`;
         renderDiag();
         return;
       }
+      if (data.type === 'note') { studio.note = data.message; lastError = 'studio: ' + data.message; renderStudioPanel(); renderDiag(); return; }
       const p = pending.get(data.id);
       if (!p) return;
       pending.delete(data.id);
@@ -788,13 +804,14 @@ It does to me.`;
       studio.status = 'loading';
       studio.error = '';
       renderStudioPanel();
-      loadPromise = callWorker({ type: 'load' }).then(() => {
+      loadPromise = callWorker({ type: 'load', quality: studio.quality }).then((res) => {
         studio.status = 'ready';
+        studio.device = res.device || '';
         if (!studio.downloaded) {
           studio.downloaded = true;
-          try { localStorage.setItem(STUDIO_KEY, JSON.stringify({ downloaded: true })); } catch { /* ignore */ }
           Object.values(state.readers).forEach((r) => { if (r.engine !== 'device') r.engine = 'studio'; });
         }
+        saveStudio();
         renderCast();
         prepareInBackground();
       }, (err) => {
@@ -813,7 +830,7 @@ It does to me.`;
 
   function studioKey(line) {
     const r = readerFor(line.character);
-    return ['kokoro', r.studioVoice, Math.round(r.rate * 100), spokenText(line.text)].join('|');
+    return ['kokoro', studio.device || studio.quality, r.studioVoice, Math.round(r.rate * 100), spokenText(line.text)].join('|');
   }
 
   // Generated lines are saved on the phone, so each one is only ever made once.
@@ -826,7 +843,7 @@ It does to me.`;
       const cached = await cacheGet(key);
       if (cached) return cached;
       await studioLoad();
-      const { wav } = await callWorker({ type: 'speak', chunks: chunkText(spokenText(line.text)), voice: r.studioVoice, speed: Math.min(1.5, Math.max(0.6, r.rate)) });
+      const { wav } = await callWorker({ type: 'speak', quality: studio.quality, chunks: chunkText(spokenText(line.text)), voice: r.studioVoice, speed: Math.min(1.5, Math.max(0.6, r.rate)) });
       const blob = new Blob([wav], { type: 'audio/wav' });
       cachePut(key, blob);
       return blob;
@@ -1516,6 +1533,29 @@ It does to me.`;
       const act = e.target.dataset.act;
       if (act === 'studio-load') studioLoad().catch(() => {});
       else if (act === 'studio-clear') { await cacheClear(); studioNotice('Saved lines cleared.'); }
+      else if (act === 'studio-test') {
+        unlockPlayer();
+        const other = state.characters.find((c) => c !== state.me);
+        const line = { type: 'dialogue', character: other || '__test', text: 'You were a kid. Anybody would have run. That\'s not on you.' };
+        if (!other) state.readers.__test = { engine: 'studio', studioVoice: 'am_michael', gender: 'm', rate: 1, pitch: 1 };
+        if (run) return;
+        const tmp = { ac: new AbortController(), skip: null };
+        run = tmp;
+        studioNotice('Generating a test line…');
+        speakStudio(line, tmp.ac.signal).then(() => studioNotice(''), (e) => studioNotice('Test failed: ' + (e.message || e))).finally(() => { if (run === tmp) run = null; });
+      }
+    });
+    $('#studioPanel').addEventListener('change', (e) => {
+      if (e.target.dataset.act !== 'studio-quality') return;
+      const prev = studio.quality;
+      studio.quality = e.target.value;
+      saveStudio();
+      if (prev !== studio.quality && studio.downloaded) {
+        // A different model: restart the engine and regenerate lines with it.
+        if (worker) { worker.terminate(); worker = null; }
+        loadPromise = null; studio.status = 'idle'; studio.device = '';
+        cacheClear().then(() => { renderStudioPanel(); studioLoad().catch(() => {}); });
+      }
     });
     $$('.tab').forEach((t) => t.addEventListener('click', () => showView(t.dataset.view)));
     $('#toStage').addEventListener('click', () => showView('stage'));

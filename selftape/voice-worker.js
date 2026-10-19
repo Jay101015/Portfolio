@@ -5,21 +5,46 @@ env.wasmPaths = new URL('./vendor/kokoro/', import.meta.url).href;
 
 const MODEL = 'onnx-community/Kokoro-82M-v1.0-ONNX';
 let ttsPromise = null;
+let loadedWith = null; // { device, dtype }
 
-function load() {
+// Best quality first: the full-precision model on the GPU (iOS 26+, Android Chrome). Phones without
+// WebGPU, or where it fails, get the compact model on the CPU — smaller download, slightly flatter sound.
+async function loadWith(device, dtype, progress) {
+  const files = {};
+  const tts = await KokoroTTS.from_pretrained(MODEL, {
+    dtype,
+    device,
+    progress_callback: (p) => {
+      if (p.status !== 'progress' || !p.total) return;
+      files[p.file] = [p.loaded, p.total];
+      let loaded = 0, total = 0;
+      Object.values(files).forEach(([l, t]) => { loaded += l; total += t; });
+      progress(loaded, total);
+    },
+  });
+  // Make sure the backend really works before we commit to it (WebGPU can load and then fail to run).
+  await tts.generate('Ready.', { voice: 'af_heart' });
+  return tts;
+}
+
+function load(quality) {
   if (!ttsPromise) {
-    const files = {};
-    ttsPromise = KokoroTTS.from_pretrained(MODEL, {
-      dtype: 'q8',
-      device: 'wasm',
-      progress_callback: (p) => {
-        if (p.status !== 'progress' || !p.total) return;
-        files[p.file] = [p.loaded, p.total];
-        let loaded = 0, total = 0;
-        Object.values(files).forEach(([l, t]) => { loaded += l; total += t; });
-        postMessage({ type: 'progress', loaded, total });
-      },
-    });
+    ttsPromise = (async () => {
+      const progress = (loaded, total) => postMessage({ type: 'progress', loaded, total });
+      const wantGpu = quality !== 'standard' && typeof navigator !== 'undefined' && !!navigator.gpu;
+      if (wantGpu) {
+        try {
+          const tts = await loadWith('webgpu', 'fp32', progress);
+          loadedWith = { device: 'webgpu', dtype: 'fp32' };
+          return tts;
+        } catch (err) {
+          postMessage({ type: 'note', message: 'GPU voices unavailable (' + String((err && err.message) || err).slice(0, 120) + '); using the compact model.' });
+        }
+      }
+      const tts = await loadWith('wasm', 'q8', progress);
+      loadedWith = { device: 'wasm', dtype: 'q8' };
+      return tts;
+    })();
     ttsPromise.catch(() => { ttsPromise = null; });
   }
   return ttsPromise;
@@ -51,10 +76,10 @@ self.onmessage = async ({ data }) => {
   const { id, type } = data;
   try {
     if (type === 'load') {
-      await load();
-      postMessage({ id, type: 'ready' });
+      await load(data.quality);
+      postMessage({ id, type: 'ready', device: loadedWith.device, dtype: loadedWith.dtype });
     } else if (type === 'speak') {
-      const tts = await load();
+      const tts = await load(data.quality);
       const parts = [];
       let rate = 24000;
       for (const chunk of data.chunks) {
@@ -63,7 +88,7 @@ self.onmessage = async ({ data }) => {
         parts.push(audio.audio);
       }
       const wav = encodeWav(parts, rate, 0.2);
-      postMessage({ id, type: 'audio', wav }, [wav]);
+      postMessage({ id, type: 'audio', wav, device: loadedWith.device }, [wav]);
     }
   } catch (err) {
     postMessage({ id, type: 'error', message: String((err && err.message) || err) });
