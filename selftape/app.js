@@ -347,7 +347,7 @@ It does to me.`;
     $('#castEmpty').hidden = has;
     $('#castPanel').hidden = !has;
     $('#toStage').disabled = !has || !state.me;
-    $('#toStage').textContent = state.me ? `Tape as ${state.me} →` : 'Choose who you\'re playing';
+    $('#toStage').textContent = state.me ? `Start the scene as ${state.me} →` : 'Choose who you\'re playing';
     renderRolePickers();
     renderNameFixer();
     renderStudioPanel();
@@ -397,8 +397,8 @@ It does to me.`;
     const gpu = typeof navigator !== 'undefined' && !!navigator.gpu;
     return `<label class="field"><span>Quality</span>
       <select data-act="studio-quality">
-        <option value="best" ${studio.quality !== 'standard' ? 'selected' : ''}>Best — full model on the GPU, ~330 MB${gpu ? '' : ' (this browser has no GPU access; falls back to standard)'}</option>
-        <option value="standard" ${studio.quality === 'standard' ? 'selected' : ''}>Standard — compact model, ~115 MB, any phone</option>
+        <option value="standard" ${studio.quality !== 'best' ? 'selected' : ''}>Standard — compact model, ~115 MB, any phone</option>
+        <option value="best" ${studio.quality === 'best' ? 'selected' : ''}>Best — full model on the GPU, ~330 MB${gpu ? ', newer phones only' : ' (no GPU access in this browser)'}</option>
       </select></label>`;
   }
 
@@ -514,11 +514,10 @@ It does to me.`;
       $('#silenceVal').textContent = (s.silenceMs / 1000).toFixed(1) + 's';
       $('#gapVal').textContent = (s.gapMs / 1000).toFixed(1) + 's';
       $$('[data-show]').forEach((el) => { el.hidden = el.dataset.show !== s.advanceMode; });
-      $('#preview').classList.toggle('mirror', !!s.mirror);
       renderLines();
       save();
     };
-    ['advanceMode', 'silenceMs', 'sensitivity', 'matchWords', 'gapMs', 'countdown', 'myLineDisplay', 'mirror'].forEach((k) => {
+    ['advanceMode', 'silenceMs', 'sensitivity', 'matchWords', 'gapMs', 'countdown', 'myLineDisplay'].forEach((k) => {
       const el = $('#' + k);
       if (el.type === 'checkbox') el.checked = !!s[k]; else el.value = s[k];
       el.addEventListener('input', () => {
@@ -581,28 +580,15 @@ It does to me.`;
   let audioCtx = null, analyser = null, levelBuf = null;
   let currentLevel = 0;
 
-  async function ensureMedia({ requireVideo = false } = {}) {
-    if (stream && (!requireVideo || stream.getVideoTracks().length)) return stream;
+  async function ensureMedia() {
+    if (stream && stream.getAudioTracks().some((t) => t.readyState === 'live')) return stream;
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      throw new Error('This browser cannot access the camera. Open the app over https in Chrome, Safari or Firefox.');
+      throw new Error('This browser cannot use the microphone. Open the app in Safari or Chrome.');
     }
-    // Echo cancellation off so the reader's voice from your speakers lands on the tape, like a real reader.
-    const audio = { echoCancellation: false, noiseSuppression: false, autoGainControl: false };
-    let s;
-    try {
-      s = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: { ideal: 1920 }, height: { ideal: 1080 } },
-        audio,
-      });
-    } catch (err) {
-      if (requireVideo) throw err;
-      s = await navigator.mediaDevices.getUserMedia({ audio });
-    }
+    // Echo cancellation off so the reader's voice from your speakers lands on the recording, like a real reader.
+    const s = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
     if (stream) stream.getTracks().forEach((t) => t.stop());
     stream = s;
-    const v = $('#preview');
-    v.srcObject = s;
-    $('#camOff').hidden = s.getVideoTracks().length > 0;
     setupMeter(s);
     return s;
   }
@@ -653,7 +639,7 @@ It does to me.`;
     const tick = () => {
       currentLevel = readLevel();
       trackNoise(currentLevel);
-      bar.style.height = Math.min(100, Math.sqrt(currentLevel) * 220) + '%';
+      bar.style.width = Math.min(100, Math.sqrt(currentLevel) * 220) + '%';
       meter.classList.toggle('speaking', currentLevel > threshold());
       requestAnimationFrame(tick);
     };
@@ -755,7 +741,7 @@ It does to me.`;
   const APP_VERSION = '1.4.0';
   const STUDIO_KEY = 'cue:studio';
   const studioSupported = typeof Worker !== 'undefined' && typeof WebAssembly === 'object';
-  const studio = { downloaded: false, status: 'idle', progress: 0, error: '', quality: 'best', device: '', note: '' };
+  const studio = { downloaded: false, status: 'idle', progress: 0, error: '', quality: 'standard', device: '', note: '' };
   try { Object.assign(studio, JSON.parse(localStorage.getItem(STUDIO_KEY) || '{}')); } catch { /* ignore */ }
   studio.status = 'idle'; studio.progress = 0; studio.error = ''; studio.note = '';
   const saveStudio = () => { try { localStorage.setItem(STUDIO_KEY, JSON.stringify({ downloaded: studio.downloaded, quality: studio.quality, device: studio.device })); } catch { /* ignore */ } };
@@ -883,7 +869,11 @@ It does to me.`;
 
   async function speakStudio(line, signal) {
     let blob = null, err = null;
+    const key = studioKey(line);
+    if (!inflight.has(key)) { /* not generated yet: say so instead of looking frozen */ }
+    const t = setTimeout(() => nowState(`${line.character} — generating the line…`), 600);
     await step(signal, (done) => { studioAudioFor(line).then((b) => { blob = b; done(); }, (e) => { err = e; done(); }); });
+    clearTimeout(t);
     if (err) throw err;
     if (!blob) return; // skipped with Next while it was generating
     await step(signal, (done, onClean) => {
@@ -1007,19 +997,19 @@ It does to me.`;
 
   function pickMime() {
     if (!window.MediaRecorder) return null;
-    const types = ['video/mp4;codecs=avc1,mp4a', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
+    const types = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mpeg'];
     return types.find((t) => MediaRecorder.isTypeSupported(t)) || '';
   }
 
   function startRecorder() {
     const mime = pickMime();
     if (mime === null) throw new Error('Recording is not supported in this browser.');
-    const rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 6_000_000 } : undefined);
+    const rec = new MediaRecorder(stream, mime ? { mimeType: mime, audioBitsPerSecond: 128_000 } : undefined);
     const chunks = [];
     const started = Date.now();
     rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
     const finished = new Promise((resolve) => {
-      rec.onstop = () => resolve(new Blob(chunks, { type: rec.mimeType || mime || 'video/webm' }));
+      rec.onstop = () => resolve(new Blob(chunks, { type: rec.mimeType || mime || 'audio/webm' }));
     });
     rec.start(1000);
     $('#recBadge').hidden = false;
@@ -1042,7 +1032,8 @@ It does to me.`;
     $('#stopBtn').disabled = !on;
     $$('.tab').forEach((t) => { if (t.dataset.view !== 'stage') t.disabled = on && record; });
   }
-  const status = (msg) => { $('#status').textContent = msg || ''; };
+  const status = (msg) => { $('#status').textContent = msg || ''; if (msg) nowState(msg); };
+  const nowState = (msg) => { const el = $('#nowState'); if (el) el.textContent = msg || ''; };
 
   async function runScene(record) {
     if (run || !state.lines.length || !state.me) return;
@@ -1055,19 +1046,25 @@ It does to me.`;
     setRunning(true, record);
     let recorder = null;
     try {
+      if (record || state.settings.advanceMode === 'voice') {
+        try { await ensureMedia(); } catch (e) {
+          if (record) throw new Error('Microphone blocked (' + (e.message || e.name) + '). Allow the mic in your browser settings to record.');
+          status('No mic — press Space after your lines.');
+        }
+      }
       if (studio.downloaded && studioLinesFrom(state.startIndex).length) {
+        // Only the first reader line has to be ready before we start; the rest are made in the background.
         try {
-          await prepareScene(state.startIndex, ac.signal, (k, n) => status(`Preparing reader voices ${k + 1}/${n}…`));
-          status('');
+          nowState('Warming up the reader voice…');
+          await studioAudioFor(studioLinesFrom(state.startIndex)[0]);
+          prepareScene(state.startIndex, ac.signal).catch(() => {});
+          nowState('');
         } catch (e) {
           if (e.name === 'AbortError') throw e;
           studioWarned = true;
           studioNotice('Studio voices unavailable (' + e.message + '). Using the phone voice instead.');
+          renderVoiceBanner();
         }
-      }
-      if (record) await ensureMedia({ requireVideo: true });
-      else if (state.settings.advanceMode === 'voice') {
-        try { await ensureMedia(); } catch { status('No mic — press Space after your lines.'); }
       }
       if (record) {
         const n = Number(state.settings.countdown);
@@ -1093,7 +1090,7 @@ It does to me.`;
       if (record) await sleep(1200, ac.signal);
     } catch (err) {
       if (err.name === 'AbortError') status('Stopped.');
-      else { status(err.message || String(err)); lastError = 'scene: ' + (err.message || err); renderDiag(); console.error(err); }
+      else { status(err.message || String(err)); nowState('⚠ ' + (err.message || String(err))); lastError = 'scene: ' + (err.message || err); renderDiag(); console.error(err); }
     } finally {
       if (hasTTS) speechSynthesis.cancel();
       run = null;
@@ -1178,7 +1175,7 @@ It does to me.`;
     const seq = ++renderSeq;
     const takes = await allTakes();
     if (seq !== renderSeq) return; // a newer render is on its way
-    $$('#takesGrid video').forEach((v) => { v.removeAttribute('src'); v.load(); });
+    $$('#takesGrid video, #takesGrid audio').forEach((v) => { v.removeAttribute('src'); v.load(); });
     takeUrls.forEach((u) => URL.revokeObjectURL(u));
     takeUrls = [];
     $('#takeCount').textContent = takes.length;
@@ -1187,10 +1184,11 @@ It does to me.`;
       const url = URL.createObjectURL(t.blob);
       takeUrls.push(url);
       const mime = t.mime || '';
-      const ext = mime.includes('mp4') ? 'mp4' : mime.includes('quicktime') ? 'mov' : mime.includes('webm') ? 'webm' : (t.ext || 'mp4');
+      const isAudio = mime.startsWith('audio/');
+      const ext = mime.includes('mp4') ? (isAudio ? 'm4a' : 'mp4') : mime.includes('quicktime') ? 'mov' : mime.includes('webm') ? 'webm' : mime.includes('ogg') ? 'ogg' : mime.includes('mpeg') ? 'mp3' : (t.ext || 'mp4');
       const file = t.name.replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '_') + '.' + ext;
       return `<div class="card take" data-id="${t.id}">
-        <video src="${url}" controls playsinline preload="metadata"></video>
+        ${isAudio ? `<div class="audiotake"><audio src="${url}" controls preload="metadata"></audio></div>` : `<video src="${url}" controls playsinline preload="metadata"></video>`}
         <div class="meta"><div style="flex:1;min-width:0"><input value="${esc(t.name)}" aria-label="Take name"><small>${new Date(t.created).toLocaleString()}${t.duration ? ' · ' + fmtDur(t.duration) : ''}</small></div></div>
         <div class="acts"><a class="btn primary sm" href="${url}" download="${esc(file)}">⬇ Download</a><button class="btn ghost sm" data-act="del">Delete</button></div>
       </div>`;
@@ -1564,11 +1562,6 @@ It does to me.`;
       $('#voices').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
-    $('#enableCam').addEventListener('click', async () => {
-      unlockAudio();
-      try { await ensureMedia({ requireVideo: true }); status(''); }
-      catch (err) { status('Camera blocked: ' + (err.message || err.name) + '. Allow camera access in your browser settings.'); }
-    });
     $('#lineList').addEventListener('click', (e) => {
       const li = e.target.closest('li[data-i]');
       if (!li || run) return;
