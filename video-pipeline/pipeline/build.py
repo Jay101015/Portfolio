@@ -73,6 +73,16 @@ def fetch_sources(project: str) -> None:
             dst = os.path.join(project, "media", name)
             if os.path.exists(dst):
                 continue
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            if url.startswith("yt:"):
+                if shutil.which("yt-dlp"):
+                    print(f"fetching {name} with yt-dlp", flush=True)
+                    r = subprocess.run(["yt-dlp", "-f", "bv*[height<=1080][ext=mp4]+ba[ext=m4a]/b[ext=mp4]", "-o", dst, url[3:]], capture_output=True, text=True)
+                    if r.returncode != 0:
+                        print(f"WARNING: yt-dlp could not fetch {name}: {r.stderr.strip()[-300:]}", flush=True)
+                else:
+                    print(f"WARNING: {name} is a YouTube link and yt-dlp is not installed; the scene will use its fallback", flush=True)
+                continue
             print(f"fetching {name} from {url}", flush=True)
             try:
                 with urllib.request.urlopen(url, timeout=120) as r, open(dst, "wb") as out:

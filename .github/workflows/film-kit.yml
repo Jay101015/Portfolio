@@ -1,0 +1,65 @@
+name: Film kit
+
+# "I watched X, review it": run this with a title. It looks the film up, gathers
+# every piece of material you can legitimately use (with the rights status of
+# each written down), drafts the script with the facts filled in, commits the
+# project folder to this branch, and attaches it to the run. Then write your
+# take into script.md, record it, push, and the render workflow does the rest.
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: "Film title"
+        required: true
+      year:
+        description: "Year (helps when titles repeat)"
+        required: false
+      trailer:
+        description: "Also download the official trailer with yt-dlp"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  kit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: video-pipeline
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          pip install -r requirements.txt
+          pip install yt-dlp
+      - name: Build the kit
+        env:
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+          TITLE: ${{ github.event.inputs.title }}
+          YEAR: ${{ github.event.inputs.year }}
+        run: |
+          flags=""
+          [ -n "$YEAR" ] && flags="--year $YEAR"
+          [ "${{ github.event.inputs.trailer }}" != "false" ] && flags="$flags --trailer"
+          python -m pipeline.film "$TITLE" $flags | tee kit.log
+          echo "project=$(sed -n 's/^project: \([^ ]*\).*/\1/p' kit.log)" >> "$GITHUB_ENV"
+      - name: Commit the project (script, report, images; footage stays out of git)
+        run: |
+          git config user.name "film-kit"
+          git config user.email "film-kit@users.noreply.github.com"
+          git add "$project" || true
+          git commit -m "Film kit: ${{ github.event.inputs.title }}" || echo "nothing to commit"
+          git push
+      - name: Attach the kit
+        uses: actions/upload-artifact@v4
+        with:
+          name: film-kit
+          retention-days: 14
+          path: video-pipeline/${{ env.project }}

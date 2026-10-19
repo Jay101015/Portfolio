@@ -176,6 +176,36 @@ occasional Content ID claim on the ad revenue. Public domain lists worth
 knowing: the Internet Archive's feature film collection and Wikipedia's list
 of films in the public domain in the United States.
 
+## Start from a film title
+
+```bash
+python -m pipeline.film "10 Things I Hate About You" --year 1999 --trailer
+```
+
+One command turns "I watched X" into a project. It finds the film on Wikidata
+(year, director, cast, runtime, genre, distributor, filming locations,
+copyright status), decides whether it is public domain, and gathers a kit
+into `projects/<title-year>/media/kit/`:
+
+| rights | what | source |
+|---|---|---|
+| free | the feature itself, when it is public domain | Internet Archive |
+| free | CC / public-domain photos of the cast, director and filming locations | Wikimedia Commons |
+| promotional | poster and studio stills (customary in reviews; a fair-use judgement) | TMDB, with `TMDB_API_KEY` |
+| trailer | the official trailer (fair use with commentary; expect a Content ID claim) | TMDB id, fetched with yt-dlp and `--trailer` |
+
+It then writes `script.md` with the film card filled in and scene slots
+pointing at the kit, `media/sources.txt` so the render can re-fetch footage,
+and `footage-report.md` with the rights status of every item. Your opinions
+go into the script; the facts are already there. On GitHub, the **Film kit**
+workflow does the same from a title and commits the project to the branch.
+
+For a film under copyright, nothing of the film itself is free to use; the
+kit says so and gives you the free photos, the promotional material and the
+trailer, each labelled. Public-domain lists worth knowing: the Internet
+Archive's feature film collection and Wikipedia's list of films in the
+public domain in the United States.
+
 ## Finding free-use footage
 
 ```bash
@@ -210,7 +240,7 @@ releases. Requires `pip install sherpa-onnx`.
 ## Layout
 
 ```
-pipeline/               script_parser.py, align.py, preview.py, build.py, gen_images.py
+pipeline/               script_parser.py, align.py, preview.py, build.py, film.py, find_footage.py
 remotion/src/avatar/    Avatar.tsx (the character), AvatarLayer.tsx (where it stands)
 remotion/src/scenes/    one component per scene type
 projects/notld-review/  sample review with placeholder footage and a robot voice
