@@ -23,13 +23,13 @@ The setup is simple. A billionaire builds a park, invites a handful of experts t
 - John Williams
 {point} Four reasons this holds up. One, the effects are mostly real. Two, the suspense is built, not bought. Three, every character wants something. {happy} And four. John Williams.
 
-[clip src="trailer.mp4" from=52 fallback="trex.png" search="tyrannosaurus rex animation" credit="Jurassic Park (1993), Universal Pictures. Official trailer." caption="The breakout" pose=shocked]
+[clip src="06-tyrannosaurus-rex-animation.mp4" fallback="trex.png" search="tyrannosaurus rex animation" credit="Arctic Giant, The by Max Fleischer, Public domain, via Internet Archive" caption="The breakout" pose=shocked]
 The T. rex breakout. {shocked} Rain. A dead fence. A goat that is no longer a goat. The animatronic rex was a full size machine that weighed as much as a truck, {laugh} and it reportedly kept malfunctioning in the rain. You can feel the weight of it, because there was weight.
 
 [stat value="15" label="Minutes of dinosaur screen time" sub="In a two hour movie. About six of those are computer generated." source="Widely reported production figures, approximate" pose=crossed]
 And here is the number that surprises everyone. {surprised} There are roughly fifteen minutes of dinosaurs in this whole film. About six of those are computer generated. {smug} That restraint is the reason it does not look dated. You never get long enough to see the seams.
 
-[clip src="trailer.mp4" from=78 fallback="raptor.png" search="velociraptor dinosaur" credit="Jurassic Park (1993), Universal Pictures. Official trailer." caption="The kitchen" pose=think]
+[clip src="08-velociraptor-dinosaur.webm" fallback="raptor.png" search="velociraptor dinosaur" credit="Colorado Museum Makes No Bones.webm by VOA, Public domain, via Wikimedia Commons" caption="The kitchen" pose=think]
 {think} The raptors in the kitchen. Two kids, steel counters, and a claw tapping on tile. {shocked} No music for most of it. Just the tapping. It is the best sequence in the movie and there is almost no dinosaur in it.
 
 [compare title="What works and what doesn't"]
