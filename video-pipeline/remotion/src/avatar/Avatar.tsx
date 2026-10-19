@@ -7,7 +7,7 @@ import React from 'react';
  */
 export type AvatarConfig = {
   skin: string;
-  hair: 'short' | 'curly' | 'buzz' | 'long' | 'bald' | 'fade' | 'locs' | 'afro' | 'bun';
+  hair: 'short' | 'curly' | 'buzz' | 'long' | 'bald' | 'fade' | 'locs' | 'afro' | 'bun' | 'hightop';
   hairColor: string;
   facialHair: 'none' | 'stubble' | 'beard' | 'goatee' | 'mustache' | 'chinstrap';
   glasses: 'none' | 'round' | 'square';
@@ -15,7 +15,7 @@ export type AvatarConfig = {
   shirt: 'tee' | 'hoodie' | 'jacket' | 'collared';
   shirtColor: string;
   shirtAccent: string;
-  accessory: 'none' | 'cap' | 'headphones' | 'beanie';
+  accessory: 'none' | 'cap' | 'headphones' | 'beanie' | 'earring';
   accessoryColor: string;
 };
 
@@ -47,17 +47,17 @@ export const defaultFaceFor = (pose: Pose): Face => {
 };
 
 export const defaultAvatar: AvatarConfig = {
-  skin: '#7a4a28',
-  hair: 'fade',
-  hairColor: '#17130f',
+  skin: '#5e3a22',
+  hair: 'hightop',
+  hairColor: '#15110e',
   facialHair: 'none',
-  glasses: 'none',
-  eyeColor: '#3a2214',
-  shirt: 'collared',
-  shirtColor: '#bfd6f2',
-  shirtAccent: '#232838',
-  accessory: 'none',
-  accessoryColor: '#e5484d',
+  glasses: 'round',
+  eyeColor: '#2c1a10',
+  shirt: 'hoodie',
+  shirtColor: '#2a2a30',
+  shirtAccent: '#d8323a',
+  accessory: 'earring',
+  accessoryColor: '#e9e9ec',
 };
 
 const INK = '#1a1714';
@@ -157,7 +157,7 @@ export const Avatar: React.FC<Props> = ({config: c, pose, face, mouth, frame, wi
     }
   })();
   const Brow: React.FC<{cx: number; y: number; a: number}> = ({cx, y, a}) => (
-    <rect x={cx - 48} y={y - 13} width={96} height={26} rx={13} fill={darken(c.hairColor, 0.1)} stroke={INK} strokeWidth={5} transform={`rotate(${a} ${cx} ${y})`} />
+    <path d={`M${cx - 50},${y + 6} Q${cx - 44},${y - 12} ${cx},${y - 14} Q${cx + 46},${y - 14} ${cx + 52},${y + 2} L${cx + 50},${y + 12} Q${cx + 6},${y + 4} ${cx - 48},${y + 14} Z`} fill={darken(c.hairColor, 0.1)} stroke={INK} strokeWidth={5} strokeLinejoin="round" transform={`rotate(${a} ${cx} ${y})`} />
   );
 
   // ------------------------------------------------------------ eyes
@@ -304,6 +304,23 @@ export const Avatar: React.FC<Props> = ({config: c, pose, face, mouth, frame, wi
             <path d="M450,330 C446,280 434,250 416,240 L424,350 Z" fill={c.hairColor} opacity={0.5} />
           </g>
         );
+      case 'hightop':
+        return (
+          <g>
+            <path d="M158,322 C160,286 176,262 196,250 L186,350 Z" fill={c.hairColor} opacity={0.45} />
+            <path d="M442,322 C440,286 424,262 404,250 L414,350 Z" fill={c.hairColor} opacity={0.45} />
+            <path d="M166,262 C168,150 206,60 300,62 C394,60 432,150 434,262 C430,236 404,222 300,222 C196,222 170,236 166,262 Z" fill={c.hairColor} stroke={INK} strokeWidth={LINE} strokeLinejoin="round" />
+            <g fill={c.hairColor} stroke={INK} strokeWidth={6}>
+              {[184, 226, 268, 310, 352, 394].map((x, i) => (
+                <circle key={x} cx={x} cy={i % 2 ? 84 : 102} r={30} />
+              ))}
+              {[205, 247, 289, 331, 373].map((x) => (
+                <circle key={x} cx={x} cy={64} r={24} />
+              ))}
+            </g>
+            <path d="M172,262 Q300,236 428,262" fill="none" stroke={INK} strokeWidth={5} opacity={0.5} />
+          </g>
+        );
       case 'curly':
       case 'afro':
         return (
@@ -376,6 +393,8 @@ export const Avatar: React.FC<Props> = ({config: c, pose, face, mouth, frame, wi
             <rect x={134} y={296} width={332} height={64} rx={20} fill={darken(c.accessoryColor, 0.25)} />
           </g>
         );
+      case 'earring':
+        return <circle cx={150} cy={404} r={9} fill={c.accessoryColor} stroke={INK} strokeWidth={4} />;
       case 'headphones':
         return (
           <g stroke={INK} strokeWidth={7}>
@@ -465,8 +484,10 @@ export const Avatar: React.FC<Props> = ({config: c, pose, face, mouth, frame, wi
           </g>
         ) : c.shirt === 'hoodie' ? (
           <g>
-            <path d="M206,606 Q300,700 394,606 Q300,650 206,606 Z" fill={shirtDark} stroke={INK} strokeWidth={6} />
-            <path d="M300,660 L300,900" stroke={c.shirtAccent} strokeWidth={8} />
+            <path d="M150,700 C150,610 210,580 262,592 L300,640 L338,592 C390,580 450,610 450,700 L420,700 C412,660 380,640 338,632 L300,670 L262,632 C220,640 188,660 180,700 Z" fill={c.shirtAccent} stroke={INK} strokeWidth={LINE} strokeLinejoin="round" />
+            <path d="M262,632 Q300,690 338,632" fill={darken(c.shirtAccent, 0.35)} stroke={INK} strokeWidth={6} />
+            <path d="M282,660 L272,760 M318,660 L328,760" stroke="#f1efe8" strokeWidth={7} strokeLinecap="round" />
+            <path d="M300,700 L300,900" stroke={shirtDark} strokeWidth={4} />
           </g>
         ) : c.shirt === 'jacket' ? (
           <g>

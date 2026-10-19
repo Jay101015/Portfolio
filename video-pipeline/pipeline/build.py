@@ -77,7 +77,7 @@ def fetch_sources(project: str) -> None:
             if url.startswith("yt:"):
                 if shutil.which("yt-dlp"):
                     print(f"fetching {name} with yt-dlp", flush=True)
-                    r = subprocess.run(["yt-dlp", "-f", "bv*[height<=1080][ext=mp4]+ba[ext=m4a]/b[ext=mp4]", "-o", dst, url[3:]], capture_output=True, text=True)
+                    r = subprocess.run(["yt-dlp", "--no-playlist", "-f", "bv*[height<=1080][ext=mp4]+ba[ext=m4a]/b[ext=mp4]/b", "--merge-output-format", "mp4", "-o", dst, url[3:]], capture_output=True, text=True)
                     if r.returncode != 0:
                         print(f"WARNING: yt-dlp could not fetch {name}: {r.stderr.strip()[-300:]}", flush=True)
                 else:

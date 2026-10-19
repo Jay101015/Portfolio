@@ -2,13 +2,6 @@
 slug: notld-review
 theme: toon
 brand.name: REEL TAKES
-avatar.skin: #7a4a28
-avatar.hair: fade
-avatar.hair_color: #17130f
-avatar.glasses: none
-avatar.shirt: collared
-avatar.shirt_color: #bfd6f2
-avatar.shirt_accent: #232838
 
 [avatar headline="The zombie movie that belongs to everyone" pose=wave]
 Welcome back. Today we are going back to nineteen sixty eight, {point} to a black and white movie shot by a bunch of friends in Pennsylvania, {surprised} that accidentally became public domain {smug} and permanently changed horror.

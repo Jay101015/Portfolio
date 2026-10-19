@@ -223,6 +223,10 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
     allowed = set(x.strip() for x in header.get("licenses", ",".join(sorted(DEFAULT_LICENSES))).split(","))
     media = os.path.join(project, "media")
     os.makedirs(media, exist_ok=True)
+    if not dry_run:
+        from .build import fetch_sources
+
+        fetch_sources(project)  # footage you already pointed at (a trailer, your own link) wins over a search
 
     report: dict[str, Any] = {"film": film, "public_domain_film": pd_film, "scenes": []}
     new_md = md

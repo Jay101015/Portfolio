@@ -10,7 +10,7 @@ Welcome back. Today we are doing the big one. {point} Nineteen ninety three. Ste
 [poster src="poster.png" title="Jurassic Park" year="1993" director="Steven Spielberg" runtime="127 min" genre="Adventure" starring="Sam Neill, Laura Dern, Jeff Goldblum" tagline="An adventure 65 million years in the making" pose=point]
 Jurassic Park. Directed by Steven Spielberg, based on the Michael Crichton novel, one hundred twenty seven minutes, and made for roughly sixty three million dollars.
 
-[clip src="trailer.mp4" from=12 fallback="gate.png" search="rainforest jungle aerial" credit="Jurassic Park (1993), Universal Pictures. Official trailer." caption="Welcome to Jurassic Park" pose=think]
+[clip src="trailer.mp4" from=20 fallback="gate.png" search="rainforest jungle aerial" credit="Jurassic Park (1993), Universal Pictures. Official trailer." caption="Welcome to Jurassic Park" pose=think]
 The setup is simple. A billionaire builds a park, invites a handful of experts to sign off on it, {surprised} and the tour goes about as well as a tour of a dinosaur island can go.
 
 [still src="glass.png" search="water glass ripples" credit="Illustration" caption="The glass of water" pose=idle]
@@ -23,13 +23,13 @@ The setup is simple. A billionaire builds a park, invites a handful of experts t
 - John Williams
 {point} Four reasons this holds up. One, the effects are mostly real. Two, the suspense is built, not bought. Three, every character wants something. {happy} And four. John Williams.
 
-[clip src="06-tyrannosaurus-rex-animation.mp4" from=58 fallback="trex.png" search="tyrannosaurus rex animation" credit="Arctic Giant, The by Max Fleischer, Public domain, via Internet Archive" caption="The breakout" pose=shocked]
+[clip src="trailer.mp4" from=52 fallback="trex.png" search="tyrannosaurus rex animation" credit="Jurassic Park (1993), Universal Pictures. Official trailer." caption="The breakout" pose=shocked]
 The T. rex breakout. {shocked} Rain. A dead fence. A goat that is no longer a goat. The animatronic rex was a full size machine that weighed as much as a truck, {laugh} and it reportedly kept malfunctioning in the rain. You can feel the weight of it, because there was weight.
 
 [stat value="15" label="Minutes of dinosaur screen time" sub="In a two hour movie. About six of those are computer generated." source="Widely reported production figures, approximate" pose=crossed]
 And here is the number that surprises everyone. {surprised} There are roughly fifteen minutes of dinosaurs in this whole film. About six of those are computer generated. {smug} That restraint is the reason it does not look dated. You never get long enough to see the seams.
 
-[clip src="08-velociraptor-dinosaur.webm" from=84 fallback="raptor.png" search="velociraptor dinosaur" credit="Colorado Museum Makes No Bones.webm by VOA, Public domain, via Wikimedia Commons" caption="The kitchen" pose=think]
+[clip src="trailer.mp4" from=78 fallback="raptor.png" search="velociraptor dinosaur" credit="Jurassic Park (1993), Universal Pictures. Official trailer." caption="The kitchen" pose=think]
 {think} The raptors in the kitchen. Two kids, steel counters, and a claw tapping on tile. {shocked} No music for most of it. Just the tapping. It is the best sequence in the movie and there is almost no dinosaur in it.
 
 [compare title="What works and what doesn't"]
