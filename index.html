@@ -114,6 +114,13 @@
           <label class="check"><input id="mirror" type="checkbox" /> Mirror camera preview</label>
 
           <button id="toStage" class="btn primary block mt" disabled>Go to taping →</button>
+
+          <details class="diag mt">
+            <summary>Something wrong? Problem report</summary>
+            <p class="hint">Copy this and send it to me so I can see exactly what your phone is doing.</p>
+            <textarea id="diagOut" readonly rows="8"></textarea>
+            <button id="diagCopy" class="btn sm">Copy report</button>
+          </details>
         </div>
       </div>
     </section>
@@ -125,6 +132,7 @@
         <span id="stageReads" class="hint"></span>
         <button id="voicesLink" class="btn ghost sm">🎙 Voices</button>
       </div>
+      <div id="voiceBanner" class="banner" hidden></div>
       <div class="stage">
         <div class="camwrap">
           <video id="preview" autoplay muted playsinline></video>

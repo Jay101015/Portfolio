@@ -101,8 +101,11 @@ It does to me.`;
       .replace(/^\s*\d+[A-Z]?\.?\s+/, '').replace(/\s+\d+[A-Z]?\.?\s*$/, '') // scene numbers either side
       .replace(/[^A-Z0-9#'&\- ]/g, ' ') // stray OCR marks: . : * " |
       .replace(/\s+/g, ' ').trim()
-      .replace(/^['\-]+|['\-]+$/g, '');
+      .replace(/^['\-]+|['\-]+$/g, '')
+      .replace(/^(.{3,}?)(\s+[A-Z]{1,2})+$/, '$1'); // "ADONIS D" from a mangled (CONT'D)
   }
+  // Markdown / rich-text leftovers around names: **ADONIS**, _ADONIS_, "ADONIS"
+  const unwrap = (t) => t.replace(/\*\*|__/g, '').replace(/^[*_"'`~\s]+|[*_"'`~\s]+$/g, '').trim();
   function isBracketed(t) {
     return /^\(.*\)$/.test(t) || /^\[.*\]$/.test(t);
   }
@@ -134,40 +137,90 @@ It does to me.`;
   }
 
   // Suggest folding misspelt/variant names (OCR typos, "ADONIS JR" leftovers) into the main spelling.
+  // OCR swaps letters for look-alike digits inside words (ADON1S, R0SE); COP 1 keeps its number.
+  const defuzz = (s) => s.replace(/[A-Z]+[0158]+[A-Z]*|[A-Z]*[0158]+[A-Z]+/g, (w) => w.replace(/[0158]/g, (d) => ({ 0: 'O', 1: 'I', 5: 'S', 8: 'B' }[d])));
   function autoMerges(counts) {
     const names = Object.keys(counts).sort((x, y) => counts[y] - counts[x]);
     const map = {};
-    names.forEach((n, i) => {
-      for (const m of names.slice(0, i)) {
-        if (map[m] || counts[m] < counts[n]) continue;
+    names.forEach((n0, i) => {
+      const n = defuzz(n0);
+      for (const m0 of names.slice(0, i)) {
+        const m = defuzz(m0);
+        if (map[m0] || counts[m0] < counts[n0]) continue;
         const digits = (s) => s.replace(/\D/g, '');
         if (digits(n) !== digits(m)) continue; // COP 1 vs COP 2 are different people
-        const close = n.length >= 4 && editDistance(n, m) <= (n.length >= 7 ? 2 : 1) && counts[n] <= Math.max(2, counts[m] / 3);
+        const close = n.length >= 4 && editDistance(n, m) <= (n.length >= 7 ? 2 : 1) && counts[n0] <= Math.max(2, counts[m0] / 3);
         const compact = n.replace(/[^A-Z0-9]/g, '') === m.replace(/[^A-Z0-9]/g, ''); // "O BRIEN" vs "O'BRIEN"
-        if (close || compact) { map[n] = m; break; }
+        if (close || compact) { map[n0] = m0; break; }
       }
     });
     return map;
   }
 
+  // Short, unpunctuated lines that repeat (in any case) with text under them are character names too —
+  // this catches sides typed as "Adonis" / "Keisha" instead of screenplay capitals.
+  function repeatedNames(raw) {
+    const counts = {};
+    for (let i = 0; i < raw.length; i++) {
+      const t = unwrap(raw[i]);
+      const next = raw[i + 1];
+      if (!t || !next || !next.trim() || t.length > 30 || /[.!?,;:]$/.test(t)) continue;
+      const words = t.split(/\s+/);
+      if (words.length > 3 || !words.every((w) => /^[A-Za-z][A-Za-z'\-.]*$/.test(w) || /^#?\d+$/.test(w))) continue;
+      if (!/^[A-Z]/.test(t) || SCENE_HEADING.test(t) || TRANSITION.test(t) || NOT_CUE.test(normName(t))) continue;
+      const n = normName(t);
+      if (n) counts[n] = (counts[n] || 0) + 1;
+    }
+    // "KEISHA And I told you" — a capitals prefix that starts several lines is a name too.
+    const inline = {};
+    for (const line of raw) {
+      const m = unwrap(line).match(/^([A-Z][A-Z0-9#'.\-]*(?: [A-Z][A-Z0-9#'.\-]*){0,2})(?:\s*\([^)]*\))?[:.\-–—]?\s+(?=[A-Za-z("'“])(.*)$/);
+      if (!m || m[2] === m[2].toUpperCase() || SCENE_HEADING.test(line) || TRANSITION.test(line)) continue;
+      const n = normName(m[1]);
+      if (n && !NOT_CUE.test(n) && !/^(I|A|OK|NO|YES|HEY|OH|GOD|SIR|MA'AM|MOM|DAD)$/.test(n)) inline[n] = (inline[n] || 0) + 1;
+    }
+    Object.keys(inline).forEach((n) => { if (inline[n] >= 2 || counts[n]) counts[n] = (counts[n] || 0) + inline[n]; });
+    return new Set(Object.keys(counts).filter((n) => counts[n] >= 2));
+  }
+
   function parseScript(text) {
-    const raw = text.replace(/\r/g, '').split('\n');
+    const raw = text.replace(/\r/g, '').replace(/\t/g, '  ').split('\n');
     const out = [];
     let speaker = null;
+    const known = repeatedNames(raw);
+    // Names found in the first pass also start dialogue on the same line: "ADONIS I told you not to come."
+    const inlineName = (t) => {
+      const m = t.match(/^([A-Z][A-Z0-9#'.\- ]{1,30}?)(?:\s*\([^)]*\))?[:.\-–—]?\s+(?=[A-Za-z(\"'“])(.*)$/);
+      if (!m) return null;
+      const name = normName(m[1]);
+      return name && (known.has(name) || knownCaps.has(name)) && m[2] && m[2] !== m[2].toUpperCase() ? { name, text: m[2] } : null;
+    };
+    const knownCaps = new Set();
     for (let i = 0; i < raw.length; i++) {
-      const t = raw[i].trim();
+      const t = unwrap(raw[i]);
+      if (t && isCue(t, raw[i + 1])) knownCaps.add(normName(t));
+    }
+    for (let i = 0; i < raw.length; i++) {
+      const t = unwrap(raw[i]);
       if (!t) { speaker = null; continue; }
       // Page-break furniture: skip it without ending the current speech.
       if (/^\(?\s*(MORE|CONTINUED|CONT'?D|CONTINUED\s*\(\d+\))\s*:?\s*\)?$/i.test(t.replace(/[’‘]/g, "'"))) continue;
       if (/\d+\/\d+(\/\d+)?/.test(t) && /\b(rev\.?|revised|revision|draft|pink|blue|yellow|green|goldenrod|white|salmon|cherry|buff|tan)\b/i.test(t)) continue;
 
-      const m = t.match(/^([A-Z][A-Za-z0-9 .'\-]{0,30}?)\s*(\([^)]*\))?\s*:\s*(.+)$/);
-      if (m && !SCENE_HEADING.test(t) && !TRANSITION.test(t)) {
+      const m = t.match(/^([A-Za-z][A-Za-z0-9 #.'\-]{0,30}?)\s*(\([^)]*\))?\s*:\s*(.+)$/);
+      if (m && !SCENE_HEADING.test(t) && !TRANSITION.test(t) && !NOT_CUE.test(normName(m[1])) && m[1].split(/\s+/).length <= 3) {
         speaker = normName(m[1]);
         out.push({ type: 'dialogue', character: speaker, text: (m[2] ? m[2] + ' ' : '') + m[3] });
         continue;
       }
       if (isCue(t, raw[i + 1])) { speaker = normName(t); continue; }
+      if ((known.has(normName(t)) || (/^[A-Z][A-Z0-9#' ]{1,30}[.:]$/.test(t) && knownCaps.has(normName(t)))) && raw[i + 1] && raw[i + 1].trim() && !/[a-z]/.test(t.replace(/\(.*$/, '')) === (t === t.toUpperCase()) && t.split(/\s+/).length <= 4 && !/[!?,;]$/.test(t)) { speaker = normName(t); continue; }
+      const inl = inlineName(t);
+      if (inl) {
+        speaker = inl.name;
+        out.push({ type: 'dialogue', character: speaker, text: inl.text, fromCue: true });
+        continue;
+      }
 
       const last = out[out.length - 1];
       if (speaker && !(isBracketed(t) && last && last.character === speaker && !last.fromCue)) {
@@ -293,6 +346,8 @@ It does to me.`;
     renderRolePickers();
     renderNameFixer();
     renderStudioPanel();
+    renderVoiceBanner();
+    renderDiag();
     if (!has) return;
 
     autoAssignVoices();
@@ -375,6 +430,44 @@ It does to me.`;
           <option value="action" ${cur === 'action' ? 'selected' : ''}>Not a character</option>
         </select></div>`;
     }).join('');
+  }
+
+  function diagnostics() {
+    const others = state.characters.filter((c) => c !== state.me);
+    return [
+      `Cue ${APP_VERSION} · ${new Date().toISOString()}`,
+      `Browser: ${navigator.userAgent}`,
+      `Standalone (home screen): ${window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true}`,
+      `Workers/WASM: ${studioSupported} · SharedArrayBuffer: ${typeof SharedArrayBuffer !== 'undefined'} · isolated: ${!!window.crossOriginIsolated} · memory: ${navigator.deviceMemory || '?'}GB`,
+      `Studio voices: downloaded=${studio.downloaded} status=${studio.status} progress=${Math.round(studio.progress * 100)}%${studio.error ? ' error=' + studio.error : ''}`,
+      `Phone voices: ${voices.length} (${voices.slice(0, 6).map((v) => v.name).join(', ')}${voices.length > 6 ? '…' : ''})`,
+      `Speech recognition: ${!!SpeechRec}${speechRecBroken ? ' (failed)' : ''} · mic meter: ${!!analyser}`,
+      `Playing: ${state.me || '(none)'} · readers: ${others.map((c) => { const r = readerFor(c); return `${c}=${usesStudio(r) ? 'studio:' + r.studioVoice : 'phone:' + (r.voiceURI || 'default')}`; }).join(', ') || '(none)'}`,
+      `Characters found: ${Object.entries(state.nameInfo.counts).map(([n, k]) => `${n}(${k})`).join(', ')}`,
+      `Settings: ${JSON.stringify(state.settings)}`,
+      `Last error: ${lastError || '(none)'}`,
+    ].join('\n');
+  }
+  let lastError = '';
+  window.addEventListener('error', (e) => { lastError = String(e.message || e.error); renderDiag(); });
+  window.addEventListener('unhandledrejection', (e) => { lastError = String((e.reason && e.reason.message) || e.reason); renderDiag(); });
+  function renderDiag() {
+    const el = $('#diagOut');
+    if (el) el.textContent = diagnostics();
+  }
+
+  function renderVoiceBanner() {
+    const b = $('#voiceBanner');
+    if (!b) return;
+    const others = state.characters.filter((c) => c !== state.me);
+    const phoneReaders = others.filter((c) => !usesStudio(readerFor(c)));
+    let msg = '';
+    if (!studioSupported) msg = 'This browser can\'t run studio voices — the phone voice is reading.';
+    else if (studio.status === 'error') msg = `Studio voices failed to load (${studio.error}). The phone voice is reading.`;
+    else if (!studio.downloaded && others.length) msg = 'Studio voices aren\'t downloaded yet — the phone voice is reading.';
+    else if (studio.downloaded && phoneReaders.length && others.length) msg = `${phoneReaders.join(', ')} ${phoneReaders.length > 1 ? 'are' : 'is'} set to the phone voice.`;
+    b.hidden = !msg || !others.length;
+    b.innerHTML = msg ? `<span>⚠ ${esc(msg)}</span><button class="btn sm" data-act="fix-voices">${studio.status === 'error' ? 'Retry' : 'Fix'}</button>` : '';
   }
 
   function renderRolePickers() {
@@ -641,6 +734,7 @@ It does to me.`;
     { id: 'bf_emma', name: 'Emma', accent: 'UK', gender: 'f' },
     { id: 'bm_george', name: 'George', accent: 'UK', gender: 'm' },
   ];
+  const APP_VERSION = '1.4.0';
   const STUDIO_KEY = 'cue:studio';
   const studioSupported = typeof Worker !== 'undefined' && typeof WebAssembly === 'object';
   const studio = { downloaded: false, status: 'idle', progress: 0, error: '' };
@@ -658,6 +752,7 @@ It does to me.`;
       if (data.type === 'progress') {
         studio.progress = data.total ? data.loaded / data.total : 0;
         renderStudioPanel();
+        renderDiag();
         return;
       }
       const p = pending.get(data.id);
@@ -667,6 +762,7 @@ It does to me.`;
       else p.resolve(data);
     };
     worker.onerror = (e) => {
+      lastError = 'worker: ' + (e.message || 'failed to start') + (e.filename ? ` @${e.filename.split('/').pop()}:${e.lineno}` : '');
       pending.forEach((p) => p.reject(new Error(e.message || 'Voice engine failed to start')));
       pending.clear();
       worker = null;
@@ -699,8 +795,11 @@ It does to me.`;
       }, (err) => {
         studio.status = 'error';
         studio.error = err.message || String(err);
+        lastError = 'studio: ' + studio.error;
         loadPromise = null;
         renderStudioPanel();
+        renderVoiceBanner();
+        renderDiag();
         throw err;
       });
     }
@@ -972,7 +1071,7 @@ It does to me.`;
       if (record) await sleep(1200, ac.signal);
     } catch (err) {
       if (err.name === 'AbortError') status('Stopped.');
-      else { status(err.message || String(err)); console.error(err); }
+      else { status(err.message || String(err)); lastError = 'scene: ' + (err.message || err); renderDiag(); console.error(err); }
     } finally {
       if (hasTTS) speechSynthesis.cancel();
       run = null;
@@ -1259,6 +1358,24 @@ It does to me.`;
       speakLine(line, tmp.ac.signal).catch(() => {}).finally(() => { if (run === tmp) run = prev; });
     });
 
+    $('#voiceBanner').addEventListener('click', (e) => {
+      if (e.target.dataset.act !== 'fix-voices') return;
+      if (studio.status === 'error' || !studio.downloaded) {
+        showView('script');
+        $('#voices').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (studio.status === 'error') studioLoad().catch(() => {});
+      } else {
+        state.characters.filter((c) => c !== state.me).forEach((c) => { readerFor(c).engine = 'studio'; });
+        renderCast();
+      }
+    });
+    $('#diagCopy').addEventListener('click', async () => {
+      renderDiag();
+      const text = diagnostics();
+      try { await navigator.clipboard.writeText(text); $('#diagCopy').textContent = 'Copied ✓'; }
+      catch { $('#diagOut').focus(); $('#diagCopy').textContent = 'Select the text above and copy'; }
+      setTimeout(() => { $('#diagCopy').textContent = 'Copy report'; }, 2500);
+    });
     $('#studioPanel').addEventListener('click', async (e) => {
       const act = e.target.dataset.act;
       if (act === 'studio-load') studioLoad().catch(() => {});
