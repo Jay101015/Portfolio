@@ -5,10 +5,10 @@ export type AvatarConfig = {
   skin: string;
   hair: 'short' | 'curly' | 'buzz' | 'long' | 'bald' | 'fade' | 'locs' | 'afro' | 'bun';
   hairColor: string;
-  facialHair: 'none' | 'stubble' | 'beard' | 'goatee' | 'mustache';
+  facialHair: 'none' | 'stubble' | 'beard' | 'goatee' | 'mustache' | 'chinstrap';
   glasses: 'none' | 'round' | 'square';
   eyeColor: string;
-  shirt: 'tee' | 'hoodie' | 'jacket';
+  shirt: 'tee' | 'hoodie' | 'jacket' | 'collared';
   shirtColor: string;
   shirtAccent: string;
   accessory: 'none' | 'cap' | 'headphones' | 'beanie';
@@ -19,15 +19,15 @@ export type Pose = 'idle' | 'point' | 'crossed' | 'think' | 'shocked' | 'thumbsu
 export const POSES: Pose[] = ['idle', 'point', 'crossed', 'think', 'shocked', 'thumbsup', 'facepalm', 'laugh', 'wave', 'shrug'];
 
 export const defaultAvatar: AvatarConfig = {
-  skin: '#8d5524',
-  hair: 'short',
-  hairColor: '#1a1a1a',
-  facialHair: 'stubble',
+  skin: '#6b4123',
+  hair: 'fade',
+  hairColor: '#141210',
+  facialHair: 'chinstrap',
   glasses: 'none',
-  eyeColor: '#3b2314',
-  shirt: 'hoodie',
-  shirtColor: '#2b2d42',
-  shirtAccent: '#e63946',
+  eyeColor: '#2a1a10',
+  shirt: 'collared',
+  shirtColor: '#bcd3ec',
+  shirtAccent: '#1f2430',
   accessory: 'none',
   accessoryColor: '#e63946',
 };
@@ -146,11 +146,28 @@ export const Avatar: React.FC<Props> = ({config: c, pose, mouth, frame, width = 
           </g>
         );
       case 'flat':
-        return <path d={`M${cx - 40},${cy + 8} L${cx + 40},${cy + 6}`} stroke="#3a1218" strokeWidth={9} strokeLinecap="round" fill="none" />;
+        return (
+          <g>
+            <path d={`M${cx - 44},${cy} Q${cx},${cy - 10} ${cx + 44},${cy} Q${cx},${cy + 6} ${cx - 44},${cy} Z`} fill="#4a2420" />
+            <path d={`M${cx - 42},${cy + 2} Q${cx},${cy + 22} ${cx + 42},${cy + 2} Q${cx},${cy + 10} ${cx - 42},${cy + 2} Z`} fill="#7a4038" />
+          </g>
+        );
       case 'smirk':
-        return <path d={`M${cx - 40},${cy + 10} Q${cx + 10},${cy + 22} ${cx + 44},${cy - 4}`} stroke="#3a1218" strokeWidth={9} strokeLinecap="round" fill="none" />;
+        return (
+          <g>
+            <path d={`M${cx - 42},${cy + 4} Q${cx},${cy - 8} ${cx + 46},${cy - 6} Q${cx},${cy + 10} ${cx - 42},${cy + 4} Z`} fill="#4a2420" />
+            <path d={`M${cx - 40},${cy + 6} Q${cx + 6},${cy + 26} ${cx + 46},${cy - 4} Q${cx},${cy + 12} ${cx - 40},${cy + 6} Z`} fill="#7a4038" />
+          </g>
+        );
       default: {
-        if (open < 0.12) return <path d={`M${cx - 44},${cy} Q${cx},${cy + 30} ${cx + 44},${cy}`} stroke="#3a1218" strokeWidth={9} strokeLinecap="round" fill="none" />;
+        if (open < 0.12)
+          return (
+            <g>
+              <path d={`M${cx - 46},${cy} Q${cx - 20},${cy - 14} ${cx},${cy - 6} Q${cx + 20},${cy - 14} ${cx + 46},${cy} Q${cx},${cy + 8} ${cx - 46},${cy} Z`} fill="#4a2420" />
+              <path d={`M${cx - 44},${cy + 1} Q${cx},${cy + 30} ${cx + 44},${cy + 1} Q${cx},${cy + 12} ${cx - 44},${cy + 1} Z`} fill="#7a4038" />
+              <path d={`M${cx - 44},${cy + 1} Q${cx},${cy + 8} ${cx + 44},${cy + 1}`} stroke="#2e1412" strokeWidth={3} fill="none" />
+            </g>
+          );
         const h = 10 + open * 48;
         const w = 40 + open * 14;
         return (
@@ -166,20 +183,34 @@ export const Avatar: React.FC<Props> = ({config: c, pose, mouth, frame, width = 
   const eye = (cx: number, raise: number) => {
     if (expr.happyEyes) return <path d={`M${cx - 24},${322} Q${cx},${296} ${cx + 24},${322}`} stroke="#1a1a1a" strokeWidth={8} fill="none" strokeLinecap="round" />;
     if (expr.eyesClosed) return <path d={`M${cx - 24},${324} Q${cx},${334} ${cx + 24},${324}`} stroke="#1a1a1a" strokeWidth={7} fill="none" strokeLinecap="round" />;
+    const id = `eye${cx}`;
+    const shape = `M${cx - 32},${322} Q${cx - 10},${298} ${cx + 32},${318} Q${cx + 8},${346} ${cx - 32},${322} Z`;
     return (
       <g>
-        <ellipse cx={cx} cy={322} rx={25} ry={28} fill="#fff" />
-        <circle cx={cx + 3} cy={326} r={13} fill={c.eyeColor} />
-        <circle cx={cx + 4} cy={327} r={6.5} fill="#111" />
-        <circle cx={cx + 9} cy={318} r={4} fill="#fff" />
-        <path d={`M${cx - 27},${raise + 306} Q${cx},${raise + 290} ${cx + 27},${raise + 306}`} stroke={c.skin} strokeWidth={0} fill="none" />
+        <defs>
+          <clipPath id={id}>
+            <path d={shape} />
+          </clipPath>
+        </defs>
+        <path d={shape} fill="#f6efe8" />
+        <g clipPath={`url(#${id})`}>
+          <circle cx={cx + 4} cy={324} r={14} fill={c.eyeColor} />
+          <circle cx={cx + 5} cy={325} r={7} fill="#0b0705" />
+          <circle cx={cx + 10} cy={318} r={3.5} fill="#fff" />
+        </g>
+        <path d={`M${cx - 32},${322} Q${cx - 10},${298} ${cx + 32},${318}`} stroke="#1a1210" strokeWidth={5} fill="none" strokeLinecap="round" />
+        <path d={`M${cx - 30},${324 + raise * 0}`} />
       </g>
     );
   };
 
   const brow = (cx: number, raise: number, side: 1 | -1) => {
     const a = expr.browAngle * side;
-    return <path d={`M${cx - 28},${282 - raise + a} Q${cx},${270 - raise} ${cx + 28},${280 - raise - a}`} stroke={hairDark} strokeWidth={10} strokeLinecap="round" fill="none" />;
+    const y = 284 - raise;
+    // side=1 is the screen-left brow; the inner end is toward x=300
+    const inner = cx + 34 * side;
+    const outer = cx - 38 * side;
+    return <path d={`M${outer},${y + 2 - a} Q${cx},${y - 12} ${inner},${y + a} L${inner},${y + 12 + a} Q${cx},${y + 2} ${outer},${y + 14 - a} Z`} fill={hairDark} />;
   };
 
   const hairBack = (() => {
@@ -210,7 +241,13 @@ export const Avatar: React.FC<Props> = ({config: c, pose, mouth, frame, width = 
       case 'buzz':
         return <path d="M150,300 Q150,150 300,150 Q450,150 450,300 Q440,260 300,250 Q160,260 150,300 Z" fill={c.hairColor} opacity={0.85} />;
       case 'fade':
-        return <path d="M165,290 Q165,140 300,140 Q435,140 435,290 Q420,220 300,215 Q180,220 165,290 Z" fill={c.hairColor} />;
+        return (
+          <g>
+            <path d="M152,300 C152,185 215,128 300,128 C385,128 448,185 448,300 C440,236 385,214 300,214 C215,214 160,236 152,300 Z" fill={c.hairColor} />
+            <path d="M152,300 C156,250 170,230 190,222 L180,330 Z" fill={c.hairColor} opacity={0.55} />
+            <path d="M448,300 C444,250 430,230 410,222 L420,330 Z" fill={c.hairColor} opacity={0.55} />
+          </g>
+        );
       case 'curly':
         return (
           <g fill={c.hairColor}>
@@ -242,6 +279,14 @@ export const Avatar: React.FC<Props> = ({config: c, pose, mouth, frame, width = 
         return <path d="M255,440 Q300,520 345,440 Q300,470 255,440 Z" fill={c.hairColor} />;
       case 'mustache':
         return <path d="M248,398 Q300,382 352,398 Q330,406 300,402 Q270,406 248,398 Z" fill={c.hairColor} />;
+      case 'chinstrap':
+        return (
+          <g fill={c.hairColor}>
+            <path d="M250,394 Q300,380 350,394 Q328,403 300,400 Q272,403 250,394 Z" opacity={0.9} />
+            <path d="M158,380 C166,460 214,520 300,534 C386,520 434,460 442,380 C436,470 388,512 300,516 C212,512 164,470 158,380 Z" opacity={0.8} />
+            <path d="M262,452 Q300,444 338,452 Q336,512 300,520 Q264,512 262,452 Z" opacity={0.95} />
+          </g>
+        );
       default:
         return null;
     }
@@ -351,13 +396,23 @@ export const Avatar: React.FC<Props> = ({config: c, pose, mouth, frame, width = 
       <g transform={`translate(0 ${bob})`}>
         {armsBack}
         {/* torso */}
-        <path d={`M120,840 L120,660 Q120,560 220,545 L380,545 Q480,560 480,660 L480,840 Z`} fill={c.shirtColor} />
+        <path d={`M108,840 L108,660 Q110,560 220,545 L380,545 Q490,560 492,660 L492,840 Z`} fill={c.shirtColor} />
         {c.shirt === 'hoodie' ? (
           <g>
             <path d="M210,548 Q300,640 390,548 Q300,590 210,548 Z" fill={shirtDark} />
             <path d="M160,760 L440,760 L440,840 L160,840 Z" fill={shirtDark} opacity={0.5} />
             <path d="M300,600 L300,840" stroke={c.shirtAccent} strokeWidth={6} />
             <circle cx={300} cy={640} r={7} fill={c.shirtAccent} />
+          </g>
+        ) : c.shirt === 'collared' ? (
+          <g>
+            <path d="M232,545 L300,640 L368,545 Z" fill={c.shirtAccent} />
+            <path d="M232,545 L300,640 L262,655 L212,575 Z" fill={c.shirtColor} stroke={shirtDark} strokeWidth={3} strokeLinejoin="round" />
+            <path d="M368,545 L300,640 L338,655 L388,575 Z" fill={c.shirtColor} stroke={shirtDark} strokeWidth={3} strokeLinejoin="round" />
+            <path d="M300,640 L300,840" stroke={shirtDark} strokeWidth={3} />
+            {[690, 760, 830].map((y) => (
+              <circle key={y} cx={300} cy={y} r={6} fill="#f4f4f4" stroke={shirtDark} strokeWidth={2} />
+            ))}
           </g>
         ) : c.shirt === 'jacket' ? (
           <g>
@@ -369,14 +424,18 @@ export const Avatar: React.FC<Props> = ({config: c, pose, mouth, frame, width = 
           <path d="M230,548 Q300,610 370,548" fill="none" stroke={shirtDark} strokeWidth={14} />
         )}
         {/* neck */}
-        <rect x={258} y={430} width={84} height={140} rx={30} fill={darken(c.skin, 0.15)} />
+        <rect x={244} y={460} width={112} height={130} rx={34} fill={darken(c.skin, 0.15)} />
         <g transform={`rotate(${expr.headTilt} 300 440)`}>
           {hairBack}
           {/* ears */}
-          <ellipse cx={150} cy={340} rx={22} ry={32} fill={c.skin} />
-          <ellipse cx={450} cy={340} rx={22} ry={32} fill={c.skin} />
+          <g>
+            <ellipse cx={152} cy={345} rx={24} ry={36} fill={c.skin} />
+            <ellipse cx={448} cy={345} rx={24} ry={36} fill={c.skin} />
+            <path d="M148,335 Q140,350 150,365" stroke={darken(c.skin, 0.3)} strokeWidth={5} fill="none" strokeLinecap="round" />
+            <path d="M452,335 Q460,350 450,365" stroke={darken(c.skin, 0.3)} strokeWidth={5} fill="none" strokeLinecap="round" />
+          </g>
           {/* head */}
-          <path d="M150,310 Q150,150 300,150 Q450,150 450,310 L450,370 Q450,500 300,510 Q150,500 150,370 Z" fill={c.skin} />
+          <path d="M300,130 C390,130 446,198 448,300 C450,390 440,452 402,498 C372,534 332,546 300,546 C268,546 228,534 198,498 C160,452 150,390 152,300 C154,198 210,130 300,130 Z" fill={c.skin} />
           {facialHair}
           {hairFront}
           {accessory}
@@ -385,7 +444,10 @@ export const Avatar: React.FC<Props> = ({config: c, pose, mouth, frame, width = 
           {eye(245, expr.browL)}
           {eye(355, expr.browR)}
           {glasses}
-          <path d="M292,340 Q278,380 300,386 Q322,380 308,340" fill="none" stroke={darken(c.skin, 0.3)} strokeWidth={6} strokeLinecap="round" />
+          <path d="M296,332 C288,355 282,372 276,388" fill="none" stroke={darken(c.skin, 0.28)} strokeWidth={5} strokeLinecap="round" />
+          <path d="M270,392 Q300,406 330,392" fill="none" stroke={darken(c.skin, 0.3)} strokeWidth={6} strokeLinecap="round" />
+          <ellipse cx={272} cy={388} rx={11} ry={7} fill={darken(c.skin, 0.32)} />
+          <ellipse cx={328} cy={388} rx={11} ry={7} fill={darken(c.skin, 0.32)} />
           {mouthEl}
           {pose === 'facepalm' ? (
             <g>

@@ -2,14 +2,14 @@
 slug: notld-review
 theme: movie
 brand.name: REEL TAKES
-avatar.skin: #8d5524
-avatar.hair: short
-avatar.hair_color: #1a1a1a
-avatar.facial_hair: stubble
+avatar.skin: #6b4123
+avatar.hair: fade
+avatar.hair_color: #141210
+avatar.facial_hair: chinstrap
 avatar.glasses: none
-avatar.shirt: hoodie
-avatar.shirt_color: #2b2d42
-avatar.shirt_accent: #e63946
+avatar.shirt: collared
+avatar.shirt_color: #bcd3ec
+avatar.shirt_accent: #1f2430
 
 [avatar headline="The zombie movie that belongs to everyone" pose=wave]
 Welcome back. Today we are going back to nineteen sixty eight, to a black and white movie shot by a bunch of friends in Pennsylvania, that accidentally became public domain and permanently changed horror.
