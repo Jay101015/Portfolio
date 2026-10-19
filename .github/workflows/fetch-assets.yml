@@ -1,0 +1,57 @@
+name: Fetch assets
+
+# Downloads files the sandbox cannot reach (generated art, reference images,
+# footage) onto the branch, so the pipeline and the design tools can use them.
+
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: "One URL per line, optionally 'name.ext=https://...' to pick the file name"
+        required: true
+      dest:
+        description: "Folder in the repo to save into"
+        required: true
+        default: "video-pipeline/projects/host-art/gen"
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download
+        env:
+          URLS: ${{ github.event.inputs.urls }}
+          DEST: ${{ github.event.inputs.dest }}
+        shell: bash
+        run: |
+          mkdir -p "$DEST"
+          n=0
+          while IFS= read -r line; do
+            line="${line//$'\r'/}"
+            [ -z "$line" ] && continue
+            n=$((n+1))
+            if [[ "$line" == *"=http"* ]]; then
+              name="${line%%=*}"; url="${line#*=}"
+            else
+              url="$line"; name="$(basename "${url%%\?*}")"
+              [[ "$name" == *.* ]] || name="asset-$n.bin"
+            fi
+            echo "fetching $url -> $DEST/$name"
+            curl -fsSL --retry 3 -A "Mozilla/5.0" -o "$DEST/$name" "$url"
+            file "$DEST/$name"
+          done <<< "$URLS"
+          ls -la "$DEST"
+      - name: Commit
+        env:
+          DEST: ${{ github.event.inputs.dest }}
+        run: |
+          git config user.name "render-bot"
+          git config user.email "render-bot@users.noreply.github.com"
+          git add -f "$DEST"
+          git commit -m "Fetch assets into $DEST" || echo "nothing new"
+          git push
