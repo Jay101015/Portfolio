@@ -29,7 +29,8 @@ type Props = {
 export const AvatarLayer: React.FC<Props> = ({config, pose, face, prevPose, prevFace, pos, mouth, viseme, talk, attention, globalFrame, sinceChange, scale = 1, toon, art = 'painted'}) => {
   const frame = useCurrentFrame();
   const {width, height, u, isVertical} = useLayout();
-  const ready = useHostImages();
+  const hostSrc = useHostImages();
+  const ready = hostSrc !== null;
   if (pos === 'none' || (art === 'painted' && !ready)) return null;
   // entrance: toon snaps in over 3 frames; glossy springs in
   const enter = toon ? interpolate(frame, [0, 3], [0, 1], {extrapolateRight: 'clamp'}) : interpolate(frame, [0, 10], [0, 1], {extrapolateRight: 'clamp'});
@@ -81,7 +82,7 @@ export const AvatarLayer: React.FC<Props> = ({config, pose, face, prevPose, prev
         }}
       >
         {art === 'painted' ? (
-          <RasterHost pose={pose} face={face} prevPose={prevPose} prevFace={prevFace} sinceChange={sinceChange} mouth={mouth} viseme={viseme} talk={talk} lookX={lookX} attention={attention} frame={globalFrame} width={w} flip={flip} src={(n) => staticFile(`host/${n}`)} />
+          <RasterHost pose={pose} face={face} prevPose={prevPose} prevFace={prevFace} sinceChange={sinceChange} mouth={mouth} viseme={viseme} talk={talk} lookX={lookX} attention={attention} frame={globalFrame} width={w} flip={flip} src={(n) => (hostSrc ? hostSrc(n) : staticFile(`host/${n}`))} />
         ) : (
           <Avatar config={config} pose={pose} face={face} prevPose={prevPose} prevFace={prevFace} sinceChange={sinceChange} mouth={mouth} viseme={viseme} talk={talk} lookX={lookX} attention={attention} frame={globalFrame} width={w} flip={flip} />
         )}

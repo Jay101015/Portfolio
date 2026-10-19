@@ -108,7 +108,7 @@ def fit_clip(sc: dict, path: str) -> list[str]:
     start = float(p.get("from", 0) or 0)
     margin = 0.3
     if dur - margin < scene_len:
-        p["from"] = 0.0
+        p["from"] = round(min(start, dur * 0.15), 2) if start > dur * 0.15 else round(start, 2)
         p["loop"] = True
         notes.append(f"scene {sc['id']}: '{os.path.basename(path)}' is {dur:.1f}s, shorter than the scene ({scene_len:.1f}s); it loops")
     elif start + scene_len > dur - margin:

@@ -188,7 +188,16 @@ def build(portrait: Path, landmarks: Path, out: Path) -> dict:
     layers.update(globals().pop("_extra", {}))
     boxes = {}
     for name, (img, box) in layers.items():
-        cv2.imwrite(str(out / name), img)
+        # crop to the content (plus a margin) so the files stay small and load fast
+        x0, y0 = (box or [0, 0, w, h])[:2]
+        ys, xs = np.where(img[:, :, 3] > 0)
+        if len(xs):
+            m = 4
+            cx0, cy0 = max(0, int(xs.min()) - m), max(0, int(ys.min()) - m)
+            cx1, cy1 = min(img.shape[1], int(xs.max()) + m + 1), min(img.shape[0], int(ys.max()) + m + 1)
+            img = img[cy0:cy1, cx0:cx1]
+            box = [x0 + cx0, y0 + cy0, x0 + cx1, y0 + cy1]
+        cv2.imwrite(str(out / name), img, [cv2.IMWRITE_PNG_COMPRESSION, 6])
         boxes[name] = box or [0, 0, w, h]
 
     def centroid(m: np.ndarray) -> list[int]:

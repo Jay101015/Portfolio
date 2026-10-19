@@ -7,12 +7,13 @@ import {Avatar, defaultAvatar, type AvatarConfig, type Face, type Pose} from './
 /** One big drawing of the host, for checking the art close up. */
 export const Portrait: React.FC<{avatar?: Partial<AvatarConfig>; pose?: Pose; face?: Face; mouth?: number; viseme?: number; bg?: string; art?: 'drawn' | 'painted'; sinceChange?: number; prevPose?: Pose; lookX?: number; attention?: number}> = ({avatar, pose = 'idle', face, mouth = 0, viseme = 0, bg = '#e9e4da', art = 'painted', sinceChange, prevPose, lookX = 0, attention = 0.3}) => {
   const frame = useCurrentFrame();
-  const ready = useHostImages();
+  const hostSrc = useHostImages();
+  const ready = hostSrc !== null;
   const config: AvatarConfig = {...defaultAvatar, ...(avatar ?? {})};
   return (
     <AbsoluteFill style={{background: bg, display: 'flex', justifyContent: 'center', alignItems: 'flex-start'}}>
       {art === 'painted' && !ready ? null : art === 'painted' ? (
-        <RasterHost pose={pose} face={face} prevPose={prevPose} sinceChange={sinceChange} mouth={mouth} viseme={viseme} lookX={lookX} attention={attention} frame={frame} width={1000} src={(n) => staticFile(`host/${n}`)} />
+        <RasterHost pose={pose} face={face} prevPose={prevPose} sinceChange={sinceChange} mouth={mouth} viseme={viseme} lookX={lookX} attention={attention} frame={frame} width={1000} src={(n) => (hostSrc ? hostSrc(n) : staticFile(`host/${n}`))} />
       ) : (
         <Avatar config={config} pose={pose} face={face} mouth={mouth} viseme={viseme} frame={frame} width={1000} style={{marginTop: -20}} />
       )}

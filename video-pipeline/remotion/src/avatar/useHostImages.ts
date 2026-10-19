@@ -1,31 +1,35 @@
 import {useEffect, useState} from 'react';
-import {continueRender, delayRender, staticFile} from 'remotion';
+import {continueRender, delayRender, prefetch, staticFile} from 'remotion';
 import hostInfo from '../../public/host/host.json';
 
-const cache = new Map<string, Promise<void>>();
+const urls = new Map<string, string>();
+let loading: Promise<void> | null = null;
 
-const load = (url: string) =>
-  cache.get(url) ??
-  (() => {
-    const p = new Promise<void>((resolve) => {
-      const img = new Image();
-      img.onload = () => resolve();
-      img.onerror = () => resolve();
-      img.src = url;
-    });
-    cache.set(url, p);
-    return p;
-  })();
+/** Fetches every layer once into memory (blob URLs) so a frame can never catch a layer half-loaded or evicted. */
+const loadAll = () =>
+  loading ??
+  (loading = Promise.all(
+    Object.keys(hostInfo.boxes).map(async (n) => {
+      const file = staticFile(`host/${n}`);
+      try {
+        const blob = await prefetch(file, {method: 'blob-url'}).waitUntilDone();
+        urls.set(n, blob);
+      } catch {
+        urls.set(n, file);
+      }
+    }),
+  ).then(() => undefined));
 
-/** Holds the frame until every layer of the painted host has decoded, so an SVG <image> never renders blank. */
-export const useHostImages = (): boolean => {
-  const [ready, setReady] = useState(false);
+/** Holds the frame until the painted host's layers are in memory; returns the resolver for layer URLs, or null while loading. */
+export const useHostImages = (): ((name: string) => string) | null => {
+  const [ready, setReady] = useState(urls.size === Object.keys(hostInfo.boxes).length);
   useEffect(() => {
+    if (ready) return;
     const handle = delayRender('host layers');
-    Promise.all(Object.keys(hostInfo.boxes).map((n) => load(staticFile(`host/${n}`)))).then(() => {
+    loadAll().then(() => {
       setReady(true);
       continueRender(handle);
     });
-  }, []);
-  return ready;
+  }, [ready]);
+  return ready ? (n) => urls.get(n) ?? staticFile(`host/${n}`) : null;
 };
