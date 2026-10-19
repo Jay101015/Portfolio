@@ -9,6 +9,8 @@ built from it by `pipeline/host_rig.py` into `remotion/public/host/`.
 1. Generate or commission a bust portrait in the house style (webtoon / manhwa
    character art: painted cel shading, fine dark line work, facing the camera,
    neutral closed mouth, eyes open, plain light background, about 1856x2304).
+   The current one is a flat vector illustration with round glasses; set
+   `"style": "flat"` or `"painted"` in landmarks.json to match the art.
    The current one came from a text-to-image tool with this brief:
 
    > Korean webtoon manhwa character art, painterly digital illustration with

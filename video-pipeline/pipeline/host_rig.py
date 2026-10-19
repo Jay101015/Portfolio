@@ -8,6 +8,7 @@ and writes the layers the raster host rig draws:
   remotion/public/host/brow-l.png     the brows as separate patches (moved/rotated for expressions)
   remotion/public/host/brow-r.png
   remotion/public/host/mouth-heal.png skin painted over the mouth, shown under drawn mouth shapes
+  remotion/public/host/glasses.png    the glasses frames, drawn above the eyes (if the landmarks name a glasses box)
   remotion/public/host/host.json      boxes, centres and sampled colours the rig needs
 
 The landmarks are picked once per portrait (see projects/host-art/README.md).
@@ -91,6 +92,11 @@ def build(portrait: Path, landmarks: Path, out: Path) -> dict:
     L = json.loads(landmarks.read_text())
     im = cv2.imread(str(portrait))
     h, w = im.shape[:2]
+    # small things to paint out first (an earring, a stray mark): [x, y, radius]
+    for x, y, r in L.get("remove_spots", []):
+        spot = np.zeros((h, w), np.uint8)
+        cv2.circle(spot, (int(x), int(y)), int(r), 255, -1)
+        im = cv2.inpaint(im, spot, int(r) + 4, cv2.INPAINT_TELEA)
     out.mkdir(parents=True, exist_ok=True)
     fg = key_background(im)
 
@@ -127,6 +133,20 @@ def build(portrait: Path, landmarks: Path, out: Path) -> dict:
     def feather(m: np.ndarray, k: int = 2) -> np.ndarray:
         return cv2.GaussianBlur(m, (k * 2 + 1, k * 2 + 1), 0)
 
+    # glasses: the dark frame lines inside the glasses box, leaving out the brows and the eyes themselves
+    glasses = None
+    if L.get("glasses_box"):
+        gx0, gy0, gx1, gy1 = L["glasses_box"]
+        g = np.zeros((h, w), np.uint8)
+        v = cv2.cvtColor(im, cv2.COLOR_BGR2HSV)[:, :, 2]
+        g[gy0:gy1, gx0:gx1] = (v[gy0:gy1, gx0:gx1] < L.get("glasses_vmax", 70)).astype(np.uint8) * 255
+        for b in (L["brow_l"], L["brow_r"]):
+            g[b[1] : b[3], b[0] : b[2]] = 0
+        for e in (L["eye_shape_l"], L["eye_shape_r"]):
+            cv2.ellipse(g, (e["cx"], e["cy"]), (e["rx"] + L.get("glasses_eye_margin", 18), e["ry"] + L.get("glasses_eye_margin", 18)), 0, 0, 360, 0, -1)
+        g = cv2.dilate(g, np.ones((3, 3), np.uint8))
+        glasses = cv2.GaussianBlur(g, (3, 3), 0)
+
     layers = {
         "body.png": (cut(im, body_alpha), None),
         "head.png": (cut(healed, head_alpha), None),
@@ -134,6 +154,8 @@ def build(portrait: Path, landmarks: Path, out: Path) -> dict:
         "brow-r.png": (cut(im, feather(brow_r), L["brow_r"]), L["brow_r"]),
         "mouth-heal.png": (cut(mouth_healed, cv2.min(mouth_soft, fg), L["mouth_box"]), L["mouth_box"]),
     }
+    if glasses is not None:
+        layers["glasses.png"] = (cut(im, glasses, L["glasses_box"]), L["glasses_box"])
     boxes = {}
     for name, (img, box) in layers.items():
         cv2.imwrite(str(out / name), img)
@@ -146,6 +168,8 @@ def build(portrait: Path, landmarks: Path, out: Path) -> dict:
     info = {
         "width": w,
         "height": h,
+        "style": L.get("style", "painted"),
+        "glasses": glasses is not None,
         "boxes": boxes,
         "brow_l": centroid(brow_l),
         "brow_r": centroid(brow_r),

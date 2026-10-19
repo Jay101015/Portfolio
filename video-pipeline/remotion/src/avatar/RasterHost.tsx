@@ -198,7 +198,9 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
   const lipU = C.lip_upper;
   const lipL = C.lip_lower;
   const sleeve = C.sleeve;
-  const sleeveS = C.sleeve_shadow;
+  const sleeveS = C.sleeve_shadow === C.sleeve ? darken(C.sleeve, 0.3) : C.sleeve_shadow;
+  const flat = (info as {style?: string}).style === 'flat';
+  const hasGlasses = Boolean((info as {glasses?: boolean}).glasses) && 'glasses.png' in info.boxes;
 
   // ------------------------------------------------------------ body tween
   const motion: Motion = {f2, talk: loud};
@@ -459,12 +461,12 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
     <svg viewBox={`0 0 ${W} ${VIEW_H}`} width={width} style={{overflow: 'visible', transform: flip ? 'scaleX(-1)' : undefined, ...style}}>
       <defs>
         <linearGradient id={`sleeve-${uid}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor={lighten(sleeve, 0.08)} />
-          <stop offset="1" stopColor={sleeveS} />
+          <stop offset="0" stopColor={flat ? sleeve : lighten(sleeve, 0.08)} />
+          <stop offset="1" stopColor={flat ? sleeve : sleeveS} />
         </linearGradient>
         <radialGradient id={`skin-${uid}`} cx="0.35" cy="0.3" r="0.9">
-          <stop offset="0" stopColor={lighten(skin, 0.1)} />
-          <stop offset="1" stopColor={skinS} />
+          <stop offset="0" stopColor={flat ? skin : lighten(skin, 0.1)} />
+          <stop offset="1" stopColor={flat ? skin : skinS} />
         </radialGradient>
       </defs>
       <g transform={`translate(0 ${bob}) rotate(${B.bodyRot} ${nx} ${VIEW_H}) translate(${nx} ${VIEW_H}) scale(1 ${1 + breath * 0.004}) translate(${-nx} ${-VIEW_H})`}>
@@ -482,6 +484,7 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
             <Eye side="l" />
             <Eye side="r" />
             <Mouth />
+            {hasGlasses ? <Layer name={'glasses.png' as keyof typeof info.boxes} /> : null}
           </g>
           {facepalmAmt > 0 ? (
             <g transform={`translate(${(1 - facepalmAmt) * 300} ${(1 - facepalmAmt) * 400})`} opacity={facepalmAmt}>
