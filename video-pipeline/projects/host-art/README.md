@@ -13,11 +13,12 @@ built from it by `pipeline/host_rig.py` into `remotion/public/host/`.
    `"style": "flat"` or `"painted"` in landmarks.json to match the art.
    The current one came from a text-to-image tool with this brief:
 
-   > Korean webtoon manhwa character art, painterly digital illustration with
-   > soft gradients and crisp cel-shaded shadow shapes ... bust portrait of a
-   > young Black man ... high-top fade with tight curls ... red hood bunched
-   > around the neck, dark charcoal hoodie, white drawstrings ... plain soft
-   > grey-blue background, no text.
+   > Webtoon manhwa style digital illustration, bust portrait of a young Black
+   > man ... thin round wire glasses ... high-top fade with dense tight black
+   > curls, shaved faded sides and a sharp line-up ... dark charcoal hoodie
+   > with a bright red hood bunched up around the neck, white drawstrings ...
+   > clean line art, hard two-tone cel shading ... plain flat light grey-blue
+   > background, no text.
 
    If the sandbox cannot download the result, run the **Fetch assets** workflow
    on GitHub with the image URL and `video-pipeline/projects/host-art/gen` as

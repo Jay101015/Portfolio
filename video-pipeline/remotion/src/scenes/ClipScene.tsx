@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, OffthreadVideo, staticFile, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Loop, OffthreadVideo, staticFile, useVideoConfig} from 'remotion';
 import type {Brand, Scene} from '../types';
 import {Reveal} from '../components/Reveal';
 import {useLayout} from '../components/layout';
@@ -14,8 +14,13 @@ export const ClipScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}
   const from = Number(scene.props.from ?? 0);
   const vol = Number(scene.props.vol ?? 0);
   const caption: string | undefined = scene.props.caption;
+  // clipDur (seconds, from the build's ffprobe) keeps the player inside the file: a frame requested past the end never returns
+  const clipDur = scene.props.clipDur ? Number(scene.props.clipDur) : undefined;
+  const startFrom = Math.round(from * fps);
+  const endAt = clipDur ? Math.max(startFrom + 1, Math.floor(clipDur * fps) - 2) : undefined;
+  const player = <OffthreadVideo src={staticFile(src ?? '')} startFrom={startFrom} endAt={endAt} volume={vol} muted={vol <= 0} style={{width: '100%', height: '100%', objectFit: 'cover'}} />;
   const video = src ? (
-    <OffthreadVideo src={staticFile(src)} startFrom={Math.round(from * fps)} volume={vol} muted={vol <= 0} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+    scene.props.loop && endAt ? <Loop durationInFrames={Math.max(1, endAt - startFrom)}>{player}</Loop> : player
   ) : (
     <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', background: '#222', color: '#aaa', fontSize: 28 * u, textAlign: 'center', padding: 30 * u}}>
       footage placeholder: put the file in media/ and set src=

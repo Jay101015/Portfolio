@@ -93,6 +93,31 @@ def fetch_sources(project: str) -> None:
                     os.remove(dst)
 
 
+def fit_clip(sc: dict, path: str) -> list[str]:
+    """Keep a clip's playback inside the file: a frame requested past the end of a video never returns
+    and the render hangs. Pulls the start offset back when the scene would run off the end, and loops
+    a file shorter than the scene."""
+    notes = []
+    try:
+        dur = al.audio_duration(path)
+    except Exception:  # noqa: BLE001 - ffprobe missing or an unreadable file: leave the clip as written
+        return notes
+    p = sc["props"]
+    p["clipDur"] = round(dur, 3)
+    scene_len = float(sc["end"]) - float(sc["start"])
+    start = float(p.get("from", 0) or 0)
+    margin = 0.3
+    if dur - margin < scene_len:
+        p["from"] = 0.0
+        p["loop"] = True
+        notes.append(f"scene {sc['id']}: '{os.path.basename(path)}' is {dur:.1f}s, shorter than the scene ({scene_len:.1f}s); it loops")
+    elif start + scene_len > dur - margin:
+        new_start = max(0.0, dur - margin - scene_len)
+        notes.append(f"scene {sc['id']}: from={start:g} would run off the end of '{os.path.basename(path)}' ({dur:.1f}s); starting at {new_start:.1f}s instead")
+        p["from"] = round(new_start, 2)
+    return notes
+
+
 def resolve_media(sb: dict, project: str, slug: str) -> list[str]:
     """Point every src at the published copy; swap a clip for its fallback still when the footage is not there."""
     notes = []
@@ -113,6 +138,8 @@ def resolve_media(sb: dict, project: str, slug: str) -> list[str]:
                     p.pop("vol", None)
                     src = fb
             if src and not src.startswith("projects/") and os.path.exists(os.path.join(src_dir, src)):
+                if sc["type"] == "clip":
+                    notes.extend(fit_clip(sc, os.path.join(src_dir, src)))
                 p["src"] = f"projects/{slug}/{folder}/{src}"
     for sc in sb["scenes"]:
         src = sc["props"].get("src")

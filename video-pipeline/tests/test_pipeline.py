@@ -1,4 +1,5 @@
 """Run with:  . .venv/bin/activate && python -m unittest discover -s tests -v"""
+import os
 import unittest
 
 from pipeline.align import align, normalize
@@ -145,6 +146,28 @@ class MediaTests(unittest.TestCase):
 class AlignTests(unittest.TestCase):
     def _transcript(self, words, start=0.5, step=0.4):
         return [{"w": w, "s": start + i * step, "e": start + i * step + 0.3} for i, w in enumerate(words)]
+
+    def test_clip_offset_is_pulled_inside_the_file(self):
+        import shutil
+        import subprocess
+        import tempfile
+        from pipeline.build import resolve_media
+        if not shutil.which("ffmpeg"):
+            self.skipTest("ffmpeg not installed")
+        with tempfile.TemporaryDirectory() as d:
+            os.makedirs(os.path.join(d, "media"))
+            clip = os.path.join(d, "media", "short.mp4")
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "color=c=black:s=64x64:d=4", "-r", "10", clip], check=True)
+            sb = {"scenes": [
+                {"id": 1, "type": "clip", "start": 0, "end": 2, "props": {"src": "short.mp4", "from": 3}},
+                {"id": 2, "type": "clip", "start": 2, "end": 8, "props": {"src": "short.mp4", "from": 0}},
+            ]}
+            notes = resolve_media(sb, d, "t")
+            p1, p2 = sb["scenes"][0]["props"], sb["scenes"][1]["props"]
+            self.assertLess(p1["from"] + 2, p1["clipDur"])
+            self.assertTrue(p2.get("loop"))
+            self.assertEqual(p2["from"], 0.0)
+            self.assertTrue(any("run off the end" in n for n in notes))
 
     def test_scene_boundaries_follow_speech(self):
         sb = parse_script(TAGGED)

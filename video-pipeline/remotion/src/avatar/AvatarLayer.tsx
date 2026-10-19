@@ -48,11 +48,11 @@ export const AvatarLayer: React.FC<Props> = ({config, pose, face, prevPose, prev
   let left = 0;
   let bottom = 0;
   if (pos === 'full') {
-    w = (isVertical ? 1.0 : 0.54) * width;
+    w = (isVertical ? 0.86 : 0.54) * width;
     left = (width - w) / 2;
     bottom = isVertical ? vBottom : -0.1 * height;
   } else if (pos === 'side-left' || pos === 'side-right') {
-    w = (isVertical ? 0.96 : 0.5) * width;
+    w = (isVertical ? 0.78 : 0.5) * width;
     left = pos === 'side-left' ? -0.06 * width : width - w + 0.06 * width;
     bottom = isVertical ? vBottom : -0.06 * height;
   } else {

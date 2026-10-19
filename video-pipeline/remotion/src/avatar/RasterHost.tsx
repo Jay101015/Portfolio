@@ -385,9 +385,10 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
     if (sinceChange >= life || sinceChange < 2) return null;
     const pop = easeOutBack(clamp01((sinceChange - 2) / 6));
     const fade = sinceChange > life - 8 ? (life - sinceChange) / 8 : 1;
-    const unflip = flip ? 'scale(-1 1)' : '';
+    // the marks sit on the side of the head that faces the frame: when the drawing is flipped the whole group is mirrored
+    // back, which also cancels the flip for the text
     const text = (x: number, y: number, s: string, size: number, color: string, rot = 0) => (
-      <text x={0} y={0} fontSize={size} fontFamily="'Gochi Hand', 'Patrick Hand', cursive" fontWeight={700} fill={color} stroke={INK} strokeWidth={12} paintOrder="stroke" textAnchor="middle" transform={`translate(${x} ${y}) rotate(${rot}) ${unflip}`}>
+      <text x={0} y={0} fontSize={size} fontFamily="'Gochi Hand', 'Patrick Hand', cursive" fontWeight={700} fill={color} stroke={INK} strokeWidth={12} paintOrder="stroke" textAnchor="middle" transform={`translate(${x} ${y}) rotate(${rot})`}>
         {s}
       </text>
     );
@@ -395,17 +396,17 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
     if (!kind) return null;
     const wob = Math.sin(sinceChange / 3) * 10;
     return (
-      <g opacity={fade}>
+      <g opacity={fade} transform={flip ? `translate(${W} 0) scale(-1 1)` : undefined}>
         {kind === 'bang' ? (
           <g transform={`translate(1380 330) scale(${pop})`}>
             {[...Array(8)].map((_, i) => {
               const a = (i / 8) * Math.PI * 2;
               return <line key={i} x1={Math.cos(a) * 150} y1={Math.sin(a) * 150} x2={Math.cos(a) * (210 + (i % 2) * 30)} y2={Math.sin(a) * (210 + (i % 2) * 30)} stroke={INK} strokeWidth={14} strokeLinecap="round" />;
             })}
-            {text(0, 85, '!', 320, RED, flip ? 12 : -12)}
+            {text(0, 85, '!', 320, RED, -12)}
           </g>
         ) : null}
-        {kind === 'question' ? <g transform={`translate(${1370 + wob} ${360 - sinceChange * 2}) scale(${pop})`}>{text(0, 90, '?', 290, GOLD, flip ? -14 : 14)}</g> : null}
+        {kind === 'question' ? <g transform={`translate(${1370 + wob} ${360 - sinceChange * 2}) scale(${pop})`}>{text(0, 90, '?', 290, GOLD, 14)}</g> : null}
         {kind === 'anger' ? (
           <g transform={`translate(1130 560) scale(${pop * 2})`} stroke={RED} strokeWidth={8} fill="none" strokeLinecap="round">
             <path d="M-24,-10 Q-10,-22 4,-10 M4,-10 Q18,2 4,14 M4,14 Q-10,26 -24,14 M-24,14 Q-38,2 -24,-10" transform={`rotate(${sinceChange * 2})`} />
