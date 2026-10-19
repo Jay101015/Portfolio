@@ -73,11 +73,11 @@ const poseParams = (pose: Pose | 'gesture', m: Motion): PoseP => {
     case 'crossed':
       return {...base, L: {elbow: [140, 2150], hand: [1300, 2000], kind: 'none', angle: 0, front: false}, R: {elbow: [1760, 2160], hand: [540, 2020], kind: 'fist', angle: 0, front: true}, tilt: 4, headY: 10};
     case 'think':
-      return {...base, R: {elbow: [1800, 2150], hand: [900, 1320], kind: 'fist', angle: 0, front: true}, tilt: -6, lean: 16, headY: 6};
+      return {...base, R: {elbow: [1800, 2150], hand: [1000, 1450], kind: 'fist', angle: -58, front: true}, tilt: -6, lean: 16, headY: 6};
     case 'shocked':
       return {...base, L: {elbow: [-60, 1600], hand: [330, 900], kind: 'open', angle: -24, front: true}, R: {elbow: [1900, 1600], hand: [1500, 900], kind: 'open', angle: 24, front: true}, headY: -36, shoulderY: -24};
     case 'thumbsup':
-      return {...base, R: {elbow: [1920, 1950], hand: [1800, 1200], kind: 'thumb', angle: 0, front: true}, tilt: 3, lean: -8};
+      return {...base, R: {elbow: [1900, 1950], hand: [1640, 1180], kind: 'thumb', angle: -10, front: true}, tilt: 3, lean: -8};
     case 'facepalm':
       return {...base, R: {elbow: [1860, 2000], hand: [1200, 1200], kind: 'none', angle: 0, front: true}, tilt: 6, headY: 36, lean: 10};
     case 'laugh': {
@@ -221,6 +221,11 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
   const glanceLen = 20 + attention * 40;
   const glancing = lookX !== 0 && hash(ci + 7) < attention + 0.2 && phase < glanceLen && sinceChange > 24;
   const headTurn = glancing ? lookX * 2.5 : 0;
+  const microX = Math.round((hash(Math.floor(frame / 9)) - 0.5) * 6);
+  const microY = Math.round((hash(Math.floor(frame / 11) + 3) - 0.5) * 4);
+  const gazeX = glancing ? lookX * 22 : microX;
+  const gazeY = glancing ? 6 : microY;
+  const gazeInfo = (info as {gaze?: {l: {cx: number; cy: number; r: number}; r: {cx: number; cy: number; r: number}} | null}).gaze ?? null;
   const blinkSlot = Math.floor((frame + 23) / 41);
   const blinkFrame = (frame + 23) % 41;
   const randomBlink = hash(blinkSlot * 3) < 0.75 && blinkFrame < 4;
@@ -265,12 +270,23 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
     }
     const lo = side === 'l' ? F.lidOuter : F.lidOuterR;
     const li = side === 'l' ? F.lidInner : F.lidInnerR;
-    if (lo < 0.05 && li < 0.05) return null;
+    const pupil = gazeInfo ? (
+      <g>
+        <clipPath id={`eye-${uid}-${side}`}>
+          <ellipse cx={e.cx} cy={e.cy} rx={e.rx - 6} ry={e.ry - 3} />
+        </clipPath>
+        <g clipPath={`url(#eye-${uid}-${side})`}>
+          <Layer name={`iris-${side}.png` as keyof typeof info.boxes} transform={`translate(${gazeX} ${gazeY})`} />
+        </g>
+      </g>
+    ) : null;
+    if (lo < 0.05 && li < 0.05) return pupil;
     // a skin-coloured lid comes down over the eye: 0 = open, 1 = shut
     const yo = e.cy - e.ry + lo * (2 * e.ry);
     const yi = e.cy - e.ry + li * (2 * e.ry);
     return (
       <g>
+        {pupil}
         <clipPath id={`lid-${uid}-${side}`}>
           <ellipse cx={e.cx} cy={e.cy} rx={e.rx + 4} ry={e.ry + 4} />
         </clipPath>
@@ -349,19 +365,41 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
   };
 
   // ------------------------------------------------------------ arms and hands, painted to match the hoodie and skin
+  /** A hand in the portrait's flat style: palm, four tapered fingers, a thumb. Origin at the wrist, fingers point up. */
   const Hand: React.FC<{kind: HandKind; angle: number}> = ({kind, angle}) => {
     if (kind === 'none') return null;
-    const finger = (x: number, rot: number, h = 140) => (
-      <rect key={`${x}${rot}`} x={x - 24} y={-h - 66} width={48} height={h + 30} rx={24} fill={`url(#skin-${uid})`} stroke={INK} strokeWidth={6} transform={`rotate(${rot})`} />
+    const fill = `url(#skin-${uid})`;
+    const line = 7;
+    const finger = (x: number, rot: number, len: number, w = 40) => (
+      <g key={`${x}${rot}`} transform={`translate(${x} -70) rotate(${rot})`}>
+        <path d={`M${-w / 2},0 L${-w / 2 + 4},${-len + 18} Q${-w / 2 + 4},${-len} ${0},${-len} Q${w / 2 - 4},${-len} ${w / 2 - 4},${-len + 18} L${w / 2},0 Z`} fill={fill} stroke={INK} strokeWidth={line} strokeLinejoin="round" />
+        <path d={`M${-w / 2 + 8},${-len * 0.55} Q0,${-len * 0.5} ${w / 2 - 8},${-len * 0.55}`} stroke={INK} strokeWidth={3} fill="none" opacity={0.5} strokeLinecap="round" />
+      </g>
     );
+    const palm = <path d="M-78,80 L-82,-40 Q-82,-78 -44,-80 L54,-80 Q86,-78 86,-40 L82,80 Q0,110 -78,80 Z" fill={fill} stroke={INK} strokeWidth={line} strokeLinejoin="round" />;
+    const knuckles = (
+      <g fill={fill} stroke={INK} strokeWidth={line}>
+        {[-58, -20, 18, 56].map((x, i) => (
+          <circle key={i} cx={x} cy={-78 + Math.abs(i - 1.5) * 6} r={22} />
+        ))}
+      </g>
+    );
+    const thumbSide = (
+      <g transform="translate(-86 -16) rotate(-52)">
+        <path d="M-20,0 L-16,-110 Q0,-128 16,-110 L20,0 Z" fill={fill} stroke={INK} strokeWidth={line} strokeLinejoin="round" />
+      </g>
+    );
+    const thumbAcross = <path d="M-74,-30 Q-20,-10 40,-12 Q72,-10 70,16 Q66,40 36,38 Q-20,40 -74,20 Z" fill={fill} stroke={INK} strokeWidth={line} strokeLinejoin="round" />;
     return (
-      <g transform={`rotate(${angle})`}>
-        {kind === 'open' ? [finger(-62, -24, 126), finger(-18, -8, 156), finger(26, 6, 156), finger(64, 20, 130)] : null}
-        {kind === 'point' ? finger(0, 0, 166) : null}
-        {kind === 'thumb' ? finger(-18, -18, 140) : null}
-        <circle r={96} fill={`url(#skin-${uid})`} stroke={INK} strokeWidth={7} />
-        <path d="M-84,26 Q0,96 84,26" fill={skinS} opacity={0.45} />
-        {kind === 'fist' ? <path d="M-58,-18 Q0,-52 58,-18 M-58,26 Q0,-6 58,26" stroke={INK} strokeWidth={6} fill="none" strokeLinecap="round" /> : null}
+      <g transform={`rotate(${angle}) scale(1.15)`}>
+        {kind === 'open' ? [finger(-62, -16, 150, 42), finger(-20, -5, 178, 42), finger(22, 5, 172, 42), finger(60, 15, 140, 40)] : null}
+        {kind === 'point' ? finger(-20, -4, 190, 42) : null}
+        {kind === 'thumb' ? <g transform="translate(-56 6) rotate(-20)">{finger(0, 0, 150, 50)}</g> : null}
+        {kind === 'open' || kind === 'point' ? thumbSide : null}
+        {palm}
+        {kind === 'fist' || kind === 'point' || kind === 'thumb' ? knuckles : null}
+        {kind === 'fist' || kind === 'point' || kind === 'thumb' ? thumbAcross : null}
+        <path d="M-66,60 Q0,96 70,60" fill={skinS} opacity={0.35} />
       </g>
     );
   };
@@ -489,14 +527,10 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
           </g>
           {facepalmAmt > 0 ? (
             <g transform={`translate(${(1 - facepalmAmt) * 300} ${(1 - facepalmAmt) * 400})`} opacity={facepalmAmt}>
-              <polyline points="1560,1760 1300,1200 1010,900" fill="none" stroke={INK} strokeWidth={210} strokeLinecap="round" strokeLinejoin="round" />
-              <polyline points="1560,1760 1300,1200 1010,900" fill="none" stroke={`url(#sleeve-${uid})`} strokeWidth={194} strokeLinecap="round" strokeLinejoin="round" />
-              <g transform="translate(800 820) rotate(-14)">
-                {[-140, -70, 0, 70].map((x, i) => (
-                  <rect key={i} x={x - 30} y={-220 + Math.abs(i - 1.5) * 18} width={60} height={200} rx={30} fill={`url(#skin-${uid})`} stroke={INK} strokeWidth={6} />
-                ))}
-                <ellipse cx={0} cy={0} rx={200} ry={120} fill={`url(#skin-${uid})`} stroke={INK} strokeWidth={7} />
-                <path d="M-160,30 Q0,100 160,30" fill={skinS} opacity={0.4} />
+              <polyline points="1600,1760 1380,1300 1060,1040" fill="none" stroke={INK} strokeWidth={210} strokeLinecap="round" strokeLinejoin="round" />
+              <polyline points="1600,1760 1380,1300 1060,1040" fill="none" stroke={`url(#sleeve-${uid})`} strokeWidth={194} strokeLinecap="round" strokeLinejoin="round" />
+              <g transform="translate(1000 1010) rotate(-62) scale(1.35)">
+                <Hand kind="open" angle={0} />
               </g>
             </g>
           ) : null}

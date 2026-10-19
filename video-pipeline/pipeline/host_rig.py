@@ -9,6 +9,8 @@ and writes the layers the raster host rig draws:
   remotion/public/host/brow-r.png
   remotion/public/host/mouth-heal.png skin painted over the mouth, shown under drawn mouth shapes
   remotion/public/host/glasses.png    the glasses frames, drawn above the eyes (if the landmarks name a glasses box)
+  remotion/public/host/iris-l.png     the pupils, shifted for gaze, with the eye white healed beneath (light-sclera portraits)
+  remotion/public/host/iris-r.png
   remotion/public/host/host.json      boxes, centres and sampled colours the rig needs
 
 The landmarks are picked once per portrait (see projects/host-art/README.md).
@@ -133,6 +135,33 @@ def build(portrait: Path, landmarks: Path, out: Path) -> dict:
     def feather(m: np.ndarray, k: int = 2) -> np.ndarray:
         return cv2.GaussianBlur(m, (k * 2 + 1, k * 2 + 1), 0)
 
+    # pupils: on a portrait with light eye whites, the dark pupil inside each eye becomes a layer that
+    # slides for gaze, and the white is painted under it
+    gaze = {}
+    for side in ("l", "r"):
+        e = L[f"eye_shape_{side}"]
+        inner = np.zeros((h, w), np.uint8)
+        cv2.ellipse(inner, (e["cx"], e["cy"]), (max(4, e["rx"] - 8), max(4, e["ry"] - 5)), 0, 0, 360, 255, -1)
+        v = cv2.cvtColor(healed, cv2.COLOR_BGR2HSV)[:, :, 2]
+        white = (inner > 0) & (v > 150)
+        if white.sum() < 200:
+            continue
+        sclera = np.median(healed[white].reshape(-1, 3), axis=0)
+        pupil = ((inner > 0) & (v < L.get("iris_vmax", 90))).astype(np.uint8) * 255
+        pupil = cv2.morphologyEx(pupil, cv2.MORPH_CLOSE, np.ones((5, 5), np.uint8))
+        n, lab, stats, cent = cv2.connectedComponentsWithStats(pupil)
+        if n < 2:
+            continue
+        big = 1 + int(np.argmax(stats[1:, cv2.CC_STAT_AREA]))
+        pupil = np.where(lab == big, 255, 0).astype(np.uint8)
+        box = L[f"eye_{side}"]
+        layers_extra = globals().setdefault("_extra", {})
+        layers_extra[f"iris-{side}.png"] = (cut(healed, cv2.GaussianBlur(cv2.dilate(pupil, np.ones((3, 3), np.uint8)), (3, 3), 0), box), box)
+        fill = (cv2.dilate(pupil, np.ones((5, 5), np.uint8)) > 0) & (inner > 0)
+        healed[fill] = sclera.astype(np.uint8)
+        ys, xs = np.where(pupil > 0)
+        gaze[side] = {"cx": int(xs.mean()), "cy": int(ys.mean()), "r": int(max(xs.max() - xs.min(), ys.max() - ys.min()) / 2)}
+
     # glasses: the dark frame lines inside the glasses box, leaving out the brows and the eyes themselves
     glasses = None
     if L.get("glasses_box"):
@@ -156,6 +185,7 @@ def build(portrait: Path, landmarks: Path, out: Path) -> dict:
     }
     if glasses is not None:
         layers["glasses.png"] = (cut(im, glasses, L["glasses_box"]), L["glasses_box"])
+    layers.update(globals().pop("_extra", {}))
     boxes = {}
     for name, (img, box) in layers.items():
         cv2.imwrite(str(out / name), img)
@@ -170,6 +200,7 @@ def build(portrait: Path, landmarks: Path, out: Path) -> dict:
         "height": h,
         "style": L.get("style", "painted"),
         "glasses": glasses is not None,
+        "gaze": gaze if len(gaze) == 2 else None,
         "boxes": boxes,
         "brow_l": centroid(brow_l),
         "brow_r": centroid(brow_r),
