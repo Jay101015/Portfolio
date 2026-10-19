@@ -7,7 +7,7 @@ Film: Jurassic Park (under copyright: only thematic free-use b-roll is searched;
 | 3 | rainforest jungle aerial | not found |  |  |
 | 4 | | already in media/: glass.png | | |
 | 6 | tyrannosaurus rex animation | downloaded 06-tyrannosaurus-rex-animation.mp4 | Public domain | Arctic Giant, The by Max Fleischer, Public domain, via Internet Archive |
-| 8 | velociraptor dinosaur | downloaded 08-velociraptor-dinosaur.webm | Public domain | Colorado Museum Makes No Bones.webm by VOA, Public domain, via Wikimedia Commons |
+| 8 | | already in media/: 08-velociraptor-dinosaur.webm | | |
 
 ## Not found
 
