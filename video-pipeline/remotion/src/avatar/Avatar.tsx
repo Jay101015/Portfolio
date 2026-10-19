@@ -50,7 +50,7 @@ export const defaultAvatar: AvatarConfig = {
   skin: '#7a4a28',
   hair: 'fade',
   hairColor: '#17130f',
-  facialHair: 'chinstrap',
+  facialHair: 'none',
   glasses: 'none',
   eyeColor: '#3a2214',
   shirt: 'collared',
@@ -61,6 +61,7 @@ export const defaultAvatar: AvatarConfig = {
 };
 
 const INK = '#1a1714';
+const LINE = 8;
 const LIP = '#8a4a44';
 const LIP_DARK = '#4a2320';
 const MOUTH = '#3a1414';
@@ -76,8 +77,8 @@ const darken = (hex: string, amt = 0.25) => {
 };
 
 type Pt = [number, number];
-const SH_L: Pt = [168, 640];
-const SH_R: Pt = [432, 640];
+const SH_L: Pt = [176, 648];
+const SH_R: Pt = [424, 648];
 
 type HandKind = 'fist' | 'open' | 'point' | 'thumb' | 'none';
 type ArmSpec = {from: Pt; elbow: Pt; hand: Pt; handKind?: HandKind; angle?: number};
@@ -156,15 +157,15 @@ export const Avatar: React.FC<Props> = ({config: c, pose, face, mouth, frame, wi
     }
   })();
   const Brow: React.FC<{cx: number; y: number; a: number}> = ({cx, y, a}) => (
-    <rect x={cx - 44} y={y - 11} width={88} height={22} rx={11} fill={darken(c.hairColor, 0.1)} stroke={INK} strokeWidth={5} transform={`rotate(${a} ${cx} ${y})`} />
+    <rect x={cx - 48} y={y - 13} width={96} height={26} rx={13} fill={darken(c.hairColor, 0.1)} stroke={INK} strokeWidth={5} transform={`rotate(${a} ${cx} ${y})`} />
   );
 
   // ------------------------------------------------------------ eyes
   const eyesClosed = blinking || expr === 'closed';
   const Eye: React.FC<{cx: number; side: 1 | -1}> = ({cx, side}) => {
-    const cy = 352;
-    const rx = 34;
-    const ry = expr === 'surprised' ? 44 : 40;
+    const cy = 350;
+    const rx = 42;
+    const ry = expr === 'surprised' ? 54 : 48;
     const id = `eye-${cx}`;
     if (expr === 'laugh') {
       return <path d={`M${cx - 30},${cy + 4} Q${cx},${cy - 34} ${cx + 30},${cy + 4}`} stroke={INK} strokeWidth={8} fill="none" strokeLinecap="round" />;
@@ -175,12 +176,12 @@ export const Avatar: React.FC<Props> = ({config: c, pose, face, mouth, frame, wi
     }
     // lid cover per expression, as a polygon inside the eye clip
     let lid: string | null = null;
-    const inner = cx + 40 * side;
-    const outer = cx - 40 * side;
-    if (expr === 'angry') lid = `M${outer},${cy - 48} L${inner},${cy - 48} L${inner},${cy - 6} L${outer},${cy - 30} Z`;
-    if (expr === 'sad') lid = `M${outer},${cy - 48} L${inner},${cy - 48} L${inner},${cy - 30} L${outer},${cy - 6} Z`;
-    if (expr === 'smug') lid = `M${outer},${cy - 48} L${inner},${cy - 48} L${inner},${cy - 14} L${outer},${cy - 10} Z`;
-    if (expr === 'confused' && side === -1) lid = `M${outer},${cy - 48} L${inner},${cy - 48} L${inner},${cy - 16} L${outer},${cy - 16} Z`;
+    const inner = cx + 48 * side;
+    const outer = cx - 48 * side;
+    if (expr === 'angry') lid = `M${outer},${cy - 58} L${inner},${cy - 58} L${inner},${cy - 6} L${outer},${cy - 34} Z`;
+    if (expr === 'sad') lid = `M${outer},${cy - 58} L${inner},${cy - 58} L${inner},${cy - 34} L${outer},${cy - 6} Z`;
+    if (expr === 'smug') lid = `M${outer},${cy - 58} L${inner},${cy - 58} L${inner},${cy - 14} L${outer},${cy - 8} Z`;
+    if (expr === 'confused' && side === -1) lid = `M${outer},${cy - 58} L${inner},${cy - 58} L${inner},${cy - 16} L${outer},${cy - 16} Z`;
     const lidEdge = lid ? lid.split('L').slice(2).map((p) => p.replace('Z', '').trim()) : null;
     return (
       <g>
@@ -191,9 +192,10 @@ export const Avatar: React.FC<Props> = ({config: c, pose, face, mouth, frame, wi
         </defs>
         <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill="#fbf7f0" />
         <g clipPath={`url(#${id})`}>
-          <circle cx={cx + 4} cy={cy + 6} r={20} fill={c.eyeColor} />
-          <circle cx={cx + 5} cy={cy + 7} r={11} fill={INK} />
-          <circle cx={cx + 12} cy={cy - 6} r={6} fill="#fff" />
+          <circle cx={cx + 5} cy={cy + 8} r={25} fill={c.eyeColor} />
+          <circle cx={cx + 6} cy={cy + 9} r={14} fill={INK} />
+          <circle cx={cx + 15} cy={cy - 6} r={8} fill="#fff" />
+          <circle cx={cx - 2} cy={cy + 20} r={4} fill="#fff" opacity={0.8} />
           {lid ? <path d={lid} fill={c.skin} /> : null}
         </g>
         {lidEdge ? <path d={`M${lidEdge[0]} L${lidEdge[1]}`} stroke={INK} strokeWidth={6} strokeLinecap="round" /> : null}
@@ -205,7 +207,7 @@ export const Avatar: React.FC<Props> = ({config: c, pose, face, mouth, frame, wi
   // ------------------------------------------------------------ mouth
   const Mouth: React.FC = () => {
     const cx = 300;
-    const cy = 474;
+    const cy = 482;
     const open = Math.max(0, Math.min(1, mouth));
     const talking = open > 0.12 && expr !== 'closed' && expr !== 'laugh' && expr !== 'surprised' && expr !== 'flat';
     if (expr === 'laugh') {
@@ -448,9 +450,9 @@ export const Avatar: React.FC<Props> = ({config: c, pose, face, mouth, frame, wi
           <Arm key={`b${i}`} {...a} skin={c.skin} sleeve={sleeve} />
         ))}
         {/* neck */}
-        <rect x={250} y={520} width={100} height={150} rx={30} fill={skinDark} stroke={INK} strokeWidth={7} />
+        <rect x={258} y={540} width={84} height={130} rx={30} fill={skinDark} stroke={INK} strokeWidth={LINE} />
         {/* torso */}
-        <path d="M96,900 L96,730 Q98,620 215,604 L385,604 Q502,620 504,730 L504,900 Z" fill={c.shirtColor} stroke={INK} strokeWidth={7} strokeLinejoin="round" />
+        <path d="M116,900 L116,740 Q118,632 222,612 L378,612 Q482,632 484,740 L484,900 Z" fill={c.shirtColor} stroke={INK} strokeWidth={LINE} strokeLinejoin="round" />
         {c.shirt === 'collared' ? (
           <g>
             <path d="M226,604 L300,712 L374,604 Z" fill={c.shirtAccent} />
@@ -475,27 +477,26 @@ export const Avatar: React.FC<Props> = ({config: c, pose, face, mouth, frame, wi
         ) : (
           <path d="M236,606 Q300,670 364,606" fill="none" stroke={INK} strokeWidth={7} />
         )}
-        <g transform={`rotate(${tilt} 300 460)`}>
+        <g transform={`translate(300 610) scale(1.17) translate(-300 -610) rotate(${tilt} 300 460)`}>
           {hairBack}
           <g stroke={INK} strokeWidth={7}>
-            <ellipse cx={148} cy={360} rx={28} ry={40} fill={c.skin} />
-            <ellipse cx={452} cy={360} rx={28} ry={40} fill={c.skin} />
+            <ellipse cx={146} cy={362} rx={34} ry={46} fill={c.skin} />
+            <ellipse cx={454} cy={362} rx={34} ry={46} fill={c.skin} />
             <path d="M144,346 Q136,362 146,380" fill="none" strokeWidth={5} strokeLinecap="round" />
             <path d="M456,346 Q464,362 454,380" fill="none" strokeWidth={5} strokeLinecap="round" />
           </g>
           {/* head */}
-          <path d="M300,150 C402,150 452,222 452,336 C452,428 440,478 410,526 C382,566 340,584 300,584 C260,584 218,566 190,526 C160,478 148,428 148,336 C148,222 198,150 300,150 Z" fill={c.skin} stroke={INK} strokeWidth={7} strokeLinejoin="round" />
+          <path d="M300,146 C410,146 456,226 456,336 C456,420 442,474 410,520 C382,560 340,578 300,578 C260,578 218,560 190,520 C158,474 144,420 144,336 C144,226 190,146 300,146 Z" fill={c.skin} stroke={INK} strokeWidth={LINE} strokeLinejoin="round" />
           {facialHair}
           {hairFront}
           {accessory}
-          <Brow cx={236} y={browSpec.l.y} a={browSpec.l.a} />
-          <Brow cx={364} y={browSpec.r.y} a={browSpec.r.a} />
-          <Eye cx={236} side={1} />
-          <Eye cx={364} side={-1} />
+          <Brow cx={230} y={browSpec.l.y - 8} a={browSpec.l.a} />
+          <Brow cx={370} y={browSpec.r.y - 8} a={browSpec.r.a} />
+          <Eye cx={230} side={1} />
+          <Eye cx={370} side={-1} />
           {/* nose */}
-          <path d="M292,372 C288,398 274,414 272,428 Q300,442 328,428 C326,414 312,398 308,372" fill={skinDark} stroke={INK} strokeWidth={5} strokeLinejoin="round" />
-          <ellipse cx={282} cy={428} rx={8} ry={5} fill={INK} />
-          <ellipse cx={318} cy={428} rx={8} ry={5} fill={INK} />
+          <path d="M300,392 C290,412 282,426 296,432 Q310,436 318,426" fill="none" stroke={INK} strokeWidth={6} strokeLinecap="round" />
+          <ellipse cx={304} cy={436} rx={14} ry={6} fill={skinDark} opacity={0.5} />
           {glasses}
           <Mouth />
           {pose === 'facepalm' ? (

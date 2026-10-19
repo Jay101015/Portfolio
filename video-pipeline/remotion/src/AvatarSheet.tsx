@@ -20,7 +20,7 @@ export const AvatarSheet: React.FC<{avatar?: Partial<AvatarConfig>; theme?: stri
         </div>
       ))}
       {FACES.map((face) => (
-        <div key={face} style={{...cell, alignItems: 'flex-start'}}>
+        <div key={face} style={{...cell, alignItems: 'flex-start', paddingTop: 44}}>
           <Avatar config={config} pose="idle" face={face} mouth={face === 'neutral' ? mouth : 0} frame={frame} width={340} style={{marginTop: 10}} />
           <div style={label}>{face}</div>
         </div>

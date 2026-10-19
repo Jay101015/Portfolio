@@ -1,0 +1,93 @@
+name: Render review video
+
+# Hosted rendering: push a project folder (script.md + voiceover + media) or
+# run this workflow by hand with the project name, and GitHub's runner does the
+# transcription, alignment and render. The finished videos are attached to
+# the run as downloadable artifacts (kept 14 days).
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: "Project folder under video-pipeline/projects"
+        required: true
+        default: "jurassic-park"
+      vertical:
+        description: "Also render the 9:16 version"
+        type: boolean
+        default: true
+  push:
+    paths:
+      - "video-pipeline/projects/**/script.md"
+      - "video-pipeline/projects/**/voiceover.*"
+
+concurrency:
+  group: render-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: video-pipeline
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pick the project
+        id: pick
+        shell: bash
+        run: |
+          if [ -n "${{ github.event.inputs.project }}" ]; then
+            echo "project=${{ github.event.inputs.project }}" >> "$GITHUB_OUTPUT"
+          else
+            # the most recently changed project folder in this push
+            p=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- projects | sed -n 's#^video-pipeline/projects/\([^/]*\)/.*#\1#p' | tail -1)
+            [ -z "$p" ] && p=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- projects | sed -n 's#^projects/\([^/]*\)/.*#\1#p' | tail -1)
+            echo "project=${p:-jurassic-park}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: video-pipeline/remotion/package-lock.json
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: video-pipeline/requirements.txt
+
+      - name: System packages
+        run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+
+      - name: Install
+        run: |
+          pip install -r requirements.txt
+          cd remotion && npm ci && npx remotion browser ensure
+
+      - name: Cache the Whisper model
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: whisper-base-en
+
+      - name: Render
+        env:
+          PROJECT: ${{ steps.pick.outputs.project }}
+        run: |
+          flags=""
+          if [ "${{ github.event.inputs.vertical }}" != "false" ]; then flags="--vertical"; fi
+          python -m pipeline.build "projects/$PROJECT" --model base.en --concurrency 2 $flags
+
+      - name: Upload the videos and storyboard
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.pick.outputs.project }}
+          retention-days: 14
+          path: |
+            video-pipeline/projects/${{ steps.pick.outputs.project }}/*.mp4
+            video-pipeline/projects/${{ steps.pick.outputs.project }}/storyboard.html
+            video-pipeline/projects/${{ steps.pick.outputs.project }}/storyboard.json

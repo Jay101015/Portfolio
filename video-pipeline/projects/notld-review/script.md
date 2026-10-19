@@ -5,7 +5,6 @@ brand.name: REEL TAKES
 avatar.skin: #7a4a28
 avatar.hair: fade
 avatar.hair_color: #17130f
-avatar.facial_hair: chinstrap
 avatar.glasses: none
 avatar.shirt: collared
 avatar.shirt_color: #bfd6f2
