@@ -97,8 +97,15 @@ def transcribe_faster_whisper(wav: str, model_size: str = "base.en", hint: str =
     device = os.environ.get("WHISPER_DEVICE", "cpu")
     compute = os.environ.get("WHISPER_COMPUTE", "int8" if device == "cpu" else "float16")
     model = WhisperModel(model_size, device=device, compute_type=compute)
+    # Hand over samples directly: faster-whisper's own decoder depends on a PyAV API that moves between releases.
+    import soundfile as sf
+
+    samples, sr = sf.read(wav, dtype="float32", always_2d=True)
+    audio = samples.mean(axis=1)
+    if sr != 16000:
+        raise SystemExit(f"expected a 16 kHz wav for transcription, got {sr} Hz")
     segments, _info = model.transcribe(
-        wav,
+        audio,
         word_timestamps=True,
         vad_filter=True,
         beam_size=5,
