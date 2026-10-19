@@ -433,8 +433,9 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
     const kind = expr === 'surprised' ? 'bang' : expr === 'confused' ? 'question' : expr === 'angry' ? 'anger' : expr === 'laugh' ? 'ha' : expr === 'sad' || pose === 'facepalm' ? 'sweat' : pose === 'thumbsup' ? 'sparkle' : expr === 'smug' ? 'smug' : null;
     if (!kind) return null;
     const wob = Math.sin(sinceChange / 3) * 10;
+    const top = ((info as {head_top?: number}).head_top ?? 260) - 260; // marks sit relative to the top of the hair
     return (
-      <g opacity={fade} transform={flip ? `translate(${W} 0) scale(-1 1)` : undefined}>
+      <g opacity={fade} transform={`${flip ? `translate(${W} 0) scale(-1 1)` : ''} translate(0 ${top})`}>
         {kind === 'bang' ? (
           <g transform={`translate(1380 330) scale(${pop})`}>
             {[...Array(8)].map((_, i) => {

@@ -1,6 +1,7 @@
 {
   "width": 1856,
   "height": 2304,
+  "head_top": 511,
   "style": "flat",
   "glasses": true,
   "gaze": {
@@ -116,11 +117,11 @@
   ],
   "colors": {
     "skin": "#5b3425",
-    "skin_shadow": "#45251c",
+    "skin_shadow": "#5a3324",
     "skin_light": "#5d3325",
     "lip_upper": "#44241b",
-    "lip_lower": "#422419",
-    "sleeve": "#d82f34",
+    "lip_lower": "#402519",
+    "sleeve": "#d92f34",
     "sleeve_shadow": "#d72e33",
     "hoodie": "#32393f"
   }

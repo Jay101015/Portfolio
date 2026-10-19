@@ -195,9 +195,11 @@ def build(portrait: Path, landmarks: Path, out: Path) -> dict:
         ys, xs = np.where(m > 128)
         return [int(xs.mean()), int(ys.mean())] if len(xs) else [0, 0]
 
+    head_rows = np.where(head_alpha.max(axis=1) > 128)[0]
     info = {
         "width": w,
         "height": h,
+        "head_top": int(head_rows.min()) if len(head_rows) else 0,
         "style": L.get("style", "painted"),
         "glasses": glasses is not None,
         "gaze": gaze if len(gaze) == 2 else None,
