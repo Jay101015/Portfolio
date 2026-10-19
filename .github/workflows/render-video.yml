@@ -25,6 +25,9 @@ concurrency:
   group: render-${{ github.ref }}
   cancel-in-progress: false
 
+permissions:
+  contents: write
+
 jobs:
   render:
     runs-on: ubuntu-latest
@@ -91,6 +94,26 @@ jobs:
           flags=""
           if [ "${{ github.event.inputs.vertical }}" != "false" ]; then flags="--vertical"; fi
           python -m pipeline.build "projects/$PROJECT" --model base.en --concurrency 2 $flags
+
+      - name: Keep what the run found (script with credits, report, small media) on the branch
+        env:
+          PROJECT: ${{ steps.pick.outputs.project }}
+        run: |
+          git config user.name "render-bot"
+          git config user.email "render-bot@users.noreply.github.com"
+          find "projects/$PROJECT/media" -type f -size -20M \( -name '*.jpg' -o -name '*.jpeg' -o -name '*.png' -o -name '*.webm' -o -name '*.mp4' \) -exec git add -f {} +
+          git add "projects/$PROJECT/script.md" "projects/$PROJECT/footage-report.md" 2>/dev/null || true
+          git commit -m "Render run: footage found for $PROJECT" || echo "nothing new to commit"
+          git push || echo "push skipped"
+
+      - name: Publish the videos as a release (downloadable without logging in to Actions)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROJECT: ${{ steps.pick.outputs.project }}
+        run: |
+          tag="demo-$PROJECT"
+          gh release view "$tag" >/dev/null 2>&1 || gh release create "$tag" --title "Demo: $PROJECT" --notes "Rendered by the Render review video workflow. See footage-report.md for every piece of footage and its licence." --target "${{ github.sha }}"
+          gh release upload "$tag" projects/$PROJECT/*.mp4 projects/$PROJECT/footage-report.md projects/$PROJECT/storyboard.html --clobber
 
       - name: Upload the videos and storyboard
         uses: actions/upload-artifact@v4
