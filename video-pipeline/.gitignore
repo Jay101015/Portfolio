@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+remotion/node_modules/
+remotion/public/projects/
+projects/*/.cache/
+projects/*/*.mp4
+projects/*/storyboard.json
+projects/*/storyboard.html
