@@ -118,9 +118,13 @@ Host on screen with a headline beside them.
 [poster title="Night of the Living Dead" year="1968" director="George A. Romero" runtime="96 min" genre="Horror" starring="Duane Jones" tagline="They won't stay dead." pose=point]
 Film card. Add src="poster.jpg" for the real poster from media/.
 
-[clip src="opening.mp4" from=12 vol=0.15 credit="Night of the Living Dead (1968), public domain" caption="The opening" pose=idle]
+[clip src="trailer.mp4" from=12 vol=0.15 fallback="gate.png" credit="Jurassic Park (1993), Universal Pictures. Official trailer." caption="The opening" pose=idle]
 Footage cutaway. `from` trims the start in seconds, `vol` ducks the clip's own
-audio (0 = muted, which is the default). The character sits in the corner.
+audio (0 = muted, which is the default). `fallback=` names a still to use
+when the footage file is not in media/ yet, so a script renders before the
+clips arrive. Big files need not be committed: list them in
+`media/sources.txt` as `<name> <direct https link>` and the build fetches
+what is missing (the GitHub workflow does this too).
 
 [still src="farmhouse.jpg" credit="..." caption="One house, one night" pose=think pos=corner-left]
 A still with a slow push-in. zoom=out pulls back instead.

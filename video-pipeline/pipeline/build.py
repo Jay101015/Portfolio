@@ -19,6 +19,7 @@ import os
 import shutil
 import subprocess
 import sys
+import urllib.request
 
 from . import align as al
 from .preview import write_preview
@@ -49,6 +50,65 @@ def file_hash(path: str) -> str:
 def _remotion(args: list[str], cwd: str) -> int:
     print("+", " ".join(args), flush=True)
     return subprocess.run(args, cwd=cwd).returncode
+
+
+def fetch_sources(project: str) -> None:
+    """media/sources.txt: `<file name> <https url>` per line. Missing files are downloaded before the build.
+
+    Keeps big footage out of git: commit the URL (your own cloud storage, a direct
+    download link), not the file. Lines starting with # are comments.
+    """
+    listing = os.path.join(project, "media", "sources.txt")
+    if not os.path.exists(listing):
+        return
+    with open(listing, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            parts = line.split(maxsplit=1)
+            if len(parts) != 2:
+                continue
+            name, url = parts
+            dst = os.path.join(project, "media", name)
+            if os.path.exists(dst):
+                continue
+            print(f"fetching {name} from {url}", flush=True)
+            try:
+                with urllib.request.urlopen(url, timeout=120) as r, open(dst, "wb") as out:
+                    shutil.copyfileobj(r, out)
+            except Exception as e:  # noqa: BLE001
+                print(f"WARNING: could not fetch {name}: {e}", flush=True)
+                if os.path.exists(dst):
+                    os.remove(dst)
+
+
+def resolve_media(sb: dict, project: str, slug: str) -> list[str]:
+    """Point every src at the published copy; swap a clip for its fallback still when the footage is not there."""
+    notes = []
+    for folder in ("media", "images"):
+        src_dir = os.path.join(project, folder)
+        if not os.path.isdir(src_dir):
+            continue
+        for sc in sb["scenes"]:
+            p = sc["props"]
+            src = p.get("src")
+            if sc["type"] == "clip" and src and not src.startswith("projects/") and not os.path.exists(os.path.join(src_dir, src)):
+                fb = p.get("fallback")
+                if fb and os.path.exists(os.path.join(src_dir, fb)):
+                    notes.append(f"scene {sc['id']}: footage '{src}' not present, using the fallback still '{fb}'")
+                    sc["type"] = "still"
+                    p["src"] = fb
+                    p.pop("from", None)
+                    p.pop("vol", None)
+                    src = fb
+            if src and not src.startswith("projects/") and os.path.exists(os.path.join(src_dir, src)):
+                p["src"] = f"projects/{slug}/{folder}/{src}"
+    for sc in sb["scenes"]:
+        src = sc["props"].get("src")
+        if src and not src.startswith("projects/"):
+            notes.append(f"WARNING: scene {sc['id']} src '{src}' not found in {project}/media")
+    return notes
 
 
 def render(props_path: str, out_path: str, composition: str, concurrency: str | None, timeout_ms: int = 120000, chunk: int = 450, retries: int = 2) -> None:
@@ -156,21 +216,15 @@ def main(argv: list[str] | None = None) -> int:
         sb["mouth"] = al.mouth_from_words(sb["scenes"], sb["fps"], sb["durationSec"])
 
     # Footage, stills and posters live in <project>/media (images/ still works for older projects).
+    fetch_sources(project)
+    for note in resolve_media(sb, project, slug):
+        print(note)
     for folder in ("media", "images"):
         src_dir = os.path.join(project, folder)
-        if not os.path.isdir(src_dir):
-            continue
-        dst = os.path.join(public_dir, folder)
-        shutil.rmtree(dst, ignore_errors=True)
-        shutil.copytree(src_dir, dst)
-        for sc in sb["scenes"]:
-            src = sc["props"].get("src")
-            if src and not src.startswith("projects/") and os.path.exists(os.path.join(src_dir, src)):
-                sc["props"]["src"] = f"projects/{slug}/{folder}/{src}"
-    for sc in sb["scenes"]:
-        src = sc["props"].get("src")
-        if src and not src.startswith("projects/"):
-            print(f"WARNING: scene {sc['id']} src '{src}' not found in {project}/media")
+        if os.path.isdir(src_dir):
+            dst = os.path.join(public_dir, folder)
+            shutil.rmtree(dst, ignore_errors=True)
+            shutil.copytree(src_dir, dst)
 
     sb_path = os.path.join(project, "storyboard.json")
     with open(sb_path, "w", encoding="utf-8") as f:

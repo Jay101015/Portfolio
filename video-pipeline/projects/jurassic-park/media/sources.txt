@@ -1,0 +1,8 @@
+# One line per file: <name as used in script.md> <direct https download link>
+# Files listed here are fetched before the build if they are not already in media/,
+# so large footage never has to be committed. Put the official trailer (any mp4)
+# somewhere you can link to directly (your own cloud storage works) and add it:
+#
+# trailer.mp4 https://example.com/your-link/jurassic-park-trailer.mp4
+#
+# Until then the [clip] scenes fall back to the illustrations named in fallback=.

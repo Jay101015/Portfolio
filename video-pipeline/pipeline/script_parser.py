@@ -164,7 +164,7 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
             if k in a:
                 p[k] = a[k]
     elif b.type == "clip":
-        for k in ("src", "caption", "credit"):
+        for k in ("src", "caption", "credit", "fallback"):
             if k in a:
                 p[k] = a[k]
         if "from" in a:

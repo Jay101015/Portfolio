@@ -111,6 +111,24 @@ class MovieParserTests(unittest.TestCase):
         self.assertEqual(env[0], 0.0)  # lead-in silence
 
 
+class MediaTests(unittest.TestCase):
+    def test_clip_falls_back_to_still_when_footage_missing(self):
+        import os, tempfile
+        from pipeline.build import resolve_media
+
+        with tempfile.TemporaryDirectory() as d:
+            os.makedirs(os.path.join(d, "media"))
+            open(os.path.join(d, "media", "art.png"), "wb").close()
+            sb = parse_script('# T\n\n[clip src="trailer.mp4" from=12 vol=0.2 fallback="art.png" credit="c"]\nHi.\n\n[still src="missing.png"]\nBye.\n')
+            notes = resolve_media(sb, d, "t")
+            a, b = sb["scenes"]
+            self.assertEqual(a["type"], "still")
+            self.assertEqual(a["props"]["src"], "projects/t/media/art.png")
+            self.assertNotIn("from", a["props"])
+            self.assertEqual(b["props"]["src"], "missing.png")
+            self.assertTrue(any("missing.png" in n for n in notes))
+
+
 class AlignTests(unittest.TestCase):
     def _transcript(self, words, start=0.5, step=0.4):
         return [{"w": w, "s": start + i * step, "e": start + i * step + 0.3} for i, w in enumerate(words)]
