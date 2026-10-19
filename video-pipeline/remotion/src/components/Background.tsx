@@ -5,8 +5,9 @@ export const Background: React.FC<{brand: Brand}> = ({brand}) => {
   const frame = useCurrentFrame();
   const {width, height} = useVideoConfig();
   if (brand.toon) {
-    // flat paper with a faint fibre texture; the texture re-seeds slowly so the page feels alive, not static
-    const seed = Math.floor(frame / 12) % 7;
+    // flat paper with a faint fibre texture (static: a full-frame noise filter is the single most expensive thing to redraw)
+    const seed = 3;
+    void frame;
     return (
       <AbsoluteFill style={{backgroundColor: brand.bg}}>
         <svg width={width} height={height} style={{position: 'absolute', inset: 0}}>

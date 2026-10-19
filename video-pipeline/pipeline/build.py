@@ -46,8 +46,9 @@ def file_hash(path: str) -> str:
     return h.hexdigest()[:16]
 
 
-def render(props_path: str, out_path: str, composition: str, concurrency: str | None) -> None:
-    cmd = ["npx", "remotion", "render", composition, out_path, f"--props={props_path}", "--log=warn"]
+def render(props_path: str, out_path: str, composition: str, concurrency: str | None, timeout_ms: int = 120000) -> None:
+    # --timeout covers delayRender waits (font loads, footage frame extraction); the default 30s is tight under load
+    cmd = ["npx", "remotion", "render", composition, out_path, f"--props={props_path}", "--log=warn", f"--timeout={timeout_ms}"]
     if concurrency:
         cmd.append(f"--concurrency={concurrency}")
     print("+", " ".join(cmd), flush=True)
