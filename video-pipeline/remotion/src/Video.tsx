@@ -168,6 +168,7 @@ const HostLayer: React.FC<{sb: Storyboard; scene: Scene; avatar: AvatarConfig; t
       sinceChange={sinceChange}
       scale={scene.props.scale ? Number(scene.props.scale) : 1}
       toon={toon}
+      art={sb.host === 'drawn' ? 'drawn' : 'painted'}
     />
   );
 };

@@ -1,5 +1,7 @@
 import React from 'react';
-import {AbsoluteFill, interpolate, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, interpolate, staticFile, useCurrentFrame} from 'remotion';
+import {RasterHost} from './RasterHost';
+import {useHostImages} from './useHostImages';
 import {Avatar, type AvatarConfig, type Face, type Pose} from './Avatar';
 import {useLayout} from '../components/layout';
 
@@ -20,13 +22,15 @@ type Props = {
   sinceChange: number; // frames since the pose/face last changed
   scale?: number;
   toon?: boolean;
+  art?: 'drawn' | 'painted';
 };
 
 /** Places the character on top of a scene: a corner bust over footage, a half-body beside text, or full frame. */
-export const AvatarLayer: React.FC<Props> = ({config, pose, face, prevPose, prevFace, pos, mouth, viseme, talk, attention, globalFrame, sinceChange, scale = 1, toon}) => {
+export const AvatarLayer: React.FC<Props> = ({config, pose, face, prevPose, prevFace, pos, mouth, viseme, talk, attention, globalFrame, sinceChange, scale = 1, toon, art = 'painted'}) => {
   const frame = useCurrentFrame();
   const {width, height, u, isVertical} = useLayout();
-  if (pos === 'none') return null;
+  const ready = useHostImages();
+  if (pos === 'none' || (art === 'painted' && !ready)) return null;
   // entrance: toon snaps in over 3 frames; glossy springs in
   const enter = toon ? interpolate(frame, [0, 3], [0, 1], {extrapolateRight: 'clamp'}) : interpolate(frame, [0, 10], [0, 1], {extrapolateRight: 'clamp'});
   // re-pose: a small squash as the body lands, on top of the rig's own tween
@@ -48,9 +52,9 @@ export const AvatarLayer: React.FC<Props> = ({config, pose, face, prevPose, prev
     left = (width - w) / 2;
     bottom = isVertical ? vBottom : -0.1 * height;
   } else if (pos === 'side-left' || pos === 'side-right') {
-    w = (isVertical ? 0.92 : 0.44) * width;
-    left = pos === 'side-left' ? -0.04 * width : width - w + 0.04 * width;
-    bottom = isVertical ? vBottom : -0.1 * height;
+    w = (isVertical ? 0.96 : 0.5) * width;
+    left = pos === 'side-left' ? -0.06 * width : width - w + 0.06 * width;
+    bottom = isVertical ? vBottom : -0.06 * height;
   } else {
     w = (isVertical ? 0.42 : 0.27) * width;
     left = pos === 'corner-left' ? 16 * u : width - w - 16 * u;
@@ -76,7 +80,11 @@ export const AvatarLayer: React.FC<Props> = ({config, pose, face, prevPose, prev
           filter: toon ? undefined : 'drop-shadow(0 18px 30px rgba(0,0,0,0.45))',
         }}
       >
-        <Avatar config={config} pose={pose} face={face} prevPose={prevPose} prevFace={prevFace} sinceChange={sinceChange} mouth={mouth} viseme={viseme} talk={talk} lookX={lookX} attention={attention} frame={globalFrame} width={w} flip={flip} />
+        {art === 'painted' ? (
+          <RasterHost pose={pose} face={face} prevPose={prevPose} prevFace={prevFace} sinceChange={sinceChange} mouth={mouth} viseme={viseme} talk={talk} lookX={lookX} attention={attention} frame={globalFrame} width={w} flip={flip} src={(n) => staticFile(`host/${n}`)} />
+        ) : (
+          <Avatar config={config} pose={pose} face={face} prevPose={prevPose} prevFace={prevFace} sinceChange={sinceChange} mouth={mouth} viseme={viseme} talk={talk} lookX={lookX} attention={attention} frame={globalFrame} width={w} flip={flip} />
+        )}
       </div>
     </AbsoluteFill>
   );

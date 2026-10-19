@@ -384,6 +384,7 @@ def parse_script(md: str) -> dict[str, Any]:
         "audio": None,
         "captions": header.get("captions", "true").lower() not in ("false", "no", "off", "0"),
         "theme": header.get("theme", "toon"),
+        "host": header.get("host", "painted"),
         "brand": brand,
         "avatar": avatar,
         "mouth": [],
