@@ -2,6 +2,7 @@ import React from 'react';
 import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {Brand, Scene, Storyboard} from './types';
 import {presets} from './theme';
+import './fonts';
 import {Background} from './components/Background';
 import {Chrome} from './components/Chrome';
 import {Captions} from './components/Captions';
@@ -20,7 +21,7 @@ import {ScoreScene} from './scenes/ScoreScene';
 import {AvatarScene} from './scenes/AvatarScene';
 import {OutroScene} from './scenes/OutroScene';
 import {AvatarLayer, type AvatarPos} from './avatar/AvatarLayer';
-import {defaultAvatar, type AvatarConfig, type Pose} from './avatar/Avatar';
+import {FACES, POSES, defaultAvatar, type AvatarConfig, type Face, type Pose} from './avatar/Avatar';
 
 const SceneSwitch: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}) => {
   switch (scene.type) {
@@ -55,41 +56,46 @@ const SceneSwitch: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}) => 
   }
 };
 
-/** Where the character stands if the script does not say. */
-const defaultPos = (type: Scene['type']): AvatarPos => {
-  switch (type) {
-    case 'avatar':
-      return 'side-left';
-    case 'clip':
-    case 'still':
-    case 'image':
-    case 'poster':
-    case 'score':
-    case 'compare':
-    case 'quote':
-      return 'corner-right';
-    case 'title':
-    case 'outro':
-      return 'side-right';
-    default:
-      return 'none';
+import {hostPosFor} from './hostPos';
+
+const isPose = (s: unknown): s is Pose => typeof s === 'string' && (POSES as string[]).includes(s);
+const isFace = (s: unknown): s is Face => typeof s === 'string' && (FACES as string[]).includes(s);
+
+/** Resolve pose/face at an absolute time: scene defaults, then every {cue} spoken so far. */
+export const resolveAvatar = (scene: Scene, t: number): {pose: Pose; face?: Face; changedAt: number} => {
+  let pose: Pose = isPose(scene.props.pose) ? scene.props.pose : scene.type === 'score' ? 'thumbsup' : scene.type === 'title' ? 'wave' : 'idle';
+  let face: Face | undefined = isFace(scene.props.face) ? scene.props.face : undefined;
+  let changedAt = scene.start;
+  for (const cue of scene.cues ?? []) {
+    if (cue.t > t) break;
+    if (isPose(cue.pose)) {
+      pose = cue.pose;
+      face = undefined;
+      changedAt = cue.t;
+    }
+    if (isFace(cue.face)) {
+      face = cue.face;
+      changedAt = cue.t;
+    }
   }
+  return {pose, face, changedAt};
 };
 
-const MouthDriven: React.FC<{sb: Storyboard; scene: Scene; avatar: AvatarConfig}> = ({sb, scene, avatar}) => {
-  // AvatarLayer sits inside the Sequence (local frame for its pop-in) but blinks/talks on the global clock.
+const HostLayer: React.FC<{sb: Storyboard; scene: Scene; avatar: AvatarConfig; toon: boolean}> = ({sb, scene, avatar, toon}) => {
   const local = useCurrentFrame();
   const {fps} = useVideoConfig();
   const globalFrame = Math.round(scene.start * fps) + local;
+  const t = globalFrame / fps;
   const mouth = sb.mouth?.[globalFrame] ?? 0;
-  const pos: AvatarPos = scene.props.pos ?? defaultPos(scene.type);
-  const pose: Pose = scene.props.pose ?? (scene.type === 'score' ? 'thumbsup' : scene.type === 'title' ? 'wave' : 'idle');
-  return <AvatarLayer config={avatar} pose={pose} pos={pos} mouth={mouth} globalFrame={globalFrame} scale={scene.props.scale ? Number(scene.props.scale) : 1} />;
+  const pos: AvatarPos = hostPosFor(scene, toon);
+  const {pose, face, changedAt} = resolveAvatar(scene, t);
+  const sinceChange = Math.max(0, Math.round((t - changedAt) * fps));
+  return <AvatarLayer config={avatar} pose={pose} face={face} pos={pos} mouth={mouth} globalFrame={globalFrame} sinceChange={sinceChange} scale={scene.props.scale ? Number(scene.props.scale) : 1} toon={toon} />;
 };
 
 export const Video: React.FC<Storyboard> = (sb) => {
   const {fps} = useVideoConfig();
-  const brand: Brand = {...(presets[sb.theme ?? 'movie'] ?? presets.movie), ...(sb.brand ?? {})};
+  const brand: Brand = {...(presets[sb.theme ?? 'toon'] ?? presets.toon), ...(sb.brand ?? {})};
   const avatar: AvatarConfig = {...defaultAvatar, ...(sb.avatar ?? {})};
   return (
     <AbsoluteFill style={{backgroundColor: brand.bg, fontFamily: brand.font, color: brand.text}}>
@@ -100,9 +106,9 @@ export const Video: React.FC<Storyboard> = (sb) => {
         const dur = Math.max(1, Math.round((scene.end - scene.start) * fps));
         return (
           <Sequence key={scene.id} from={from} durationInFrames={dur} name={`${scene.id} ${scene.type}`}>
-            <SceneFade durationInFrames={dur}>
+            <SceneFade durationInFrames={dur} toon={brand.toon}>
               <SceneSwitch scene={scene} brand={brand} />
-              <MouthDriven sb={sb} scene={scene} avatar={avatar} />
+              <HostLayer sb={sb} scene={scene} avatar={avatar} toon={brand.toon} />
             </SceneFade>
           </Sequence>
         );

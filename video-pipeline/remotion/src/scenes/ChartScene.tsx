@@ -4,6 +4,7 @@ import type {Brand, Scene} from '../types';
 import {Reveal} from '../components/Reveal';
 import {SourceTag} from '../components/SourceTag';
 import {compactNum, useLayout} from '../components/layout';
+import {card} from '../theme';
 
 /** Round an axis maximum up to a 1/2/2.5/5 x 10^k step so gridline labels are round numbers. */
 const niceMax = (v: number, ticks = 4) => {
@@ -135,11 +136,11 @@ export const ChartScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand
     <AbsoluteFill style={{justifyContent: 'center', padding: pad}}>
       {title ? (
         <Reveal delay={0}>
-          <div style={{fontSize: (isVertical ? 50 : 60) * u, fontWeight: 800, marginBottom: 28 * u, letterSpacing: -1}}>{title}</div>
+          <div style={{fontFamily: brand.display, fontSize: (isVertical ? 54 : 66) * u, fontWeight: brand.toon ? 400 : 800, marginBottom: 24 * u}}>{title}</div>
         </Reveal>
       ) : null}
       <Reveal delay={4} from="none">
-        <div style={{background: `${brand.panel}cc`, borderRadius: 28 * u, padding: 24 * u, border: `1px solid ${brand.text}14`}}>
+        <div style={{...card(brand, u, brand.toon ? -0.6 : 0), padding: 24 * u}}>
           <svg width={W - 48 * u} height={H} viewBox={`0 0 ${W} ${H}`} style={{overflow: 'visible'}}>
             {Array.from({length: ticks + 1}).map((_, i) => {
               const v = yMin + ((yMax - yMin) * i) / ticks;

@@ -86,6 +86,20 @@ class MovieParserTests(unittest.TestCase):
         self.assertEqual(sb["scenes"][2]["props"]["director"], "Someone")
         self.assertEqual(sb["scenes"][3]["props"]["value"], "8.5")
 
+    def test_inline_cues_are_stripped_and_timed(self):
+        from pipeline.script_parser import split_cues
+
+        text, cues = split_cues("Look at {shocked} this. {angry}No way. {wave}")
+        self.assertEqual(text, "Look at this. No way.")
+        self.assertEqual(cues, [{"word": 2, "pose": "shocked"}, {"word": 3, "face": "angry"}, {"word": 5, "pose": "wave"}])
+        sb = parse_script("# T\n\n[avatar]\nOne two {shocked} three four.\n")
+        sc = sb["scenes"][0]
+        self.assertEqual(sc["narration"], "One two three four.")
+        self.assertEqual(len(sc["cues"]), 1)
+        self.assertEqual(sc["cues"][0]["pose"], "shocked")
+        # fires just before "three" is spoken
+        self.assertAlmostEqual(sc["cues"][0]["t"], sc["words"][2]["s"] - 0.08, places=2)
+
     def test_mouth_from_words_flaps_only_while_speaking(self):
         from pipeline.align import mouth_from_words
 

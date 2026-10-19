@@ -27,13 +27,22 @@ Rendering needs Chrome. Remotion downloads a headless build on first render
 unless `remotion.config.ts` finds one already installed (set `REMOTION_BROWSER`
 to point at your own).
 
+## The look
+
+Default theme is `toon`: hand-drawn storytime style in the spirit of channels
+like Let Me Explain Studios. Paper background, thick ink outlines, hand-lettered
+type, hard cuts, and a host character whose line work re-draws every few
+frames and moves on twos so it reads as animated by hand. Borrowed footage sits
+inside a drawn screen beside the host. `theme: movie` and `theme: finance` keep
+the older glossy motion-graphics look.
+
 ## Approve the character first
 
 ```bash
 cd remotion && npx remotion still AvatarSheet avatar.png --frame=20
 ```
 
-That renders all ten poses on one sheet. Tune the look with `avatar.*` lines in
+That renders all ten poses and all ten expressions on one sheet. Tune the look with `avatar.*` lines in
 any script header (or change the defaults in `remotion/src/avatar/Avatar.tsx`):
 
 | key | values |
@@ -50,9 +59,23 @@ any script header (or change the defaults in `remotion/src/avatar/Avatar.tsx`):
 | `avatar.accessory_color` | hex |
 
 Poses: `idle`, `point`, `crossed`, `think`, `shocked`, `thumbsup`, `facepalm`,
-`laugh`, `wave`, `shrug`. Placements: `corner-right`, `corner-left`,
-`side-left`, `side-right`, `full`, `none`. Every scene tag accepts `pose=` and
-`pos=`; the character blinks on its own and its mouth follows your recording.
+`laugh`, `wave`, `shrug`. Expressions: `neutral`, `happy`, `angry`, `sad`,
+`smug`, `surprised`, `confused`, `laugh_face`, `closed`, `flat`. Placements:
+`corner-right`, `corner-left`, `side-left`, `side-right`, `full`, `none`.
+Every scene tag accepts `pose=`, `face=` and `pos=`; the character blinks on
+its own and its mouth follows your recording.
+
+**Reaction cues inside the narration** are what make the host feel alive.
+Drop a pose or expression name in braces where the reaction should land:
+
+```
+It opens in a cemetery, and within three minutes {confused} the movie has
+already broken its own rules. {shocked} The slow man is not a mourner.
+```
+
+The cue fires on the word that follows it, timed from your recording, with a
+little squash so the change reads as a drawn re-pose. Cues are stripped from
+the captions and the alignment text, so read the line without them.
 
 ## Make a video
 
@@ -159,6 +182,7 @@ pipeline/               script_parser.py, align.py, preview.py, build.py, gen_im
 remotion/src/avatar/    Avatar.tsx (the character), AvatarLayer.tsx (where it stands)
 remotion/src/scenes/    one component per scene type
 projects/notld-review/  sample review with placeholder footage and a robot voice
+docs/                   monetisation-plan.md: the plan from zero to a paying channel
 projects/first-10k/     the earlier finance sample (theme: finance)
 tests/                  python -m unittest discover -s tests
 ```

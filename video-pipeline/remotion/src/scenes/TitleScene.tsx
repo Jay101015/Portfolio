@@ -16,20 +16,20 @@ export const TitleScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand
     <AbsoluteFill style={{justifyContent: 'center', padding: pad}}>
       {kicker ? (
         <Reveal delay={0}>
-          <div style={{fontSize: 30 * u, fontWeight: 700, letterSpacing: 4, color: brand.accent, marginBottom: 24 * u}}>
-            {kicker.toUpperCase()}
+          <div style={{fontFamily: brand.display, fontSize: 36 * u, letterSpacing: brand.toon ? 0 : 4, color: brand.accent, marginBottom: 20 * u}}>
+            {brand.toon ? kicker : kicker.toUpperCase()}
           </div>
         </Reveal>
       ) : null}
       <Reveal delay={4} distance={60}>
-        <div style={{fontSize: (isVertical ? 96 : 112) * u, fontWeight: 800, lineHeight: 1.04, letterSpacing: -2 * u, maxWidth: isVertical ? '100%' : '82%'}}>
+        <div style={{fontFamily: brand.display, fontSize: (isVertical ? 96 : 112) * u, fontWeight: brand.toon ? 400 : 800, lineHeight: 1.04, letterSpacing: brand.toon ? 0 : -2 * u, maxWidth: isVertical ? '100%' : '60%', transform: brand.toon ? 'rotate(-1.5deg)' : undefined}}>
           {title}
         </div>
       </Reveal>
-      <div style={{height: 10 * u, width: `${bar * 28}%`, background: brand.accent2, marginTop: 36 * u, borderRadius: 999}} />
+      <div style={{height: 12 * u, width: `${bar * 26}%`, background: brand.accent2, marginTop: 30 * u, borderRadius: 999, border: brand.toon ? `${4 * u}px solid ${brand.ink}` : undefined}} />
       {subtitle ? (
         <Reveal delay={14}>
-          <div style={{fontSize: 40 * u, color: brand.muted, marginTop: 32 * u, maxWidth: '80%', lineHeight: 1.3}}>{subtitle}</div>
+          <div style={{fontSize: 42 * u, color: brand.muted, marginTop: 28 * u, maxWidth: '58%', lineHeight: 1.3}}>{subtitle}</div>
         </Reveal>
       ) : null}
       <Reveal delay={24} from="none">

@@ -1,6 +1,10 @@
 import React from 'react';
 
-/** A layered vector character. Same face every video; poses, blinks and mouth flap are parameters. */
+/**
+ * Hand-drawn style host character: thick ink outlines, big eyes, flat colour,
+ * a line "boil" that re-draws every few frames, and motion held on twos so it
+ * reads as animated by hand rather than tweened.
+ */
 export type AvatarConfig = {
   skin: string;
   hair: 'short' | 'curly' | 'buzz' | 'long' | 'bald' | 'fade' | 'locs' | 'afro' | 'bun';
@@ -16,31 +20,52 @@ export type AvatarConfig = {
 };
 
 export type Pose = 'idle' | 'point' | 'crossed' | 'think' | 'shocked' | 'thumbsup' | 'facepalm' | 'laugh' | 'wave' | 'shrug';
+export type Face = 'neutral' | 'happy' | 'angry' | 'sad' | 'smug' | 'surprised' | 'confused' | 'laugh' | 'closed' | 'flat';
 export const POSES: Pose[] = ['idle', 'point', 'crossed', 'think', 'shocked', 'thumbsup', 'facepalm', 'laugh', 'wave', 'shrug'];
+export const FACES: Face[] = ['neutral', 'happy', 'angry', 'sad', 'smug', 'surprised', 'confused', 'laugh', 'closed', 'flat'];
+
+export const defaultFaceFor = (pose: Pose): Face => {
+  switch (pose) {
+    case 'point':
+    case 'wave':
+    case 'thumbsup':
+      return 'happy';
+    case 'crossed':
+      return 'angry';
+    case 'think':
+    case 'shrug':
+      return 'confused';
+    case 'shocked':
+      return 'surprised';
+    case 'facepalm':
+      return 'closed';
+    case 'laugh':
+      return 'laugh';
+    default:
+      return 'neutral';
+  }
+};
 
 export const defaultAvatar: AvatarConfig = {
-  skin: '#6b4123',
+  skin: '#7a4a28',
   hair: 'fade',
-  hairColor: '#141210',
+  hairColor: '#17130f',
   facialHair: 'chinstrap',
   glasses: 'none',
-  eyeColor: '#2a1a10',
+  eyeColor: '#3a2214',
   shirt: 'collared',
-  shirtColor: '#bcd3ec',
-  shirtAccent: '#1f2430',
+  shirtColor: '#bfd6f2',
+  shirtAccent: '#232838',
   accessory: 'none',
-  accessoryColor: '#e63946',
+  accessoryColor: '#e5484d',
 };
 
-type Props = {
-  config: AvatarConfig;
-  pose: Pose;
-  mouth: number; // 0..1 how open
-  frame: number; // global frame, drives blink + idle motion
-  width?: number;
-  flip?: boolean;
-  style?: React.CSSProperties;
-};
+const INK = '#1a1714';
+const LIP = '#8a4a44';
+const LIP_DARK = '#4a2320';
+const MOUTH = '#3a1414';
+const TEETH = '#fbf7f0';
+const TONGUE = '#c2514f';
 
 const darken = (hex: string, amt = 0.25) => {
   const n = parseInt(hex.replace('#', ''), 16);
@@ -51,240 +76,264 @@ const darken = (hex: string, amt = 0.25) => {
 };
 
 type Pt = [number, number];
-const SH_L: Pt = [150, 575]; // shoulders (character's right/left are swapped for the viewer; we just use L/R on screen)
-const SH_R: Pt = [450, 575];
+const SH_L: Pt = [168, 640];
+const SH_R: Pt = [432, 640];
 
-type ArmProps = {from: Pt; elbow: Pt; hand: Pt; skin: string; sleeve: string; handKind?: 'fist' | 'open' | 'point' | 'thumb' | 'none'; angle?: number};
-type ArmSpec = Omit<ArmProps, 'skin' | 'sleeve'>;
+type HandKind = 'fist' | 'open' | 'point' | 'thumb' | 'none';
+type ArmSpec = {from: Pt; elbow: Pt; hand: Pt; handKind?: HandKind; angle?: number};
 
-const Arm: React.FC<ArmProps> = ({
-  from,
-  elbow,
-  hand,
-  skin,
-  sleeve,
-  handKind = 'open',
-  angle = 0,
-}) => (
-  <g>
-    <polyline points={`${from[0]},${from[1]} ${elbow[0]},${elbow[1]} ${hand[0]},${hand[1]}`} fill="none" stroke={skin} strokeWidth={54} strokeLinecap="round" strokeLinejoin="round" />
-    <line x1={from[0]} y1={from[1]} x2={elbow[0]} y2={elbow[1]} stroke={sleeve} strokeWidth={66} strokeLinecap="round" />
-    {handKind === 'none' ? null : (
-      <g transform={`translate(${hand[0]} ${hand[1]}) rotate(${angle})`}>
-        <circle r={34} fill={skin} />
-        {handKind === 'point' ? <rect x={-14} y={-78} width={28} height={60} rx={14} fill={skin} /> : null}
-        {handKind === 'thumb' ? <rect x={-12} y={-82} width={24} height={56} rx={12} fill={skin} transform="rotate(-15)" /> : null}
-        {handKind === 'open' ? (
-          <>
-            <rect x={-30} y={-62} width={18} height={44} rx={9} fill={skin} transform="rotate(-18)" />
-            <rect x={-9} y={-70} width={18} height={50} rx={9} fill={skin} />
-            <rect x={12} y={-64} width={18} height={44} rx={9} fill={skin} transform="rotate(16)" />
-          </>
-        ) : null}
+const Hand: React.FC<{kind: HandKind; skin: string; angle: number}> = ({kind, skin, angle}) => {
+  if (kind === 'none') return null;
+  const finger = (x: number, rot: number, h = 46) => (
+    <rect key={`${x}${rot}`} x={x - 10} y={-h - 24} width={20} height={h + 10} rx={10} fill={skin} stroke={INK} strokeWidth={6} transform={`rotate(${rot})`} />
+  );
+  return (
+    <g transform={`rotate(${angle})`}>
+      {kind === 'open' ? [finger(-22, -22), finger(0, -4, 54), finger(20, 14)] : null}
+      {kind === 'point' ? finger(0, 0, 60) : null}
+      {kind === 'thumb' ? finger(-6, -18, 52) : null}
+      <circle r={36} fill={skin} stroke={INK} strokeWidth={6} />
+      {kind === 'fist' ? <path d="M-22,-6 Q0,-18 22,-6 M-22,8 Q0,-2 22,8" stroke={INK} strokeWidth={5} fill="none" strokeLinecap="round" /> : null}
+    </g>
+  );
+};
+
+const Arm: React.FC<ArmSpec & {skin: string; sleeve: string}> = ({from, elbow, hand, skin, sleeve, handKind = 'open', angle = 0}) => {
+  const pts = `${from[0]},${from[1]} ${elbow[0]},${elbow[1]} ${hand[0]},${hand[1]}`;
+  return (
+    <g>
+      <polyline points={pts} fill="none" stroke={INK} strokeWidth={72} strokeLinecap="round" strokeLinejoin="round" />
+      <polyline points={pts} fill="none" stroke={sleeve} strokeWidth={58} strokeLinecap="round" strokeLinejoin="round" />
+      <g transform={`translate(${hand[0]} ${hand[1]})`}>
+        <Hand kind={handKind} skin={skin} angle={angle} />
       </g>
-    )}
-  </g>
-);
+    </g>
+  );
+};
 
-export const Avatar: React.FC<Props> = ({config: c, pose, mouth, frame, width = 600, flip = false, style}) => {
-  const shirtDark = darken(c.shirtColor, 0.2);
-  const hairDark = darken(c.hairColor, 0.2);
-  // deterministic blink every ~3.5s, 4 frames long
-  const blinkPeriod = 105;
-  const blinkPhase = (frame + 37) % blinkPeriod;
-  const blinking = blinkPhase < 4;
-  const bob = Math.sin(frame / 14) * 4;
-  const tilt = Math.sin(frame / 38) * 1.6;
+type Props = {
+  config: AvatarConfig;
+  pose: Pose;
+  face?: Face;
+  mouth: number; // 0..1
+  frame: number; // global frame
+  width?: number;
+  flip?: boolean;
+  style?: React.CSSProperties;
+};
 
-  const expr = {
-    browL: 0, // positive = raised
-    browR: 0,
-    browAngle: 0, // positive = angry/skeptical inner-down
-    eyesClosed: blinking,
-    happyEyes: false,
-    mouthMode: 'talk' as 'talk' | 'o' | 'laugh' | 'flat' | 'smirk',
-    headTilt: tilt,
-  };
-  if (pose === 'shocked') {
-    expr.browL = expr.browR = 18;
-    expr.mouthMode = 'o';
-  } else if (pose === 'crossed') {
-    expr.browAngle = 10;
-    expr.mouthMode = 'flat';
-  } else if (pose === 'think') {
-    expr.browL = 12;
-    expr.browAngle = -4;
-    expr.mouthMode = 'smirk';
-  } else if (pose === 'facepalm') {
-    expr.eyesClosed = true;
-    expr.browAngle = 8;
-    expr.mouthMode = 'flat';
-  } else if (pose === 'laugh') {
-    expr.happyEyes = true;
-    expr.mouthMode = 'laugh';
-    expr.headTilt = tilt - 6;
-  } else if (pose === 'thumbsup' || pose === 'wave') {
-    expr.browL = expr.browR = 6;
-  } else if (pose === 'shrug') {
-    expr.browL = 14;
-    expr.browR = 4;
-    expr.mouthMode = 'flat';
-  }
+export const Avatar: React.FC<Props> = ({config: c, pose, face, mouth, frame, width = 600, flip = false, style}) => {
+  const f2 = Math.floor(frame / 2) * 2; // hold on twos
+  const boilSeed = Math.floor(frame / 3) % 6; // re-draw the line every 3 frames
+  const bob = Math.round(Math.sin(f2 / 16) * 3);
+  const tilt = Math.round(Math.sin(f2 / 44) * 2);
+  const blinkPhase = (frame + 41) % 112;
+  const blinking = blinkPhase < 5;
+  const expr: Face = face ?? defaultFaceFor(pose);
+  const skinDark = darken(c.skin, 0.22);
+  const sleeve = c.shirt === 'tee' ? c.skin : c.shirtColor;
 
-  const open = Math.max(0, Math.min(1, mouth));
-  const mouthEl = (() => {
-    const cx = 300;
-    const cy = 415;
-    switch (expr.mouthMode) {
-      case 'o':
-        return <ellipse cx={cx} cy={cy + 6} rx={26} ry={34} fill="#3a1218" />;
+  // ------------------------------------------------------------ brows
+  const browSpec = (() => {
+    switch (expr) {
+      case 'angry':
+        return {l: {y: 300, a: 16}, r: {y: 300, a: -16}};
+      case 'sad':
+        return {l: {y: 290, a: -16}, r: {y: 290, a: 16}};
+      case 'surprised':
+        return {l: {y: 268, a: -4}, r: {y: 268, a: 4}};
+      case 'confused':
+        return {l: {y: 270, a: -10}, r: {y: 298, a: 8}};
+      case 'smug':
+        return {l: {y: 292, a: -2}, r: {y: 278, a: 10}};
       case 'laugh':
-        return (
-          <g>
-            <path d={`M${cx - 58},${cy - 6} Q${cx},${cy + 80} ${cx + 58},${cy - 6} Z`} fill="#3a1218" />
-            <path d={`M${cx - 46},${cy - 2} Q${cx},${cy + 14} ${cx + 46},${cy - 2} L${cx + 46},${cy + 8} Q${cx},${cy + 22} ${cx - 46},${cy + 8} Z`} fill="#fff" />
-          </g>
-        );
-      case 'flat':
-        return (
-          <g>
-            <path d={`M${cx - 44},${cy} Q${cx},${cy - 10} ${cx + 44},${cy} Q${cx},${cy + 6} ${cx - 44},${cy} Z`} fill="#4a2420" />
-            <path d={`M${cx - 42},${cy + 2} Q${cx},${cy + 22} ${cx + 42},${cy + 2} Q${cx},${cy + 10} ${cx - 42},${cy + 2} Z`} fill="#7a4038" />
-          </g>
-        );
-      case 'smirk':
-        return (
-          <g>
-            <path d={`M${cx - 42},${cy + 4} Q${cx},${cy - 8} ${cx + 46},${cy - 6} Q${cx},${cy + 10} ${cx - 42},${cy + 4} Z`} fill="#4a2420" />
-            <path d={`M${cx - 40},${cy + 6} Q${cx + 6},${cy + 26} ${cx + 46},${cy - 4} Q${cx},${cy + 12} ${cx - 40},${cy + 6} Z`} fill="#7a4038" />
-          </g>
-        );
-      default: {
-        if (open < 0.12)
-          return (
-            <g>
-              <path d={`M${cx - 46},${cy} Q${cx - 20},${cy - 14} ${cx},${cy - 6} Q${cx + 20},${cy - 14} ${cx + 46},${cy} Q${cx},${cy + 8} ${cx - 46},${cy} Z`} fill="#4a2420" />
-              <path d={`M${cx - 44},${cy + 1} Q${cx},${cy + 30} ${cx + 44},${cy + 1} Q${cx},${cy + 12} ${cx - 44},${cy + 1} Z`} fill="#7a4038" />
-              <path d={`M${cx - 44},${cy + 1} Q${cx},${cy + 8} ${cx + 44},${cy + 1}`} stroke="#2e1412" strokeWidth={3} fill="none" />
-            </g>
-          );
-        const h = 10 + open * 48;
-        const w = 40 + open * 14;
-        return (
-          <g>
-            <path d={`M${cx - w},${cy - 2} Q${cx},${cy - 2 + h * 1.6} ${cx + w},${cy - 2} Q${cx},${cy - 12} ${cx - w},${cy - 2} Z`} fill="#3a1218" />
-            {open > 0.35 ? <path d={`M${cx - w * 0.7},${cy} Q${cx},${cy + 10} ${cx + w * 0.7},${cy} L${cx + w * 0.7},${cy + 6} Q${cx},${cy + 16} ${cx - w * 0.7},${cy + 6} Z`} fill="#fff" /> : null}
-          </g>
-        );
-      }
+      case 'happy':
+        return {l: {y: 282, a: -6}, r: {y: 282, a: 6}};
+      case 'closed':
+        return {l: {y: 296, a: 10}, r: {y: 296, a: -10}};
+      default:
+        return {l: {y: 290, a: -4}, r: {y: 290, a: 4}};
     }
   })();
+  const Brow: React.FC<{cx: number; y: number; a: number}> = ({cx, y, a}) => (
+    <rect x={cx - 44} y={y - 11} width={88} height={22} rx={11} fill={darken(c.hairColor, 0.1)} stroke={INK} strokeWidth={5} transform={`rotate(${a} ${cx} ${y})`} />
+  );
 
-  const eye = (cx: number, raise: number) => {
-    if (expr.happyEyes) return <path d={`M${cx - 24},${322} Q${cx},${296} ${cx + 24},${322}`} stroke="#1a1a1a" strokeWidth={8} fill="none" strokeLinecap="round" />;
-    if (expr.eyesClosed) return <path d={`M${cx - 24},${324} Q${cx},${334} ${cx + 24},${324}`} stroke="#1a1a1a" strokeWidth={7} fill="none" strokeLinecap="round" />;
-    const id = `eye${cx}`;
-    const shape = `M${cx - 32},${322} Q${cx - 10},${298} ${cx + 32},${318} Q${cx + 8},${346} ${cx - 32},${322} Z`;
+  // ------------------------------------------------------------ eyes
+  const eyesClosed = blinking || expr === 'closed';
+  const Eye: React.FC<{cx: number; side: 1 | -1}> = ({cx, side}) => {
+    const cy = 352;
+    const rx = 34;
+    const ry = expr === 'surprised' ? 44 : 40;
+    const id = `eye-${cx}`;
+    if (expr === 'laugh') {
+      return <path d={`M${cx - 30},${cy + 4} Q${cx},${cy - 34} ${cx + 30},${cy + 4}`} stroke={INK} strokeWidth={8} fill="none" strokeLinecap="round" />;
+    }
+    if (eyesClosed) {
+      const lid = expr === 'sad' ? `M${cx - 30},${cy - 2} Q${cx},${cy + 16} ${cx + 30},${cy - 2}` : `M${cx - 30},${cy} Q${cx},${cy + 12} ${cx + 30},${cy}`;
+      return <path d={lid} stroke={INK} strokeWidth={7} fill="none" strokeLinecap="round" />;
+    }
+    // lid cover per expression, as a polygon inside the eye clip
+    let lid: string | null = null;
+    const inner = cx + 40 * side;
+    const outer = cx - 40 * side;
+    if (expr === 'angry') lid = `M${outer},${cy - 48} L${inner},${cy - 48} L${inner},${cy - 6} L${outer},${cy - 30} Z`;
+    if (expr === 'sad') lid = `M${outer},${cy - 48} L${inner},${cy - 48} L${inner},${cy - 30} L${outer},${cy - 6} Z`;
+    if (expr === 'smug') lid = `M${outer},${cy - 48} L${inner},${cy - 48} L${inner},${cy - 14} L${outer},${cy - 10} Z`;
+    if (expr === 'confused' && side === -1) lid = `M${outer},${cy - 48} L${inner},${cy - 48} L${inner},${cy - 16} L${outer},${cy - 16} Z`;
+    const lidEdge = lid ? lid.split('L').slice(2).map((p) => p.replace('Z', '').trim()) : null;
     return (
       <g>
         <defs>
           <clipPath id={id}>
-            <path d={shape} />
+            <ellipse cx={cx} cy={cy} rx={rx} ry={ry} />
           </clipPath>
         </defs>
-        <path d={shape} fill="#f6efe8" />
+        <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill="#fbf7f0" />
         <g clipPath={`url(#${id})`}>
-          <circle cx={cx + 4} cy={324} r={14} fill={c.eyeColor} />
-          <circle cx={cx + 5} cy={325} r={7} fill="#0b0705" />
-          <circle cx={cx + 10} cy={318} r={3.5} fill="#fff" />
+          <circle cx={cx + 4} cy={cy + 6} r={20} fill={c.eyeColor} />
+          <circle cx={cx + 5} cy={cy + 7} r={11} fill={INK} />
+          <circle cx={cx + 12} cy={cy - 6} r={6} fill="#fff" />
+          {lid ? <path d={lid} fill={c.skin} /> : null}
         </g>
-        <path d={`M${cx - 32},${322} Q${cx - 10},${298} ${cx + 32},${318}`} stroke="#1a1210" strokeWidth={5} fill="none" strokeLinecap="round" />
-        <path d={`M${cx - 30},${324 + raise * 0}`} />
+        {lidEdge ? <path d={`M${lidEdge[0]} L${lidEdge[1]}`} stroke={INK} strokeWidth={6} strokeLinecap="round" /> : null}
+        <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill="none" stroke={INK} strokeWidth={6} />
       </g>
     );
   };
 
-  const brow = (cx: number, raise: number, side: 1 | -1) => {
-    const a = expr.browAngle * side;
-    const y = 284 - raise;
-    // side=1 is the screen-left brow; the inner end is toward x=300
-    const inner = cx + 34 * side;
-    const outer = cx - 38 * side;
-    return <path d={`M${outer},${y + 2 - a} Q${cx},${y - 12} ${inner},${y + a} L${inner},${y + 12 + a} Q${cx},${y + 2} ${outer},${y + 14 - a} Z`} fill={hairDark} />;
+  // ------------------------------------------------------------ mouth
+  const Mouth: React.FC = () => {
+    const cx = 300;
+    const cy = 474;
+    const open = Math.max(0, Math.min(1, mouth));
+    const talking = open > 0.12 && expr !== 'closed' && expr !== 'laugh' && expr !== 'surprised' && expr !== 'flat';
+    if (expr === 'laugh') {
+      return (
+        <g>
+          <path d={`M${cx - 54},${cy - 10} Q${cx},${cy + 2} ${cx + 54},${cy - 10} Q${cx + 40},${cy + 74} ${cx},${cy + 78} Q${cx - 40},${cy + 74} ${cx - 54},${cy - 10} Z`} fill={MOUTH} stroke={INK} strokeWidth={6} strokeLinejoin="round" />
+          <path d={`M${cx - 46},${cy - 4} Q${cx},${cy + 6} ${cx + 46},${cy - 4} L${cx + 42},${cy + 14} Q${cx},${cy + 22} ${cx - 42},${cy + 14} Z`} fill={TEETH} />
+          <ellipse cx={cx} cy={cy + 58} rx={26} ry={16} fill={TONGUE} />
+        </g>
+      );
+    }
+    if (expr === 'surprised') {
+      return <ellipse cx={cx} cy={cy + 14} rx={22 + open * 6} ry={30 + open * 10} fill={MOUTH} stroke={INK} strokeWidth={6} />;
+    }
+    if (talking) {
+      const h = 14 + open * 54;
+      const w = 44 + open * 12;
+      return (
+        <g>
+          <path d={`M${cx - w},${cy - 4} Q${cx},${cy - 12} ${cx + w},${cy - 4} Q${cx + w * 0.9},${cy + h} ${cx},${cy + h} Q${cx - w * 0.9},${cy + h} ${cx - w},${cy - 4} Z`} fill={MOUTH} stroke={INK} strokeWidth={6} strokeLinejoin="round" />
+          <path d={`M${cx - w * 0.85},${cy - 2} Q${cx},${cy + 2} ${cx + w * 0.85},${cy - 2} L${cx + w * 0.8},${cy + Math.min(14, h * 0.35)} Q${cx},${cy + Math.min(18, h * 0.4)} ${cx - w * 0.8},${cy + Math.min(14, h * 0.35)} Z`} fill={TEETH} />
+          {open > 0.5 ? <ellipse cx={cx} cy={cy + h * 0.78} rx={w * 0.45} ry={h * 0.18} fill={TONGUE} /> : null}
+        </g>
+      );
+    }
+    switch (expr) {
+      case 'happy':
+      case 'smug': {
+        const lift = expr === 'smug' ? 1 : 0;
+        return (
+          <g>
+            <path d={`M${cx - 48},${cy - 6 + lift * 6} Q${cx},${cy + 30} ${cx + 50},${cy - 10 - lift * 8}`} stroke={INK} strokeWidth={7} fill="none" strokeLinecap="round" />
+            <path d={`M${cx - 48},${cy - 6 + lift * 6} Q${cx},${cy + 30} ${cx + 50},${cy - 10 - lift * 8} Q${cx},${cy + 12} ${cx - 48},${cy - 6 + lift * 6} Z`} fill={LIP} />
+          </g>
+        );
+      }
+      case 'sad':
+        return <path d={`M${cx - 40},${cy + 10} Q${cx},${cy - 16} ${cx + 40},${cy + 10}`} stroke={INK} strokeWidth={7} fill="none" strokeLinecap="round" />;
+      case 'angry':
+        return (
+          <g>
+            <path d={`M${cx - 44},${cy + 6} Q${cx},${cy - 10} ${cx + 44},${cy + 6}`} stroke={INK} strokeWidth={7} fill="none" strokeLinecap="round" />
+            <path d={`M${cx - 44},${cy + 6} Q${cx},${cy - 10} ${cx + 44},${cy + 6} Q${cx},${cy + 18} ${cx - 44},${cy + 6} Z`} fill={LIP_DARK} />
+          </g>
+        );
+      case 'confused':
+        return <path d={`M${cx - 40},${cy + 2} Q${cx - 10},${cy + 18} ${cx + 10},${cy + 2} Q${cx + 28},${cy - 10} ${cx + 44},${cy + 4}`} stroke={INK} strokeWidth={7} fill="none" strokeLinecap="round" />;
+      case 'flat':
+      case 'closed':
+        return <path d={`M${cx - 42},${cy + 2} L${cx + 42},${cy}`} stroke={INK} strokeWidth={7} strokeLinecap="round" />;
+      default:
+        return (
+          <g>
+            <path d={`M${cx - 46},${cy} Q${cx - 22},${cy - 12} ${cx},${cy - 4} Q${cx + 22},${cy - 12} ${cx + 46},${cy} Q${cx},${cy + 8} ${cx - 46},${cy} Z`} fill={LIP_DARK} />
+            <path d={`M${cx - 44},${cy + 2} Q${cx},${cy + 30} ${cx + 44},${cy + 2} Q${cx},${cy + 12} ${cx - 44},${cy + 2} Z`} fill={LIP} />
+            <path d={`M${cx - 46},${cy} Q${cx},${cy + 8} ${cx + 46},${cy}`} stroke={INK} strokeWidth={5} fill="none" strokeLinecap="round" />
+          </g>
+        );
+    }
   };
 
+  // ------------------------------------------------------------ hair
   const hairBack = (() => {
     switch (c.hair) {
       case 'afro':
-        return <circle cx={300} cy={300} r={215} fill={c.hairColor} />;
+        return <circle cx={300} cy={320} r={225} fill={c.hairColor} stroke={INK} strokeWidth={7} />;
       case 'long':
-        return <path d="M150,300 Q140,520 170,600 L430,600 Q460,520 450,300 Z" fill={c.hairColor} />;
+        return <path d="M150,320 Q140,540 170,640 L430,640 Q460,540 450,320 Z" fill={c.hairColor} stroke={INK} strokeWidth={7} />;
       case 'locs':
         return (
-          <g fill={c.hairColor}>
+          <g fill={c.hairColor} stroke={INK} strokeWidth={6}>
             {[-130, -100, -70, 100, 130, 160].map((dx, i) => (
-              <rect key={i} x={300 + dx - 14} y={260} width={28} height={300 + (i % 2) * 40} rx={14} />
+              <rect key={i} x={300 + dx - 14} y={280} width={28} height={300 + (i % 2) * 40} rx={14} />
             ))}
           </g>
         );
       case 'bun':
-        return <circle cx={300} cy={150} r={60} fill={c.hairColor} />;
+        return <circle cx={300} cy={170} r={64} fill={c.hairColor} stroke={INK} strokeWidth={7} />;
       default:
         return null;
     }
   })();
-
   const hairFront = (() => {
+    const cap = 'M150,330 C150,212 212,148 300,148 C388,148 450,212 450,330 C446,262 392,238 300,238 C208,238 154,262 150,330 Z';
     switch (c.hair) {
       case 'bald':
         return null;
       case 'buzz':
-        return <path d="M150,300 Q150,150 300,150 Q450,150 450,300 Q440,260 300,250 Q160,260 150,300 Z" fill={c.hairColor} opacity={0.85} />;
       case 'fade':
         return (
           <g>
-            <path d="M152,300 C152,185 215,128 300,128 C385,128 448,185 448,300 C440,236 385,214 300,214 C215,214 160,236 152,300 Z" fill={c.hairColor} />
-            <path d="M152,300 C156,250 170,230 190,222 L180,330 Z" fill={c.hairColor} opacity={0.55} />
-            <path d="M448,300 C444,250 430,230 410,222 L420,330 Z" fill={c.hairColor} opacity={0.55} />
+            <path d={cap} fill={c.hairColor} stroke={INK} strokeWidth={7} strokeLinejoin="round" />
+            <path d="M150,330 C154,280 166,250 184,240 L176,350 Z" fill={c.hairColor} opacity={0.5} />
+            <path d="M450,330 C446,280 434,250 416,240 L424,350 Z" fill={c.hairColor} opacity={0.5} />
           </g>
         );
       case 'curly':
+      case 'afro':
         return (
-          <g fill={c.hairColor}>
-            <path d="M150,310 Q150,150 300,150 Q450,150 450,310 Q440,250 300,240 Q160,250 150,310 Z" />
-            {[160, 200, 245, 300, 355, 400, 440].map((x, i) => (
-              <circle key={i} cx={x} cy={i % 2 ? 170 : 200} r={42} />
+          <g fill={c.hairColor} stroke={INK} strokeWidth={7}>
+            <path d={cap} />
+            {[165, 205, 250, 300, 350, 395, 435].map((x, i) => (
+              <circle key={i} cx={x} cy={i % 2 ? 176 : 206} r={44} />
             ))}
           </g>
         );
-      case 'long':
-        return <path d="M150,330 Q150,150 300,150 Q450,150 450,330 Q440,250 330,235 Q250,230 150,330 Z" fill={c.hairColor} />;
-      case 'afro':
-        return <path d="M150,310 Q150,150 300,150 Q450,150 450,310 Q440,250 300,240 Q160,250 150,310 Z" fill={c.hairColor} />;
-      case 'locs':
-      case 'bun':
-      case 'short':
       default:
-        return <path d="M150,310 Q150,150 300,150 Q450,150 450,310 Q440,250 300,245 Q160,250 150,310 Z" fill={c.hairColor} />;
+        return <path d={cap} fill={c.hairColor} stroke={INK} strokeWidth={7} strokeLinejoin="round" />;
     }
   })();
 
   const facialHair = (() => {
+    const mustache = <path d="M250,450 Q300,434 350,450 Q330,458 300,452 Q270,458 250,450 Z" fill={c.hairColor} stroke={INK} strokeWidth={4} strokeLinejoin="round" />;
     switch (c.facialHair) {
       case 'stubble':
-        return <path d="M165,370 Q190,500 300,505 Q410,500 435,370 Q400,470 300,470 Q200,470 165,370 Z" fill={hairDark} opacity={0.28} />;
+        return <path d="M176,420 C190,500 236,548 300,556 C364,548 410,500 424,420 Q400,520 300,528 Q200,520 176,420 Z" fill={INK} opacity={0.18} />;
       case 'beard':
-        return <path d="M160,360 Q180,520 300,530 Q420,520 440,360 Q410,445 300,450 Q190,445 160,360 Z" fill={c.hairColor} />;
+        return <path d="M166,400 C180,520 236,576 300,580 C364,576 420,520 434,400 Q410,470 300,476 Q190,470 166,400 Z" fill={c.hairColor} stroke={INK} strokeWidth={6} />;
       case 'goatee':
-        return <path d="M255,440 Q300,520 345,440 Q300,470 255,440 Z" fill={c.hairColor} />;
+        return <path d="M262,496 Q300,488 338,496 Q336,560 300,568 Q264,560 262,496 Z" fill={c.hairColor} stroke={INK} strokeWidth={5} />;
       case 'mustache':
-        return <path d="M248,398 Q300,382 352,398 Q330,406 300,402 Q270,406 248,398 Z" fill={c.hairColor} />;
+        return mustache;
       case 'chinstrap':
         return (
-          <g fill={c.hairColor}>
-            <path d="M250,394 Q300,380 350,394 Q328,403 300,400 Q272,403 250,394 Z" opacity={0.9} />
-            <path d="M158,380 C166,460 214,520 300,534 C386,520 434,460 442,380 C436,470 388,512 300,516 C212,512 164,470 158,380 Z" opacity={0.8} />
-            <path d="M262,452 Q300,444 338,452 Q336,512 300,520 Q264,512 262,452 Z" opacity={0.95} />
+          <g>
+            <path d="M176,420 C186,496 232,548 300,558 C368,548 414,496 424,420 C414,512 368,540 300,544 C232,540 186,512 176,420 Z" fill={c.hairColor} opacity={0.85} />
+            <path d="M262,498 Q300,490 338,498 Q336,562 300,570 Q264,562 262,498 Z" fill={c.hairColor} stroke={INK} strokeWidth={5} strokeLinejoin="round" />
+            {mustache}
           </g>
         );
       default:
@@ -294,22 +343,17 @@ export const Avatar: React.FC<Props> = ({config: c, pose, mouth, frame, width = 
 
   const glasses = (() => {
     if (c.glasses === 'none') return null;
-    const stroke = '#1f1f1f';
     return c.glasses === 'round' ? (
-      <g fill="none" stroke={stroke} strokeWidth={7}>
-        <circle cx={245} cy={325} r={36} />
-        <circle cx={355} cy={325} r={36} />
-        <path d="M281,325 Q300,312 319,325" />
-        <path d="M209,322 L160,312" />
-        <path d="M391,322 L440,312" />
+      <g fill="none" stroke={INK} strokeWidth={8}>
+        <circle cx={240} cy={352} r={46} />
+        <circle cx={360} cy={352} r={46} />
+        <path d="M286,348 Q300,338 314,348 M194,346 L150,336 M406,346 L450,336" />
       </g>
     ) : (
-      <g fill="none" stroke={stroke} strokeWidth={7}>
-        <rect x={205} y={293} width={78} height={62} rx={14} />
-        <rect x={317} y={293} width={78} height={62} rx={14} />
-        <path d="M283,322 L317,322" />
-        <path d="M205,318 L160,310" />
-        <path d="M395,318 L440,310" />
+      <g fill="none" stroke={INK} strokeWidth={8}>
+        <rect x={192} y={312} width={96} height={78} rx={16} />
+        <rect x={312} y={312} width={96} height={78} rx={16} />
+        <path d="M288,348 L312,348 M192,344 L150,336 M408,344 L450,336" />
       </g>
     );
   })();
@@ -318,24 +362,24 @@ export const Avatar: React.FC<Props> = ({config: c, pose, mouth, frame, width = 
     switch (c.accessory) {
       case 'cap':
         return (
-          <g>
-            <path d="M140,300 Q140,135 300,135 Q460,135 460,300 Z" fill={c.accessoryColor} />
-            <path d="M120,300 L480,300 Q520,300 520,330 Q400,345 120,330 Z" fill={darken(c.accessoryColor, 0.3)} />
+          <g stroke={INK} strokeWidth={7} strokeLinejoin="round">
+            <path d="M142,320 Q142,130 300,130 Q458,130 458,320 Z" fill={c.accessoryColor} />
+            <path d="M120,320 L480,320 Q530,320 530,352 Q400,368 120,350 Z" fill={darken(c.accessoryColor, 0.3)} />
           </g>
         );
       case 'beanie':
         return (
-          <g>
-            <path d="M140,330 Q140,120 300,120 Q460,120 460,330 Z" fill={c.accessoryColor} />
-            <rect x={135} y={280} width={330} height={60} rx={20} fill={darken(c.accessoryColor, 0.25)} />
+          <g stroke={INK} strokeWidth={7} strokeLinejoin="round">
+            <path d="M140,350 Q140,118 300,118 Q460,118 460,350 Z" fill={c.accessoryColor} />
+            <rect x={134} y={296} width={332} height={64} rx={20} fill={darken(c.accessoryColor, 0.25)} />
           </g>
         );
       case 'headphones':
         return (
-          <g>
-            <path d="M135,330 Q135,120 300,120 Q465,120 465,330" fill="none" stroke={c.accessoryColor} strokeWidth={16} />
-            <rect x={110} y={300} width={50} height={90} rx={22} fill={c.accessoryColor} />
-            <rect x={440} y={300} width={50} height={90} rx={22} fill={c.accessoryColor} />
+          <g stroke={INK} strokeWidth={7}>
+            <path d="M135,350 Q135,118 300,118 Q465,118 465,350" fill="none" strokeWidth={18} />
+            <rect x={106} y={316} width={56} height={96} rx={24} fill={c.accessoryColor} />
+            <rect x={438} y={316} width={56} height={96} rx={24} fill={c.accessoryColor} />
           </g>
         );
       default:
@@ -343,122 +387,129 @@ export const Avatar: React.FC<Props> = ({config: c, pose, mouth, frame, width = 
     }
   })();
 
-  // Arms per pose. "Right" means screen-right (the viewer's right).
-  const armsBack: React.ReactNode[] = [];
-  const armsFront: React.ReactNode[] = [];
-  const A = (p: ArmSpec) => <Arm {...p} skin={c.skin} sleeve={c.shirtColor} />;
-  const w = frame;
+  // ------------------------------------------------------------ arms
+  const back: ArmSpec[] = [];
+  const front: ArmSpec[] = [];
   switch (pose) {
     case 'point':
-      armsBack.push(A({from: SH_R, elbow: [540, 700], hand: [560, 820], handKind: 'none'}));
-      armsFront.push(A({from: SH_L, elbow: [40, 620], hand: [-70, 540], handKind: 'point', angle: -90}));
+      back.push({from: SH_R, elbow: [520, 760], hand: [540, 860], handKind: 'none'});
+      front.push({from: SH_L, elbow: [40, 690], hand: [-70, 590], handKind: 'point', angle: -92});
       break;
     case 'crossed':
-      armsBack.push(A({from: SH_L, elbow: [130, 650], hand: [410, 625], handKind: 'none'}));
-      armsFront.push(A({from: SH_R, elbow: [470, 655], hand: [185, 640], handKind: 'fist'}));
+      back.push({from: SH_L, elbow: [130, 716], hand: [412, 690], handKind: 'none'});
+      front.push({from: SH_R, elbow: [470, 722], hand: [186, 704], handKind: 'fist'});
       break;
     case 'think':
-      armsBack.push(A({from: SH_L, elbow: [90, 720], hand: [80, 830], handKind: 'none'}));
-      armsFront.push(A({from: SH_R, elbow: [540, 700], hand: [370, 470], handKind: 'fist'}));
+      back.push({from: SH_L, elbow: [90, 780], hand: [80, 880], handKind: 'none'});
+      front.push({from: SH_R, elbow: [540, 760], hand: [372, 522], handKind: 'fist'});
       break;
     case 'shocked':
-      armsFront.push(A({from: SH_L, elbow: [40, 480], hand: [110, 330], handKind: 'open', angle: -20}));
-      armsFront.push(A({from: SH_R, elbow: [560, 480], hand: [490, 330], handKind: 'open', angle: 20}));
+      front.push({from: SH_L, elbow: [30, 540], hand: [110, 380], handKind: 'open', angle: -20});
+      front.push({from: SH_R, elbow: [570, 540], hand: [490, 380], handKind: 'open', angle: 20});
       break;
     case 'thumbsup':
-      armsBack.push(A({from: SH_L, elbow: [90, 720], hand: [80, 830], handKind: 'none'}));
-      armsFront.push(A({from: SH_R, elbow: [560, 640], hand: [560, 470], handKind: 'thumb'}));
+      back.push({from: SH_L, elbow: [90, 780], hand: [80, 880], handKind: 'none'});
+      front.push({from: SH_R, elbow: [570, 700], hand: [570, 520], handKind: 'thumb'});
       break;
     case 'facepalm':
-      armsBack.push(A({from: SH_L, elbow: [90, 720], hand: [80, 830], handKind: 'none'}));
+      back.push({from: SH_L, elbow: [90, 780], hand: [80, 880], handKind: 'none'});
       break;
     case 'laugh':
-      armsFront.push(A({from: SH_L, elbow: [110, 720], hand: [250, 720], handKind: 'fist'}));
-      armsBack.push(A({from: SH_R, elbow: [520, 720], hand: [540, 830], handKind: 'none'}));
+      front.push({from: SH_L, elbow: [110, 780], hand: [250, 770], handKind: 'fist'});
+      back.push({from: SH_R, elbow: [520, 780], hand: [540, 880], handKind: 'none'});
       break;
     case 'wave': {
-      const wob = Math.sin(w / 4) * 40;
-      armsBack.push(A({from: SH_L, elbow: [90, 720], hand: [80, 830], handKind: 'none'}));
-      armsFront.push(A({from: SH_R, elbow: [560, 560], hand: [600 + wob, 380], handKind: 'open', angle: wob / 2}));
+      const wob = Math.round(Math.sin(f2 / 5) * 40);
+      back.push({from: SH_L, elbow: [90, 780], hand: [80, 880], handKind: 'none'});
+      front.push({from: SH_R, elbow: [570, 600], hand: [610 + wob, 420], handKind: 'open', angle: wob / 2});
       break;
     }
     case 'shrug':
-      armsFront.push(A({from: SH_L, elbow: [60, 680], hand: [10, 600], handKind: 'open', angle: -80}));
-      armsFront.push(A({from: SH_R, elbow: [540, 680], hand: [590, 600], handKind: 'open', angle: 80}));
+      front.push({from: SH_L, elbow: [50, 740], hand: [0, 650], handKind: 'open', angle: -80});
+      front.push({from: SH_R, elbow: [550, 740], hand: [600, 650], handKind: 'open', angle: 80});
       break;
     default:
-      armsBack.push(A({from: SH_L, elbow: [90, 720], hand: [80, 830], handKind: 'none'}));
-      armsBack.push(A({from: SH_R, elbow: [510, 720], hand: [520, 830], handKind: 'none'}));
+      back.push({from: SH_L, elbow: [90, 780], hand: [80, 880], handKind: 'none'});
+      back.push({from: SH_R, elbow: [510, 780], hand: [520, 880], handKind: 'none'});
   }
+
+  const shirtDark = darken(c.shirtColor, 0.18);
 
   return (
     <svg viewBox="-120 60 840 760" width={width} style={{overflow: 'visible', transform: flip ? 'scaleX(-1)' : undefined, ...style}}>
-      <g transform={`translate(0 ${bob})`}>
-        {armsBack}
+      <defs>
+        <filter id="boil" x="-10%" y="-10%" width="120%" height="120%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves={2} seed={boilSeed} result="n" />
+          <feDisplacementMap in="SourceGraphic" in2="n" scale={5} xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </defs>
+      <g filter="url(#boil)" transform={`translate(0 ${bob})`}>
+        {back.map((a, i) => (
+          <Arm key={`b${i}`} {...a} skin={c.skin} sleeve={sleeve} />
+        ))}
+        {/* neck */}
+        <rect x={250} y={520} width={100} height={150} rx={30} fill={skinDark} stroke={INK} strokeWidth={7} />
         {/* torso */}
-        <path d={`M108,840 L108,660 Q110,560 220,545 L380,545 Q490,560 492,660 L492,840 Z`} fill={c.shirtColor} />
-        {c.shirt === 'hoodie' ? (
+        <path d="M96,900 L96,730 Q98,620 215,604 L385,604 Q502,620 504,730 L504,900 Z" fill={c.shirtColor} stroke={INK} strokeWidth={7} strokeLinejoin="round" />
+        {c.shirt === 'collared' ? (
           <g>
-            <path d="M210,548 Q300,640 390,548 Q300,590 210,548 Z" fill={shirtDark} />
-            <path d="M160,760 L440,760 L440,840 L160,840 Z" fill={shirtDark} opacity={0.5} />
-            <path d="M300,600 L300,840" stroke={c.shirtAccent} strokeWidth={6} />
-            <circle cx={300} cy={640} r={7} fill={c.shirtAccent} />
-          </g>
-        ) : c.shirt === 'collared' ? (
-          <g>
-            <path d="M232,545 L300,640 L368,545 Z" fill={c.shirtAccent} />
-            <path d="M232,545 L300,640 L262,655 L212,575 Z" fill={c.shirtColor} stroke={shirtDark} strokeWidth={3} strokeLinejoin="round" />
-            <path d="M368,545 L300,640 L338,655 L388,575 Z" fill={c.shirtColor} stroke={shirtDark} strokeWidth={3} strokeLinejoin="round" />
-            <path d="M300,640 L300,840" stroke={shirtDark} strokeWidth={3} />
-            {[690, 760, 830].map((y) => (
-              <circle key={y} cx={300} cy={y} r={6} fill="#f4f4f4" stroke={shirtDark} strokeWidth={2} />
+            <path d="M226,604 L300,712 L374,604 Z" fill={c.shirtAccent} />
+            <path d="M226,604 L300,712 L258,730 L204,640 Z" fill={c.shirtColor} stroke={INK} strokeWidth={6} strokeLinejoin="round" />
+            <path d="M374,604 L300,712 L342,730 L396,640 Z" fill={c.shirtColor} stroke={INK} strokeWidth={6} strokeLinejoin="round" />
+            <path d="M300,712 L300,900" stroke={shirtDark} strokeWidth={4} />
+            {[770, 850].map((y) => (
+              <circle key={y} cx={300} cy={y} r={7} fill="#fff" stroke={INK} strokeWidth={4} />
             ))}
+          </g>
+        ) : c.shirt === 'hoodie' ? (
+          <g>
+            <path d="M206,606 Q300,700 394,606 Q300,650 206,606 Z" fill={shirtDark} stroke={INK} strokeWidth={6} />
+            <path d="M300,660 L300,900" stroke={c.shirtAccent} strokeWidth={8} />
           </g>
         ) : c.shirt === 'jacket' ? (
           <g>
-            <path d="M120,660 Q120,560 220,545 L300,640 L300,840 L120,840 Z" fill={shirtDark} />
-            <path d="M220,545 L300,640 L262,560 Z" fill={c.shirtAccent} />
-            <path d="M380,545 L300,640 L338,560 Z" fill={c.shirtAccent} />
+            <path d="M96,730 Q98,620 215,604 L300,712 L300,900 L96,900 Z" fill={shirtDark} stroke={INK} strokeWidth={6} />
+            <path d="M215,604 L300,712 L262,626 Z" fill={c.shirtAccent} />
+            <path d="M385,604 L300,712 L338,626 Z" fill={c.shirtAccent} />
           </g>
         ) : (
-          <path d="M230,548 Q300,610 370,548" fill="none" stroke={shirtDark} strokeWidth={14} />
+          <path d="M236,606 Q300,670 364,606" fill="none" stroke={INK} strokeWidth={7} />
         )}
-        {/* neck */}
-        <rect x={244} y={460} width={112} height={130} rx={34} fill={darken(c.skin, 0.15)} />
-        <g transform={`rotate(${expr.headTilt} 300 440)`}>
+        <g transform={`rotate(${tilt} 300 460)`}>
           {hairBack}
-          {/* ears */}
-          <g>
-            <ellipse cx={152} cy={345} rx={24} ry={36} fill={c.skin} />
-            <ellipse cx={448} cy={345} rx={24} ry={36} fill={c.skin} />
-            <path d="M148,335 Q140,350 150,365" stroke={darken(c.skin, 0.3)} strokeWidth={5} fill="none" strokeLinecap="round" />
-            <path d="M452,335 Q460,350 450,365" stroke={darken(c.skin, 0.3)} strokeWidth={5} fill="none" strokeLinecap="round" />
+          <g stroke={INK} strokeWidth={7}>
+            <ellipse cx={148} cy={360} rx={28} ry={40} fill={c.skin} />
+            <ellipse cx={452} cy={360} rx={28} ry={40} fill={c.skin} />
+            <path d="M144,346 Q136,362 146,380" fill="none" strokeWidth={5} strokeLinecap="round" />
+            <path d="M456,346 Q464,362 454,380" fill="none" strokeWidth={5} strokeLinecap="round" />
           </g>
           {/* head */}
-          <path d="M300,130 C390,130 446,198 448,300 C450,390 440,452 402,498 C372,534 332,546 300,546 C268,546 228,534 198,498 C160,452 150,390 152,300 C154,198 210,130 300,130 Z" fill={c.skin} />
+          <path d="M300,150 C402,150 452,222 452,336 C452,428 440,478 410,526 C382,566 340,584 300,584 C260,584 218,566 190,526 C160,478 148,428 148,336 C148,222 198,150 300,150 Z" fill={c.skin} stroke={INK} strokeWidth={7} strokeLinejoin="round" />
           {facialHair}
           {hairFront}
           {accessory}
-          {brow(245, expr.browL, 1)}
-          {brow(355, expr.browR, -1)}
-          {eye(245, expr.browL)}
-          {eye(355, expr.browR)}
+          <Brow cx={236} y={browSpec.l.y} a={browSpec.l.a} />
+          <Brow cx={364} y={browSpec.r.y} a={browSpec.r.a} />
+          <Eye cx={236} side={1} />
+          <Eye cx={364} side={-1} />
+          {/* nose */}
+          <path d="M292,372 C288,398 274,414 272,428 Q300,442 328,428 C326,414 312,398 308,372" fill={skinDark} stroke={INK} strokeWidth={5} strokeLinejoin="round" />
+          <ellipse cx={282} cy={428} rx={8} ry={5} fill={INK} />
+          <ellipse cx={318} cy={428} rx={8} ry={5} fill={INK} />
           {glasses}
-          <path d="M296,332 C288,355 282,372 276,388" fill="none" stroke={darken(c.skin, 0.28)} strokeWidth={5} strokeLinecap="round" />
-          <path d="M270,392 Q300,406 330,392" fill="none" stroke={darken(c.skin, 0.3)} strokeWidth={6} strokeLinecap="round" />
-          <ellipse cx={272} cy={388} rx={11} ry={7} fill={darken(c.skin, 0.32)} />
-          <ellipse cx={328} cy={388} rx={11} ry={7} fill={darken(c.skin, 0.32)} />
-          {mouthEl}
+          <Mouth />
           {pose === 'facepalm' ? (
             <g>
-              <polyline points="450,575 540,540 340,320" fill="none" stroke={c.skin} strokeWidth={54} strokeLinecap="round" strokeLinejoin="round" />
-              <line x1={450} y1={575} x2={540} y2={540} stroke={c.shirtColor} strokeWidth={66} strokeLinecap="round" />
-              <ellipse cx={305} cy={325} rx={92} ry={58} fill={c.skin} transform="rotate(-12 305 325)" />
-              <path d="M225,345 L385,300" stroke={darken(c.skin, 0.25)} strokeWidth={5} strokeLinecap="round" />
+              <polyline points="432,640 548,560 352,330" fill="none" stroke={INK} strokeWidth={72} strokeLinecap="round" strokeLinejoin="round" />
+              <polyline points="432,640 548,560 352,330" fill="none" stroke={sleeve} strokeWidth={58} strokeLinecap="round" strokeLinejoin="round" />
+              <ellipse cx={312} cy={342} rx={96} ry={62} fill={c.skin} stroke={INK} strokeWidth={6} transform="rotate(-12 312 342)" />
+              <path d="M232,362 L390,318 M240,384 L392,342" stroke={INK} strokeWidth={4} strokeLinecap="round" opacity={0.6} />
             </g>
           ) : null}
         </g>
-        {armsFront}
+        {front.map((a, i) => (
+          <Arm key={`f${i}`} {...a} skin={c.skin} sleeve={sleeve} />
+        ))}
       </g>
     </svg>
   );

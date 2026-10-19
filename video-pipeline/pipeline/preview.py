@@ -60,7 +60,7 @@ def write_preview(storyboard: dict[str, Any], path: str, align_report: str = "")
         rows.append(
             f"<div class=scene><div><div class=n>{sc['id']}</div><div class=t>{html.escape(sc['type'].upper())}</div>"
             f"<div class=time>{sc['start']:.1f}s → {sc['end']:.1f}s<br>({sc['end']-sc['start']:.1f}s)</div></div>"
-            f"<div class=vis>{_visual_summary(sc)}{(' <small style=color:#9aa3b8>[avatar: ' + str(sc['props'].get('pose','')) + ' ' + str(sc['props'].get('pos','')) + ']</small>') if sc['props'].get('pose') or sc['props'].get('pos') else ''}</div><div class=nar>{html.escape(sc['narration'])}</div></div>"
+            f"<div class=vis>{_visual_summary(sc)}{(' <small style=color:#9aa3b8>cues: ' + ', '.join(str(c.get('pose') or c.get('face')) + '@' + str(c['t']) + 's' for c in sc.get('cues', [])) + '</small>') if sc.get('cues') else ''}{(' <small style=color:#9aa3b8>[avatar: ' + str(sc['props'].get('pose','')) + ' ' + str(sc['props'].get('pos','')) + ']</small>') if sc['props'].get('pose') or sc['props'].get('pos') else ''}</div><div class=nar>{html.escape(sc['narration'])}</div></div>"
         )
     warn = ""
     if sb.get("timing") != "aligned":

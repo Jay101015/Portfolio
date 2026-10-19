@@ -29,17 +29,20 @@ export const StatScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}
     <AbsoluteFill style={{justifyContent: 'center', alignItems: 'flex-start', padding: pad}}>
       {label ? (
         <Reveal delay={0}>
-          <div style={{fontSize: 36 * u, fontWeight: 600, color: brand.muted, letterSpacing: 1, marginBottom: 20 * u}}>{label}</div>
+          <div style={{fontFamily: brand.display, fontSize: 40 * u, color: brand.muted, marginBottom: 16 * u}}>{label}</div>
         </Reveal>
       ) : null}
       <Reveal delay={4} distance={50}>
         <div
           style={{
+            fontFamily: brand.display,
             fontSize: (isVertical ? 150 : 200) * u,
-            fontWeight: 800,
+            fontWeight: brand.toon ? 400 : 800,
             lineHeight: 1,
-            letterSpacing: -6 * u,
-            color,
+            letterSpacing: brand.toon ? 0 : -6 * u,
+            color: brand.toon && color === brand.text ? brand.accent : color,
+            WebkitTextStroke: brand.toon ? `${3 * u}px ${brand.ink}` : undefined,
+            textShadow: brand.toon ? `${8 * u}px ${8 * u}px 0 ${brand.ink}` : undefined,
             fontVariantNumeric: 'tabular-nums',
           }}
         >
@@ -48,7 +51,7 @@ export const StatScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}
       </Reveal>
       {sub ? (
         <Reveal delay={18}>
-          <div style={{fontSize: 40 * u, color: brand.text, marginTop: 28 * u, maxWidth: '80%', lineHeight: 1.3}}>{sub}</div>
+          <div style={{fontSize: 40 * u, color: brand.text, marginTop: 24 * u, maxWidth: isVertical ? '100%' : '56%', lineHeight: 1.3}}>{sub}</div>
         </Reveal>
       ) : null}
       <Reveal delay={26} from="none" style={{marginTop: 36 * u}}>

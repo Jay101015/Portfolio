@@ -36,6 +36,9 @@ SCENE_TYPES = {"title", "text", "stat", "list", "chart", "compare", "quote", "im
 TAG_RE = re.compile(r"^\[(\w+)([^\]]*)\]\s*$")
 ATTR_RE = re.compile(r'(\w+)=(?:"([^"]*)"|(\S+))')
 FLAG_RE = re.compile(r"(?<![\w=\"])([A-Za-z_]\w*)(?![\w=\"])")
+CUE_RE = re.compile(r"\{([a-z_]+)\}")
+POSE_NAMES = {"idle", "point", "crossed", "think", "shocked", "thumbsup", "facepalm", "laugh", "wave", "shrug"}
+FACE_NAMES = {"neutral", "happy", "angry", "sad", "smug", "surprised", "confused", "laugh_face", "closed", "flat"}
 MONEY_OR_PCT_RE = re.compile(r"\$\s?[\d,]+(?:\.\d+)?[KMBTkmbt]?|[\d,]+(?:\.\d+)?\s?%")
 
 
@@ -187,10 +190,40 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
     if "dur" in a:
         p["dur"] = float(a["dur"])
     # The character can be placed and posed on any scene.
-    for k in ("pos", "pose", "scale"):
+    for k in ("pos", "pose", "face", "scale"):
         if k in a:
             p[k] = a[k]
     return p
+
+
+def split_cues(text: str) -> tuple[str, list[dict[str, Any]]]:
+    """'Look at this {shocked} thing' -> ('Look at this thing', [{'word': 3, 'pose': 'shocked'}]).
+
+    The word index is the index of the word the cue precedes, in the cleaned text.
+    A face name changes the expression only; a pose name changes body and expression.
+    """
+    cues: list[dict[str, Any]] = []
+    out: list[str] = []
+    for tok in text.split():
+        m = CUE_RE.fullmatch(tok)
+        if m:
+            name = m.group(1)
+            if name in POSE_NAMES:
+                cues.append({"word": len(out), "pose": name})
+            elif name in FACE_NAMES:
+                cues.append({"word": len(out), "face": name.replace("_face", "")})
+            continue
+        # cue glued to a word, e.g. "{angry}No."
+        inner = CUE_RE.findall(tok)
+        cleaned = CUE_RE.sub("", tok)
+        for name in inner:
+            if name in POSE_NAMES:
+                cues.append({"word": len(out), "pose": name})
+            elif name in FACE_NAMES:
+                cues.append({"word": len(out), "face": name.replace("_face", "")})
+        if cleaned:
+            out.append(cleaned)
+    return " ".join(out), cues
 
 
 def _narration_for(b: Block) -> str:
@@ -213,6 +246,22 @@ def _spread_words(text: str, start: float, end: float) -> list[dict[str, Any]]:
     return [{"w": w, "s": round(start + i * step, 3), "e": round(start + (i + 1) * step - 0.04, 3)} for i, w in enumerate(ws)]
 
 
+def time_cues(sc: dict[str, Any]) -> None:
+    """Turn word-indexed cues into absolute times using the scene's word timings."""
+    words = sc.get("words") or []
+    cues = []
+    for c in sc.get("cueWords", []):
+        i = min(c["word"], max(0, len(words) - 1))
+        t = words[i]["s"] - 0.08 if words else sc["start"]
+        cue = {"t": round(max(sc["start"], t), 3)}
+        if "pose" in c:
+            cue["pose"] = c["pose"]
+        if "face" in c:
+            cue["face"] = c["face"]
+        cues.append(cue)
+    sc["cues"] = cues
+
+
 def estimate_timings(scenes: list[dict[str, Any]], lead_in: float = 0.4) -> float:
     """Fill start/end/words with a reading-pace estimate. Returns total duration."""
     t = lead_in
@@ -222,6 +271,7 @@ def estimate_timings(scenes: list[dict[str, Any]], lead_in: float = 0.4) -> floa
         sc["start"] = round(t, 3)
         sc["end"] = round(t + dur, 3)
         sc["words"] = _spread_words(sc["narration"], t + 0.15, t + dur - 0.25)
+        time_cues(sc)
         t += dur
     return round(t + 1.0, 3)
 
@@ -299,13 +349,16 @@ def parse_script(md: str) -> dict[str, Any]:
 
     scenes = []
     for i, b in enumerate(blocks, 1):
+        narration, cues = split_cues(_narration_for(b))
         scenes.append({
             "id": i,
             "type": b.type,
             "start": 0.0,
             "end": 0.0,
-            "narration": _narration_for(b),
+            "narration": narration,
             "words": [],
+            "cueWords": cues,
+            "cues": [],
             "props": _block_to_props(b, title),
         })
     if scenes and header.get("kicker") and scenes[0]["type"] == "title":
@@ -330,7 +383,7 @@ def parse_script(md: str) -> dict[str, Any]:
         "durationSec": duration,
         "audio": None,
         "captions": header.get("captions", "true").lower() not in ("false", "no", "off", "0"),
-        "theme": header.get("theme", "movie"),
+        "theme": header.get("theme", "toon"),
         "brand": brand,
         "avatar": avatar,
         "mouth": [],

@@ -20,8 +20,8 @@ export const demoStoryboard: Storyboard = {
   durationSec: 28,
   audio: null,
   captions: true,
-  theme: 'movie',
-  brand: presets.movie,
+  theme: 'toon',
+  brand: presets.toon,
   avatar: {},
   scenes: [
     {id: 1, type: 'avatar', start: 0, end: 5, narration: n1, words: spread(n1, 0.3, 4.6), props: {headline: 'Your First $10,000', sub: 'Demo storyboard', pose: 'wave'}},

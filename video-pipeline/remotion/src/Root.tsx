@@ -13,7 +13,7 @@ export const Root: React.FC = () => {
     <>
       <Composition id="Main" component={Video} width={1920} height={1080} fps={FPS} durationInFrames={FPS * demoStoryboard.durationSec} defaultProps={demoStoryboard} calculateMetadata={meta} />
       <Composition id="Vertical" component={Video} width={1080} height={1920} fps={FPS} durationInFrames={FPS * demoStoryboard.durationSec} defaultProps={demoStoryboard} calculateMetadata={meta} />
-      <Composition id="AvatarSheet" component={AvatarSheet} width={1920} height={1080} fps={FPS} durationInFrames={FPS * 4} defaultProps={{avatar: {}, theme: 'movie'}} />
+      <Composition id="AvatarSheet" component={AvatarSheet} width={1920} height={1080} fps={FPS} durationInFrames={FPS * 4} defaultProps={{avatar: {}, theme: 'toon'}} />
     </>
   );
 };

@@ -11,10 +11,10 @@ export const OutroScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand
   return (
     <AbsoluteFill style={{justifyContent: 'center', padding: pad}}>
       <Reveal delay={0} distance={50}>
-        <div style={{fontSize: (isVertical ? 80 : 96) * u, fontWeight: 800, letterSpacing: -2, lineHeight: 1.05}}>{title}</div>
+        <div style={{fontFamily: brand.display, fontSize: (isVertical ? 80 : 100) * u, fontWeight: brand.toon ? 400 : 800, lineHeight: 1.05, maxWidth: isVertical ? '100%' : '58%', transform: brand.toon ? 'rotate(-1.5deg)' : undefined}}>{title}</div>
       </Reveal>
       <Reveal delay={10}>
-        <div style={{display: 'inline-flex', marginTop: 40 * u, padding: `${20 * u}px ${40 * u}px`, borderRadius: 999, background: brand.accent, color: brand.bg, fontSize: 40 * u, fontWeight: 800}}>
+        <div style={{display: 'inline-flex', marginTop: 36 * u, padding: `${16 * u}px ${36 * u}px`, borderRadius: 999, background: brand.accent, color: '#fff', fontFamily: brand.display, fontSize: 44 * u, border: brand.toon ? `${5 * u}px solid ${brand.ink}` : undefined, boxShadow: brand.toon ? `${7 * u}px ${7 * u}px 0 ${brand.ink}` : undefined, transform: brand.toon ? 'rotate(1deg)' : undefined}}>
           {cta}
         </div>
       </Reveal>
@@ -22,7 +22,7 @@ export const OutroScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand
         <div style={{display: 'flex', gap: 40 * u, marginTop: 70 * u}}>
           {['Next video', 'Playlist'].map((label, i) => (
             <Reveal key={label} delay={18 + i * 6} from="none">
-              <div style={{width: 560 * u, height: 315 * u, borderRadius: 24 * u, border: `2px dashed ${brand.muted}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: brand.muted, fontSize: 30 * u}}>
+              <div style={{width: 480 * u, height: 270 * u, borderRadius: 24 * u, border: `${brand.toon ? 4 * u : 2}px dashed ${brand.muted}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: brand.muted, fontSize: 30 * u}}>
                 {label} (end screen slot)
               </div>
             </Reveal>

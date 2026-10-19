@@ -11,7 +11,12 @@ export type Brand = {
   accent: string;
   accent2: string;
   font: string;
+  display: string; // headline face
+  ink: string; // outline / primary text colour
+  toon: boolean; // hand-drawn styling on (paper, outlines, hard cuts)
 };
+
+export type Cue = {t: number; pose?: string; face?: string}; // mid-scene change, absolute seconds
 
 export type SceneType =
   | 'title'
@@ -36,6 +41,7 @@ export type Scene = {
   end: number; // seconds
   narration: string;
   words?: Word[];
+  cues?: Cue[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props: Record<string, any>;
 };

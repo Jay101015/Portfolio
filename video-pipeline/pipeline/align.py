@@ -246,10 +246,13 @@ def align(storyboard: dict[str, Any], transcript: list[Word], total_sec: float) 
     last_end = total_sec
     if not per_scene[-1]:
         last_end = max(total_sec, resolved[-1] + float(scenes[-1]["props"].get("dur", 3.0)))
+    from .script_parser import time_cues
+
     for si, sc in enumerate(scenes):
         sc["start"] = round(resolved[si], 3)
         sc["end"] = round(resolved[si + 1] if si + 1 < n else max(last_end, resolved[si] + MIN_SCENE), 3)
         sc["words"] = per_scene[si]
+        time_cues(sc)
 
     storyboard["durationSec"] = round(max(scenes[-1]["end"], total_sec) + 0.5, 3)
     storyboard["timing"] = "aligned"

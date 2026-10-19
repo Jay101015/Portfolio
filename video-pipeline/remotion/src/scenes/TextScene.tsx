@@ -38,15 +38,15 @@ export const TextScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}
     <AbsoluteFill style={{justifyContent: 'center', padding: pad}}>
       {headline ? (
         <Reveal delay={0}>
-          <div style={{fontSize: 34 * u, fontWeight: 700, letterSpacing: 3, color: brand.accent, marginBottom: 30 * u}}>{headline.toUpperCase()}</div>
+          <div style={{fontFamily: brand.display, fontSize: 38 * u, letterSpacing: brand.toon ? 0 : 3, color: brand.accent, marginBottom: 26 * u}}>{brand.toon ? headline : headline.toUpperCase()}</div>
         </Reveal>
       ) : null}
       <Reveal key={idx} delay={Math.max(0, groupStartFrame - 2)} distance={30}>
-        <div style={{fontSize: (isVertical ? 64 : 80) * u, fontWeight: 800, lineHeight: 1.15, letterSpacing: -1.5 * u, maxWidth: isVertical ? '100%' : '88%'}}>
+        <div style={{fontFamily: brand.display, fontSize: (isVertical ? 64 : 84) * u, fontWeight: brand.toon ? 400 : 800, lineHeight: 1.15, letterSpacing: brand.toon ? 0 : -1.5 * u, maxWidth: isVertical ? '100%' : '88%'}}>
           {group.map((w, i) => {
             const lit = t >= w.s - 0.03;
             return (
-              <span key={i} style={{color: lit ? brand.text : `${brand.text}44`, marginRight: 18 * u}}>
+              <span key={i} style={{color: lit ? brand.text : `${brand.text}44`, marginRight: 18 * u, display: 'inline-block', transform: brand.toon && lit ? `rotate(${((i * 7) % 5) - 2}deg)` : undefined}}>
                 {w.w}
               </span>
             );

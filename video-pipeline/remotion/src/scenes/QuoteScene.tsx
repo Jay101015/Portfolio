@@ -11,10 +11,10 @@ export const QuoteScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand
   return (
     <AbsoluteFill style={{justifyContent: 'center', padding: pad}}>
       <Reveal delay={0} from="none">
-        <div style={{fontSize: 220 * u, lineHeight: 0.6, color: brand.accent2, fontWeight: 800, marginBottom: 10 * u}}>“</div>
+        <div style={{fontFamily: brand.display, fontSize: 220 * u, lineHeight: 0.6, color: brand.accent2, marginBottom: 10 * u, WebkitTextStroke: brand.toon ? `${3 * u}px ${brand.ink}` : undefined}}>“</div>
       </Reveal>
       <Reveal delay={6} distance={50}>
-        <div style={{fontSize: (isVertical ? 60 : 72) * u, fontWeight: 700, lineHeight: 1.2, maxWidth: '90%', letterSpacing: -1}}>{quote}</div>
+        <div style={{fontFamily: brand.display, fontSize: (isVertical ? 60 : 76) * u, fontWeight: brand.toon ? 400 : 700, lineHeight: 1.2, maxWidth: isVertical ? '100%' : '62%', transform: brand.toon ? 'rotate(-1deg)' : undefined}}>{quote}</div>
       </Reveal>
       {attribution ? (
         <Reveal delay={20}>
