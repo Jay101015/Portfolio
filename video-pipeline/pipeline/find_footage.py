@@ -265,7 +265,8 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
                 entry["status"] = f"download failed: {e}"
                 report["scenes"].append(entry)
                 continue
-            new_md = rewrite_tag(new_md, sc["id"], sb, {"src": fname, "credit": attribution(chosen)}, to_type="clip" if chosen.kind == "video" else "still")
+            # Replace the footage and its credit; drop a from= offset that was written for a different file.
+            new_md = rewrite_tag(new_md, sc["id"], sb, {"src": fname, "credit": attribution(chosen)}, to_type="clip" if chosen.kind == "video" else "still", drop=("from",))
         report["scenes"].append(entry)
 
     if not dry_run and new_md != md:
@@ -275,7 +276,7 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
     return report
 
 
-def rewrite_tag(md: str, scene_id: int, sb: dict[str, Any], updates: dict[str, str], to_type: str | None = None) -> str:
+def rewrite_tag(md: str, scene_id: int, sb: dict[str, Any], updates: dict[str, str], to_type: str | None = None, drop: tuple[str, ...] = ()) -> str:
     """Replace attributes on the Nth scene tag line (1-based, counting tag lines in order)."""
     lines = md.splitlines(keepends=True)
     n = 0
@@ -289,6 +290,8 @@ def rewrite_tag(md: str, scene_id: int, sb: dict[str, Any], updates: dict[str, s
         typ, rest = m.group(1), m.group(2)
         if to_type and typ in ("clip", "still", "image") and to_type != typ:
             typ = to_type
+        for k in drop:
+            rest = re.sub(rf'\s*\b{k}=(?:"[^"]*"|\S+)', "", rest)
         for k, v in updates.items():
             if re.search(rf'\b{k}=', rest):
                 rest = re.sub(rf'\b{k}=(?:"[^"]*"|\S+)', f'{k}="{v}"', rest)

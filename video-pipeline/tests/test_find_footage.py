@@ -71,7 +71,7 @@ class EndToEndTests(unittest.TestCase):
             open(os.path.join(d, "media", "have.png"), "wb").close()
             report = ff.find(d, ["commons"], get=fake_get, download=fake_download)
             md = open(os.path.join(d, "script.md")).read()
-            self.assertIn('[clip src="02-rain-forest.webm" from=12 fallback="art.png" search="rain forest" credit="Rain forest.webm by Someone, CC0, via Wikimedia Commons"]', md)
+            self.assertIn('[clip src="02-rain-forest.webm" fallback="art.png" search="rain forest" credit="Rain forest.webm by Someone, CC0, via Wikimedia Commons"]', md)
             self.assertEqual(downloads, ["https://u/rain.webm"])
             self.assertEqual([s["status"] for s in report["scenes"]], ["downloaded", "present"])
             rep = open(os.path.join(d, "footage-report.md")).read()
