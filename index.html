@@ -20,7 +20,7 @@
     <div class="brand"><span class="dot"></span>Cue <small>self-tape reader</small></div>
     <nav class="tabs" role="tablist">
       <button class="tab active" data-view="script" role="tab">1 · Script</button>
-      <button class="tab" data-view="stage" role="tab">2 · Tape</button>
+      <button class="tab" data-view="stage" role="tab">2 · Scene</button>
       <button class="tab" data-view="takes" role="tab">3 · Takes <span id="takeCount" class="badge">0</span></button>
     </nav>
   </header>
@@ -111,9 +111,8 @@
               <option value="hidden">Hide (off book)</option>
             </select>
           </label>
-          <label class="check"><input id="mirror" type="checkbox" /> Mirror camera preview</label>
 
-          <button id="toStage" class="btn primary block mt" disabled>Go to taping →</button>
+          <button id="toStage" class="btn primary block mt" disabled>Go to the scene →</button>
 
           <details class="diag mt">
             <summary>Something wrong? Problem report</summary>
@@ -134,16 +133,13 @@
       </div>
       <div id="voiceBanner" class="banner" hidden></div>
       <div class="stage">
-        <div class="camwrap">
-          <video id="preview" autoplay muted playsinline></video>
-          <div id="camOff" class="camoff">
-            <p>Camera &amp; mic are off</p>
-            <button id="enableCam" class="btn primary">Enable camera</button>
-            <p class="hint">Rehearsal works without a camera in manual or timed mode.</p>
-          </div>
+        <div class="now card">
           <div id="countdownOverlay" class="overlay" hidden></div>
-          <div id="recBadge" class="rec" hidden><span></span>REC <b id="recTime">0:00</b></div>
-          <div id="meter" class="meter" title="Mic level"><i></i></div>
+          <div class="now-top">
+            <span id="recBadge" class="rec" hidden><span></span>REC <b id="recTime">0:00</b></span>
+            <span id="nowState" class="hint">Tap ▶ Start scene — I'll read the other parts and wait for yours.</span>
+            <span id="meter" class="meter" title="Mic level"><i></i></span>
+          </div>
           <div id="prompter" class="prompter" hidden></div>
         </div>
 
@@ -157,8 +153,8 @@
       </div>
 
       <div class="controls">
-        <button id="rehearseBtn" class="btn">▶ Rehearse</button>
-        <button id="recordBtn" class="btn rec-btn">● Record take</button>
+        <button id="rehearseBtn" class="btn primary">▶ Start scene</button>
+        <button id="recordBtn" class="btn rec-btn">● Record audio</button>
         <button id="nextBtn" class="btn ghost" disabled>Next ⏭ <kbd>Space</kbd></button>
         <button id="stopBtn" class="btn ghost" disabled>■ Stop <kbd>Esc</kbd></button>
         <span id="status" class="status"></span>
@@ -171,7 +167,7 @@
         <label class="btn sm">⬆ Import from camera roll<input id="videoInput" type="file" accept="video/*" multiple hidden /></label>
         <span id="importStatus" class="hint"></span>
       </div>
-      <div id="takesEmpty" class="card empty">No takes yet. Record one from the Tape tab, or import a video.</div>
+      <div id="takesEmpty" class="card empty">No takes yet. Record audio from the Scene tab, or import a video.</div>
       <div id="takesGrid" class="takes"></div>
     </section>
   </main>
