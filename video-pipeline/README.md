@@ -176,6 +176,31 @@ occasional Content ID claim on the ad revenue. Public domain lists worth
 knowing: the Internet Archive's feature film collection and Wikipedia's list
 of films in the public domain in the United States.
 
+## Finding free-use footage
+
+```bash
+python -m pipeline.find_footage projects/my-review            # searches, downloads, writes credits into the script
+python -m pipeline.find_footage projects/my-review --dry-run  # report only
+```
+
+For every `clip`, `still` or `image` scene without a file, the finder builds
+a query (`search=`, else the caption, else the narration's keywords) and asks,
+in order: the Internet Archive (the film itself when the header says
+`rights: public-domain`, otherwise public-domain and CC items), Wikimedia
+Commons (CC0, public domain, CC BY, CC BY-SA), and Pexels stock b-roll (set
+`PEXELS_API_KEY`; free at pexels.com/api). The first usable hit lands in
+`media/`, the scene gets `src=` and an on-screen `credit=`, and
+`footage-report.md` lists every scene with its licence and what was not
+found. CC BY-NC and CC BY-ND are skipped on purpose: a monetised channel is
+commercial use.
+
+Header keys it reads: `film:` (the title), `rights: public-domain` (search
+for the feature itself), `licenses:` (narrow the accepted set). For a film
+under copyright there is no free-use footage of the film; the finder returns
+thematic b-roll and says so in the report. The GitHub workflow runs the finder
+before every render, so a pushed script with `search=` hints comes back with
+footage attached.
+
 ## Offline alignment fallback
 
 If Hugging Face is unreachable, `--backend sherpa_onnx --model <dir>` uses a

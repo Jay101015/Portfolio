@@ -74,6 +74,12 @@ jobs:
           path: ~/.cache/huggingface
           key: whisper-base-en
 
+      - name: Find free-use footage for scenes that have none
+        env:
+          PROJECT: ${{ steps.pick.outputs.project }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+        run: python -m pipeline.find_footage "projects/$PROJECT" || echo "footage finder failed; rendering with fallbacks"
+
       - name: Render
         env:
           PROJECT: ${{ steps.pick.outputs.project }}
@@ -91,3 +97,5 @@ jobs:
             video-pipeline/projects/${{ steps.pick.outputs.project }}/*.mp4
             video-pipeline/projects/${{ steps.pick.outputs.project }}/storyboard.html
             video-pipeline/projects/${{ steps.pick.outputs.project }}/storyboard.json
+            video-pipeline/projects/${{ steps.pick.outputs.project }}/footage-report.md
+            video-pipeline/projects/${{ steps.pick.outputs.project }}/script.md
