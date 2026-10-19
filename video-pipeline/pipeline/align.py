@@ -75,6 +75,44 @@ def mouth_envelope(wav: str, fps: int, total_sec: float) -> list[float]:
     return [round(float(v), 2) for v in sm]
 
 
+VISEME = {"a": 1, "e": 2, "i": 2, "o": 3, "u": 3, "y": 2, "m": 4, "b": 4, "p": 4, "f": 5, "v": 5, "l": 6, "th": 6, "w": 3, "q": 3, "r": 0, "s": 2, "z": 2, "c": 2, "t": 2, "d": 2, "n": 2, "k": 1, "g": 1, "h": 1, "j": 2, "x": 2}
+
+
+def visemes_for_word(word: str) -> list[int]:
+    """A crude letter-to-mouth-shape sequence: 0 rest, 1 open (ah), 2 wide (ee), 3 round (oh), 4 closed (m/b/p), 5 teeth-on-lip (f/v), 6 tongue (l/th)."""
+    w = re.sub(r"[^a-z]", "", word.lower())
+    out: list[int] = []
+    i = 0
+    while i < len(w):
+        if w[i:i + 2] == "th":
+            out.append(6)
+            i += 2
+            continue
+        v = VISEME.get(w[i], 0)
+        if not out or out[-1] != v:
+            out.append(v)
+        i += 1
+    return out or [1]
+
+
+def visemes_from_words(scenes: list[dict[str, Any]], fps: int, total_sec: float) -> list[int]:
+    """Per-frame viseme ids: each word's shapes are spread across its spoken span; silence is 0."""
+    n_frames = int(total_sec * fps) + 1
+    out = [0] * n_frames
+    for sc in scenes:
+        for w in sc.get("words", []):
+            a, b = int(w["s"] * fps), max(int(w["s"] * fps) + 1, int(w["e"] * fps))
+            seq = visemes_for_word(w["w"])
+            span = max(1, b - a)
+            for f in range(max(0, a), min(n_frames, b)):
+                idx = min(len(seq) - 1, int((f - a) / span * len(seq)))
+                out[f] = seq[idx]
+            # a closed beat between words keeps the mouth from smearing
+            if b < n_frames:
+                out[b] = 0
+    return out
+
+
 def mouth_from_words(scenes: list[dict[str, Any]], fps: int, total_sec: float) -> list[float]:
     """No recording yet: flap the mouth while estimated words are being 'spoken'."""
     import math

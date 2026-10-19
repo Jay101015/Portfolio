@@ -57,5 +57,6 @@ export type Storyboard = {
   brand: Partial<Brand>;
   avatar?: Partial<AvatarConfig>;
   mouth?: number[]; // per-frame mouth openness 0..1
+  visemes?: number[]; // per-frame mouth shape 0..6 (rest, open, wide, round, closed, teeth-lip, tongue)
   scenes: Scene[];
 };

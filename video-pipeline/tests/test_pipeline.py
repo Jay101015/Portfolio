@@ -100,6 +100,19 @@ class MovieParserTests(unittest.TestCase):
         # fires just before "three" is spoken
         self.assertAlmostEqual(sc["cues"][0]["t"], sc["words"][2]["s"] - 0.08, places=2)
 
+    def test_visemes_follow_letters(self):
+        from pipeline.align import visemes_for_word, visemes_from_words
+
+        self.assertEqual(visemes_for_word("map"), [4, 1, 4])
+        self.assertEqual(visemes_for_word("the"), [6, 2])
+        self.assertEqual(visemes_for_word("---"), [1])
+        sb = parse_script(MOVIE)
+        v = visemes_from_words(sb["scenes"], 30, sb["durationSec"])
+        self.assertEqual(len(v), int(sb["durationSec"] * 30) + 1)
+        self.assertEqual(v[0], 0)
+        first = sb["scenes"][0]["words"][0]
+        self.assertNotEqual(v[int(first["s"] * 30) + 1], 0)
+
     def test_mouth_from_words_flaps_only_while_speaking(self):
         from pipeline.align import mouth_from_words
 

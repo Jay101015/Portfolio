@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, interpolate, useCurrentFrame} from 'remotion';
 import {Avatar, type AvatarConfig, type Face, type Pose} from './Avatar';
 import {useLayout} from '../components/layout';
 
@@ -9,26 +9,34 @@ type Props = {
   config: AvatarConfig;
   pose: Pose;
   face?: Face;
+  prevPose?: Pose;
+  prevFace?: Face;
   pos: AvatarPos;
   mouth: number;
+  viseme?: number;
+  talk?: number;
+  attention?: number;
   globalFrame: number;
-  sinceChange: number; // frames since the pose/face last changed (for the snap)
+  sinceChange: number; // frames since the pose/face last changed
   scale?: number;
   toon?: boolean;
 };
 
 /** Places the character on top of a scene: a corner bust over footage, a half-body beside text, or full frame. */
-export const AvatarLayer: React.FC<Props> = ({config, pose, face, pos, mouth, globalFrame, sinceChange, scale = 1, toon}) => {
+export const AvatarLayer: React.FC<Props> = ({config, pose, face, prevPose, prevFace, pos, mouth, viseme, talk, attention, globalFrame, sinceChange, scale = 1, toon}) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
   const {width, height, u, isVertical} = useLayout();
   if (pos === 'none') return null;
-  // entrance: toon snaps in over 3 frames with a squash; glossy springs in
+  // entrance: toon snaps in over 3 frames; glossy springs in
   const enter = toon ? interpolate(frame, [0, 3], [0, 1], {extrapolateRight: 'clamp'}) : interpolate(frame, [0, 10], [0, 1], {extrapolateRight: 'clamp'});
-  // pose/face change: quick squash-and-stretch so cuts read as a drawn re-pose
-  const snap = toon ? interpolate(sinceChange, [0, 2, 5], [1, 0.9, 1], {extrapolateRight: 'clamp', extrapolateLeft: 'clamp'}) : 1;
+  // re-pose: a small squash as the body lands, on top of the rig's own tween
+  const s2 = Math.floor(sinceChange / 2) * 2;
+  const snap = toon ? interpolate(s2, [0, 4, 8, 12], [1, 1.03, 0.97, 1], {extrapolateRight: 'clamp', extrapolateLeft: 'clamp'}) : 1;
   const sx = 2 - snap;
   const sy = snap;
+  // big reactions bounce the whole drawing
+  const react = pose === 'shocked' ? interpolate(s2, [0, 4, 10], [1, 1.12, 1], {extrapolateRight: 'clamp'}) : pose === 'laugh' ? 1 + Math.abs(Math.sin(s2 / 4)) * 0.03 : 1;
+  const shake = pose === 'crossed' && sinceChange < 12 ? Math.round(Math.sin(sinceChange * 2.6) * 6 * (1 - sinceChange / 12)) : 0;
 
   // On 9:16 the body overflows the drawing box by ~12%, and the captions sit in the bottom 250u: stand above both.
   const vBottom = 430 * u;
@@ -51,24 +59,24 @@ export const AvatarLayer: React.FC<Props> = ({config, pose, face, pos, mouth, gl
   w *= scale;
   const flip = pos === 'corner-left' || pos === 'side-left';
   const svgH = (w * 760) / 840;
-  const _fps = fps;
-  void _fps;
+  // The thing being talked about sits on the other side of the frame: in the drawing's own space that is always to the left.
+  const lookX = pos === 'full' ? 0 : -1;
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
       <div
         style={{
           position: 'absolute',
-          left,
+          left: left + shake,
           bottom,
           width: w,
           height: svgH,
           opacity: toon ? 1 : enter,
-          transform: `translateY(${(1 - enter) * 40}px) scale(${(0.94 + enter * 0.06) * sx}, ${(0.94 + enter * 0.06) * sy})`,
+          transform: `translateY(${(1 - enter) * 40}px) scale(${(0.94 + enter * 0.06) * sx * react}, ${(0.94 + enter * 0.06) * sy * react})`,
           transformOrigin: 'bottom center',
           filter: toon ? undefined : 'drop-shadow(0 18px 30px rgba(0,0,0,0.45))',
         }}
       >
-        <Avatar config={config} pose={pose} face={face} mouth={mouth} frame={globalFrame} width={w} flip={flip} />
+        <Avatar config={config} pose={pose} face={face} prevPose={prevPose} prevFace={prevFace} sinceChange={sinceChange} mouth={mouth} viseme={viseme} talk={talk} lookX={lookX} attention={attention} frame={globalFrame} width={w} flip={flip} />
       </div>
     </AbsoluteFill>
   );

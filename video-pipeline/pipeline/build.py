@@ -221,9 +221,11 @@ def main(argv: list[str] | None = None) -> int:
         shutil.copyfile(audio, os.path.join(public_dir, f"voiceover{ext}"))
         sb["audio"] = f"projects/{slug}/voiceover{ext}"
         sb["mouth"] = al.mouth_envelope(wav, sb["fps"], sb["durationSec"])
+        sb["visemes"] = al.visemes_from_words(sb["scenes"], sb["fps"], sb["durationSec"])
     else:
         print("no voiceover.* found: using estimated timing, silent render")
         sb["mouth"] = al.mouth_from_words(sb["scenes"], sb["fps"], sb["durationSec"])
+        sb["visemes"] = al.visemes_from_words(sb["scenes"], sb["fps"], sb["durationSec"])
 
     # Footage, stills and posters live in <project>/media (images/ still works for older projects).
     fetch_sources(project)
