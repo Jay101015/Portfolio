@@ -34,6 +34,8 @@ jobs:
         working-directory: video-pipeline
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Pick the project
         id: pick
@@ -42,9 +44,11 @@ jobs:
           if [ -n "${{ github.event.inputs.project }}" ]; then
             echo "project=${{ github.event.inputs.project }}" >> "$GITHUB_OUTPUT"
           else
-            # the most recently changed project folder in this push
-            p=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- projects | sed -n 's#^video-pipeline/projects/\([^/]*\)/.*#\1#p' | tail -1)
-            [ -z "$p" ] && p=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- projects | sed -n 's#^projects/\([^/]*\)/.*#\1#p' | tail -1)
+            # the most recently changed project folder in this push (before-sha may be unknown on a new branch)
+            base="${{ github.event.before }}"
+            git cat-file -e "$base" 2>/dev/null || base="HEAD~1"
+            git cat-file -e "$base" 2>/dev/null || base="$(git hash-object -t tree /dev/null)"
+            p=$(git diff --name-only "$base" HEAD -- . | sed -n 's#^video-pipeline/projects/\([^/]*\)/.*#\1#p' | tail -1)
             echo "project=${p:-jurassic-park}" >> "$GITHUB_OUTPUT"
           fi
 
