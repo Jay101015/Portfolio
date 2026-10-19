@@ -51,7 +51,12 @@ jobs:
             base="${{ github.event.before }}"
             git cat-file -e "$base" 2>/dev/null || base="HEAD~1"
             git cat-file -e "$base" 2>/dev/null || base="$(git hash-object -t tree /dev/null)"
-            p=$(git diff --name-only "$base" HEAD -- . | sed -n 's#^video-pipeline/projects/\([^/]*\)/.*#\1#p' | tail -1)
+            # of the projects touched by this push, the one whose last commit is newest
+            p=""; newest=0
+            for q in $(git diff --name-only "$base" HEAD -- . | sed -n 's#^video-pipeline/projects/\([^/]*\)/.*#\1#p' | sort -u); do
+              t=$(git log -1 --format=%ct -- "video-pipeline/projects/$q" 2>/dev/null || echo 0)
+              if [ "${t:-0}" -ge "$newest" ]; then newest=$t; p=$q; fi
+            done
             echo "project=${p:-jurassic-park}" >> "$GITHUB_OUTPUT"
           fi
 
