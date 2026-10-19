@@ -46,13 +46,50 @@ def file_hash(path: str) -> str:
     return h.hexdigest()[:16]
 
 
-def render(props_path: str, out_path: str, composition: str, concurrency: str | None, timeout_ms: int = 120000) -> None:
-    # --timeout covers delayRender waits (font loads, footage frame extraction); the default 30s is tight under load
-    cmd = ["npx", "remotion", "render", composition, out_path, f"--props={props_path}", "--log=warn", f"--timeout={timeout_ms}"]
+def _remotion(args: list[str], cwd: str) -> int:
+    print("+", " ".join(args), flush=True)
+    return subprocess.run(args, cwd=cwd).returncode
+
+
+def render(props_path: str, out_path: str, composition: str, concurrency: str | None, timeout_ms: int = 120000, chunk: int = 450, retries: int = 2) -> None:
+    """Render in frame chunks, retrying a chunk that fails, then join the chunks with ffmpeg.
+
+    Chunking makes a long render robust against a single hung frame (a footage
+    frame extraction or font load that never returns) and keeps each browser
+    session short. All chunks share the same encoder settings, so a stream copy
+    concat is lossless.
+    """
+    with open(props_path, encoding="utf-8") as f:
+        sb = json.load(f)
+    total = max(1, int(round(sb["durationSec"] * sb.get("fps", 30))))
+    base = ["npx", "remotion", "render", composition, f"--props={props_path}", "--log=warn", f"--timeout={timeout_ms}"]
     if concurrency:
-        cmd.append(f"--concurrency={concurrency}")
-    print("+", " ".join(cmd), flush=True)
-    subprocess.run(cmd, cwd=REMOTION, check=True)
+        base.append(f"--concurrency={concurrency}")
+    if chunk <= 0 or total <= chunk:
+        if _remotion(base[:4] + [out_path] + base[4:], REMOTION) != 0:
+            raise SystemExit("render failed")
+        return
+    tmp = os.path.join(os.path.dirname(out_path), ".cache", "chunks", composition)
+    shutil.rmtree(tmp, ignore_errors=True)
+    os.makedirs(tmp, exist_ok=True)
+    parts = []
+    for i, start in enumerate(range(0, total, chunk)):
+        end = min(total - 1, start + chunk - 1)
+        part = os.path.join(tmp, f"part{i:03d}.mp4")
+        for attempt in range(retries + 1):
+            code = _remotion(base[:4] + [part] + base[4:] + [f"--frames={start}-{end}"], REMOTION)
+            if code == 0 and os.path.exists(part):
+                break
+            print(f"chunk {i} ({start}-{end}) failed (attempt {attempt + 1}/{retries + 1})", flush=True)
+        else:
+            raise SystemExit(f"render failed: chunk {i} frames {start}-{end} did not render after {retries + 1} attempts")
+        parts.append(part)
+    listing = os.path.join(tmp, "parts.txt")
+    with open(listing, "w", encoding="utf-8") as f:
+        for p in parts:
+            f.write(f"file '{p}'\n")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", listing, "-c", "copy", out_path], check=True)
+    print(f"joined {len(parts)} chunks -> {out_path}", flush=True)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -66,6 +103,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--no-captions", action="store_true")
     ap.add_argument("--concurrency", default=None)
     ap.add_argument("--retranscribe", action="store_true", help="ignore the cached transcript for this voiceover")
+    ap.add_argument("--chunk", type=int, default=450, help="frames per render chunk (0 = single pass)")
     args = ap.parse_args(argv)
 
     project = os.path.abspath(args.project)
@@ -143,9 +181,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if not args.only_vertical:
-        render(sb_path, os.path.join(project, f"{slug}.mp4"), "Main", args.concurrency)
+        render(sb_path, os.path.join(project, f"{slug}.mp4"), "Main", args.concurrency, chunk=args.chunk)
     if args.vertical or args.only_vertical:
-        render(sb_path, os.path.join(project, f"{slug}-vertical.mp4"), "Vertical", args.concurrency)
+        render(sb_path, os.path.join(project, f"{slug}-vertical.mp4"), "Vertical", args.concurrency, chunk=args.chunk)
     print("done")
     return 0
 

@@ -89,6 +89,9 @@ python -m pipeline.build projects/my-review --no-render   # storyboard.json + st
 python -m pipeline.build projects/my-review --vertical    # renders my-review.mp4 and my-review-vertical.mp4
 ```
 
+Long renders run in frame chunks (450 frames each, `--chunk` to change, `0`
+for a single pass); a chunk that hangs is retried and the chunks are joined
+losslessly with ffmpeg, so one stuck frame never costs you a whole render.
 The transcript is cached per recording, so re-rendering after a script tweak
 skips the slow transcription step. `--model small.en` if alignment coverage
 comes back low; `--retranscribe` forces a fresh pass. Live preview while
