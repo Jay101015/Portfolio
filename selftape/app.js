@@ -148,6 +148,8 @@ It does to me.`;
         const m = defuzz(m0);
         if (map[m0] || counts[m0] < counts[n0]) continue;
         const digits = (s) => s.replace(/\D/g, '');
+        const trailingNum = n.match(/^(.+?)\s+\d{1,2}$/);
+        if (trailingNum && trailingNum[1] === m && !names.some((o) => o !== n0 && new RegExp('^' + m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s+#?\\d{1,2}$').test(defuzz(o)))) { map[n0] = m0; break; } // "ADONIS 3" = margin junk, not a second Adonis
         if (digits(n) !== digits(m)) continue; // COP 1 vs COP 2 are different people
         const close = n.length >= 4 && editDistance(n, m) <= (n.length >= 7 ? 2 : 1) && counts[n0] <= Math.max(2, counts[m0] / 3);
         const compact = n.replace(/[^A-Z0-9]/g, '') === m.replace(/[^A-Z0-9]/g, ''); // "O BRIEN" vs "O'BRIEN"
@@ -200,9 +202,12 @@ It does to me.`;
       const t = unwrap(raw[i]);
       if (t && isCue(t, raw[i + 1])) knownCaps.add(normName(t));
     }
+    let gap = false;
     for (let i = 0; i < raw.length; i++) {
-      const t = unwrap(raw[i]);
-      if (!t) { speaker = null; continue; }
+      const t = unwrap(raw[i]).replace(/(\s+[^A-Za-z0-9#\s.,;:!?'"()\-–—…]\S{0,2})+$/, '').trim(); // "£7", "*" margin junk
+      if (!t) { gap = true; continue; }
+      // A blank line only ends a speech if what follows looks like a new block, not a wrapped continuation.
+      if (gap) { if (!(speaker && (/^[a-z(]/.test(t) || (out.length && out[out.length - 1].type === 'dialogue' && /[,;:\-–—]$/.test(out[out.length - 1].text))))) speaker = null; gap = false; }
       // Page-break furniture: skip it without ending the current speech.
       if (/^\(?\s*(MORE|CONTINUED|CONT'?D|CONTINUED\s*\(\d+\))\s*:?\s*\)?$/i.test(t.replace(/[’‘]/g, "'"))) continue;
       if (/\d+\/\d+(\/\d+)?/.test(t) && /\b(rev\.?|revised|revision|draft|pink|blue|yellow|green|goldenrod|white|salmon|cherry|buff|tan)\b/i.test(t)) continue;
@@ -234,7 +239,7 @@ It does to me.`;
     return out;
   }
 
-  const spokenText = (s) => s.replace(/\([^)]*\)|\[[^\]]*\]/g, ' ').replace(/\s+/g, ' ').trim();
+  const spokenText = (s) => s.replace(/\([^)]*\)|\[[^\]]*\]/g, ' ').replace(/(^|\s)[£©®§¤¢¥€*=|~^@]+\S{0,2}(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
   const wordCount = (s) => (spokenText(s).match(/\S+/g) || []).length;
 
   // ---------- voices ----------
@@ -1228,7 +1233,135 @@ It does to me.`;
     return ocrWorker;
   }
 
-  // Undo the common ways OCR mangles screenplay pages.
+
+  // Screenplay pages have a strict column layout: action at the left margin, dialogue indented,
+  // character names further in, and (on revised pages) a column of asterisks at the right edge.
+  // Using the word positions from OCR instead of the text alone lets us drop the asterisk column,
+  // tell names from dialogue without relying on capitals, and ignore blank lines OCR invents.
+  const PAGE_JUNK = /^(\(?\s*(MORE|CONTINUED|CONT'?D)\s*:?\s*(\(\d+\))?\s*\)?|\d*\s*CONTINUED:?\s*(\(\d+\))?\s*\d*|\d+\.?|\d+ of \d+|\d+:\d\d|[A-Z]?\d*\s*.*\d+\/\d+\/\d+.*|.*\b(rev\.?|revised|revision|draft|shooting script)\b.*\d.*)$/i;
+  const median = (xs) => { const s = xs.slice().sort((p, q) => p - q); return s.length ? s[Math.floor(s.length / 2)] : 0; };
+  const pct = (xs, f) => { const s = xs.slice().sort((p, q) => p - q); return s.length ? s[Math.min(s.length - 1, Math.floor(s.length * f))] : 0; };
+  const isSymbolToken = (w) => !/[A-Za-z0-9]/.test(w) && !/^(--|—|–|\.\.\.|…|-)$/.test(w);
+
+  function layoutLines(data) {
+    const blocks = data.blocks || [];
+    const lines = blocks.flatMap((b) => (b.paragraphs || []).flatMap((p) => p.lines || []));
+    return lines.filter((l) => l.words && l.words.length);
+  }
+
+  function pageToBlocks(data, pageIndex) {
+    const lines = layoutLines(data);
+    if (lines.length < 4) return null;
+    const words = lines.flatMap((l) => l.words);
+    const charW = median(words.filter((w) => w.text.length >= 3).map((w) => (w.bbox.x1 - w.bbox.x0) / w.text.length)) || 10;
+    // Right edge of real text: anything starting beyond it is the revision-mark column.
+    const rightEdge = pct(words.filter((w) => /[A-Za-z]{4,}/.test(w.text)).map((w) => w.bbox.x1), 0.97) + charW;
+    const cleaned = lines.map((l) => {
+      const ws = l.words.filter((w) => {
+        const t = w.text.trim();
+        if (!t || isSymbolToken(t)) return false;
+        if (w.bbox.x0 > rightEdge && t.length <= 4) return false;
+        return true;
+      });
+      // A short low-confidence tail far from the previous word is margin junk too ("bd", "£7", "bol").
+      while (ws.length > 1) {
+        const last = ws[ws.length - 1], prev = ws[ws.length - 2];
+        const gap = (last.bbox.x0 - prev.bbox.x1) / charW;
+        if (last.text.length <= 3 && gap > 3 && (last.confidence < 85 || !/^[A-Za-z]+[.,!?]?$/.test(last.text) || /^(bd|bol|hil|LJ|ED|w|i)$/.test(last.text))) ws.pop();
+        else break;
+      }
+      return ws.length ? { x0: ws[0].bbox.x0, y: l.bbox.y0, text: ws.map((w) => w.text).join(' ').replace(/[“”]/g, '"').replace(/[‘’]/g, "'").trim() } : null;
+    }).filter(Boolean).filter((l) => l.text.length > 1 && /[A-Za-z]/.test(l.text) && !PAGE_JUNK.test(l.text) && !/\b\d+ of \d+\b|\b\d{1,2}:\d\d\b/.test(l.text));
+    if (!cleaned.length) return [];
+
+    const left = pct(cleaned.map((l) => l.x0), 0.05);
+    cleaned.forEach((l) => { l.indent = (l.x0 - left) / charW; });
+    const indented = cleaned.filter((l) => l.indent > 3);
+    // Dialogue indent = the most common indent among indented lines; the name column sits well inside that.
+    const hist = {};
+    indented.forEach((l) => { const k = Math.round(l.indent / 2) * 2; hist[k] = (hist[k] || 0) + 1; });
+    const D = Number(Object.keys(hist).sort((p, q) => hist[q] - hist[p])[0] || 8);
+    const capsShort = (t) => { const letters = t.replace(/[^A-Za-z]/g, ''); return letters.length >= 2 && t.split(/\s+/).length <= 5 && letters.replace(/[^A-Z]/g, '').length / letters.length >= 0.8 && !SCENE_HEADING.test(t) && !TRANSITION.test(t); };
+    const nameIndents = indented.filter((l) => capsShort(l.text) && l.indent > D + 3).map((l) => l.indent);
+    const N = nameIndents.length ? median(nameIndents) : null;
+
+    return cleaned.map((l) => {
+      const t = l.text;
+      let cls;
+      if (l.indent <= 3) cls = SCENE_HEADING.test(t) ? 'heading' : (N === null && capsShort(t) && isCue(t, 'x') ? 'name' : 'action');
+      else if (capsShort(t) && ((N !== null && l.indent >= N - 3) || (N === null && isCue(t, 'x')))) cls = 'name';
+      else cls = 'dialogue';
+      return { cls, text: t, page: pageIndex, y: l.y };
+    });
+  }
+
+  // Turn classified lines from all pages into clean script text: group them into blocks (a name plus
+  // its lines, or a run of action), join wrapped parentheticals, and drop blocks repeated where two
+  // screenshots overlap.
+  function blocksToScript(all) {
+    const blocks = [];
+    let cur = null, openParen = null;
+    const push = (b) => { if (b && (b.lines.length || b.name)) blocks.push(b); };
+    all.forEach(({ lines }, page) => {
+      const ys = lines.map((l) => l.y), y0 = Math.min(...ys), y1 = Math.max(...ys);
+      lines.forEach((l) => {
+        const yFrac = (l.y - y0) / (y1 - y0 || 1);
+        if (openParen !== null) {
+          openParen += ' ' + l.text;
+          if (/\)/.test(l.text)) { cur.lines.push(openParen); openParen = null; }
+          return;
+        }
+        if (l.cls === 'name') {
+          push(cur);
+          cur = { kind: 'speech', name: normName(l.text) + (/\(/.test(l.text) ? ' ' + (l.text.match(/\(.*\)?/) || [''])[0] : ''), lines: [], page, yFrac };
+        } else if (l.cls === 'dialogue') {
+          if (/^\(/.test(l.text) && !/\)/.test(l.text)) { openParen = l.text; if (!cur || cur.kind !== 'speech') cur = { kind: 'speech', name: '', lines: [], page, yFrac }; return; }
+          if (!cur || cur.kind !== 'speech') { push(cur); cur = { kind: 'speech', name: '', lines: [], page, yFrac }; }
+          cur.lines.push(l.text);
+        } else {
+          if (!cur || cur.kind !== 'action' || l.cls === 'heading') { push(cur); cur = { kind: 'action', heading: l.cls === 'heading', lines: [], page, yFrac }; }
+          cur.lines.push(l.text);
+        }
+      });
+      push(cur); cur = null;
+      if (openParen) { blocks.push({ kind: 'speech', name: '', lines: [openParen], page, yFrac: 1 }); openParen = null; }
+    });
+
+    // Overlap between screenshots: a block near the top of a later page whose lines were already seen.
+    const norm = (s) => s.toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter(Boolean);
+    const seen = [];
+    // Same words in the same order (a few may be garbled by the phone's overlay or a page edge).
+    const inOrder = (w, s) => { let j = 0, hits = 0; for (const x of w) { const k = s.indexOf(x, j); if (k >= 0) { hits++; j = k + 1; } } return hits / w.length; };
+    const isDup = (w) => w.length >= 4 && seen.some((s) => Math.abs(s.length - w.length) <= 2 && inOrder(w, s) >= 0.75);
+    const kept = [];
+    let lastSpeaker = '';
+    blocks.forEach((b) => {
+      if (b.kind === 'speech') {
+        const words = b.lines.map(norm);
+        const candidate = b.page > 0 && b.yFrac < 0.6;
+        const dups = candidate ? words.map(isDup) : words.map(() => false);
+        const real = words.filter((w) => w.length >= 4).length;
+        const dupCount = dups.filter(Boolean).length;
+        if (candidate && real && dupCount / real >= 0.6) return; // whole block is a repeat
+        b.lines = b.lines.filter((_, i) => !dups[i]);
+        words.forEach((w, i) => { if (!dups[i] && !/^\(/.test(b.lines[i] || '')) seen.push(w); });
+        if (!b.lines.length || b.lines.every((l) => /^\(/.test(l))) return; // nothing left to say
+        if (!b.name) {
+          // Dialogue with no name above it (a page that starts mid-speech).
+          if (lastSpeaker) b.name = lastSpeaker;
+          else { kept.push({ kind: 'action', lines: ['(continued from the previous page: ' + b.lines.join(' ') + ')'] }); return; }
+        }
+        lastSpeaker = b.name.replace(/\s*\(.*$/, '');
+      } else if (b.heading) {
+        lastSpeaker = '';
+      }
+      kept.push(b);
+    });
+
+    return kept.map((b) => (b.kind === 'speech' ? b.name + '\n' + b.lines.join('\n') : b.lines.join('\n'))).join('\n\n').trim();
+  }
+
+  // Undo the common ways OCR mangles screenplay pages (used when no layout information is available).
   function cleanOcr(text) {
     const lines = text
       .replace(/[“”]/g, '"').replace(/[‘’]/g, "'")
@@ -1261,10 +1394,13 @@ It does to me.`;
           if (m.status === 'recognizing text') st.textContent = `Reading page ${k} of ${files.length}… ${Math.round(m.progress * 100)}%`;
           else if (!ocrWorker) st.textContent = 'Loading text reader (first time only)…';
         });
-        const { data } = await w.recognize(f);
-        pages.push(cleanOcr(data.text));
+        const { data } = await w.recognize(f, {}, { text: true, blocks: true });
+        const blocks = pageToBlocks(data, k - 1);
+        pages.push(blocks && blocks.length ? { lines: blocks } : { text: cleanOcr(data.text) });
       }
-      const text = pages.join('\n\n');
+      const laid = pages.filter((p) => p.lines);
+      window.__cuePages = laid; // for automated tests
+      const text = [blocksToScript(laid)].concat(pages.filter((p) => p.text).map((p) => p.text)).filter(Boolean).join('\n\n');
       const box = $('#scriptInput');
       const existing = box.value.trim();
       const replace = !existing || existing === SAMPLE.trim() || confirm('Replace the current script? (Cancel adds the photos to the end.)');
@@ -1422,4 +1558,5 @@ It does to me.`;
   }
 
   init();
+  window.__cue = { pageToBlocks, blocksToScript, parseScript }; // for automated tests
 })();
