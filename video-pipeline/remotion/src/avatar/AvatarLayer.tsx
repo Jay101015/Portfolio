@@ -44,17 +44,17 @@ export const AvatarLayer: React.FC<Props> = ({config, pose, face, prevPose, prev
   let left = 0;
   let bottom = 0;
   if (pos === 'full') {
-    w = (isVertical ? 1.0 : 0.52) * width;
+    w = (isVertical ? 1.0 : 0.54) * width;
     left = (width - w) / 2;
-    bottom = isVertical ? vBottom : -0.12 * height;
+    bottom = isVertical ? vBottom : -0.1 * height;
   } else if (pos === 'side-left' || pos === 'side-right') {
-    w = (isVertical ? 0.9 : 0.42) * width;
-    left = pos === 'side-left' ? -0.03 * width : width - w + 0.03 * width;
-    bottom = isVertical ? vBottom : -0.16 * height;
+    w = (isVertical ? 0.92 : 0.44) * width;
+    left = pos === 'side-left' ? -0.04 * width : width - w + 0.04 * width;
+    bottom = isVertical ? vBottom : -0.1 * height;
   } else {
-    w = (isVertical ? 0.42 : 0.26) * width;
+    w = (isVertical ? 0.42 : 0.27) * width;
     left = pos === 'corner-left' ? 16 * u : width - w - 16 * u;
-    bottom = isVertical ? vBottom : -44 * u;
+    bottom = isVertical ? vBottom : -30 * u;
   }
   w *= scale;
   const flip = pos === 'corner-left' || pos === 'side-left';
