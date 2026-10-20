@@ -715,8 +715,11 @@ It does to me.`;
     if (usesStudio(r)) {
       try { return await speakStudio(line, signal); } catch (e) {
         if (e.name === 'AbortError') throw e;
-        console.warn(e);
-        if (!studioWarned) { studioWarned = true; studioNotice('Studio voice failed (' + e.message + '). Using the phone voice instead.'); }
+        if (e.name === 'NotReady') status(`${line.character} (phone voice — studio line still generating)`);
+        else {
+          console.warn(e);
+          if (!studioWarned) { studioWarned = true; studioNotice('Studio voice failed (' + e.message + '). Using the phone voice instead.'); }
+        }
       }
     }
     if (!hasTTS) return sleep(1000 + wordCount(text) * 400 / r.rate, signal);
@@ -844,11 +847,12 @@ It does to me.`;
     const r = readerFor(line.character);
     const p = (async () => {
       const cached = await cacheGet(key);
-      if (cached) return cached;
+      if (cached) { ready.add(key); return cached; }
       await studioLoad();
       const { wav } = await callWorker({ type: 'speak', quality: studio.quality, chunks: chunkText(spokenText(line.text)), voice: r.studioVoice, speed: Math.min(1.5, Math.max(0.6, r.rate)) });
       const blob = new Blob([wav], { type: 'audio/wav' });
       cachePut(key, blob);
+      ready.add(key);
       return blob;
     })();
     inflight.set(key, p);
@@ -861,19 +865,33 @@ It does to me.`;
   }
 
   // Generate every reader line before the scene starts, so the reader never keeps you waiting mid-take.
+  const ready = new Set(); // studio keys whose audio is generated (in memory or on disk)
+  const prep = { done: 0, total: 0, running: false };
+  function renderPrep() {
+    if (run) return;
+    if (!prep.running || !prep.total) { if (!run && prep.total && prep.done >= prep.total) nowState('Reader voices ready. Tap ▶ Start scene.'); return; }
+    nowState(`Preparing reader voices ${prep.done}/${prep.total}… you can start now — any line that isn't ready yet is read by the phone voice.`);
+  }
+
   async function prepareScene(from, signal, onProgress) {
     const lines = studioLinesFrom(from);
-    for (let k = 0; k < lines.length; k++) {
-      if (signal && signal.aborted) throw abortError();
-      onProgress && onProgress(k, lines.length);
-      await studioAudioFor(lines[k]);
-    }
+    prep.total = lines.length; prep.done = lines.filter((l) => ready.has(studioKey(l))).length; prep.running = true;
+    renderPrep();
+    try {
+      for (let k = 0; k < lines.length; k++) {
+        if (signal && signal.aborted) throw abortError();
+        onProgress && onProgress(k, lines.length);
+        if (!ready.has(studioKey(lines[k]))) await studioAudioFor(lines[k]);
+        prep.done = lines.filter((l) => ready.has(studioKey(l))).length;
+        renderPrep();
+      }
+    } finally { prep.running = false; renderPrep(); }
   }
 
   let bgPrep = null;
   function prepareInBackground() {
-    if (!studioReady() || !state.me || bgPrep) return;
-    bgPrep = prepareScene(0).catch(() => {}).finally(() => { bgPrep = null; });
+    if (!studioSupported || !studio.downloaded || !state.me || bgPrep) return;
+    bgPrep = studioLoad().then(() => prepareScene(state.startIndex)).catch(() => {}).finally(() => { bgPrep = null; });
   }
 
   // One shared <audio>: iOS only lets an element play after a tap has "unlocked" it.
@@ -884,13 +902,24 @@ It does to me.`;
     try { player.src = SILENT; player.play().catch(() => {}); } catch { /* ignore */ }
   }
 
+  class NotReady extends Error { constructor() { super('not ready'); this.name = 'NotReady'; } }
   async function speakStudio(line, signal) {
     let blob = null, err = null;
     const key = studioKey(line);
-    if (!inflight.has(key)) { /* not generated yet: say so instead of looking frozen */ }
-    const t = setTimeout(() => nowState(`${line.character} — generating the line…`), 600);
-    await step(signal, (done) => { studioAudioFor(line).then((b) => { blob = b; done(); }, (e) => { err = e; done(); }); });
-    clearTimeout(t);
+    const isReady = ready.has(key);
+    // A line that is still being generated gets a short grace period, then the phone voice takes it so the
+    // scene never stalls; generation carries on in the background for the lines after it.
+    const grace = isReady ? 15000 : 1500;
+    let timer = null;
+    try {
+      await step(signal, (done, onClean) => {
+        let settled = false;
+        const finish = () => { if (!settled) { settled = true; done(); } };
+        studioAudioFor(line).then((b) => { blob = b; finish(); }, (e) => { err = e; finish(); });
+        timer = setTimeout(() => { if (!settled) { err = new NotReady(); finish(); } }, grace);
+        onClean(() => clearTimeout(timer));
+      });
+    } finally { clearTimeout(timer); }
     if (err) throw err;
     if (!blob) return; // skipped with Next while it was generating
     await step(signal, (done, onClean) => {
@@ -1087,9 +1116,12 @@ It does to me.`;
       if (studio.downloaded && studioLinesFrom(state.startIndex).length) {
         // Only the first reader line has to be ready before we start; the rest are made in the background.
         try {
-          nowState('Warming up the reader voice…');
-          await studioAudioFor(studioLinesFrom(state.startIndex)[0]);
-          prepareScene(state.startIndex, ac.signal).catch(() => {});
+          const first = studioLinesFrom(state.startIndex)[0];
+          if (!ready.has(studioKey(first))) {
+            nowState('Warming up the reader voice…');
+            await Promise.race([studioAudioFor(first), sleep(6000, ac.signal)]);
+          }
+          if (!bgPrep) bgPrep = prepareScene(state.startIndex).catch(() => {}).finally(() => { bgPrep = null; });
           nowState('');
         } catch (e) {
           if (e.name === 'AbortError') throw e;
@@ -1119,6 +1151,7 @@ It does to me.`;
         if (state.settings.gapMs) await sleep(state.settings.gapMs, ac.signal);
       }
       status('Scene complete.');
+      setTimeout(renderPrep, 2500);
       if (record) await sleep(1200, ac.signal);
     } catch (err) {
       if (err.name === 'AbortError') status('Stopped.');
@@ -1465,7 +1498,7 @@ It does to me.`;
     $$('.tab').forEach((t) => t.classList.toggle('active', t.dataset.view === name));
     $$('.view').forEach((v) => v.classList.toggle('active', v.id === 'view-' + name));
     if (name === 'takes') renderTakes();
-    if (name === 'stage' && studio.downloaded && studioSupported) studioLoad().catch(() => {});
+    if (name === 'stage') prepareInBackground();
   }
 
   function init() {
