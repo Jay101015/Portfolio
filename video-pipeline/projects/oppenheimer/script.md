@@ -20,7 +20,7 @@ Oppenheimer. Written and directed by Christopher Nolan, based on the book Americ
 - Robert Downey Jr. finally gets to act again
 {point} Four reasons this works. One, Cillian Murphy's face does the heavy lifting. Two, two timelines in two film stocks, telling one argument. Three, the sound is the special effect. {happy} And four, Robert Downey Junior finally gets to act again.
 
-[clip src="trinity.mp4" fallback="trinity.png" search="trinity atomic test 1945" credit="Trinity test, United States Department of Energy, public domain" caption="Trinity" pose=shocked]
+[clip src="05-trinity-atomic-test-1945.mp4" fallback="trinity.png" search="trinity atomic test 1945" credit="My Japan by U.S. Treasury Department, Public domain, via Internet Archive" caption="Trinity" pose=shocked]
 Trinity. {shocked} The test in the desert. Nolan built it with real explosives, real fuel, real light, {surprised} and the thing that gets you is not the fireball. It is the silence. The flash comes, everyone stares, and the sound does not arrive for nearly a minute. {think} Because that is how far away they were.
 
 [stat value="7" label="Academy Awards" sub="Including Best Picture, Best Director, and Best Actor for Cillian Murphy." source="96th Academy Awards" pose=crossed]
