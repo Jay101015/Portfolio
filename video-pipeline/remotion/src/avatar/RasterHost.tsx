@@ -172,10 +172,23 @@ export type RasterHostProps = {
   style?: React.CSSProperties;
   /** Resolves a layer file name to a URL (Remotion: staticFile; the studio: a relative path). */
   src: (name: string) => string;
+  /** Decoded layers. When given, the painted layers are drawn on a canvas, synchronously, so a frame can never miss one. */
+  bitmaps?: Map<string, ImageBitmap> | null;
   info?: HostInfo;
 };
 
-export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, prevFace, sinceChange = 999, mouth, viseme = 0, talk = 0, lookX = 0, attention = 0.3, frame, width = 600, flip = false, style, src, info = hostInfo}) => {
+export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, prevFace, sinceChange = 999, mouth, viseme = 0, talk = 0, lookX = 0, attention = 0.3, frame, width = 600, flip = false, style, src, bitmaps = null, info = hostInfo}) => {
+  type DrawOp = (ctx: CanvasRenderingContext2D) => void;
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const ops: DrawOp[] | null = bitmaps ? [] : null;
+  React.useLayoutEffect(() => {
+    const c = canvasRef.current;
+    if (!c || !ops) return;
+    const ctx = c.getContext('2d');
+    if (!ctx) return;
+    ctx.clearRect(0, 0, W, VIEW_H);
+    ops.forEach((op) => op(ctx));
+  });
   const uid = React.useId().replace(/[^a-zA-Z0-9]/g, '');
   const f2 = Math.floor(frame / 2) * 2;
   const since2 = Math.floor(Math.max(0, sinceChange) / 2) * 2;
@@ -227,13 +240,32 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
 
   // ------------------------------------------------------------ layers
   const box = (name: keyof typeof info.boxes) => info.boxes[name];
-  const Layer: React.FC<{name: keyof typeof info.boxes; transform?: string; opacity?: number}> = ({name, transform, opacity}) => {
+  const Layer: React.FC<{name: keyof typeof info.boxes; dx?: number; dy?: number; rot?: number; pivot?: Pt; opacity?: number}> = ({name, dx = 0, dy = 0, rot = 0, pivot, opacity}) => {
     const [x0, y0, x1, y1] = box(name);
+    if (ops) {
+      ops.push((ctx) => {
+        const bm = bitmaps?.get(name);
+        if (!bm) return;
+        ctx.save();
+        if (opacity !== undefined) ctx.globalAlpha = opacity;
+        ctx.translate(dx, dy);
+        if (rot && pivot) {
+          ctx.translate(pivot[0], pivot[1]);
+          ctx.rotate((rot * Math.PI) / 180);
+          ctx.translate(-pivot[0], -pivot[1]);
+        }
+        ctx.drawImage(bm, x0, y0, x1 - x0, y1 - y0);
+        ctx.restore();
+      });
+      return null;
+    }
+    const transform = [dx || dy ? `translate(${dx} ${dy})` : '', rot && pivot ? `rotate(${rot} ${pivot[0]} ${pivot[1]})` : ''].join(' ').trim() || undefined;
     return <image href={src(name)} x={x0} y={y0} width={x1 - x0} height={y1 - y0} transform={transform} opacity={opacity} />;
   };
 
   // ------------------------------------------------------------ eyes: lids, blinks and laugh arcs painted over the portrait
   const eyesShut = blinking || F.closed > 0.5;
+  type Prim = {d: string; fill?: string; stroke?: string; sw?: number; clipD?: string};
   const Eye: React.FC<{side: 'l' | 'r'}> = ({side}) => {
     const e = side === 'l' ? info.eye_shape_l : info.eye_shape_r;
     const sign = side === 'l' ? 1 : -1; // outer corner is toward the ear
@@ -241,50 +273,88 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
     const inner = e.cx + sign * e.rx;
     const top = e.cy - e.ry * F.eyeOpen - 6;
     const lidLine = (yo: number, yi: number) => `M${outer},${yo} Q${e.cx},${Math.min(yo, yi) - 6} ${inner},${yi}`;
+    const ellipseD = (rx: number, ry: number) => `M${e.cx - rx},${e.cy} a${rx},${ry} 0 1,0 ${2 * rx},0 a${rx},${ry} 0 1,0 ${-2 * rx},0 Z`;
+    const prims: Prim[] = [];
+    let pupil: {clipD: string; dx: number; dy: number} | null = null;
     if (F.laughEyes > 0.5) {
-      return (
-        <g>
-          <ellipse cx={e.cx} cy={e.cy} rx={e.rx + 10} ry={e.ry + 10} fill={skin} />
-          <path d={`M${outer},${e.cy + 6} Q${e.cx},${e.cy - 34} ${inner},${e.cy + 4}`} stroke={INK} strokeWidth={9} fill="none" strokeLinecap="round" />
-        </g>
-      );
-    }
-    if (eyesShut) {
+      prims.push({d: ellipseD(e.rx + 10, e.ry + 10), fill: skin});
+      prims.push({d: `M${outer},${e.cy + 6} Q${e.cx},${e.cy - 34} ${inner},${e.cy + 4}`, stroke: INK, sw: 9});
+    } else if (eyesShut) {
       const droop = expr === 'sad' ? 14 : 8;
-      return (
-        <g>
-          <ellipse cx={e.cx} cy={e.cy} rx={e.rx + 12} ry={e.ry + 10} fill={skin} />
-          <path d={`M${outer},${e.cy - 2} Q${e.cx},${e.cy + droop} ${inner},${e.cy - 4}`} stroke={INK} strokeWidth={7} fill="none" strokeLinecap="round" />
-          <path d={`M${outer},${e.cy - 2} L${outer - sign * 12},${e.cy - 12}`} stroke={INK} strokeWidth={5} strokeLinecap="round" />
-        </g>
-      );
+      prims.push({d: ellipseD(e.rx + 12, e.ry + 10), fill: skin});
+      prims.push({d: `M${outer},${e.cy - 2} Q${e.cx},${e.cy + droop} ${inner},${e.cy - 4}`, stroke: INK, sw: 7});
+      prims.push({d: `M${outer},${e.cy - 2} L${outer - sign * 12},${e.cy - 12}`, stroke: INK, sw: 5});
+    } else {
+      const lo = side === 'l' ? F.lidOuter : F.lidOuterR;
+      const li = side === 'l' ? F.lidInner : F.lidInnerR;
+      if (gazeInfo) pupil = {clipD: ellipseD(e.rx - 6, e.ry - 3), dx: gazeX, dy: gazeY};
+      if (lo >= 0.05 || li >= 0.05) {
+        // a skin-coloured lid comes down over the eye: 0 = open, 1 = shut
+        const yo = e.cy - e.ry + lo * (2 * e.ry);
+        const yi = e.cy - e.ry + li * (2 * e.ry);
+        const clipD = ellipseD(e.rx + 4, e.ry + 4);
+        prims.push({d: `M${outer - sign * 10},${top} L${inner + sign * 10},${top} L${inner + sign * 10},${yi} Q${e.cx},${Math.min(yo, yi) - 4} ${outer - sign * 10},${yo} Z`, fill: skin, clipD});
+        prims.push({d: lidLine(yo, yi), stroke: INK, sw: 6, clipD});
+      }
     }
-    const lo = side === 'l' ? F.lidOuter : F.lidOuterR;
-    const li = side === 'l' ? F.lidInner : F.lidInnerR;
-    const pupil = gazeInfo ? (
-      <g>
-        <clipPath id={`eye-${uid}-${side}`}>
-          <ellipse cx={e.cx} cy={e.cy} rx={e.rx - 6} ry={e.ry - 3} />
-        </clipPath>
-        <g clipPath={`url(#eye-${uid}-${side})`}>
-          <Layer name={`iris-${side}.png` as keyof typeof info.boxes} transform={`translate(${gazeX} ${gazeY})`} />
-        </g>
-      </g>
-    ) : null;
-    if (lo < 0.05 && li < 0.05) return pupil;
-    // a skin-coloured lid comes down over the eye: 0 = open, 1 = shut
-    const yo = e.cy - e.ry + lo * (2 * e.ry);
-    const yi = e.cy - e.ry + li * (2 * e.ry);
+    const irisName = `iris-${side}.png` as keyof typeof info.boxes;
+    if (ops) {
+      if (pupil) {
+        const pp = pupil;
+        const [x0, y0, x1, y1] = box(irisName);
+        ops.push((ctx) => {
+          const bm = bitmaps?.get(irisName);
+          if (!bm) return;
+          ctx.save();
+          ctx.clip(new Path2D(pp.clipD));
+          ctx.drawImage(bm, x0 + pp.dx, y0 + pp.dy, x1 - x0, y1 - y0);
+          ctx.restore();
+        });
+      }
+      prims.forEach((pr) =>
+        ops.push((ctx) => {
+          ctx.save();
+          if (pr.clipD) ctx.clip(new Path2D(pr.clipD));
+          const path = new Path2D(pr.d);
+          if (pr.fill) {
+            ctx.fillStyle = pr.fill;
+            ctx.fill(path);
+          }
+          if (pr.stroke) {
+            ctx.strokeStyle = pr.stroke;
+            ctx.lineWidth = pr.sw ?? 6;
+            ctx.lineCap = 'round';
+            ctx.stroke(path);
+          }
+          ctx.restore();
+        }),
+      );
+      return null;
+    }
     return (
       <g>
-        {pupil}
-        <clipPath id={`lid-${uid}-${side}`}>
-          <ellipse cx={e.cx} cy={e.cy} rx={e.rx + 4} ry={e.ry + 4} />
-        </clipPath>
-        <g clipPath={`url(#lid-${uid}-${side})`}>
-          <path d={`M${outer - sign * 10},${top} L${inner + sign * 10},${top} L${inner + sign * 10},${yi} Q${e.cx},${Math.min(yo, yi) - 4} ${outer - sign * 10},${yo} Z`} fill={skin} />
-          <path d={lidLine(yo, yi)} stroke={INK} strokeWidth={6} fill="none" strokeLinecap="round" />
-        </g>
+        {pupil ? (
+          <g>
+            <clipPath id={`eye-${uid}-${side}`}>
+              <path d={pupil.clipD} />
+            </clipPath>
+            <g clipPath={`url(#eye-${uid}-${side})`}>
+              <Layer name={irisName} dx={pupil.dx} dy={pupil.dy} />
+            </g>
+          </g>
+        ) : null}
+        {prims.map((pr, k) => {
+          const el = <path key={k} d={pr.d} fill={pr.fill ?? 'none'} stroke={pr.stroke} strokeWidth={pr.sw} strokeLinecap="round" />;
+          if (!pr.clipD) return el;
+          return (
+            <g key={k}>
+              <clipPath id={`lid-${uid}-${side}-${k}`}>
+                <path d={pr.clipD} />
+              </clipPath>
+              <g clipPath={`url(#lid-${uid}-${side}-${k})`}>{el}</g>
+            </g>
+          );
+        })}
       </g>
     );
   };
@@ -535,35 +605,54 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
   const browPivotL: Pt = [bl[2] - 10, (bl[1] + bl[3]) / 2];
   const browPivotR: Pt = [br[0] + 10, (br[1] + br[3]) / 2];
 
+  const defs = (
+    <defs>
+      <linearGradient id={`sleeve-${uid}`} x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor={flat ? sleeve : lighten(sleeve, 0.08)} />
+        <stop offset="1" stopColor={flat ? sleeve : sleeveS} />
+      </linearGradient>
+      <radialGradient id={`skin-${uid}`} cx="0.35" cy="0.3" r="0.9">
+        <stop offset="0" stopColor={flat ? skin : lighten(skin, 0.1)} />
+        <stop offset="1" stopColor={flat ? skin : skinS} />
+      </radialGradient>
+    </defs>
+  );
+  const tree = (
+    <g>
+      <g>
+        <Layer name="body.png" />
+      </g>
+      <g transform={`translate(${headDx} ${headDy}) rotate(${headTilt} ${nx} ${ny})`}>
+        <Layer name="head.png" />
+        <g>
+          <Layer name="brow-l.png" dy={F.browY - browLift} rot={F.browLA} pivot={browPivotL} />
+          <Layer name="brow-r.png" dy={F.browRY - browLift} rot={-F.browRA} pivot={browPivotR} />
+          <Eye side="l" />
+          <Eye side="r" />
+          <Mouth />
+          {hasGlasses ? <Layer name={'glasses.png' as keyof typeof info.boxes} /> : null}
+        </g>
+      </g>
+      <Emanata />
+    </g>
+  );
+  if (ops) {
+    // The painted layers, brows, pupils and lids are drawn on the canvas in the order they appear above;
+    // the SVG on top carries only the drawn mouth and the reaction marks.
+    return (
+      <div style={{position: 'relative', width, aspectRatio: `${W} / ${VIEW_H}`, transform: flip ? 'scaleX(-1)' : undefined, ...style}}>
+        <canvas ref={canvasRef} width={W} height={VIEW_H} style={{position: 'absolute', inset: 0, width: '100%', height: '100%'}} />
+        <svg viewBox={`0 0 ${W} ${VIEW_H}`} style={{position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible'}}>
+          {defs}
+          {tree}
+        </svg>
+      </div>
+    );
+  }
   return (
     <svg viewBox={`0 0 ${W} ${VIEW_H}`} width={width} style={{overflow: 'visible', transform: flip ? 'scaleX(-1)' : undefined, ...style}}>
-      <defs>
-        <linearGradient id={`sleeve-${uid}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor={flat ? sleeve : lighten(sleeve, 0.08)} />
-          <stop offset="1" stopColor={flat ? sleeve : sleeveS} />
-        </linearGradient>
-        <radialGradient id={`skin-${uid}`} cx="0.35" cy="0.3" r="0.9">
-          <stop offset="0" stopColor={flat ? skin : lighten(skin, 0.1)} />
-          <stop offset="1" stopColor={flat ? skin : skinS} />
-        </radialGradient>
-      </defs>
-      <g>
-        <g>
-          <Layer name="body.png" />
-        </g>
-        <g transform={`translate(${headDx} ${headDy}) rotate(${headTilt} ${nx} ${ny})`}>
-          <Layer name="head.png" />
-          <g>
-            <Layer name="brow-l.png" transform={`translate(0 ${F.browY - browLift}) rotate(${F.browLA} ${browPivotL[0]} ${browPivotL[1]})`} />
-            <Layer name="brow-r.png" transform={`translate(0 ${F.browRY - browLift}) rotate(${-F.browRA} ${browPivotR[0]} ${browPivotR[1]})`} />
-            <Eye side="l" />
-            <Eye side="r" />
-            <Mouth />
-            {hasGlasses ? <Layer name={'glasses.png' as keyof typeof info.boxes} /> : null}
-          </g>
-        </g>
-        <Emanata />
-      </g>
+      {defs}
+      {tree}
     </svg>
   );
 };

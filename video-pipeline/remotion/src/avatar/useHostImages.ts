@@ -2,10 +2,14 @@ import {useEffect, useState} from 'react';
 import {continueRender, delayRender, prefetch, staticFile} from 'remotion';
 import hostInfo from '../../public/host/host.json';
 
-const urls = new Map<string, string>();
-let loading: Promise<void> | null = null;
+export type HostImages = {src: (name: string) => string; bitmaps: Map<string, ImageBitmap> | null};
 
-/** Fetches every layer once into memory (blob URLs) so a frame can never catch a layer half-loaded or evicted. */
+const urls = new Map<string, string>();
+const bitmaps = new Map<string, ImageBitmap>();
+let loading: Promise<void> | null = null;
+let done = false;
+
+/** Fetches every layer once into memory (blob URLs) and decodes it into a bitmap, so a frame can never catch a layer half-loaded or evicted. */
 const loadAll = () =>
   loading ??
   (loading = Promise.all(
@@ -14,15 +18,19 @@ const loadAll = () =>
       try {
         const blob = await prefetch(file, {method: 'blob-url'}).waitUntilDone();
         urls.set(n, blob);
+        const data = await (await fetch(blob)).blob();
+        bitmaps.set(n, await createImageBitmap(data));
       } catch {
         urls.set(n, file);
       }
     }),
-  ).then(() => undefined));
+  ).then(() => {
+    done = true;
+  }));
 
-/** Holds the frame until the painted host's layers are in memory; returns the resolver for layer URLs, or null while loading. */
-export const useHostImages = (): ((name: string) => string) | null => {
-  const [ready, setReady] = useState(urls.size === Object.keys(hostInfo.boxes).length);
+/** Holds the frame until the painted host's layers are in memory; returns the layer URLs and decoded bitmaps, or null while loading. */
+export const useHostImages = (): HostImages | null => {
+  const [ready, setReady] = useState(done);
   useEffect(() => {
     if (ready) return;
     const handle = delayRender('host layers');
@@ -31,5 +39,7 @@ export const useHostImages = (): ((name: string) => string) | null => {
       continueRender(handle);
     });
   }, [ready]);
-  return ready ? (n) => urls.get(n) ?? staticFile(`host/${n}`) : null;
+  if (!ready) return null;
+  const complete = bitmaps.size === Object.keys(hostInfo.boxes).length;
+  return {src: (n) => urls.get(n) ?? staticFile(`host/${n}`), bitmaps: complete ? bitmaps : null};
 };
