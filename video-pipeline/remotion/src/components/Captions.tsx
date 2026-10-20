@@ -26,7 +26,7 @@ const chunkWords = (words: Word[], maxWords: number): Chunk[] => {
   return chunks;
 };
 
-export const Captions: React.FC<{scenes: Scene[]; brand: Brand}> = ({scenes, brand}) => {
+export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string}> = ({scenes, brand, host}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const {u, isVertical, pad, width} = useLayout();
@@ -37,7 +37,7 @@ export const Captions: React.FC<{scenes: Scene[]; brand: Brand}> = ({scenes, bra
   const current = scenes.find((s) => t >= s.start && t < s.end);
   if (current?.type === 'text') return null;
   // keep the caption out from under the host: shift it to the side the character is not on
-  const hostPos = current ? hostPosFor(current, brand.toon) : 'none';
+  const hostPos = current ? hostPosFor(current, brand.toon, host) : 'none';
   const shift = isVertical || hostPos === 'none' || hostPos === 'full' ? 0 : hostPos.endsWith('left') ? 1 : -1;
   const sideStyle: React.CSSProperties = shift === 0 ? {} : {alignItems: shift > 0 ? 'flex-end' : 'flex-start', paddingLeft: shift > 0 ? width * 0.42 : pad, paddingRight: shift < 0 ? width * 0.42 : pad};
 
@@ -61,7 +61,7 @@ export const Captions: React.FC<{scenes: Scene[]; brand: Brand}> = ({scenes, bra
   }
   return (
     <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: (isVertical ? 120 : 56) * u, ...sideStyle}}>
-      <div style={{maxWidth: shift === 0 ? `calc(100% - ${pad * 2}px)` : width * 0.52, padding: `${14 * u}px ${28 * u}px`, borderRadius: 16 * u, background: 'rgba(5,8,20,0.72)', fontSize: (isVertical ? 44 : 36) * u, fontWeight: 700, lineHeight: 1.25, textAlign: 'center', textShadow: '0 2px 8px rgba(0,0,0,0.6)'}}>
+      <div style={{maxWidth: shift === 0 ? `calc(100% - ${pad * 2}px)` : width * 0.52, padding: `${14 * u}px ${30 * u}px`, borderRadius: 18 * u, background: 'rgba(5,8,20,0.74)', border: `1px solid ${brand.text}14`, fontSize: (isVertical ? 46 : 40) * u, fontWeight: 700, lineHeight: 1.25, textAlign: 'center', textShadow: '0 2px 8px rgba(0,0,0,0.6)'}}>
         {chunk.words.map((w, i) => {
           const active = t >= w.s - 0.02 && t < w.e + 0.08;
           const spoken = t >= w.s;

@@ -25,4 +25,5 @@ export const defaultPos = (type: Scene['type'], toon: boolean): AvatarPos => {
   }
 };
 
-export const hostPosFor = (scene: Scene, toon: boolean): AvatarPos => scene.props.pos ?? defaultPos(scene.type, toon);
+/** Where the host stands for a scene; with `host: none` in the script there is no host anywhere. */
+export const hostPosFor = (scene: Scene, toon: boolean, host?: string): AvatarPos => (host === 'none' ? 'none' : scene.props.pos ?? defaultPos(scene.type, toon));

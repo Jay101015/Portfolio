@@ -384,7 +384,8 @@ def parse_script(md: str) -> dict[str, Any]:
         "audio": None,
         "captions": header.get("captions", "true").lower() not in ("false", "no", "off", "0"),
         "theme": header.get("theme", "toon"),
-        "host": header.get("host", "painted"),
+        # the painted host belongs to the hand-drawn look; the motion-graphics themes carry the video without one
+        "host": header.get("host", "painted" if header.get("theme", "toon") == "toon" else "none"),
         "brand": brand,
         "avatar": avatar,
         "mouth": [],

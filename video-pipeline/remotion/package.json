@@ -9,7 +9,9 @@
   "dependencies": {
     "@fontsource/caveat-brush": "^5.1.0",
     "@fontsource/gochi-hand": "^5.1.0",
+    "@fontsource/inter": "^5.1.0",
     "@fontsource/patrick-hand": "^5.1.0",
+    "@fontsource/space-grotesk": "^5.1.0",
     "@remotion/cli": "^4.0.300",
     "@remotion/fonts": "^4.0.300",
     "react": "^18.3.1",

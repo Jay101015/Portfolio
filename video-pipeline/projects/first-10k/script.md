@@ -2,6 +2,7 @@
 kicker: Money basics
 slug: first-10k
 theme: finance
+host: none
 brand.name: MONEY MOVES
 
 [title subtitle="The order of operations that actually works"]

@@ -32,7 +32,13 @@ to point at your own).
 
 ## The look
 
-Default theme is `toon`: hand-drawn storytime style in the spirit of channels
+`theme: finance` with `host: none` is the channel's look: a deep navy
+motion-graphics style with no presenter, where big numbers spring in and
+count up, charts draw themselves with a live value tag, list rows light up as
+they are said, comparison cards swing in with share bars, and every scene
+pushes in and lifts away. `projects/first-10k` is the sample.
+
+The older default is `toon`: hand-drawn storytime style in the spirit of channels
 like Let Me Explain Studios. Paper background, thick ink outlines, hand-lettered
 type, hard cuts, and a painted host who holds still while the charts, numbers
 and cards do the moving. Footage and illustrations sit inside a drawn screen
@@ -175,7 +181,9 @@ review. A script with no tags at all still renders (each paragraph becomes a
 scene), but tags are the point.
 
 Header keys: `topic` (what the video is about; `film` for a review), `theme`
-(`toon`, `finance` or `movie`), `slug`, `kicker`, `captions: false`, any
+(`toon`, `finance` or `movie`), `host` (`none` for pure motion graphics, the
+default on the `finance` and `movie` themes; `painted` or `drawn` to put the
+host on screen, the default on `toon`), `slug`, `kicker`, `captions: false`, any
 `brand.*` (`name`, `bg`, `panel`, `text`, `muted`, `accent`, `accent2`,
 `font`) and any `avatar.*` from the table above.
 

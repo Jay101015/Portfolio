@@ -96,8 +96,8 @@ export const resolveAvatar = (scene: Scene, t: number): Resolved => {
 /** Which scenes get a whip-pan in (the "look at this" scenes); the rest hard cut. */
 const transitionFor = (scene: Scene, toon: boolean): Transition => {
   const asked = scene.props.transition;
-  if (asked === 'cut' || asked === 'whip' || asked === 'fade') return asked;
-  if (!toon) return 'fade';
+  if (asked === 'cut' || asked === 'whip' || asked === 'fade' || asked === 'push') return asked;
+  if (!toon) return scene.start === 0 ? 'fade' : 'push';
   if (scene.start === 0) return 'cut';
   return ['clip', 'still', 'image', 'poster', 'score', 'compare', 'chart', 'quote', 'stat'].includes(scene.type) ? 'whip' : 'cut';
 };
@@ -189,14 +189,14 @@ export const Video: React.FC<Storyboard> = (sb) => {
             <SceneFade durationInFrames={dur} toon={brand.toon} transition={transitionFor(scene, brand.toon)} dir={scene.id % 2 ? 1 : -1}>
               <Camera scene={scene} toon={brand.toon}>
                 <SceneSwitch scene={scene} brand={brand} />
-                <HostLayer sb={sb} scene={scene} avatar={avatar} toon={brand.toon} />
+                {sb.host === 'none' ? null : <HostLayer sb={sb} scene={scene} avatar={avatar} toon={brand.toon} />}
               </Camera>
             </SceneFade>
           </Sequence>
         );
       })}
       <Chrome brand={brand} durationSec={sb.durationSec} />
-      {sb.captions ? <Captions scenes={sb.scenes} brand={brand} /> : null}
+      {sb.captions ? <Captions scenes={sb.scenes} brand={brand} host={sb.host} /> : null}
     </AbsoluteFill>
   );
 };
