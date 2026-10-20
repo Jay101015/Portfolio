@@ -36,6 +36,24 @@ export const StillScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand
       </AbsoluteFill>
     );
   }
+  if (!brand.toon && !isVertical) {
+    // Motion-graphics look: the picture sits in a framed card in the middle of the frame, with the caption as a pill on it.
+    const w = width * 0.72;
+    const h = (w * 9) / 16;
+    return (
+      <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', padding: pad}}>
+        <Reveal delay={0} from="up" distance={50}>
+          <div style={{width: w, height: h, borderRadius: 32 * u, overflow: 'hidden', position: 'relative', background: '#111', border: `1px solid ${brand.text}22`, boxShadow: `0 ${30 * u}px ${90 * u}px rgba(0,0,0,0.55)`}}>
+            {img}
+            {caption ? (
+              <div style={{position: 'absolute', left: 32 * u, bottom: 32 * u, background: brand.accent, color: brand.bg, fontFamily: brand.display, fontWeight: 700, fontSize: 40 * u, padding: `${10 * u}px ${26 * u}px`, borderRadius: 14 * u}}>{caption}</div>
+            ) : null}
+            {scene.props.credit ? <div style={{position: 'absolute', right: 24 * u, bottom: 20 * u, fontSize: 22 * u, color: '#fff', opacity: 0.8, textShadow: '0 1px 6px rgba(0,0,0,0.8)'}}>{scene.props.credit}</div> : null}
+          </div>
+        </Reveal>
+      </AbsoluteFill>
+    );
+  }
   return (
     <AbsoluteFill>
       <AbsoluteFill style={{overflow: 'hidden'}}>{img}</AbsoluteFill>

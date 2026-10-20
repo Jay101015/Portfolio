@@ -7,13 +7,18 @@ import {compactNum, useLayout} from '../components/layout';
 import {card} from '../theme';
 import {pop} from '../components/motion';
 
-/** Round an axis maximum up to a 1/2/2.5/5 x 10^k step so gridline labels are round numbers. */
-const niceMax = (v: number, ticks = 4) => {
-  if (v <= 0) return 1;
-  const raw = v / ticks;
+/** A gridline step of 1/2/2.5/5 x 10^k and the axis maximum as a whole number of those steps, so every label is round. */
+const niceAxis = (v: number, want = 4): {max: number; step: number; ticks: number} => {
+  if (v <= 0) return {max: 1, step: 0.25, ticks: 4};
+  const raw = v / want;
   const mag = Math.pow(10, Math.floor(Math.log10(raw)));
-  const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((st) => st >= raw) ?? 10 * mag;
-  return Math.ceil(v / step) * step;
+  let step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((st) => st >= raw) ?? 10 * mag;
+  let ticks = Math.ceil(v / step);
+  if (ticks > 6) {
+    step *= 2;
+    ticks = Math.ceil(v / step);
+  }
+  return {max: ticks * step, step, ticks};
 };
 
 type Series = {name?: string; points: [number, number][]; color?: string};
@@ -47,12 +52,15 @@ export const ChartScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand
   let body: React.ReactNode = null;
   let yMax = 0;
   let yMin = 0;
+  let ticks = 4;
 
   if (chartType === 'line') {
     const series: Series[] = scene.props.series ?? [];
     const allY = series.flatMap((s) => s.points.map((p) => p[1]));
     const allX = series.flatMap((s) => s.points.map((p) => p[0]));
-    yMax = niceMax(Math.max(...allY, 0));
+    const axis = niceAxis(Math.max(...allY, 0));
+    yMax = axis.max;
+    ticks = axis.ticks;
     yMin = Math.min(...allY, 0);
     const xMin = Math.min(...allX);
     const xMax = Math.max(...allX);
@@ -137,7 +145,9 @@ export const ChartScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand
     );
   } else {
     const bars: Bar[] = scene.props.bars ?? [];
-    yMax = niceMax(Math.max(...bars.map((b) => b.value), 0));
+    const axis = niceAxis(Math.max(...bars.map((b) => b.value), 0));
+    yMax = axis.max;
+    ticks = axis.ticks;
     const gap = 28 * u;
     const bw = (plotW - gap * (bars.length + 1)) / Math.max(1, bars.length);
     body = (
@@ -167,7 +177,6 @@ export const ChartScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand
     );
   }
 
-  const ticks = 4;
   return (
     <AbsoluteFill style={{justifyContent: 'center', alignItems: glossy ? 'center' : 'stretch', padding: pad}}>
       {title ? (
