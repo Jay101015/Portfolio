@@ -3,6 +3,7 @@ import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {Brand} from '../types';
 import {DOODLES} from './doodles';
 import {rnd} from '../components/motion';
+import {handMarkup} from './hand';
 
 /**
  * The whiteboard look's writing. Text is revealed one character at a time, left to right inside each glyph, at a
@@ -146,47 +147,12 @@ export const Doodle: React.FC<DoodleProps> = ({name, size, draw, stroke, width =
 // ------------------------------------------------------------------ the hand
 type Tip = {x: number; y: number; color?: string} | null;
 
-/**
- * A cartoon hand holding a marker, drawn in a frame aligned with the marker (x runs down the barrel from the tip at
- * (0,0), y across it) and rotated so the barrel runs down and to the right. Index finger over the barrel, thumb
- * under it, the rest curled into the palm, the wrist running off the bottom-right of the frame.
- */
+/** The hand, rotated so the barrel runs down and to the right from the tip at the top-left of the box. */
 export const MarkerHand: React.FC<{size: number; color?: string; brand: Brand}> = ({size, color, brand}) => {
-  const ink = brand.ink;
-  const skin = '#f3c9a3';
-  const shade = '#e3a97e';
-  const cap = color && color !== ink ? color : '#1d1d1f';
-  // a finger: an outlined capsule, drawn as two round-capped lines
-  const Finger: React.FC<{x1: number; y1: number; x2: number; y2: number; r: number; fill?: string}> = ({x1, y1, x2, y2, r, fill = skin}) => (
-    <>
-      <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={ink} strokeWidth={r * 2 + 9} strokeLinecap="round" />
-      <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={fill} strokeWidth={r * 2} strokeLinecap="round" />
-    </>
-  );
+  const cap = color && color !== brand.ink ? color : '#1d1d1f';
   return (
     <svg width={size} height={size} viewBox="0 0 300 300" style={{overflow: 'visible', display: 'block'}}>
-      <g transform="rotate(52)">
-        {/* wrist and palm sit behind everything, running off along the barrel's line */}
-        <path d="M250,-46 L440,-70 L440,150 L250,118 Z" fill={skin} stroke={ink} strokeWidth={4.5} strokeLinejoin="round" />
-        <ellipse cx={212} cy={44} rx={92} ry={84} fill={skin} stroke={ink} strokeWidth={4.5} />
-        {/* ring and little fingers curled under */}
-        <Finger x1={132} y1={66} x2={176} y2={86} r={21} />
-        <Finger x1={118} y1={104} x2={166} y2={118} r={19} />
-        <path d="M132,88 C150,96 166,100 182,98" fill="none" stroke={shade} strokeWidth={3} strokeLinecap="round" />
-        {/* the marker */}
-        <g stroke={ink} strokeWidth={4.5} strokeLinejoin="round" strokeLinecap="round">
-          <path d="M0,0 L16,-10 L16,10 Z" fill={cap} />
-          <rect x={16} y={-16} width={246} height={32} rx={9} fill="#2b2b2e" />
-          <rect x={16} y={-16} width={70} height={32} rx={9} fill={cap} />
-          <rect x={262} y={-13} width={16} height={26} rx={6} fill={cap} />
-          <rect x={96} y={-9} width={120} height={6} rx={3} fill="#ffffff" opacity={0.22} stroke="none" />
-        </g>
-        {/* index finger over the barrel, thumb under it */}
-        <Finger x1={86} y1={-28} x2={224} y2={-40} r={23} />
-        <Finger x1={104} y1={30} x2={222} y2={64} r={25} />
-        <path d="M100,-50 C94,-40 94,-28 100,-18" fill="none" stroke={shade} strokeWidth={3} strokeLinecap="round" />
-        <path d="M118,16 C112,26 112,38 118,48" fill="none" stroke={shade} strokeWidth={3} strokeLinecap="round" />
-      </g>
+      <g transform="rotate(52)" dangerouslySetInnerHTML={{__html: handMarkup(cap, brand.ink)}} />
     </svg>
   );
 };
