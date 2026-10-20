@@ -54,7 +54,7 @@ It does to me.`;
       advanceMode: 'voice',
       silenceMs: 1000,
       sensitivity: 5,
-      matchWords: 'rehearse',
+      matchWords: 'off',
       gapMs: 300,
       countdown: '3',
       myLineDisplay: 'full',
@@ -72,7 +72,8 @@ It does to me.`;
         state.readers = saved.readers || {};
         state.aliases = saved.aliases || {};
         Object.assign(state.settings, saved.settings || {});
-        if (typeof state.settings.matchWords !== 'string') state.settings.matchWords = 'rehearse';
+        if (typeof state.settings.matchWords !== 'string') state.settings.matchWords = 'off';
+        if (saved.settings && !saved.settings.matchWordsV2) { state.settings.matchWords = 'off'; state.settings.matchWordsV2 = true; } // v1 default stole the mic on iPhone
       }
     } catch { /* storage unavailable: start fresh */ }
   }
@@ -604,6 +605,14 @@ It does to me.`;
   function setupMeter(s) {
     try {
       unlockAudio();
+      const track = s.getAudioTracks()[0];
+      const micRate = track && track.getSettings ? track.getSettings().sampleRate : 0;
+      if (micRate && audioCtx.sampleRate !== micRate) {
+        try { audioCtx.close(); } catch { /* ignore */ }
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: micRate });
+        if (audioCtx.state !== 'running') audioCtx.resume();
+      }
+      meterSamplesSeen = 0; meterNonZero = 0; noiseFloor = 0.003;
       const src = audioCtx.createMediaStreamSource(s);
       analyser = audioCtx.createAnalyser();
       analyser.fftSize = 1024;
@@ -622,14 +631,20 @@ It does to me.`;
     return Math.sqrt(sum / levelBuf.length);
   }
   // Speech must clear both the sensitivity setting and the room's background noise.
-  let noiseFloor = 0.005;
-  const threshold = () => Math.max(0.2 * Math.pow(0.7, state.settings.sensitivity), noiseFloor * 2.5);
+  let noiseFloor = 0.003;
+  // Speech must stand clearly above the room: a multiple of the measured noise floor (sensitivity 10 = 2×, 1 = 8×),
+  // never below a tiny absolute level so a dead-silent input can't trigger.
+  const threshold = () => Math.max(0.0015, noiseFloor * (2 + (10 - state.settings.sensitivity) * 0.65));
   function trackNoise(level) {
     if (run && run.readerSpeaking) return; // the reader's voice through the speaker isn't room noise
     if (level < noiseFloor) noiseFloor += (level - noiseFloor) * 0.1;
-    else if (level < threshold()) noiseFloor += (level - noiseFloor) * 0.01;
-    noiseFloor = Math.min(Math.max(noiseFloor, 0.001), 0.05);
+    else if (level < threshold()) noiseFloor += (level - noiseFloor) * 0.003; // creep up very slowly so soft speech isn't absorbed
+    noiseFloor = Math.min(Math.max(noiseFloor, 0.0005), 0.03);
   }
+  // Is the meter actually receiving audio? (iOS can hand us a silent analyser if the AudioContext was created
+  // before the mic opened at a different sample rate.)
+  let meterSamplesSeen = 0, meterNonZero = 0;
+  const meterAlive = () => meterSamplesSeen < 30 || meterNonZero > 0;
 
   let meterRunning = false;
   function meterLoop() {
@@ -638,6 +653,8 @@ It does to me.`;
     const bar = $('#meter i'), meter = $('#meter');
     const tick = () => {
       currentLevel = readLevel();
+      meterSamplesSeen++;
+      if (currentLevel > 0.00001) meterNonZero++;
       trackNoise(currentLevel);
       bar.style.width = Math.min(100, Math.sqrt(currentLevel) * 220) + '%';
       meter.classList.toggle('speaking', currentLevel > threshold());
@@ -961,14 +978,29 @@ It does to me.`;
       if (stopListening) onClean(stopListening);
       status(stopListening ? 'Listening for your line…' : (analyser ? 'Your line — I\'ll cue when you finish.' : 'Your line — press Space when done.'));
 
+      const timedMs = 1200 + wordCount(line.text) * 420;
+      let fellBack = false, hinted = false;
       const iv = setInterval(() => {
         const now = performance.now();
         const dt = now - prev; prev = now;
         if (now - start < 300) return; // ignore the tail of the reader's audio
-        const hasMic = !!analyser;
-        if (hasMic && readLevel() > threshold()) { voicedMs += dt; lastVoice = now; }
+        const hasMic = !!analyser && meterAlive();
+        const level = hasMic ? readLevel() : 0;
+        const hearing = hasMic && level > threshold();
+        if (hearing) { voicedMs += dt; lastVoice = now; if (!hinted) nowState('Hearing you… I\'ll cue when you finish.'); }
         const quietFor = hasMic && voicedMs > 250 ? now - lastVoice : 0;
         const following = stopListening && !speechRecBroken && lastHeard > 0;
+
+        if (!hasMic && !following) {
+          // Nothing to listen with: time the line by its length and say so, rather than waiting forever.
+          if (!fellBack) { fellBack = true; status(analyser ? 'Mic isn\'t delivering sound — timing your line instead. Tap Next to skip.' : 'No mic — timing your line. Tap Next to skip.'); }
+          if (now - start > timedMs) done();
+          return;
+        }
+        if (hasMic && !following && voicedMs === 0 && now - start > 8000 && !hinted) {
+          hinted = true;
+          nowState('I can\'t hear you yet — speak up, move closer, or tap Next when you\'re done.');
+        }
 
         if (following && progress.atEnd && progress.ratio >= 0.5) {
           // Reached the last words: cue once they stop talking.
