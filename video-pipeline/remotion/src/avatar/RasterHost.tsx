@@ -211,7 +211,7 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
   const phase = (frame + Math.floor(hash(ci) * 40)) % cycle;
   const glanceLen = 20 + attention * 40;
   const glancing = lookX !== 0 && hash(ci + 7) < attention + 0.2 && phase < glanceLen && sinceChange > 24;
-  const headTurn = glancing ? lookX * 1.2 : 0;
+  const headTurn = 0; // a glance moves only the pupils
   const microX = Math.round((hash(Math.floor(frame / 9)) - 0.5) * 6);
   const microY = Math.round((hash(Math.floor(frame / 11) + 3) - 0.5) * 4);
   const gazeX = glancing ? lookX * 22 : microX;
@@ -299,22 +299,25 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
   const lipShape = (v: number, open: number): LipShape => {
     switch (v) {
       case 1:
-        return {gap: 14 + open * 22, sx: 1};
+        return {gap: 10 + open * 16, sx: 1};
       case 2:
-        return {gap: 8 + open * 12, sx: 1.04};
+        return {gap: 6 + open * 8, sx: 1.04};
       case 3:
-        return {gap: 16 + open * 18, sx: 0.86};
+        return {gap: 12 + open * 12, sx: 0.8};
       case 4:
         return {gap: 0, sx: 1};
       case 5:
         return {gap: 7, sx: 1};
       case 6:
-        return {gap: 12 + open * 14, sx: 1};
+        return {gap: 9 + open * 10, sx: 1};
       default:
         return {gap: 0, sx: 1};
     }
   };
   const Mouth: React.FC = () => {
+    // The painted lips are never touched. When the host talks, a small dark opening is painted just
+    // under the painted mouth line, closed by a lower lip line, in the style of a mouth swap: the
+    // chin, jaw and upper lip stay exactly as drawn. Closed mouths show the painting as is.
     const Lp = info.lips;
     const cx = (Lp.corner_l[0] + Lp.corner_r[0]) / 2;
     const lineY = Lp.line_y;
@@ -326,55 +329,19 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
     if (expr === 'closed' || expr === 'flat') v = 0;
     if (v === 0 && loud > 0.3 && expr !== 'closed' && expr !== 'flat') v = 1;
     let S: LipShape;
-    if (isLaugh) S = {gap: 40, sx: 1.06};
-    else if (isSurprised && v === 0) S = {gap: 26, sx: 0.86};
+    if (isLaugh) S = {gap: 34, sx: 1};
+    else if (isSurprised && v === 0) S = {gap: 22, sx: 0.8};
     else S = lipShape(v, open);
-    const cl = F.cornerL * 1.6; // + = corners down
-    const cr = F.cornerR * 1.6;
-    const mid = F.lipMid * 1.2; // + = the middle of the line sits lower (a smile)
-    const neutralCorners = Math.abs(cl) < 1 && Math.abs(cr) < 1 && Math.abs(mid) < 1;
-    if (S.gap < 3 && neutralCorners && S.sx === 1) return null; // the painted lips, untouched
-    const lipHalf = ((Lp.corner_r[0] - Lp.corner_l[0]) / 2) * S.sx;
-    const half = Lp.line_half * S.sx;
-    const cornerY = Lp.corner_l[1];
-    const P: Pt[] = [[cx - lipHalf, cornerY + cl], ...Lp.top.map(([x, y]): Pt => [cx + (x - cx) * S.sx, y]), [cx + lipHalf, cornerY + cr]];
-    let top = `M${P[0][0]},${P[0][1]}`;
-    for (let k = 0; k < P.length - 1; k++) {
-      const p0 = P[Math.max(0, k - 1)];
-      const p1 = P[k];
-      const p2 = P[k + 1];
-      const p3 = P[Math.min(P.length - 1, k + 2)];
-      top += ` C${p1[0] + (p2[0] - p0[0]) / 6},${p1[1] + (p2[1] - p0[1]) / 6} ${p2[0] - (p3[0] - p1[0]) / 6},${p2[1] - (p3[1] - p1[1]) / 6} ${p2[0]},${p2[1]}`;
-    }
-    const lineL: Pt = [cx - half, lineY + cl * 0.8];
-    const lineR: Pt = [cx + half, lineY + cr * 0.8];
-    const roofY = lineY + Lp.line_dip + mid;
-    const roof = `M${lineL[0]},${lineL[1]} Q${cx},${roofY} ${lineR[0]},${lineR[1]}`;
-    const heal = <Layer name="mouth-heal.png" />;
-    const upperLip = (
-      <g>
-        <path d={`${top} L${lineR[0]},${lineR[1]} Q${cx},${roofY} ${lineL[0]},${lineL[1]} Z`} fill={lipU} />
-        <path d={top} stroke={INK} strokeWidth={sw} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-      </g>
-    );
-    if (S.gap < 3) {
-      return (
-        <g>
-          {heal}
-          {upperLip}
-          <path d={roof} stroke={INK} strokeWidth={sw * 1.25} fill="none" strokeLinecap="round" />
-        </g>
-      );
-    }
-    const floorY = roofY + S.gap;
-    const opening = `${roof} Q${cx},${floorY + S.gap * 0.35} ${lineL[0]},${lineL[1]} Z`;
+    if (S.gap < 4) return null;
+    const half = Lp.line_half * 0.92 * S.sx;
+    const topY = lineY + Lp.line_dip * 0.5 + 2; // just under the painted line
+    const floorY = topY + S.gap;
+    const roof = `M${cx - half},${lineY + 1} Q${cx},${topY} ${cx + half},${lineY + 1}`;
+    const floor = `Q${cx},${floorY + S.gap * 0.4} ${cx - half},${lineY + 1} Z`;
     return (
       <g>
-        {heal}
-        {upperLip}
-        <path d={opening} fill={MOUTH} />
-        <path d={roof} stroke={INK} strokeWidth={sw} fill="none" strokeLinecap="round" />
-        <path d={`M${lineL[0]},${lineL[1]} Q${cx},${floorY + S.gap * 0.35} ${lineR[0]},${lineR[1]}`} stroke={INK} strokeWidth={sw * 1.1} fill="none" strokeLinecap="round" />
+        <path d={`${roof} ${floor}`} fill={MOUTH} />
+        <path d={`M${cx - half},${lineY + 1} Q${cx},${floorY + S.gap * 0.4} ${cx + half},${lineY + 1}`} stroke={INK} strokeWidth={sw} fill="none" strokeLinecap="round" />
       </g>
     );
   };
@@ -560,9 +527,9 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
     {key: 'L', from: shL, arm: B.L},
     {key: 'R', from: shR, arm: B.R},
   ];
-  const headTilt = B.tilt + slowTilt + headTurn;
-  const headDx = B.lean + headTurn * 6;
-  const headDy = B.headY - nod;
+  const headTilt = 0; // the head is a still: the whole drawing holds, only eyes, brows and mouth change
+  const headDx = 0;
+  const headDy = 0;
   const bl = box('brow-l.png');
   const br = box('brow-r.png');
   const browPivotL: Pt = [bl[2] - 10, (bl[1] + bl[3]) / 2];
@@ -580,16 +547,13 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
           <stop offset="1" stopColor={flat ? skin : skinS} />
         </radialGradient>
       </defs>
-      <g transform={`translate(0 ${bob}) rotate(${B.bodyRot} ${nx} ${VIEW_H}) translate(${nx} ${VIEW_H}) scale(1 ${1 + breath * 0.004}) translate(${-nx} ${-VIEW_H})`}>
-        {arms.filter((a) => !a.arm.front).map((a) => (
-          <Arm key={`b${a.key}`} from={a.from} arm={a.arm} side={a.key} />
-        ))}
-        <g transform={`translate(0 ${B.shoulderY * 0.5})`}>
+      <g>
+        <g>
           <Layer name="body.png" />
         </g>
         <g transform={`translate(${headDx} ${headDy}) rotate(${headTilt} ${nx} ${ny})`}>
           <Layer name="head.png" />
-          <g transform={`translate(${headTurn * 4} 0)`}>
+          <g>
             <Layer name="brow-l.png" transform={`translate(0 ${F.browY - browLift}) rotate(${F.browLA} ${browPivotL[0]} ${browPivotL[1]})`} />
             <Layer name="brow-r.png" transform={`translate(0 ${F.browRY - browLift}) rotate(${-F.browRA} ${browPivotR[0]} ${browPivotR[1]})`} />
             <Eye side="l" />
@@ -598,9 +562,6 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
             {hasGlasses ? <Layer name={'glasses.png' as keyof typeof info.boxes} /> : null}
           </g>
         </g>
-        {arms.filter((a) => a.arm.front).map((a) => (
-          <Arm key={`f${a.key}`} from={a.from} arm={a.arm} side={a.key} />
-        ))}
         <Emanata />
       </g>
     </svg>
