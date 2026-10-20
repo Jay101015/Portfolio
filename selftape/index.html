@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Cue · Self-Tape Reader</title>
+  <meta name="description" content="Rehearse and record self-tapes with an AI scene reader." />
+  <meta name="theme-color" content="#111214" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23ff4d5e'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23fff'/%3E%3C/svg%3E" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Cue" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="dot"></span>Cue <small>self-tape reader</small></div>
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-view="script" role="tab">1 · Script</button>
+      <button class="tab" data-view="stage" role="tab">2 · Scene</button>
+      <button class="tab" data-view="takes" role="tab">3 · Takes <span id="takeCount" class="badge">0</span></button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- SCRIPT -->
+    <section id="view-script" class="view active">
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head">
+            <h2>Your sides</h2>
+            <div class="row">
+              <button id="loadSample" class="btn ghost sm">Sample scene</button>
+              <label class="btn ghost sm">Photo of sides<input id="photoInput" type="file" accept="image/*" multiple hidden /></label>
+              <label class="btn ghost sm">Upload .txt<input id="fileInput" type="file" accept=".txt,.fountain,text/plain" hidden /></label>
+            </div>
+          </div>
+          <p class="hint">Paste your scene. Use <code>NAME: line</code>, or standard screenplay format (character name in CAPS on its own line, dialogue underneath). Parentheticals like <code>(beat)</code> are shown but not read.</p>
+          <p id="ocrStatus" class="hint ocr" hidden></p>
+          <textarea id="scriptInput" spellcheck="false" placeholder="SARAH: Where were you last night?&#10;TOM: Out.&#10;SARAH: (quietly) That's not an answer."></textarea>
+        </div>
+
+        <div class="card">
+          <h2>Cast</h2>
+          <div id="castEmpty" class="hint">Paste a script to detect characters.</div>
+          <div id="castPanel" hidden>
+            <p id="castSummary" class="hint"></p>
+            <details class="fixer">
+              <summary>Wrong or duplicate names? Fix characters</summary>
+              <p class="hint">Merge spellings of the same person, or mark headings that aren't people.</p>
+              <div id="nameFix"></div>
+            </details>
+            <label class="field role">
+              <span>Who are you playing?</span>
+              <select id="mySelect"></select>
+            </label>
+            <div id="readerList"></div>
+          </div>
+
+          <div id="voices" class="elbox">
+            <h2>🎙 Studio voices</h2>
+            <div id="studioPanel"></div>
+          </div>
+
+          <h2 class="mt">Settings</h2>
+          <label class="field">
+            <span>Advance after my lines</span>
+            <select id="advanceMode">
+              <option value="voice">When I finish my line (listens to me)</option>
+              <option value="manual">When I tap / press Space</option>
+              <option value="timed">Timed by word count</option>
+            </select>
+          </label>
+          <label class="field" data-show="voice">
+            <span>Pause before cue <b id="silenceVal"></b></span>
+            <input id="silenceMs" type="range" min="400" max="2500" step="100" />
+          </label>
+          <label class="field" data-show="voice">
+            <span>Mic sensitivity</span>
+            <input id="sensitivity" type="range" min="1" max="10" step="1" />
+          </label>
+          <label class="field" data-show="voice">
+            <span>Follow my words (lets me pause mid-line)</span>
+            <select id="matchWords">
+              <option value="rehearse">When rehearsing</option>
+              <option value="always">Always — check your first take has sound</option>
+              <option value="off">Off — just listen for silence</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Gap between lines <b id="gapVal"></b></span>
+            <input id="gapMs" type="range" min="0" max="2000" step="100" />
+          </label>
+          <label class="field">
+            <span>Countdown before recording</span>
+            <select id="countdown">
+              <option value="0">None</option>
+              <option value="3">3 seconds</option>
+              <option value="5">5 seconds</option>
+              <option value="10">10 seconds</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>My lines on screen</span>
+            <select id="myLineDisplay">
+              <option value="full">Show full line</option>
+              <option value="first">First words only (memorise)</option>
+              <option value="hidden">Hide (off book)</option>
+            </select>
+          </label>
+
+          <button id="toStage" class="btn primary block mt" disabled>Go to the scene →</button>
+
+          <details class="diag mt">
+            <summary>Something wrong? Problem report</summary>
+            <p class="hint">Copy this and send it to me so I can see exactly what your phone is doing.</p>
+            <textarea id="diagOut" readonly rows="8"></textarea>
+            <button id="diagCopy" class="btn sm">Copy report</button>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- STAGE -->
+    <section id="view-stage" class="view">
+      <div class="rolebar card">
+        <label>You're playing <select id="stageRole"></select></label>
+        <span id="stageReads" class="hint"></span>
+        <button id="voicesLink" class="btn ghost sm">🎙 Voices</button>
+      </div>
+      <div id="voiceBanner" class="banner" hidden></div>
+      <div class="stage">
+        <div class="now card">
+          <div id="countdownOverlay" class="overlay" hidden></div>
+          <div class="now-top">
+            <span id="recBadge" class="rec" hidden><span></span>REC <b id="recTime">0:00</b></span>
+            <span id="nowState" class="hint">Tap ▶ Start scene — I'll read the other parts and wait for yours.</span>
+            <span id="meter" class="meter" title="Mic level"><i></i></span>
+          </div>
+          <div id="prompter" class="prompter" hidden></div>
+        </div>
+
+        <aside class="scriptpane card">
+          <div class="card-head">
+            <h2>Scene</h2>
+            <span class="hint">Tap a line to start there</span>
+          </div>
+          <ol id="lineList" class="lines"></ol>
+        </aside>
+      </div>
+
+      <div class="controls">
+        <button id="rehearseBtn" class="btn primary">▶ Start scene</button>
+        <button id="recordBtn" class="btn rec-btn">● Record audio</button>
+        <button id="nextBtn" class="btn ghost" disabled>Next ⏭ <kbd>Space</kbd></button>
+        <button id="stopBtn" class="btn ghost" disabled>■ Stop <kbd>Esc</kbd></button>
+        <span id="status" class="status"></span>
+      </div>
+    </section>
+
+    <!-- TAKES -->
+    <section id="view-takes" class="view">
+      <div class="takes-bar">
+        <label class="btn sm">⬆ Import from camera roll<input id="videoInput" type="file" accept="video/*" multiple hidden /></label>
+        <span id="importStatus" class="hint"></span>
+      </div>
+      <div id="takesEmpty" class="card empty">No takes yet. Record audio from the Scene tab, or import a video.</div>
+      <div id="takesGrid" class="takes"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
