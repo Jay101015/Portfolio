@@ -70,7 +70,7 @@ const poseParams = (pose: Pose | 'gesture', m: Motion): PoseP => {
       return {...base, R: {hand: [1540 + sway, 1150 - beat], kind: 'open', bend: 18 + sway / 2, front: true}, lean: 6};
     }
     case 'point':
-      return {...base, L: {hand: [30, 1060], kind: 'point', bend: -78, abs: true, front: true}, lean: -22, tilt: -3, bodyRot: -1.5};
+      return {...base, L: {hand: [430, 1300], kind: 'point', bend: -72, abs: true, front: true}, lean: -22, tilt: -3, bodyRot: -1.5};
     case 'crossed':
       return {...base, L: {hand: [1250, 2050], kind: 'none', bend: 0, front: false}, R: {hand: [560, 1600], kind: 'fist', bend: 84, front: true}, tilt: 4, headY: 10};
     case 'think':

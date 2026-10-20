@@ -16,7 +16,7 @@ export const ListScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}
     <>
       {title ? (
         <Reveal delay={0}>
-          <div style={{fontFamily: brand.display, fontSize: (isVertical ? 58 : 66) * u, marginBottom: 30 * u, fontWeight: brand.toon ? 400 : 800}}>{title}</div>
+          <div style={{fontFamily: brand.display, fontSize: (isVertical ? 58 : 60) * u, marginBottom: 26 * u, fontWeight: brand.toon ? 400 : 800}}>{title}</div>
         </Reveal>
       ) : null}
       {items.map((item, i) => {
@@ -28,7 +28,7 @@ export const ListScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}
               <div style={{width: 62 * u, height: 62 * u, borderRadius: brand.toon ? 999 : 16 * u, background: brand.toon ? brand.accent2 : brand.accent, color: brand.toon ? brand.ink : brand.bg, fontFamily: brand.display, fontSize: 36 * u, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: brand.toon ? `${4 * u}px solid ${brand.ink}` : undefined, transform: brand.toon ? `rotate(${((i * 13) % 9) - 4}deg)` : undefined}}>
                 {numbered ? i + 1 : '✓'}
               </div>
-              <div style={{fontSize: (isVertical ? 42 : 48) * u, lineHeight: 1.2, fontWeight: brand.toon ? 400 : 600}}>{item}</div>
+              <div style={{fontSize: (isVertical ? 42 : 44) * u, lineHeight: 1.2, fontWeight: brand.toon ? 400 : 600}}>{item}</div>
             </div>
           </Reveal>
         );
@@ -39,7 +39,7 @@ export const ListScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}
     return (
       <AbsoluteFill style={{justifyContent: 'center', alignItems: 'flex-start', padding: pad, paddingBottom: isVertical ? pad : pad + 120 * u}}>
         <Reveal delay={0} from="none">
-          <div style={{...card(brand, u, -1), padding: `${36 * u}px ${48 * u}px`, maxWidth: isVertical ? '100%' : '58%', minWidth: isVertical ? '100%' : '46%'}}>{body}</div>
+          <div style={{...card(brand, u, -1), padding: `${36 * u}px ${48 * u}px`, maxWidth: isVertical ? '100%' : '54%', minWidth: isVertical ? '100%' : '46%'}}>{body}</div>
         </Reveal>
       </AbsoluteFill>
     );
