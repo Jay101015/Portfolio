@@ -169,6 +169,34 @@ class AlignTests(unittest.TestCase):
             self.assertEqual(p2["from"], 0.0)
             self.assertTrue(any("run off the end" in n for n in notes))
 
+    def test_found_footage_skips_its_opening_titles(self):
+        import shutil
+        import subprocess
+        import tempfile
+        from pipeline.build import resolve_media
+        if not shutil.which("ffmpeg"):
+            self.skipTest("ffmpeg not installed")
+        with tempfile.TemporaryDirectory() as d:
+            os.makedirs(os.path.join(d, "media"))
+            clip = os.path.join(d, "media", "found.mp4")
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "color=c=black:s=64x64:d=10", "-r", "10", clip], check=True)
+            sb = {"scenes": [
+                {"id": 1, "type": "clip", "start": 0, "end": 3, "props": {"src": "found.mp4", "search": "a film"}},
+                {"id": 2, "type": "clip", "start": 3, "end": 20, "props": {"src": "found.mp4", "search": "a film"}},
+                {"id": 3, "type": "clip", "start": 20, "end": 23, "props": {"src": "found.mp4", "search": "a film", "from": 0}},
+                {"id": 4, "type": "clip", "start": 23, "end": 26, "props": {"src": "missing.mp4", "fallback": "art.png",
+                                                                             "credit": "Studio. Official trailer."}},
+            ]}
+            open(os.path.join(d, "media", "art.png"), "wb").close()
+            resolve_media(sb, d, "t")
+            p1, p2, p3, p4 = (sc["props"] for sc in sb["scenes"])
+            self.assertAlmostEqual(p1["from"], 1.5, places=1)      # 15% of a 10 s file
+            self.assertTrue(p2.get("loop"))
+            self.assertAlmostEqual(p2["from"], 1.5, places=1)      # the loop starts past the titles too
+            self.assertEqual(p3["from"], 0.0)                      # an explicit from= is kept
+            self.assertEqual(sb["scenes"][3]["type"], "still")
+            self.assertEqual(p4["credit"], "Illustration")         # the trailer credit does not describe the still
+
     def test_scene_boundaries_follow_speech(self):
         sb = parse_script(TAGGED)
         # Narrator drops a word, mispronounces one, and the ASR hears an extra filler.

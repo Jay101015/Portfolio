@@ -107,14 +107,24 @@ def fit_clip(sc: dict, path: str) -> list[str]:
     scene_len = float(sc["end"]) - float(sc["start"])
     start = float(p.get("from", 0) or 0)
     margin = 0.3
+    # Footage the finder fetched (a search= tag and no from= of its own) opens past the first
+    # fifteen percent of the file, so a found film does not play its title cards.
+    found = p.get("from") is None and bool(p.get("search"))
     if dur - margin < scene_len:
-        p["from"] = round(min(start, dur * 0.15), 2) if start > dur * 0.15 else round(start, 2)
+        if found:
+            start = dur * 0.15
+        p["from"] = round(min(start, max(0.0, dur - margin - 1.0)), 2)
         p["loop"] = True
         notes.append(f"scene {sc['id']}: '{os.path.basename(path)}' is {dur:.1f}s, shorter than the scene ({scene_len:.1f}s); it loops")
-    elif start + scene_len > dur - margin:
-        new_start = max(0.0, dur - margin - scene_len)
-        notes.append(f"scene {sc['id']}: from={start:g} would run off the end of '{os.path.basename(path)}' ({dur:.1f}s); starting at {new_start:.1f}s instead")
-        p["from"] = round(new_start, 2)
+    else:
+        if found:
+            start = min(dur * 0.15, dur - margin - scene_len)
+            notes.append(f"scene {sc['id']}: found footage '{os.path.basename(path)}' starts at {start:.1f}s, past its opening")
+        if start + scene_len > dur - margin:
+            new_start = max(0.0, dur - margin - scene_len)
+            notes.append(f"scene {sc['id']}: from={start:g} would run off the end of '{os.path.basename(path)}' ({dur:.1f}s); starting at {new_start:.1f}s instead")
+            start = new_start
+        p["from"] = round(start, 2)
     return notes
 
 
@@ -134,6 +144,9 @@ def resolve_media(sb: dict, project: str, slug: str) -> list[str]:
                     notes.append(f"scene {sc['id']}: footage '{src}' not present, using the fallback still '{fb}'")
                     sc["type"] = "still"
                     p["src"] = fb
+                    if p.get("credit"):
+                        # The credit described the missing footage; the still is the project's own art.
+                        p["credit"] = "Illustration"
                     p.pop("from", None)
                     p.pop("vol", None)
                     src = fb
