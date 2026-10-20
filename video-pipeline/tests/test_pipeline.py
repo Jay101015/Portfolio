@@ -192,6 +192,54 @@ class MediaTests(unittest.TestCase):
             self.assertNotIn("sticker", sb["scenes"][2]["props"])
             self.assertTrue(any("gone.gif" in n for n in notes))
 
+    def test_a_recording_alone_becomes_a_script(self):
+        from pipeline.auto_script import script_from_words
+
+        said = ("Hi guys, welcome to the channel. Today: what to do with your first ten thousand pounds. "
+                "It took me a while to save it. I made mistakes on the way, and I want you to skip them. "
+                "First, build a small emergency fund. Second, clear any expensive debt. Third, take the full employer match. "
+                "A credit card at twenty four percent costs you more than any fund will earn. That is why debt comes before investing. "
+                "That is the plan for now. If this helped, subscribe and I will see you next week.")
+        words, t = [], 0.0
+        for w in said.split():
+            words.append({"w": w, "s": t, "e": t + 0.3})
+            t += 0.38 + (0.9 if w.endswith(".") else 0)
+        md = script_from_words(words, {"slug": "x"}, None)
+        sb = parse_script(md)
+        types = [sc["type"] for sc in sb["scenes"]]
+        self.assertEqual(types[0], "title")
+        self.assertIn("list", types)
+        self.assertIn("stat", types)
+        self.assertEqual(types[-1], "outro")
+        values = [sc["props"].get("value") for sc in sb["scenes"] if sc["type"] == "stat"]
+        self.assertTrue({"£10,000", "24%"} & set(values), values)
+        # every word said is in the narration, in order
+        self.assertEqual(" ".join(sc["narration"] for sc in sb["scenes"]).split(), said.split())
+
+    def test_a_new_recording_replaces_the_old_voice(self):
+        import base64, os, tempfile
+        from pipeline.build import find_audio, unpack_uploads
+
+        with tempfile.TemporaryDirectory() as d:
+            with open(os.path.join(d, "voiceover.mp3"), "wb") as f:
+                f.write(b"old")
+            with open(os.path.join(d, "voiceover.m4a.b64"), "w") as f:
+                f.write(base64.b64encode(b"new").decode())
+            notes = unpack_uploads(d)
+            self.assertTrue(find_audio(d).endswith("voiceover.m4a"))
+            self.assertFalse(os.path.exists(os.path.join(d, "voiceover.mp3")))
+            self.assertTrue(any("replaced voiceover.mp3" in n for n in notes))
+
+    def test_spoken_figures(self):
+        from pipeline.auto_script import _figure
+
+        self.assertEqual(_figure("your first ten thousand pounds"), "£10,000")
+        self.assertEqual(_figure("about twenty four percent"), "24%")
+        self.assertEqual(_figure("seven per cent a year"), "7%")
+        self.assertEqual(_figure("a hundred thousand invested"), "100,000")
+        self.assertEqual(_figure("it costs £2,000 a month"), "£2,000")
+        self.assertIsNone(_figure("I was young and in a hurry"))
+
     def test_still_keeps_its_want_text_for_the_placeholder(self):
         sb = parse_script('# T\n\n[still src="x.jpg" want="a phone in a hand"]\nHi.\n')
         self.assertEqual(sb["scenes"][0]["props"]["want"], "a phone in a hand")

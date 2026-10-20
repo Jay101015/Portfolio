@@ -63,6 +63,36 @@ and cards do the moving. Footage and illustrations sit inside a drawn screen
 beside the host. `theme: finance` and `theme: movie` keep the older glossy
 motion-graphics look.
 
+## Just talk: a recording is enough
+
+You do not need a finished script. Record yourself (in the studio's Read
+tab, or any voice memo app) and in Read choose **Build the scenes from my
+voice**. The studio sends the recording; the render transcribes it,
+writes the scenes from what you said (`pipeline/auto_script.py`: your
+words stay exactly as said; the opening line becomes the title, a money
+figure or a percentage, spoken as words or digits, becomes a big-number
+scene, "first / second / third" becomes a list, the sign-off becomes the
+outro), lines every scene up with your voice and renders. The script it
+wrote, the transcript and the timings are committed back next to your
+recording.
+
+Then, in Read: **Load the scenes the render built** brings that script
+into the studio with the real timings and your voice, so you edit around
+the actual recording. **Better scenes from my words (Claude)** hands the
+transcript to Claude for sharper headlines, comparisons and charts,
+keeping your words untouched. Ship again and the new scenes are lined up
+with the same recording; the transcript is kept, so this re-render does not
+transcribe again.
+
+If you did write the script first, **Send my voice with this script** keeps
+your scenes and moves them to your timing. Either way a new recording
+replaces the old one, and the recording, the script and any pictures go up
+in one commit, so there is one render.
+
+On the command line the same thing works: put `voiceover.m4a` (or mp3,
+wav, webm) in an empty project folder, or next to a `script.md` with only
+header lines, and run the build.
+
 ## Read, record, upload: the video cuts itself around your voice
 
 The order of work is: Claude turns what you dictated into a script; you read

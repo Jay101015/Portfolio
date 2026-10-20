@@ -145,12 +145,12 @@ export const Doodle: React.FC<DoodleProps> = ({name, size, draw, win, stroke, wi
 // ------------------------------------------------------------------ the hand
 
 /**
- * Jeffrey's line drawing of a hand holding a pencil (public/hand.png): brown skin, a yellow pencil, the outside cut
- * away. The pencil tip is at HAND_TIP in the image; the image is placed so that point sits at (0,0) of its box, and
- * the arm runs off the bottom of the frame.
+ * Jeffrey's line drawing of a hand, coloured in (public/hand.png): brown skin, and the pencil repainted as a black
+ * Sharpie-style marker with a bullet nib, a grey grip and a label strip; the outside cut away. The nib is at HAND_TIP
+ * in the image; the image is placed so that point sits at (0,0) of its box, and the arm runs off the bottom.
  */
-const HAND_TIP = {x: 2 / 404, y: 0 / 752};
-const HAND_RATIO = 752 / 404;
+const HAND_TIP = {x: 3.8 / 407, y: 0.4 / 754};
+const HAND_RATIO = 754 / 407;
 export const MarkerHand: React.FC<{size: number}> = ({size}) => {
   const w = size * 0.62;
   return <Img src={staticFile('hand.png')} style={{display: 'block', width: w, height: w * HAND_RATIO, transform: `translate(${-HAND_TIP.x * 100}%, ${-HAND_TIP.y * 100}%)`}} />;

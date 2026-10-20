@@ -41,7 +41,16 @@ def audio_duration(path: str) -> float:
         ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "json", path],
         capture_output=True, text=True, check=True,
     ).stdout
-    return float(json.loads(out)["format"]["duration"])
+    dur = json.loads(out).get("format", {}).get("duration")
+    if dur not in (None, "N/A"):
+        return float(dur)
+    # a browser recording (MediaRecorder webm) has no duration in its header: decode it and read where it ends
+    err = subprocess.run(["ffmpeg", "-i", path, "-vn", "-f", "null", "-"], capture_output=True, text=True).stderr
+    times = re.findall(r"time=(\d+):(\d+):(\d+(?:\.\d+)?)", err)
+    if not times:
+        raise RuntimeError(f"could not tell how long {path} is")
+    h, m, s = times[-1]
+    return int(h) * 3600 + int(m) * 60 + float(s)
 
 
 def to_wav16k(src: str, dst: str) -> str:

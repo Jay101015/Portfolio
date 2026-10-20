@@ -3,7 +3,10 @@
     python -m pipeline.build projects/<name> [--vertical] [--no-render] [--backend faster_whisper|sherpa_onnx|none]
 
 Expects in the project folder:
-    script.md                     the tagged script (required)
+    script.md                     the tagged script; plain paragraphs work too. Optional when there is a voiceover:
+                                  with no script, or a script with only header lines, the recording is transcribed
+                                  and the scenes are built from your words (pipeline/auto_script.py), and the script
+                                  that was built is written back so you can edit it and render again
     voiceover.(wav|mp3|m4a|...)   your recording (optional; estimated timing without it)
     images/                       hero images referenced by [image src=...] (optional)
 Writes:
@@ -17,6 +20,7 @@ import glob
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -24,6 +28,7 @@ import urllib.request
 
 from . import align as al
 from .preview import write_preview
+from .auto_script import script_from_words
 from .script_parser import parse_script
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -99,13 +104,20 @@ def unpack_uploads(project: str) -> list[str]:
     Each is decoded to media/<name> before the build; a newer upload replaces an older decoded copy."""
     notes = []
     media = os.path.join(project, "media")
-    if not os.path.isdir(media):
-        return notes
-    for name in sorted(os.listdir(media)):
-        if not name.endswith(".b64"):
-            continue
-        src = os.path.join(media, name)
-        dst = os.path.join(media, name[:-4])
+    candidates = []
+    if os.path.isdir(media):
+        candidates += [os.path.join(media, n) for n in sorted(os.listdir(media)) if n.endswith(".b64")]
+    # a recording sent from the studio: voiceover.<ext>.b64 in the project folder
+    candidates += sorted(glob.glob(os.path.join(project, "voiceover.*.b64")))
+    for src in candidates:
+        name = os.path.basename(src)
+        dst = src[:-4]
+        if name.startswith("voiceover."):
+            # the new recording replaces any other voice in the folder
+            for old in glob.glob(os.path.join(project, "voiceover.*")):
+                if old != src and old != dst and not old.endswith(".b64"):
+                    os.remove(old)
+                    notes.append(f"replaced {os.path.basename(old)} with the new recording")
         if os.path.exists(dst) and os.path.getmtime(dst) >= os.path.getmtime(src):
             continue
         try:
@@ -118,6 +130,53 @@ def unpack_uploads(project: str) -> list[str]:
             f.write(raw)
         notes.append(f"unpacked {name} -> {name[:-4]} ({len(raw) // 1024} KB)")
     return notes
+
+
+def _header_lines(md: str) -> dict[str, str]:
+    """The `key: value` lines above the first tag, as written (the parser lower-cases and interprets them)."""
+    out: dict[str, str] = {}
+    for line in md.splitlines():
+        if line.startswith("["):
+            break
+        m = re.match(r"^([\w.]+):\s*(.+)$", line.strip())
+        if m and len(line.split()) <= 12:
+            out[m.group(1)] = m.group(2).strip()
+    return out
+
+
+def transcript_for(project: str, audio: str, wav: str, total: float, args: argparse.Namespace, hint: str) -> list | None:
+    """Words with times for the recording. Kept per recording in transcript.json (on the branch, so a re-render after
+    editing the script does not transcribe again) and in .cache; alignment itself is instant and always re-run."""
+    h = file_hash(audio)
+    kept = os.path.join(project, "transcript.json")
+    cache = os.path.join(project, ".cache", f"transcript-{h}.json")
+    if not args.retranscribe:
+        if os.path.exists(kept):
+            with open(kept, encoding="utf-8") as f:
+                data = json.load(f)
+            if data.get("hash") == h and data.get("words"):
+                print("using the kept transcript (transcript.json)")
+                return data["words"]
+        if os.path.exists(cache):
+            with open(cache, encoding="utf-8") as f:
+                words = json.load(f)
+            print(f"using cached transcript {os.path.basename(cache)}")
+            _keep_transcript(kept, audio, h, total, words)
+            return words
+    if args.backend == "none":
+        return None
+    print(f"transcribing {os.path.basename(audio)} ({total:.1f}s) with {args.backend}...", flush=True)
+    words = al.transcribe(wav, args.backend, args.model, hint)
+    os.makedirs(os.path.dirname(cache), exist_ok=True)
+    with open(cache, "w", encoding="utf-8") as f:
+        json.dump(words, f)
+    _keep_transcript(kept, audio, h, total, words)
+    return words
+
+
+def _keep_transcript(path: str, audio: str, h: str, total: float, words: list) -> None:
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump({"audio": os.path.basename(audio), "hash": h, "durationSec": round(total, 3), "text": " ".join(w["w"] for w in words), "words": words}, f, separators=(",", ":"))
 
 
 def fit_clip(sc: dict, path: str) -> list[str]:
@@ -260,39 +319,49 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     project = os.path.abspath(args.project)
+    # files sent from the studio (pictures, and the voice itself) arrive as <name>.b64; unpack them first
+    for note in unpack_uploads(project):
+        print(note)
+    fetch_sources(project)
     script_path = os.path.join(project, "script.md")
-    if not os.path.exists(script_path):
-        print(f"no script.md in {project}", file=sys.stderr)
-        return 2
-    with open(script_path, encoding="utf-8") as f:
-        sb = parse_script(f.read())
+    md = ""
+    if os.path.exists(script_path):
+        with open(script_path, encoding="utf-8") as f:
+            md = f.read()
+    sb = parse_script(md) if md.strip() else None
+    audio = find_audio(project)
+    words = None
+    total = 0.0
+    wav = None
+    if audio:
+        total = al.audio_duration(audio)
+        wav = al.to_wav16k(audio, os.path.join(project, ".cache", "asr16k.wav"))
+        hint = " ".join(sc["narration"] for sc in sb["scenes"]) if sb else ""
+        words = transcript_for(project, audio, wav, total, args, hint)
+    if sb is None or not sb["scenes"]:
+        if not words:
+            print(f"no script in {project}, and no voiceover to build one from", file=sys.stderr)
+            return 2
+        header = {}
+        title = None
+        if sb is not None:
+            title = sb["title"]
+            header = {k: v for k, v in _header_lines(md).items()}
+        header.setdefault("slug", os.path.basename(project.rstrip(os.sep)))
+        md = script_from_words(words, header, title)
+        with open(script_path, "w", encoding="utf-8") as f:
+            f.write(md)
+        sb = parse_script(md)
+        print(f"built the script from the voiceover: {len(sb['scenes'])} scenes, written to script.md")
     if args.no_captions:
         sb["captions"] = False
     slug = sb["slug"]
     print(f"storyboard: {len(sb['scenes'])} scenes, estimated {sb['durationSec']:.0f}s")
 
-    audio = find_audio(project)
     align_report = ""
     public_dir = os.path.join(REMOTION, "public", "projects", slug)
     os.makedirs(public_dir, exist_ok=True)
     if audio:
-        total = al.audio_duration(audio)
-        wav = al.to_wav16k(audio, os.path.join(project, ".cache", "asr16k.wav"))
-        # The transcript is cached per recording, so editing the script or re-rendering never
-        # repeats the slow ASR step; alignment itself is instant and always re-run.
-        cache = os.path.join(project, ".cache", f"transcript-{file_hash(audio)}.json")
-        words = None
-        if os.path.exists(cache) and not args.retranscribe:
-            with open(cache, encoding="utf-8") as f:
-                words = json.load(f)
-            print(f"using cached transcript {os.path.basename(cache)}")
-        elif args.backend != "none":
-            hint = " ".join(sc["narration"] for sc in sb["scenes"])
-            print(f"transcribing {os.path.basename(audio)} ({total:.1f}s) with {args.backend}...", flush=True)
-            words = al.transcribe(wav, args.backend, args.model, hint)
-            os.makedirs(os.path.dirname(cache), exist_ok=True)
-            with open(cache, "w", encoding="utf-8") as f:
-                json.dump(words, f)
         if words is not None:
             sb = al.align(sb, words, total)
             align_report = al.report(sb)
@@ -316,9 +385,6 @@ def main(argv: list[str] | None = None) -> int:
         sb["visemes"] = al.visemes_from_words(sb["scenes"], sb["fps"], sb["durationSec"])
 
     # Footage, stills and posters live in <project>/media (images/ still works for older projects).
-    for note in unpack_uploads(project):
-        print(note)
-    fetch_sources(project)
     for note in resolve_media(sb, project, slug):
         print(note)
     for folder in ("media", "images"):
