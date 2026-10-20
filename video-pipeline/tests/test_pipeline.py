@@ -139,8 +139,27 @@ class MediaTests(unittest.TestCase):
             self.assertEqual(a["type"], "still")
             self.assertEqual(a["props"]["src"], "projects/t/media/art.png")
             self.assertNotIn("from", a["props"])
-            self.assertEqual(b["props"]["src"], "missing.png")
-            self.assertTrue(any("missing.png" in n for n in notes))
+            # A still whose file never arrived renders its placeholder instead of failing the render.
+            self.assertNotIn("src", b["props"])
+            self.assertEqual(b["props"]["missing"], "missing.png")
+            self.assertTrue(any("missing.png" in n and "placeholder" in n for n in notes))
+
+    def test_missing_clip_without_fallback_becomes_a_placeholder_still(self):
+        import os, tempfile
+        from pipeline.build import resolve_media
+
+        with tempfile.TemporaryDirectory() as d:
+            os.makedirs(os.path.join(d, "media"))
+            sb = parse_script('# T\n\n[clip src="gone.mp4" from=3 vol=0.2 want="a phone showing a chart"]\nHi.\n')
+            resolve_media(sb, d, "t")
+            sc = sb["scenes"][0]
+            self.assertEqual(sc["type"], "still")
+            self.assertNotIn("src", sc["props"])
+            self.assertNotIn("from", sc["props"])
+
+    def test_still_keeps_its_want_text_for_the_placeholder(self):
+        sb = parse_script('# T\n\n[still src="x.jpg" want="a phone in a hand"]\nHi.\n')
+        self.assertEqual(sb["scenes"][0]["props"]["want"], "a phone in a hand")
 
 
 class AlignTests(unittest.TestCase):

@@ -160,11 +160,11 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
         if "by" in a:
             p["attribution"] = a["by"]
     elif b.type in ("image", "still"):
-        for k in ("src", "caption", "prompt", "credit", "zoom", "search", "fallback"):
+        for k in ("src", "caption", "prompt", "credit", "zoom", "search", "fallback", "want"):
             if k in a:
                 p[k] = a[k]
     elif b.type == "clip":
-        for k in ("src", "caption", "credit", "fallback", "search"):
+        for k in ("src", "caption", "credit", "fallback", "search", "want"):
             if k in a:
                 p[k] = a[k]
         if "from" in a:

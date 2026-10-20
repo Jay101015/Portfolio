@@ -155,9 +155,18 @@ def resolve_media(sb: dict, project: str, slug: str) -> list[str]:
                     notes.extend(fit_clip(sc, os.path.join(src_dir, src)))
                 p["src"] = f"projects/{slug}/{folder}/{src}"
     for sc in sb["scenes"]:
-        src = sc["props"].get("src")
+        p = sc["props"]
+        src = p.get("src")
         if src and not src.startswith("projects/"):
-            notes.append(f"WARNING: scene {sc['id']} src '{src}' not found in {project}/media")
+            # A missing file must not fail the render: the scene draws its placeholder
+            # (the want= text in an empty frame) and the note says what to drop into media/.
+            notes.append(f"WARNING: scene {sc['id']} src '{src}' not found in {project}/media; rendering the placeholder frame")
+            p["missing"] = src
+            p.pop("src", None)
+            if sc["type"] == "clip":
+                sc["type"] = "still"
+                p.pop("from", None)
+                p.pop("vol", None)
     return notes
 
 

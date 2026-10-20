@@ -472,7 +472,13 @@ export const PaperStill: React.FC<P> = ({scene, brand}) => {
       <div style={{position: 'relative', transform: `rotate(${tilt}deg) translateY(${(1 - s) * 40 * u}px)`, opacity: Math.min(1, s * 1.4)}}>
         <div style={{width: w, height: h, background: '#fff', padding: 18 * u, paddingBottom: 18 * u, boxShadow: `0 ${14 * u}px ${40 * u}px rgba(40,30,10,0.25)`}}>
           <div style={{width: '100%', height: '100%', overflow: 'hidden', background: '#e9e2d6'}}>
-            {src ? <Img src={staticFile(src)} style={{width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${scale})`}} /> : null}
+            {src ? (
+              <Img src={staticFile(src)} style={{width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${scale})`}} />
+            ) : (
+              <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 * u, textAlign: 'center', fontFamily: hand(brand), fontSize: 40 * u, lineHeight: 1.2, color: brand.muted}}>
+                {scene.props.want ?? scene.props.prompt ?? 'picture goes here'}
+              </div>
+            )}
           </div>
         </div>
         {/* a strip of tape over the top edge */}
