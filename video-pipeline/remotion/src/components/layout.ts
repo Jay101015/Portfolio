@@ -69,7 +69,7 @@ export const compactNum = (n: number, fmt?: string) => {
   else if (abs >= 1e6) body = `${(n / 1e6).toFixed(1)}M`;
   else if (abs >= 1e4) body = `${Math.round(n / 1e3)}K`;
   else body = formatNum(n, abs < 10 && !Number.isInteger(n) ? 1 : 0);
-  if (fmt === '$') return `$${body}`;
   if (fmt === '%') return `${body}%`;
+  if (fmt && fmt.trim() && fmt.trim().length <= 2) return `${fmt.trim()}${body}`; // a currency sign: $, £, €
   return body;
 };
