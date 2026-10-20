@@ -1,7 +1,7 @@
 {
   "width": 1856,
   "height": 2304,
-  "head_top": 511,
+  "head_top": 246,
   "style": "flat",
   "glasses": true,
   "gaze": {
@@ -25,7 +25,7 @@
     ],
     "head.png": [
       498,
-      506,
+      241,
       1358,
       1441
     ],
@@ -38,14 +38,14 @@
     "brow-r.png": [
       977,
       817,
-      1207,
+      1209,
       868
     ],
     "mouth-heal.png": [
-      833,
-      1215,
-      1024,
-      1312
+      825,
+      1209,
+      1032,
+      1374
     ],
     "glasses.png": [
       600,
@@ -100,23 +100,74 @@
   },
   "mouth": [
     928,
-    1262
+    1282
   ],
   "mouth_half_width": 82,
+  "lips": {
+    "_note": "the drawn mouth in the portrait's own line: corners of the upper-lip outline, its top edge, the mouth line, the chin crease",
+    "corner_l": [
+      835,
+      1262
+    ],
+    "corner_r": [
+      1025,
+      1262
+    ],
+    "top": [
+      [
+        863,
+        1237
+      ],
+      [
+        890,
+        1227
+      ],
+      [
+        927,
+        1242
+      ],
+      [
+        947,
+        1227
+      ],
+      [
+        980,
+        1235
+      ]
+    ],
+    "line_y": 1282,
+    "line_half": 116,
+    "line_dip": 8,
+    "crease": [
+      [
+        862,
+        1327
+      ],
+      [
+        928,
+        1341
+      ],
+      [
+        998,
+        1327
+      ]
+    ],
+    "stroke": 8
+  },
   "neck_base": [
     928,
     1400
   ],
   "shoulder_l": [
-    170,
-    1790
+    330,
+    1720
   ],
   "shoulder_r": [
-    1700,
-    1780
+    1530,
+    1720
   ],
   "colors": {
-    "skin": "#5b3425",
+    "skin": "#5c3425",
     "skin_shadow": "#5a3324",
     "skin_light": "#5d3325",
     "lip_upper": "#44241b",

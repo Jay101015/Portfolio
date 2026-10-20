@@ -221,6 +221,7 @@ def build(portrait: Path, landmarks: Path, out: Path) -> dict:
         "eye_shape_r": L["eye_shape_r"],
         "mouth": L["mouth_center"],
         "mouth_half_width": L["mouth_half_width"],
+        "lips": L.get("lips"),
         "neck_base": L["neck_base"],
         "shoulder_l": L["shoulder_l"],
         "shoulder_r": L["shoulder_r"],

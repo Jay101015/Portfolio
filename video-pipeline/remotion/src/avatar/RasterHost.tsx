@@ -53,12 +53,13 @@ const lighten = (hex: string, amt = 0.15) => {
 
 // ------------------------------------------------------------------ poses (portrait pixels)
 type HandKind = 'fist' | 'open' | 'point' | 'thumb' | 'none';
-type ArmP = {elbow: Pt; hand: Pt; kind: HandKind; angle: number; front: boolean};
+/** An arm is placed by its wrist; the elbow is solved from the shoulder. bend: degrees the hand turns off the forearm. */
+type ArmP = {hand: Pt; kind: HandKind; bend: number; front: boolean; elbowUp?: boolean; abs?: boolean};
 type PoseP = {L: ArmP; R: ArmP; tilt: number; lean: number; headY: number; shoulderY: number; bodyRot: number};
 type Motion = {f2: number; talk: number};
 
-const REST_L: ArmP = {elbow: [120, 2200], hand: [120, 2500], kind: 'none', angle: 0, front: false};
-const REST_R: ArmP = {elbow: [1740, 2200], hand: [1740, 2500], kind: 'none', angle: 0, front: false};
+const REST_L: ArmP = {hand: [250, 2650], kind: 'none', bend: 0, front: false};
+const REST_R: ArmP = {hand: [1610, 2650], kind: 'none', bend: 0, front: false};
 
 const poseParams = (pose: Pose | 'gesture', m: Motion): PoseP => {
   const base: PoseP = {L: REST_L, R: REST_R, tilt: 0, lean: 0, headY: 0, shoulderY: 0, bodyRot: 0};
@@ -66,30 +67,30 @@ const poseParams = (pose: Pose | 'gesture', m: Motion): PoseP => {
     case 'gesture': {
       const beat = Math.round(m.talk * 70);
       const sway = Math.round(Math.sin(m.f2 / 9) * 28);
-      return {...base, R: {elbow: [1840, 1950], hand: [1600 + sway, 1180 - beat], kind: 'open', angle: 26 + sway, front: true}, lean: 6};
+      return {...base, R: {hand: [1540 + sway, 1150 - beat], kind: 'open', bend: 18 + sway / 2, front: true}, lean: 6};
     }
     case 'point':
-      return {...base, L: {elbow: [-60, 1800], hand: [-300, 1060], kind: 'point', angle: -95, front: true}, lean: -22, tilt: -3, bodyRot: -1.5};
+      return {...base, L: {hand: [-140, 1040], kind: 'point', bend: -78, abs: true, front: true}, lean: -22, tilt: -3, bodyRot: -1.5};
     case 'crossed':
-      return {...base, L: {elbow: [140, 2150], hand: [1300, 2000], kind: 'none', angle: 0, front: false}, R: {elbow: [1760, 2160], hand: [540, 2020], kind: 'fist', angle: 0, front: true}, tilt: 4, headY: 10};
+      return {...base, L: {hand: [1250, 2050], kind: 'none', bend: 0, front: false}, R: {hand: [560, 1600], kind: 'fist', bend: 84, front: true}, tilt: 4, headY: 10};
     case 'think':
-      return {...base, R: {elbow: [1800, 2150], hand: [1000, 1450], kind: 'fist', angle: -58, front: true}, tilt: -6, lean: 16, headY: 6};
+      return {...base, R: {hand: [1010, 1440], kind: 'fist', bend: -8, front: true}, tilt: -6, lean: 16, headY: 6};
     case 'shocked':
-      return {...base, L: {elbow: [-60, 1600], hand: [330, 900], kind: 'open', angle: -24, front: true}, R: {elbow: [1900, 1600], hand: [1500, 900], kind: 'open', angle: 24, front: true}, headY: -36, shoulderY: -24};
+      return {...base, L: {hand: [230, 870], kind: 'open', bend: -16, abs: true, front: true}, R: {hand: [1630, 870], kind: 'open', bend: 16, abs: true, front: true}, headY: -36, shoulderY: -24};
     case 'thumbsup':
-      return {...base, R: {elbow: [1900, 1950], hand: [1640, 1180], kind: 'thumb', angle: -10, front: true}, tilt: 3, lean: -8};
+      return {...base, R: {hand: [1560, 1120], kind: 'thumb', bend: 14, abs: true, front: true}, tilt: 3, lean: -8};
     case 'facepalm':
-      return {...base, R: {elbow: [1860, 2000], hand: [1200, 1200], kind: 'none', angle: 0, front: true}, tilt: 6, headY: 36, lean: 10};
+      return {...base, R: {hand: [1090, 1030], kind: 'open', bend: -62, abs: true, elbowUp: true, front: true}, tilt: 6, headY: 36, lean: 10};
     case 'laugh': {
       const ha = Math.abs(Math.sin(m.f2 / 4)) * 28;
-      return {...base, L: {elbow: [160, 2300], hand: [700, 2250 - ha], kind: 'fist', angle: 0, front: true}, headY: -22 + ha, tilt: 5, shoulderY: -ha * 0.6};
+      return {...base, L: {hand: [560, 1660 - ha], kind: 'fist', bend: 70, front: true}, headY: -22 + ha, tilt: 5, shoulderY: -ha * 0.6};
     }
     case 'wave': {
       const wob = Math.round(Math.sin(m.f2 / 5) * 110);
-      return {...base, R: {elbow: [1900, 1750], hand: [1960 + wob, 1050], kind: 'open', angle: wob / 2.5, front: true}, tilt: 2};
+      return {...base, R: {hand: [1700 + wob, 1000], kind: 'open', bend: 12 + wob / 3, abs: true, front: true}, tilt: 2};
     }
     case 'shrug':
-      return {...base, L: {elbow: [-80, 2100], hand: [-150, 1750], kind: 'open', angle: -80, front: true}, R: {elbow: [1940, 2100], hand: [2010, 1750], kind: 'open', angle: 80, front: true}, tilt: 6, shoulderY: -40, headY: 16};
+      return {...base, L: {hand: [-40, 1480], kind: 'open', bend: -100, abs: true, front: true}, R: {hand: [1900, 1480], kind: 'open', bend: 100, abs: true, front: true}, tilt: 6, shoulderY: -40, headY: 16};
     default:
       return base;
   }
@@ -97,7 +98,7 @@ const poseParams = (pose: Pose | 'gesture', m: Motion): PoseP => {
 const blendArm = (a: ArmP, b: ArmP, t: number): ArmP => {
   const swapAt = a.kind === 'none' && b.kind !== 'none' ? 0.3 : a.kind !== 'none' && b.kind === 'none' ? 0.7 : 0.5;
   const late = t >= swapAt;
-  return {elbow: mixPt(a.elbow, b.elbow, t), hand: mixPt(a.hand, b.hand, t), kind: late ? b.kind : a.kind, angle: mix(a.angle, b.angle, t), front: late ? b.front : a.front};
+  return {hand: mixPt(a.hand, b.hand, t), kind: late ? b.kind : a.kind, bend: mix(a.bend, b.bend, t), front: late ? b.front : a.front, elbowUp: late ? b.elbowUp : a.elbowUp, abs: late ? b.abs : a.abs};
 };
 const blendPose = (a: PoseP, b: PoseP, t: number): PoseP => ({
   L: blendArm(a.L, b.L, t),
@@ -298,75 +299,111 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
     );
   };
 
-  // ------------------------------------------------------------ mouth: drawn in the portrait's colours over the healed patch
+  // ------------------------------------------------------------ mouth: the portrait's own lip drawing, redrawn so it can move
+  // The art draws the mouth as an outlined upper lip, a thick mouth line and a chin crease, with no lower-lip line.
+  // Every shape here keeps that vocabulary: the upper lip lifts and narrows, the mouth line becomes the roof of the
+  // opening, the lower lip is the same kind of line, and the crease drops with the jaw.
+  type LipShape = {sx: number; gap: number; lift: number; teeth: number; lowerTeeth: number; tongue: number};
+  const lipShape = (v: number, open: number): LipShape => {
+    switch (v) {
+      case 1:
+        return {sx: 1, gap: 24 + open * 70, lift: 4, teeth: 0.6, lowerTeeth: 0, tongue: open > 0.6 ? 0.6 : 0};
+      case 2:
+        return {sx: 1.14, gap: 12 + open * 30, lift: 3, teeth: 1, lowerTeeth: 0, tongue: 0};
+      case 3:
+        return {sx: 0.62, gap: 40 + open * 50, lift: 12, teeth: 0, lowerTeeth: 0, tongue: 0};
+      case 4:
+        return {sx: 0.96, gap: 0, lift: 0, teeth: 0, lowerTeeth: 0, tongue: 0};
+      case 5:
+        return {sx: 1.06, gap: 14, lift: 2, teeth: 1, lowerTeeth: 0, tongue: 0};
+      case 6:
+        return {sx: 1, gap: 22 + open * 40, lift: 3, teeth: 0.3, lowerTeeth: 0, tongue: 1};
+      default:
+        return {sx: 1, gap: 0, lift: 0, teeth: 0, lowerTeeth: 0, tongue: 0};
+    }
+  };
   const Mouth: React.FC = () => {
-    const [cx, cy] = info.mouth;
-    const k = info.mouth_half_width / 34;
+    const Lp = info.lips;
+    const cx = (Lp.corner_l[0] + Lp.corner_r[0]) / 2;
+    const lineY = Lp.line_y;
+    const sw = Lp.stroke;
     const open = 0.3 + 0.7 * loud;
     const isLaugh = expr === 'laugh' && twFace >= 1;
     const isSurprised = expr === 'surprised' && twFace >= 1;
     let v = viseme;
     if (expr === 'closed' || expr === 'flat') v = 0;
     if (v === 0 && loud > 0.3 && expr !== 'closed' && expr !== 'flat') v = 1;
-    const restingNeutral = v === 0 && (expr === 'neutral' || expr === 'closed' || expr === 'flat') && twFace >= 1;
-    if (restingNeutral) return null; // the painted lips
-    let S: MouthShape;
-    if (isLaugh) S = {w: 40, top: -6, bot: 44, teeth: 1, tongue: 1, round: 0};
-    else if (isSurprised && v === 0) S = {w: 16, top: -12, bot: 26, teeth: 0, tongue: 0, round: 1};
-    else if ((expr === 'happy' || expr === 'smug') && v === 0 && twFace >= 1) S = {w: expr === 'smug' ? 36 : 42, top: 0, bot: expr === 'smug' ? 0 : 14, teeth: 1, tongue: 0, round: 0};
-    else S = visemeShape(v, open);
-    const w = S.w * k;
-    const topY = S.top * k;
-    const botY = S.bot * k;
-    const cl = F.cornerL * k;
-    const cr = F.cornerR * k;
-    const opening = botY - topY;
-    const line = 7;
+    let S: LipShape;
+    if (isLaugh) S = {sx: 1.18, gap: 110, lift: 8, teeth: 1, lowerTeeth: 0, tongue: 1};
+    else if (isSurprised && v === 0) S = {sx: 0.58, gap: 70, lift: 14, teeth: 0, lowerTeeth: 0, tongue: 0};
+    else if (expr === 'happy' && v === 0 && twFace >= 1) S = {sx: 1.12, gap: 0, lift: 0, teeth: 0, lowerTeeth: 0, tongue: 0};
+    else S = lipShape(v, open);
+    const cl = F.cornerL * 2.4; // + = corners down
+    const cr = F.cornerR * 2.4;
+    const mid = F.lipMid * 2.4; // + = the middle of the line sits lower (a smile)
+    const lipHalf = ((Lp.corner_r[0] - Lp.corner_l[0]) / 2) * S.sx;
+    const half = Lp.line_half * S.sx;
+    const cornerY = Lp.corner_l[1] - S.lift;
+    const P: Pt[] = [[cx - lipHalf, cornerY + cl], ...Lp.top.map(([x, y]): Pt => [cx + (x - cx) * S.sx, y - S.lift + (mid < 0 ? mid * 0.3 : 0)]), [cx + lipHalf, cornerY + cr]];
+    // the upper-lip outline as a smooth curve through its points
+    let top = `M${P[0][0]},${P[0][1]}`;
+    for (let k = 0; k < P.length - 1; k++) {
+      const p0 = P[Math.max(0, k - 1)];
+      const p1 = P[k];
+      const p2 = P[k + 1];
+      const p3 = P[Math.min(P.length - 1, k + 2)];
+      top += ` C${p1[0] + (p2[0] - p0[0]) / 6},${p1[1] + (p2[1] - p0[1]) / 6} ${p2[0] - (p3[0] - p1[0]) / 6},${p2[1] - (p3[1] - p1[1]) / 6} ${p2[0]},${p2[1]}`;
+    }
+    const lineL: Pt = [cx - half, lineY + cl * 0.8 - S.lift * 0.5];
+    const lineR: Pt = [cx + half, lineY + cr * 0.8 - S.lift * 0.5];
+    const roofY = lineY + Lp.line_dip + mid - S.lift * 0.5 - S.gap * 0.22;
+    const roof = `M${lineL[0]},${lineL[1]} Q${cx},${roofY} ${lineR[0]},${lineR[1]}`;
+    const creaseDrop = S.gap * 0.6;
+    const crease = `M${cx + (Lp.crease[0][0] - cx) * Math.max(0.9, S.sx)},${Lp.crease[0][1] + creaseDrop} Q${cx},${Lp.crease[1][1] + creaseDrop + S.gap * 0.08} ${cx + (Lp.crease[2][0] - cx) * Math.max(0.9, S.sx)},${Lp.crease[2][1] + creaseDrop}`;
     const heal = <Layer name="mouth-heal.png" />;
-    if (opening > 5 * k) {
-      const kx = S.round ? w * 0.55 : w * 0.9;
-      const topPath = `M${cx - w},${cy + cl} C${cx - kx},${cy + topY - 4} ${cx + kx},${cy + topY - 4} ${cx + w},${cy + cr}`;
-      const botPath = `C${cx + kx},${cy + botY} ${cx - kx},${cy + botY} ${cx - w},${cy + cl} Z`;
-      const teethH = Math.min(9 * k, opening * 0.38);
-      const lipLo = darken(lipL, 0.25);
+    // the upper lip: fill between the outline and the mouth line
+    const upperLip = (
+      <g>
+        <path d={`${top} L${lineR[0]},${lineR[1]} Q${cx},${roofY} ${lineL[0]},${lineL[1]} Z`} fill={lipU} />
+        <path d={top} stroke={INK} strokeWidth={sw} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </g>
+    );
+    if (S.gap < 4) {
       return (
         <g>
           {heal}
-          <path d={`M${cx - w - 8},${cy + cl - 2} C${cx - kx},${cy + botY + 44} ${cx + kx},${cy + botY + 44} ${cx + w + 8},${cy + cr - 2} ${botPath}`} fill={lipLo} />
-          <path d={`M${cx - w},${cy + cl + 6} C${cx - kx * 0.9},${cy + botY + 30} ${cx + kx * 0.9},${cy + botY + 30} ${cx + w},${cy + cr + 6} C${cx + kx},${cy + botY + 4} ${cx - kx},${cy + botY + 4} ${cx - w},${cy + cl + 6} Z`} fill={lipL} opacity={0.7} />
-          <path d={`M${cx - w - 8},${cy + cl - 2} C${cx - kx},${cy + topY - 46} ${cx + kx},${cy + topY - 46} ${cx + w + 8},${cy + cr - 2} ${topPath.replace('M', 'L')} Z`} fill={lipU} />
-          <path d={`${topPath} ${botPath}`} fill={MOUTH} />
-          <clipPath id={`mouth-${uid}`}>
-            <path d={`${topPath} ${botPath}`} />
-          </clipPath>
-          <g clipPath={`url(#mouth-${uid})`}>
-            {S.teeth > 0 ? <path d={`M${cx - w},${cy + topY - 16} L${cx + w},${cy + topY - 16} L${cx + w},${cy + topY + teethH * 0.6} Q${cx},${cy + topY + teethH + 10} ${cx - w},${cy + topY + teethH * 0.6} Z`} fill={TEETH} opacity={S.teeth * 0.92} /> : null}
-            {S.teeth > 0 ? <path d={`M${cx - w * 0.8},${cy + topY - 2} Q${cx},${cy + topY + 8} ${cx + w * 0.8},${cy + topY - 2}`} stroke={darken(TEETH, 0.3)} strokeWidth={3} fill="none" opacity={S.teeth * 0.5} /> : null}
-            {v === 5 ? <rect x={cx - w * 0.8} y={cy + botY - 16} width={w * 1.6} height={16} fill={TEETH} /> : null}
-            {S.tongue > 0 ? <ellipse cx={cx} cy={cy + botY} rx={w * 0.5} ry={Math.max(16, opening * 0.22)} fill={TONGUE} opacity={S.tongue} /> : null}
-          </g>
-          <path d={topPath} stroke={INK} strokeWidth={line} fill="none" strokeLinecap="round" />
-          <path d={`M${cx - w},${cy + cl} C${cx - kx},${cy + botY} ${cx + kx},${cy + botY} ${cx + w},${cy + cr}`} stroke={INK} strokeWidth={line * 0.7} fill="none" strokeLinecap="round" opacity={0.85} />
-          <path d={`M${cx - w * 0.7},${cy + botY + 30} Q${cx},${cy + botY + 46} ${cx + w * 0.7},${cy + botY + 30}`} stroke={skinS} strokeWidth={6} fill="none" strokeLinecap="round" opacity={0.8} />
+          {upperLip}
+          <path d={roof} stroke={INK} strokeWidth={sw * 1.25} fill="none" strokeLinecap="round" />
+          <path d={crease} stroke={INK} strokeWidth={sw} fill="none" strokeLinecap="round" opacity={0.9} />
         </g>
       );
     }
-    const mid = (F.lipMid + (v === 4 ? -2 : 0)) * k;
+    const floorY = lineY + Lp.line_dip + mid + S.gap * 0.78;
+    const bulge = S.gap * 0.5;
+    const opening = `${roof} Q${cx},${floorY + bulge} ${lineL[0]},${lineL[1]} Z`;
+    const teethH = Math.min(22, S.gap * 0.3);
     return (
       <g>
         {heal}
-        <path d={`M${cx - w},${cy + cl} Q${cx - w * 0.5},${cy - 10 + mid * 0.3} ${cx - 16},${cy - 8} Q${cx},${cy + 2} ${cx + 16},${cy - 8} Q${cx + w * 0.5},${cy - 10 + mid * 0.3} ${cx + w},${cy + cr} Q${cx},${cy + mid + 6} ${cx - w},${cy + cl} Z`} fill={lipU} />
-        <path d={`M${cx - w + 10},${cy + cl + 2} Q${cx},${cy + mid + 4} ${cx + w - 10},${cy + cr + 2} Q${cx + w * 0.6},${cy + mid + 40} ${cx},${cy + mid + 46} Q${cx - w * 0.6},${cy + mid + 40} ${cx - w + 10},${cy + cl + 2} Z`} fill={darken(lipL, 0.3)} />
-        <path d={`M${cx - w * 0.55},${cy + cl + 8} Q${cx},${cy + mid + 10} ${cx + w * 0.55},${cy + cr + 8} Q${cx + w * 0.35},${cy + mid + 30} ${cx},${cy + mid + 32} Q${cx - w * 0.35},${cy + mid + 30} ${cx - w * 0.55},${cy + cl + 8} Z`} fill={lipL} opacity={0.6} />
-        <path d={`M${cx - w},${cy + cl} Q${cx},${cy + mid + 6} ${cx + w},${cy + cr}`} stroke={INK} strokeWidth={line} fill="none" strokeLinecap="round" />
-        <path d={`M${cx - w * 0.65},${cy + mid + 56} Q${cx},${cy + mid + 72} ${cx + w * 0.65},${cy + mid + 56}`} stroke={skinS} strokeWidth={7} fill="none" strokeLinecap="round" opacity={0.9} />
+        {upperLip}
+        <path d={opening} fill={MOUTH} />
+        <clipPath id={`mouth-${uid}`}>
+          <path d={opening} />
+        </clipPath>
+        <g clipPath={`url(#mouth-${uid})`}>
+          {S.teeth > 0 ? <path d={`M${lineL[0]},${lineL[1] - 10} L${lineR[0]},${lineR[1] - 10} L${lineR[0] - 14},${lineR[1] + teethH * 0.5} Q${cx},${roofY + teethH + 6} ${lineL[0] + 14},${lineL[1] + teethH * 0.5} Z`} fill={TEETH} opacity={S.teeth * 0.9} /> : null}
+          {S.tongue > 0 ? <ellipse cx={cx} cy={floorY + bulge * 0.4} rx={half * 0.5} ry={Math.max(14, S.gap * 0.24)} fill={TONGUE} opacity={S.tongue * 0.9} /> : null}
+        </g>
+        <path d={roof} stroke={INK} strokeWidth={sw} fill="none" strokeLinecap="round" />
+        <path d={`M${lineL[0]},${lineL[1]} Q${cx},${floorY + bulge} ${lineR[0]},${lineR[1]}`} stroke={INK} strokeWidth={sw * 1.15} fill="none" strokeLinecap="round" />
+        <path d={crease} stroke={INK} strokeWidth={sw} fill="none" strokeLinecap="round" opacity={0.9} />
       </g>
     );
   };
 
   // ------------------------------------------------------------ arms and hands, painted to match the hoodie and skin
   /** A hand in the portrait's flat style: palm, four tapered fingers, a thumb. Origin at the wrist, fingers point up. */
-  const Hand: React.FC<{kind: HandKind; angle: number}> = ({kind, angle}) => {
+  const Hand: React.FC<{kind: HandKind; angle: number; mirror?: boolean}> = ({kind, angle, mirror}) => {
     if (kind === 'none') return null;
     const fill = `url(#skin-${uid})`;
     const line = 7;
@@ -391,7 +428,7 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
     );
     const thumbAcross = <path d="M-74,-30 Q-20,-10 40,-12 Q72,-10 70,16 Q66,40 36,38 Q-20,40 -74,20 Z" fill={fill} stroke={INK} strokeWidth={line} strokeLinejoin="round" />;
     return (
-      <g transform={`rotate(${angle}) scale(1.15)`}>
+      <g transform={`rotate(${angle}) scale(${mirror ? -1.3 : 1.3} 1.3)`}>
         {kind === 'open' ? [finger(-62, -16, 150, 42), finger(-20, -5, 178, 42), finger(22, 5, 172, 42), finger(60, 15, 140, 40)] : null}
         {kind === 'point' ? finger(-20, -4, 190, 42) : null}
         {kind === 'thumb' ? <g transform="translate(-56 6) rotate(-20)">{finger(0, 0, 150, 50)}</g> : null}
@@ -403,15 +440,75 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
       </g>
     );
   };
-  const Arm: React.FC<{from: Pt; arm: ArmP}> = ({from, arm}) => {
-    const pts = `${from[0]},${from[1]} ${arm.elbow[0]},${arm.elbow[1]} ${arm.hand[0]},${arm.hand[1]}`;
+  /** A sleeve in the hoodie's raglan red: upper arm and forearm as tapered pieces, a cuff, and the hand continuing the forearm. */
+  const Arm: React.FC<{from: Pt; arm: ArmP; side: 'L' | 'R'}> = ({from, arm, side}) => {
+    const UPPER = 620;
+    const FORE = 570;
+    const S = from;
+    const H = arm.hand;
+    let dx = H[0] - S[0];
+    let dy = H[1] - S[1];
+    let d = Math.hypot(dx, dy);
+    const reach = UPPER + FORE - 30;
+    if (d > reach) {
+      dx *= reach / d;
+      dy *= reach / d;
+      d = reach;
+    }
+    const W: Pt = [S[0] + dx, S[1] + dy];
+    const ux = dx / d;
+    const uy = dy / d;
+    const a = (d * d + UPPER * UPPER - FORE * FORE) / (2 * d);
+    const h = Math.sqrt(Math.max(0, UPPER * UPPER - a * a));
+    const c1: Pt = [S[0] + ux * a - uy * h, S[1] + uy * a + ux * h];
+    const c2: Pt = [S[0] + ux * a + uy * h, S[1] + uy * a - ux * h];
+    const out = side === 'L' ? -1 : 1; // which way is away from the body
+    const score = (p: Pt) => (arm.elbowUp ? -p[1] : p[1]) + out * p[0] * 0.3;
+    const E = score(c1) > score(c2) ? c1 : c2;
+    const piece = (p: Pt, q: Pt, wp: number, wq: number, grow = 0) => {
+      const vx = q[0] - p[0];
+      const vy = q[1] - p[1];
+      const l = Math.hypot(vx, vy) || 1;
+      const px = -vy / l;
+      const py = vx / l;
+      const a1 = wp / 2 + grow;
+      const a2 = wq / 2 + grow;
+      return `M${p[0] + px * a1},${p[1] + py * a1} L${q[0] + px * a2},${q[1] + py * a2} L${q[0] - px * a2},${q[1] - py * a2} L${p[0] - px * a1},${p[1] - py * a1} Z`;
+    };
+    const wS = 240;
+    const wE = 200;
+    const wW = 150;
+    const fvx = W[0] - E[0];
+    const fvy = W[1] - E[1];
+    const fl = Math.hypot(fvx, fvy) || 1;
+    const fux = fvx / fl;
+    const fuy = fvy / fl;
+    const forearmAngle = (Math.atan2(fux, -fuy) * 180) / Math.PI;
+    // a relative bend turns the hand off the forearm; an absolute one sets where the fingers point
+    const handAngle = arm.abs ? arm.bend : forearmAngle + arm.bend;
+    const cuffA: Pt = [W[0] - fux * 46, W[1] - fuy * 46];
+    const cuffB: Pt = [W[0] + fux * 10, W[1] + fuy * 10];
+    const ink = 10;
     return (
       <g>
-        <polyline points={pts} fill="none" stroke={INK} strokeWidth={210} strokeLinecap="round" strokeLinejoin="round" />
-        <polyline points={pts} fill="none" stroke={`url(#sleeve-${uid})`} strokeWidth={194} strokeLinecap="round" strokeLinejoin="round" />
-        <polyline points={pts} fill="none" stroke={sleeveS} strokeWidth={56} strokeLinecap="round" strokeLinejoin="round" opacity={0.45} transform="translate(34 28)" />
-        <g transform={`translate(${arm.hand[0]} ${arm.hand[1]})`}>
-          <Hand kind={arm.kind} angle={arm.angle} />
+        <g fill={INK}>
+          <circle cx={S[0]} cy={S[1]} r={wS / 2 + ink} />
+          <path d={piece(S, E, wS, wE, ink)} />
+          <circle cx={E[0]} cy={E[1]} r={wE / 2 + ink} />
+          <path d={piece(E, W, wE, wW, ink)} />
+          <circle cx={W[0]} cy={W[1]} r={wW / 2 + ink} />
+        </g>
+        <g fill={sleeve}>
+          <circle cx={S[0]} cy={S[1]} r={wS / 2} />
+          <path d={piece(S, E, wS, wE)} />
+          <circle cx={E[0]} cy={E[1]} r={wE / 2} />
+          <path d={piece(E, W, wE, wW)} />
+          <circle cx={W[0]} cy={W[1]} r={wW / 2} />
+        </g>
+        <path d={piece(cuffA, cuffB, wW + 4, wW + 4)} fill={darken(sleeve, 0.18)} stroke={INK} strokeWidth={6} strokeLinejoin="round" />
+        <g transform={`translate(${W[0]} ${W[1]})`}>
+          {/* the thumbs face the body: the viewer's-left hand is the drawing mirrored */}
+          <Hand kind={arm.kind} angle={handAngle} mirror={side === 'L'} />
         </g>
       </g>
     );
@@ -433,7 +530,7 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
     const kind = expr === 'surprised' ? 'bang' : expr === 'confused' ? 'question' : expr === 'angry' ? 'anger' : expr === 'laugh' ? 'ha' : expr === 'sad' || pose === 'facepalm' ? 'sweat' : pose === 'thumbsup' ? 'sparkle' : expr === 'smug' ? 'smug' : null;
     if (!kind) return null;
     const wob = Math.sin(sinceChange / 3) * 10;
-    const top = ((info as {head_top?: number}).head_top ?? 260) - 260; // marks sit relative to the top of the hair
+    const top = Math.max(0, ((info as {head_top?: number}).head_top ?? 260) - 260); // marks sit relative to the top of the hair, inside the drawing
     return (
       <g opacity={fade} transform={`${flip ? `translate(${W} 0) scale(-1 1)` : ''} translate(0 ${top})`}>
         {kind === 'bang' ? (
@@ -484,11 +581,10 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
   const [nx, ny] = info.neck_base;
   const shL: Pt = [info.shoulder_l[0], info.shoulder_l[1] + B.shoulderY];
   const shR: Pt = [info.shoulder_r[0], info.shoulder_r[1] + B.shoulderY];
-  const arms = [
+  const arms: {key: 'L' | 'R'; from: Pt; arm: ArmP}[] = [
     {key: 'L', from: shL, arm: B.L},
     {key: 'R', from: shR, arm: B.R},
   ];
-  const facepalmAmt = pose === 'facepalm' ? clamp01((sinceChange - 4) / 4) : prevPose === 'facepalm' ? 1 - clamp01(sinceChange / 4) : 0;
   const headTilt = B.tilt + slowTilt + headTurn;
   const headDx = B.lean + headTurn * 6;
   const headDy = B.headY - nod;
@@ -511,7 +607,7 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
       </defs>
       <g transform={`translate(0 ${bob}) rotate(${B.bodyRot} ${nx} ${VIEW_H}) translate(${nx} ${VIEW_H}) scale(1 ${1 + breath * 0.004}) translate(${-nx} ${-VIEW_H})`}>
         {arms.filter((a) => !a.arm.front).map((a) => (
-          <Arm key={`b${a.key}`} from={a.from} arm={a.arm} />
+          <Arm key={`b${a.key}`} from={a.from} arm={a.arm} side={a.key} />
         ))}
         <g transform={`translate(0 ${B.shoulderY * 0.5})`}>
           <Layer name="body.png" />
@@ -526,18 +622,9 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
             <Mouth />
             {hasGlasses ? <Layer name={'glasses.png' as keyof typeof info.boxes} /> : null}
           </g>
-          {facepalmAmt > 0 ? (
-            <g transform={`translate(${(1 - facepalmAmt) * 300} ${(1 - facepalmAmt) * 400})`} opacity={facepalmAmt}>
-              <polyline points="1600,1760 1380,1300 1060,1040" fill="none" stroke={INK} strokeWidth={210} strokeLinecap="round" strokeLinejoin="round" />
-              <polyline points="1600,1760 1380,1300 1060,1040" fill="none" stroke={`url(#sleeve-${uid})`} strokeWidth={194} strokeLinecap="round" strokeLinejoin="round" />
-              <g transform="translate(1000 1010) rotate(-62) scale(1.35)">
-                <Hand kind="open" angle={0} />
-              </g>
-            </g>
-          ) : null}
         </g>
-        {arms.filter((a) => a.arm.front && !(pose === 'facepalm' && a.key === 'R' && facepalmAmt > 0.5)).map((a) => (
-          <Arm key={`f${a.key}`} from={a.from} arm={a.arm} />
+        {arms.filter((a) => a.arm.front).map((a) => (
+          <Arm key={`f${a.key}`} from={a.from} arm={a.arm} side={a.key} />
         ))}
         <Emanata />
       </g>
