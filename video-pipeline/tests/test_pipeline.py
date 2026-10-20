@@ -207,8 +207,8 @@ class AlignTests(unittest.TestCase):
         sc = out["scenes"]
         self.assertEqual(out["timing"], "aligned")
         self.assertGreater(out["alignment"]["coverage"], 0.8)
-        # title starts at the first word, list at "five", chart at "eight"
-        self.assertAlmostEqual(sc[0]["start"], 0.25, places=2)
+        # the first scene is on screen from the first frame; list starts at "five", chart at "eight"
+        self.assertEqual(sc[0]["start"], 0.0)
         self.assertAlmostEqual(sc[1]["start"], tr[4]["s"] - 0.25, places=2)
         self.assertAlmostEqual(sc[3]["start"], tr[12]["s"] - 0.25, places=2)
         # silent image scene borrows its 2s before the chart, and nothing overlaps
@@ -218,6 +218,40 @@ class AlignTests(unittest.TestCase):
         # captions carry the script's spelling, not the transcript's
         self.assertIn("alpha", [w["w"].lower() for w in sc[1]["words"]])
         self.assertEqual(out["durationSec"], round(total + 0.5, 3))
+
+    def test_first_scene_starts_at_zero_when_the_recogniser_drops_the_opening(self):
+        sb = parse_script(TAGGED)
+        # The recogniser heard nothing of the title and only the end of the list, starting late.
+        spoken = "seven beta item eight nine ten".split()
+        tr = self._transcript(spoken)
+        tr = [{**w, "s": w["s"] + 19.0, "e": w["e"] + 19.0} for w in tr]
+        total = tr[-1]["e"] + 1.0
+        out = align(sb, tr, total)
+        sc = out["scenes"]
+        self.assertEqual(sc[0]["start"], 0.0)
+        # the list scene (5 of 7 words unmatched) is spread before its anchored words, not squeezed to a blink
+        self.assertGreater(sc[1]["end"] - sc[1]["start"], 2.0)
+        self.assertLess(sc[0]["words"][0]["s"], 5.0)
+        for a, b in zip(sc, sc[1:]):
+            self.assertLessEqual(a["end"], b["start"] + 1e-6)
+
+    def test_short_stray_matches_do_not_anchor_a_long_script(self):
+        from pipeline.align import align as align_fn
+        words = [f"w{i}" for i in range(30)]
+        sb = {"scenes": [
+            {"id": 1, "type": "title", "props": {}, "narration": " ".join(words[:10])},
+            {"id": 2, "type": "list", "props": {}, "narration": " ".join(words[10:20])},
+            {"id": 3, "type": "stat", "props": {}, "narration": " ".join(words[20:])},
+        ]}
+        # scene 1 is unheard except one stray word late in the recording; scenes 2 and 3 are heard in full
+        spoken = words[10:14] + ["w3"] + words[14:]
+        tr = self._transcript(spoken)
+        tr = [{**w, "s": w["s"] + 10.0, "e": w["e"] + 10.0} for w in tr]
+        out = align_fn(sb, tr, tr[-1]["e"] + 1)
+        sc = out["scenes"]
+        self.assertEqual(sc[0]["start"], 0.0)
+        self.assertAlmostEqual(sc[1]["start"], tr[0]["s"] - 0.25, places=2)
+        self.assertEqual(out["alignment"]["perScene"][0]["matched"], 0)
 
     def test_normalize(self):
         self.assertEqual(normalize("Seven,"), "7")

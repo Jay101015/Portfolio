@@ -247,17 +247,32 @@ def align(storyboard: dict[str, Any], transcript: list[Word], total_sec: float) 
     sm = difflib.SequenceMatcher(None, a, b, autojunk=False)
     starts: list[float | None] = [None] * len(a)
     ends: list[float | None] = [None] * len(a)
-    matched = 0
+    # A run of one or two matching words is as likely a common word landing where it was not said
+    # as a real hit, so once there is enough text only runs of a few words anchor anything.
+    min_block = 3 if len(a) >= 20 else 1
     for blk in sm.get_matching_blocks():
+        if blk.size < min_block:
+            continue
         for k in range(blk.size):
             starts[blk.a + k] = transcript[blk.b + k]["s"]
             ends[blk.a + k] = transcript[blk.b + k]["e"]
-            matched += 1
+    # A scene whose words mostly went unmatched has no anchors of its own: the few that did match are
+    # as likely strays as hits, so the whole scene is placed between its neighbours by word count.
+    for si in range(len(scenes)):
+        idx = [i for i, (sj, _) in enumerate(script_words) if sj == si]
+        hit = sum(1 for i in idx if starts[i] is not None)
+        if idx and hit / len(idx) < 0.5:
+            for i in idx:
+                starts[i] = None
+                ends[i] = None
+    matched = sum(1 for t in starts if t is not None)
 
-    first_t = transcript[0]["s"] if transcript else 0.0
+    # Unmatched words before the first anchor are spread from the start of the recording, not from
+    # the first word the recogniser kept: a recogniser that drops the opening would otherwise push
+    # the first scene, and everything on screen with it, to wherever it started listening.
     last_t = transcript[-1]["e"] if transcript else total_sec
-    s_times = _interpolate_missing(starts, first_t, last_t)
-    e_times = _interpolate_missing(ends, first_t, last_t)
+    s_times = _interpolate_missing(starts, 0.3, last_t)
+    e_times = _interpolate_missing(ends, 0.3, last_t)
 
     per_scene: list[list[Word]] = [[] for _ in scenes]
     per_scene_matched = [0] * len(scenes)
@@ -285,7 +300,8 @@ def align(storyboard: dict[str, Any], transcript: list[Word], total_sec: float) 
         else:
             prev_words = next((per_scene[j] for j in range(si - 1, -1, -1) if per_scene[j]), None)
             starts[si] = (prev_words[-1]["e"] + 0.3) if prev_words else 0.0
-    resolved: list[float] = [max(0.0, starts[0] or 0.0)]
+    # The first scene is on screen from the first frame whatever the recording does before its first word.
+    resolved: list[float] = [0.0]
     for si in range(1, n):
         resolved.append(max(float(starts[si] or 0.0), resolved[si - 1] + MIN_SCENE))
     last_end = total_sec

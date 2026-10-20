@@ -130,4 +130,5 @@ jobs:
             video-pipeline/projects/${{ steps.pick.outputs.project }}/storyboard.html
             video-pipeline/projects/${{ steps.pick.outputs.project }}/storyboard.json
             video-pipeline/projects/${{ steps.pick.outputs.project }}/footage-report.md
+            video-pipeline/projects/${{ steps.pick.outputs.project }}/.cache/transcript-*.json
             video-pipeline/projects/${{ steps.pick.outputs.project }}/script.md
