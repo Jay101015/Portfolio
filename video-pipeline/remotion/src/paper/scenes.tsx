@@ -6,6 +6,8 @@ import {compactNum, findPhraseTime, formatNum, parseValue, useLayout} from '../c
 import {fadeIn, pop, rnd} from '../components/motion';
 import {Arrow, Marker, SketchEllipse, SketchLine, SketchPath, SketchRect, Underline, roughGen} from './sketch';
 import {Doodle, Write, WriteSpoken, pickDoodle, writeFrames} from './write';
+import {Media} from './media';
+import {Loop} from 'remotion';
 
 /**
  * The paper look: every scene is laid out like a page someone wrote on. Big words in a serif, notes in
@@ -68,11 +70,10 @@ const CornerDoodle: React.FC<{brand: Brand; name?: string; frame: number; fps: n
   const {u, pad, isVertical} = useLayout();
   if (!brand.board || !name) return null;
   const size = (isVertical ? 200 : 260) * u;
-  const draw = lin(frame, start, start + fps * 0.9);
-  if (draw <= 0) return null;
+  void frame;
   return (
     <div style={{position: 'absolute', top: isVertical ? pad * 1.3 : pad * 0.9, right: pad * 0.9, width: size, height: size}}>
-      <Doodle name={name} size={size} draw={draw} stroke={color ?? brand.ink} width={1.5} seed={seed} />
+      <Doodle name={name} size={size} win={[start, start + fps * 0.9]} stroke={color ?? brand.ink} width={1.5} seed={seed} />
     </div>
   );
 };
@@ -101,14 +102,14 @@ export const PaperTitle: React.FC<P> = ({scene, brand}) => {
       <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: (isVertical ? 96 : 124) * u * (brand.board ? 1.08 : 1), lineHeight: 1.02, letterSpacing: brand.board ? 0 : -2 * u, color: brand.ink, maxWidth: isVertical ? '100%' : '82%'}}>
         <Txt brand={brand} text={title} frame={frame} fps={fps} start={titleStart} cps={20} seed={3} />
       </div>
-      <Underline width={Math.min(width * 0.42, 640 * u)} stroke={brand.accent2} thickness={7 * u} draw={ul} seed={5} style={{marginTop: 18 * u}} />
+      <Underline width={Math.min(width * 0.42, 640 * u)} stroke={brand.accent2} thickness={7 * u} win={[titleDone, titleDone + fps * 0.6]} easeOut seed={5} style={{marginTop: 18 * u}} />
       {subtitle ? (
         <div style={{fontSize: (isVertical ? 40 : 44) * u, color: brand.muted, marginTop: 26 * u, maxWidth: isVertical ? '100%' : '62%', lineHeight: 1.35, opacity: brand.board ? 1 : fadeIn(frame, 18, 10)}}>
           {brand.board ? <Write text={subtitle} frame={frame} fps={fps} start={subStart} cps={34} color={brand.muted} /> : subtitle}
         </div>
       ) : null}
       <div style={{fontFamily: hand(brand), fontSize: 28 * u, color: brand.muted, marginTop: 60 * u, opacity: fadeIn(frame, brand.board ? subStart + fps : 30, 10)}}>for education, not advice</div>
-      <CornerDoodle brand={brand} name={pickDoodle(scene.props.icon, title, subtitle)} frame={frame} fps={fps} start={titleDone + fps * 0.7} seed={1} color={brand.blue} />
+      <CornerDoodle brand={brand} name={scene.props.sticker ? undefined : pickDoodle(scene.props.icon, title, subtitle)} frame={frame} fps={fps} start={titleDone + fps * 0.7} seed={1} color={brand.blue} />
     </AbsoluteFill>
   );
 };
@@ -148,11 +149,11 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
           <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: size, lineHeight: 1, letterSpacing: brand.board ? 0 : -5 * u, color: brand.ink, fontVariantNumeric: 'tabular-nums', transform: brand.board ? undefined : `scale(${0.85 + 0.15 * s})`, transformOrigin: 'left bottom', opacity: brand.board ? 1 : Math.min(1, s * 1.5)}}>
             {brand.board ? <Write text={display} frame={frame} fps={fps} start={numStart} cps={9} wordGap="0.2em" /> : display}
           </div>
-          <Underline width={Math.min(size * 2.4, width * 0.5)} stroke={brand.accent} thickness={8 * u} draw={ul} seed={7} style={{marginTop: 8 * u}} />
+          <Underline width={Math.min(size * 2.4, width * 0.5)} stroke={brand.accent} thickness={8 * u} win={[numDone, numDone + fps * 0.5]} easeOut seed={7} style={{marginTop: 8 * u}} />
         </div>
         {sub ? (
           <div style={{display: 'flex', alignItems: 'center', gap: 16 * u, marginBottom: 40 * u, opacity: brand.board ? 1 : note, maxWidth: isVertical ? '100%' : width * 0.34}}>
-            {!isVertical ? <Arrow length={120 * u} stroke={brand.accent2} draw={note} angle={-8} seed={9} thickness={4 * u} /> : null}
+            {!isVertical ? <Arrow length={120 * u} stroke={brand.accent2} win={brand.board ? [noteStart, noteStart + 8] : [20, 30]} angle={-8} seed={9} thickness={4 * u} /> : null}
             <div style={{fontFamily: hand(brand), fontSize: 44 * u, lineHeight: 1.15, color: brand.accent2, transform: 'rotate(-2deg)'}}>
               {brand.board ? <Write text={sub} frame={frame} fps={fps} start={noteStart + 8} cps={30} color={brand.accent2} /> : sub}
             </div>
@@ -162,7 +163,7 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
       <div style={{marginTop: 30 * u}}>
         <Source brand={brand} source={scene.props.source} delay={brand.board ? noteStart + (sub ? writeFrames(sub, fps, 30) + 12 : 4) : 24} />
       </div>
-      <CornerDoodle brand={brand} name={pickDoodle(scene.props.icon, label, sub, scene.narration)} frame={frame} fps={fps} start={brand.board ? Math.max(numDone + 6, 10) : 0} seed={scene.id} color={brand.blue} />
+      <CornerDoodle brand={brand} name={scene.props.sticker ? undefined : pickDoodle(scene.props.icon, label, sub, scene.narration)} frame={frame} fps={fps} start={brand.board ? Math.max(numDone + 6, 10) : 0} seed={scene.id} color={brand.blue} />
     </AbsoluteFill>
   );
 };
@@ -200,7 +201,7 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
       <div key={idx} style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 64 : 88) * u, lineHeight: 1.2, letterSpacing: brand.board ? 0 : -1 * u, color: brand.ink, maxWidth: isVertical ? '100%' : '86%'}}>
         {brand.board ? (
           // the marker keeps pace with the voice: each word is written as it is said
-          <WriteSpoken words={group} t={t} fps={fps} />
+          <WriteSpoken words={group} t={t} fps={fps} sceneStart={scene.start} />
         ) : (
           group.map((w, i) => {
             const since = t - w.s;
@@ -214,7 +215,7 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
           })
         )}
       </div>
-      <CornerDoodle brand={brand} name={pickDoodle(scene.props.icon, headline, scene.narration)} frame={frame} fps={fps} start={headline ? writeFrames(headline, fps, 34) + 4 : 4} seed={scene.id + 3} color={brand.blue} />
+      <CornerDoodle brand={brand} name={scene.props.sticker ? undefined : pickDoodle(scene.props.icon, headline, scene.narration)} frame={frame} fps={fps} start={headline ? writeFrames(headline, fps, 34) + 4 : 4} seed={scene.id + 3} color={brand.blue} />
     </AbsoluteFill>
   );
 };
@@ -243,7 +244,7 @@ export const PaperList: React.FC<P> = ({scene, brand}) => {
           <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 60 : 70) * u * (brand.board ? 1.1 : 1), color: brand.ink, letterSpacing: brand.board ? 0 : -1 * u}}>
             <Txt brand={brand} text={title} frame={frame} fps={fps} seed={11} per={2} cps={22} />
           </div>
-          <Underline width={Math.min(560 * u, title.length * 28 * u)} stroke={brand.accent2} thickness={6 * u} draw={ul} seed={12} />
+          <Underline width={Math.min(560 * u, title.length * 28 * u)} stroke={brand.accent2} thickness={6 * u} win={[brand.board ? titleDone : 6, (brand.board ? titleDone : 6) + fps * 0.5]} easeOut seed={12} />
         </div>
       ) : null}
       {items.map((item, i) => {
@@ -254,11 +255,11 @@ export const PaperList: React.FC<P> = ({scene, brand}) => {
         return (
           <div key={i} style={{display: 'flex', alignItems: 'center', gap: 30 * u, marginBottom: 26 * u, opacity: brand.board ? 1 : 0.3 + 0.7 * Math.min(1, s * 1.5), transform: brand.board ? undefined : `translateX(${(1 - s) * -30 * u}px)`}}>
             <svg width={76 * u} height={76 * u} viewBox="0 0 76 76" style={{flexShrink: 0, overflow: 'visible', visibility: brand.board && circle <= 0 ? 'hidden' : undefined}}>
-              <SketchEllipse cx={38} cy={38} w={64} h={64} draw={circle} options={{stroke: brand.ink, strokeWidth: 3, seed: 20 + i, fill: lit && !brand.board ? marker(brand) : undefined, fillStyle: 'solid'}} />
+              <SketchEllipse cx={38} cy={38} w={64} h={64} draw={circle} win={brand.board ? [delays[i], delays[i] + 8] : undefined} options={{stroke: brand.ink, strokeWidth: 3, seed: 20 + i, fill: lit && !brand.board ? marker(brand) : undefined, fillStyle: 'solid'}} />
               {numbered ? (
                 <text x={38} y={50} textAnchor="middle" fontFamily={hand(brand)} fontSize={40} fontWeight={700} fill={brand.ink} opacity={brand.board ? lin(frame, delays[i] + 8, delays[i] + 10) : 1}>{i + 1}</text>
               ) : (
-                <SketchPath d="M20,40 L33,53 L58,24" draw={tick} options={{stroke: brand.accent, strokeWidth: 5, seed: 30 + i, roughness: 1}} />
+                <SketchPath d="M20,40 L33,53 L58,24" win={[delays[i] + 4, delays[i] + 14]} easeOut options={{stroke: brand.accent, strokeWidth: 5, seed: 30 + i, roughness: 1}} />
               )}
             </svg>
             <div style={{fontSize: (isVertical ? 42 : 48) * u * (brand.board ? 1.08 : 1), lineHeight: 1.25, fontWeight: brand.board ? 400 : 600, color: lit ? brand.ink : brand.muted}}>
@@ -267,7 +268,7 @@ export const PaperList: React.FC<P> = ({scene, brand}) => {
           </div>
         );
       })}
-      <CornerDoodle brand={brand} name={pickDoodle(scene.props.icon, title, items.join(' '))} frame={frame} fps={fps} start={titleDone + 6} seed={scene.id + 5} color={brand.blue} />
+      <CornerDoodle brand={brand} name={scene.props.sticker ? undefined : pickDoodle(scene.props.icon, title, items.join(' '))} frame={frame} fps={fps} start={titleDone + 6} seed={scene.id + 5} color={brand.blue} />
     </AbsoluteFill>
   );
 };
@@ -295,7 +296,7 @@ export const PaperCompare: React.FC<P> = ({scene, brand}) => {
     return (
       <div style={{position: 'relative', width: cardW, height: cardH, transform: `rotate(${tilt}deg) translateY(${brand.board ? 0 : (1 - s) * 30 * u}px)`, opacity: brand.board ? 1 : Math.min(1, s * 1.4)}}>
         <svg width={cardW} height={cardH} viewBox={`0 0 ${cardW} ${cardH}`} style={{position: 'absolute', inset: 0, overflow: 'visible'}}>
-          <SketchRect x={6} y={6} w={cardW - 12} h={cardH - 12} draw={box} options={{stroke: brand.ink, strokeWidth: 3.5 * u, seed, fill: brand.board ? undefined : brand.panel, fillStyle: 'solid', roughness: 1.2}} />
+          <SketchRect x={6} y={6} w={cardW - 12} h={cardH - 12} draw={box} win={brand.board ? [delay, delay + Math.round(fps * 0.6)] : undefined} options={{stroke: brand.ink, strokeWidth: 3.5 * u, seed, fill: brand.board ? undefined : brand.panel, fillStyle: 'solid', roughness: 1.2}} />
         </svg>
         <div style={{position: 'relative', padding: 40 * u, display: 'flex', flexDirection: 'column', gap: 14 * u, height: '100%'}}>
           <div style={{fontFamily: hand(brand), fontSize: 46 * u, color, lineHeight: 1}}>{brand.board ? <Write text={side.title} frame={frame} fps={fps} start={textAt} cps={30} color={color} /> : side.title}</div>
@@ -310,7 +311,7 @@ export const PaperCompare: React.FC<P> = ({scene, brand}) => {
               <div key={i} style={{fontSize: 34 * u, color: brand.ink, display: 'flex', gap: 14 * u, alignItems: 'flex-start', opacity: brand.board ? 1 : fadeIn(frame, at, 8)}}>
                 {brand.board ? (
                   <svg width={34 * u} height={34 * u} viewBox="0 0 24 24" style={{flexShrink: 0, marginTop: 4 * u, overflow: 'visible', visibility: frame < at ? 'hidden' : undefined}}>
-                    <SketchPath d={bad ? 'M5,5 L19,19 M19,5 L5,19' : 'M4,13 L10,19 L20,6'} draw={lin(frame, at, at + 5)} options={{stroke: color, strokeWidth: 3.5, seed: seed + i, roughness: 0.8}} />
+                    <SketchPath d={bad ? 'M5,5 L19,19 M19,5 L5,19' : 'M4,13 L10,19 L20,6'} win={[at, at + 5]} options={{stroke: color, strokeWidth: 3.5, seed: seed + i, roughness: 0.8}} />
                   </svg>
                 ) : (
                   <Icon size={34 * u} color={color} strokeWidth={3} style={{flexShrink: 0, marginTop: 4 * u}} />
@@ -427,7 +428,7 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
           const cy = sy(vNow);
           return (
             <g key={i} visibility={brand.board && reveal <= 0 ? 'hidden' : undefined}>
-              <SketchPath d={d} draw={reveal} options={{stroke: c, strokeWidth: 6 * u, roughness: 1.1, bowing: 0.6, seed: 60 + i}} />
+              <SketchPath d={d} win={brand.board ? [lineAt, lineAt + fps * 2.2] : [10, 10 + fps * 2.2]} easeOut={!brand.board} options={{stroke: c, strokeWidth: 6 * u, roughness: 1.1, bowing: 0.6, seed: 60 + i}} />
               <circle cx={cx} cy={cy} r={9 * u} fill={c} />
               <text x={cx + 18 * u} y={cy + 12 * u} fontFamily={hand(brand)} fontSize={38 * u} fontWeight={700} fill={c}>{yLab(vNow)}</text>
               {s.name ? <text x={left + 10 * u + i * 300 * u} y={28 * u} fontFamily={hand(brand)} fontSize={34 * u} fill={c} {...labelWipe(lineAt)}>— {s.name}</text> : null}
@@ -485,8 +486,8 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
             </g>
           );
         })}
-        <SketchLine x1={left} y1={top + plotH} x2={left + plotW} y2={top + plotH} draw={Math.min(1, axes * 2)} options={{stroke: brand.ink, strokeWidth: 3.5 * u, seed: 50}} />
-        <SketchLine x1={left} y1={top + plotH} x2={left} y2={top} draw={Math.max(0, axes * 2 - 1)} options={{stroke: brand.ink, strokeWidth: 3.5 * u, seed: 51}} />
+        <SketchLine x1={left} y1={top + plotH} x2={left + plotW} y2={top + plotH} draw={Math.min(1, axes * 2)} win={brand.board ? [axesAt, axesAt + Math.round(fps * 0.5) / 2] : undefined} options={{stroke: brand.ink, strokeWidth: 3.5 * u, seed: 50}} />
+        <SketchLine x1={left} y1={top + plotH} x2={left} y2={top} draw={Math.max(0, axes * 2 - 1)} win={brand.board ? [axesAt + Math.round(fps * 0.5) / 2, axesAt + Math.round(fps * 0.5)] : undefined} options={{stroke: brand.ink, strokeWidth: 3.5 * u, seed: 51}} />
         {body}
       </svg>
       <div style={{marginTop: 10 * u}}>
@@ -546,7 +547,7 @@ export const PaperOutro: React.FC<P> = ({scene, brand}) => {
       </div>
       <div style={{position: 'relative', width: btnW, height: btnH, marginTop: 44 * u, transform: `rotate(-1deg) scale(${brand.board ? 1 : 0.9 + 0.1 * s})`, transformOrigin: 'left center', opacity: brand.board ? 1 : Math.min(1, s * 1.5)}}>
         <svg width={btnW} height={btnH} viewBox={`0 0 ${btnW} ${btnH}`} style={{position: 'absolute', inset: 0, overflow: 'visible', visibility: brand.board && box <= 0 ? 'hidden' : undefined}}>
-          <SketchRect x={4} y={4} w={btnW - 8} h={btnH - 8} draw={box} options={{stroke: brand.ink, strokeWidth: 4 * u, seed: 71, fill: marker(brand), fillStyle: brand.board ? 'zigzag' : 'solid', hachureGap: 14 * u, fillWeight: 10 * u, roughness: 1.3}} />
+          <SketchRect x={4} y={4} w={btnW - 8} h={btnH - 8} draw={box} win={brand.board ? [btnAt, btnAt + Math.round(fps * 0.5)] : undefined} options={{stroke: brand.ink, strokeWidth: 4 * u, seed: 71, fill: marker(brand), fillStyle: brand.board ? 'zigzag' : 'solid', hachureGap: 14 * u, fillWeight: 10 * u, roughness: 1.3}} />
         </svg>
         <div style={{position: 'relative', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: hand(brand), fontWeight: 700, fontSize: 48 * u, color: brand.ink}}>
           {brand.board ? <Write text={cta} frame={frame} fps={fps} start={ctaAt} cps={30} /> : cta}
@@ -560,7 +561,7 @@ export const PaperOutro: React.FC<P> = ({scene, brand}) => {
             return (
               <div key={label} style={{position: 'relative', width: 480 * u, height: 270 * u, opacity: brand.board ? 1 : fadeIn(frame, at, 10)}}>
                 <svg width={480 * u} height={270 * u} viewBox={`0 0 ${480 * u} ${270 * u}`} style={{position: 'absolute', inset: 0, overflow: 'visible', visibility: d <= 0 ? 'hidden' : undefined}}>
-                  <SketchRect x={4} y={4} w={472 * u} h={262 * u} draw={d} options={{stroke: brand.muted, strokeWidth: 2.5 * u, seed: 80 + i, roughness: 1.4}} />
+                  <SketchRect x={4} y={4} w={472 * u} h={262 * u} draw={d} win={brand.board ? [at, at + Math.round(fps * 0.45)] : undefined} options={{stroke: brand.muted, strokeWidth: 2.5 * u, seed: 80 + i, roughness: 1.4}} />
                 </svg>
                 <div style={{position: 'relative', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: hand(brand), color: brand.muted, fontSize: 34 * u}}>
                   {brand.board ? <Write text={`${label} goes here`} frame={frame} fps={fps} start={at + Math.round(fps * 0.45)} cps={34} color={brand.muted} /> : `${label} goes here`}
@@ -580,9 +581,7 @@ export const PaperStill: React.FC<P> = ({scene, brand}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const {u, pad, width, isVertical} = useLayout();
-  const total = Math.max(1, (scene.end - scene.start) * fps);
-  const zoomOut = scene.props.zoom === 'out';
-  const scale = interpolate(frame, [0, total], zoomOut ? [1.1, 1.0] : [1.0, 1.1], {extrapolateRight: 'clamp'});
+  const total = Math.max(1, Math.round((scene.end - scene.start) * fps));
   const src: string | undefined = scene.props.src;
   const caption: string | undefined = scene.props.caption;
   const w = isVertical ? width - pad * 2 : width * 0.62;
@@ -593,9 +592,15 @@ export const PaperStill: React.FC<P> = ({scene, brand}) => {
     <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', padding: pad}}>
       <div style={{position: 'relative', transform: `rotate(${tilt}deg) translateY(${(1 - s) * 40 * u}px)`, opacity: Math.min(1, s * 1.4)}}>
         <div style={{width: w, height: h, background: '#fff', padding: 18 * u, paddingBottom: 18 * u, boxShadow: `0 ${14 * u}px ${40 * u}px rgba(40,30,10,0.25)`}}>
-          <div style={{width: '100%', height: '100%', overflow: 'hidden', background: brand.board ? '#f1f1ee' : '#e9e2d6'}}>
+          <div style={{position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: brand.board ? '#f1f1ee' : '#e9e2d6'}}>
             {src ? (
-              <Img src={staticFile(src)} style={{width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${scale})`}} />
+              scene.props.loop && scene.props.clipDur ? (
+                <Loop durationInFrames={Math.max(1, Math.round(Number(scene.props.clipDur) * fps))}>
+                  <Media src={src} props={scene.props} durationFrames={total} width={w - 36 * u} height={h - 36 * u} />
+                </Loop>
+              ) : (
+                <Media src={src} props={scene.props} durationFrames={total} width={w - 36 * u} height={h - 36 * u} />
+              )
             ) : (
               <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 * u, textAlign: 'center', fontFamily: hand(brand), fontSize: 40 * u, lineHeight: 1.2, color: brand.muted}}>
                 {scene.props.want ?? scene.props.prompt ?? 'picture goes here'}
@@ -616,6 +621,39 @@ export const PaperStill: React.FC<P> = ({scene, brand}) => {
           </div>
         ) : null}
         {scene.props.credit ? <div style={{position: 'absolute', right: 10 * u, bottom: -46 * u, fontFamily: hand(brand), fontSize: 26 * u, color: brand.muted, opacity: fadeIn(frame, 14, 10)}}>{scene.props.credit}</div> : null}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ------------------------------------------------------------------ sticker: a GIF or picture on top of any scene
+const STICK: Record<string, React.CSSProperties> = {
+  tr: {top: '9%', right: '5%'},
+  tl: {top: '9%', left: '5%'},
+  br: {bottom: '16%', right: '5%'},
+  bl: {bottom: '16%', left: '5%'},
+  r: {top: '50%', right: '5%', transform: 'translateY(-50%)'},
+  l: {top: '50%', left: '5%', transform: 'translateY(-50%)'},
+  c: {top: '50%', left: '50%', transform: 'translate(-50%, -50%)'},
+};
+export const Sticker: React.FC<P> = ({scene, brand}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const {height} = useLayout();
+  const src: string | undefined = scene.props.sticker;
+  if (!src) return null;
+  const at = String(scene.props.sticker_at ?? 'tr');
+  const size = height * Math.max(0.1, Math.min(0.8, Number(scene.props.sticker_size ?? 0.32)));
+  const s = pop(frame, fps, Math.round(fps * 0.4), 11);
+  const total = Math.max(1, Math.round((scene.end - scene.start) * fps));
+  const tilt = (rnd(scene.id * 7) - 0.5) * 8;
+  const place = STICK[at] ?? STICK.tr;
+  return (
+    <AbsoluteFill style={{pointerEvents: 'none'}}>
+      <div style={{position: 'absolute', ...place, width: size, height: size}}>
+        <div style={{position: 'relative', width: '100%', height: '100%', overflow: 'hidden', borderRadius: size * 0.06, border: brand.board ? `${Math.max(2, size * 0.012)}px solid ${brand.ink}` : undefined, transform: `rotate(${tilt}deg) scale(${s})`, opacity: Math.min(1, s * 1.5), background: '#fff'}}>
+          <Media src={src} props={{zoom: 'none', ...Object.fromEntries(Object.entries(scene.props).filter(([k]) => k.startsWith('sticker_')).map(([k, v]) => [k.slice(8), v]))}} durationFrames={total} width={size} height={size} />
+        </div>
       </div>
     </AbsoluteFill>
   );
@@ -642,6 +680,7 @@ export const PaperSwitch: React.FC<P> = ({scene, brand}) => {
       return <PaperOutro scene={scene} brand={brand} />;
     case 'still':
     case 'image':
+    case 'clip':
       return <PaperStill scene={scene} brand={brand} />;
     default:
       return null;

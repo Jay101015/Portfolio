@@ -12,6 +12,7 @@ Writes:
 from __future__ import annotations
 
 import argparse
+import base64
 import glob
 import hashlib
 import json
@@ -93,6 +94,32 @@ def fetch_sources(project: str) -> None:
                     os.remove(dst)
 
 
+def unpack_uploads(project: str) -> list[str]:
+    """media/<name>.b64: a file sent from the studio on a phone, base64 text (the GitHub connector carries text only).
+    Each is decoded to media/<name> before the build; a newer upload replaces an older decoded copy."""
+    notes = []
+    media = os.path.join(project, "media")
+    if not os.path.isdir(media):
+        return notes
+    for name in sorted(os.listdir(media)):
+        if not name.endswith(".b64"):
+            continue
+        src = os.path.join(media, name)
+        dst = os.path.join(media, name[:-4])
+        if os.path.exists(dst) and os.path.getmtime(dst) >= os.path.getmtime(src):
+            continue
+        try:
+            with open(src, "rb") as f:
+                raw = base64.b64decode(b"".join(f.read().split()), validate=False)
+        except (ValueError, OSError) as e:
+            notes.append(f"WARNING: could not decode {name}: {e}")
+            continue
+        with open(dst, "wb") as f:
+            f.write(raw)
+        notes.append(f"unpacked {name} -> {name[:-4]} ({len(raw) // 1024} KB)")
+    return notes
+
+
 def fit_clip(sc: dict, path: str) -> list[str]:
     """Keep a clip's playback inside the file: a frame requested past the end of a video never returns
     and the render hangs. Pulls the start offset back when the scene would run off the end, and loops
@@ -154,8 +181,15 @@ def resolve_media(sb: dict, project: str, slug: str) -> list[str]:
                 if sc["type"] == "clip":
                     notes.extend(fit_clip(sc, os.path.join(src_dir, src)))
                 p["src"] = f"projects/{slug}/{folder}/{src}"
+            sticker = p.get("sticker")
+            if sticker and not str(sticker).startswith("projects/") and os.path.exists(os.path.join(src_dir, sticker)):
+                p["sticker"] = f"projects/{slug}/{folder}/{sticker}"
     for sc in sb["scenes"]:
         p = sc["props"]
+        sticker = p.get("sticker")
+        if sticker and not str(sticker).startswith("projects/"):
+            notes.append(f"WARNING: scene {sc['id']} sticker '{sticker}' not found in {project}/media; leaving it off")
+            p.pop("sticker", None)
         src = p.get("src")
         if src and not src.startswith("projects/"):
             # A missing file must not fail the render: the scene draws its placeholder
@@ -282,6 +316,8 @@ def main(argv: list[str] | None = None) -> int:
         sb["visemes"] = al.visemes_from_words(sb["scenes"], sb["fps"], sb["durationSec"])
 
     # Footage, stills and posters live in <project>/media (images/ still works for older projects).
+    for note in unpack_uploads(project):
+        print(note)
     fetch_sources(project)
     for note in resolve_media(sb, project, slug):
         print(note)

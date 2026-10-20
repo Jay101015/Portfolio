@@ -160,11 +160,11 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
         if "by" in a:
             p["attribution"] = a["by"]
     elif b.type in ("image", "still"):
-        for k in ("src", "caption", "prompt", "credit", "zoom", "search", "fallback", "want"):
+        for k in ("src", "caption", "prompt", "credit", "zoom", "search", "fallback", "want", "from", "focus", "mag", "rotate", "flip", "bright", "contrast", "sat", "bw", "look"):
             if k in a:
                 p[k] = a[k]
     elif b.type == "clip":
-        for k in ("src", "caption", "credit", "fallback", "search", "want"):
+        for k in ("src", "caption", "credit", "fallback", "search", "want", "zoom", "focus", "mag", "rotate", "flip", "bright", "contrast", "sat", "bw", "look"):
             if k in a:
                 p[k] = a[k]
         if "from" in a:
@@ -193,6 +193,10 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
     for k in ("pos", "pose", "face", "scale", "icon"):
         if k in a:
             p[k] = a[k]
+    # a sticker (GIF or picture) on any scene, with its own edits as sticker_<edit>
+    for k, v in a.items():
+        if k == "sticker" or k.startswith("sticker_"):
+            p[k] = v
     return p
 
 

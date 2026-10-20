@@ -93,6 +93,38 @@ Keep the tags; change the words. If you drift from the script while
 recording, the aligner follows the voice, not the page: scenes still land
 where you say them.
 
+## Pictures, GIFs and video from your phone
+
+In the studio, Add → "Photo or video from camera roll" (or "Take a photo",
+or "GIF from a link"; a Giphy page link works) puts a picture scene in after
+the one you are on. Edit on a picture scene shows the picture controls, and
+every scene has a "Sticker" section for a GIF or picture on top of it.
+
+| Control | In the script | What it does |
+|---|---|---|
+| Drag on the preview, or the two position sliders | `focus="40 30"` | which part of the picture stays in frame |
+| Zoom | `mag=1.6` | zoom in on that point |
+| Rotate, Flip | `rotate=90`, `flip=h` / `v` / `hv` | quarter turns and mirroring |
+| Brightness, Contrast, Colour | `bright=1.2 contrast=1.1 sat=0.8` | colour (1 is unchanged) |
+| B&W | `bw` | black and white |
+| Sketch look | `look=sketch` | traces the photo as marker lines, so it sits on the whiteboard like a drawing |
+| Slow zoom | `zoom=in` / `out` / `none` | the push-in over the scene |
+| Start at (video) | `from=3.5` | where in the clip to start |
+| Sticker | `sticker="x.gif" sticker_at=tr sticker_size=0.35` | a GIF or picture on any scene; `sticker_` + any edit above applies to it |
+
+The edits are settings, not changes to the file, so you can go back and
+change them; the preview and the render apply the same ones. Photos are
+shrunk to 1920 pixels before they leave the phone. GIFs play, videos play
+muted (your voice is the soundtrack).
+
+When you ship, anything you picked on the phone is uploaded first, then the
+script, so one render picks everything up. The connector carries text only,
+so each file goes up as `media/<name>.b64`; the build decodes it and the
+render keeps the real file on the branch. GIF links the studio could not
+fetch are written to `media/sources.txt` and downloaded by the render.
+Very large videos are better trimmed first, or uploaded on GitHub directly
+into the project's `media/` folder.
+
 ## Approve the host first
 
 The host is a painted portrait (`projects/host-art/base.jpg`) cut into

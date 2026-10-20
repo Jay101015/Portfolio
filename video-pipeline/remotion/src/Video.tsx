@@ -21,12 +21,13 @@ import {ScoreScene} from './scenes/ScoreScene';
 import {AvatarScene} from './scenes/AvatarScene';
 import {OutroScene} from './scenes/OutroScene';
 import {AvatarLayer, type AvatarPos} from './avatar/AvatarLayer';
-import {PaperSwitch} from './paper/scenes';
+import {PaperSwitch, Sticker} from './paper/scenes';
+import {SketchFilterDefs} from './paper/media';
 import {PenHand} from './paper/write';
 import {FACES, POSES, defaultAvatar, defaultFaceFor, type AvatarConfig, type Face, type Pose} from './avatar/Avatar';
 
 const SceneSwitch: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}) => {
-  if (brand.paper && ['title', 'stat', 'text', 'list', 'compare', 'chart', 'quote', 'outro', 'still', 'image'].includes(scene.type)) return <PaperSwitch scene={scene} brand={brand} />;
+  if (brand.paper && ['title', 'stat', 'text', 'list', 'compare', 'chart', 'quote', 'outro', 'still', 'image', 'clip'].includes(scene.type)) return <PaperSwitch scene={scene} brand={brand} />;
   switch (scene.type) {
     case 'title':
       return <TitleScene scene={scene} brand={brand} />;
@@ -183,6 +184,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
   return (
     <AbsoluteFill style={{backgroundColor: brand.bg, fontFamily: brand.font, color: brand.text}}>
       <Background brand={brand} />
+      <SketchFilterDefs />
       {sb.audio ? <Audio src={staticFile(sb.audio)} /> : null}
       {sb.scenes.map((scene) => {
         const from = Math.round(scene.start * fps);
@@ -191,7 +193,10 @@ export const Video: React.FC<Storyboard> = (sb) => {
           <Sequence key={scene.id} from={from} durationInFrames={dur} name={`${scene.id} ${scene.type}`}>
             <SceneFade durationInFrames={dur} toon={brand.toon} transition={transitionFor(scene, brand.toon)} dir={scene.id % 2 ? 1 : -1}>
               <Camera scene={scene} toon={brand.toon}>
-                <SceneSwitch scene={scene} brand={brand} />
+                <AbsoluteFill data-pen-scene={scene.id} data-pen-from={from}>
+                  <SceneSwitch scene={scene} brand={brand} />
+                  <Sticker scene={scene} brand={brand} />
+                </AbsoluteFill>
                 {sb.host === 'none' ? null : <HostLayer sb={sb} scene={scene} avatar={avatar} toon={brand.toon} />}
               </Camera>
             </SceneFade>

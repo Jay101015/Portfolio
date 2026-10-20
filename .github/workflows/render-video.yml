@@ -106,7 +106,9 @@ jobs:
         run: |
           git config user.name "render-bot"
           git config user.email "render-bot@users.noreply.github.com"
-          find "projects/$PROJECT/media" -type f -size -20M \( -name '*.jpg' -o -name '*.jpeg' -o -name '*.png' -o -name '*.webm' -o -name '*.mp4' \) -exec git add -f {} +
+          # uploads from the studio arrive as <name>.b64; the build decoded them, so keep the real file and drop the text copy
+          find "projects/$PROJECT/media" -name '*.b64' -exec git rm -q --ignore-unmatch {} + 2>/dev/null || true
+          find "projects/$PROJECT/media" -type f -size -40M \( -name '*.jpg' -o -name '*.jpeg' -o -name '*.png' -o -name '*.gif' -o -name '*.webp' -o -name '*.webm' -o -name '*.mp4' -o -name '*.mov' \) -exec git add -f {} +
           git add "projects/$PROJECT/script.md" "projects/$PROJECT/footage-report.md" "projects/$PROJECT/timing.json" 2>/dev/null || true
           git commit -m "Render run: footage and timings for $PROJECT" || echo "nothing new to commit"
           git push || echo "push skipped"

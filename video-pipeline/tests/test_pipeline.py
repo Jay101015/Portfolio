@@ -157,6 +157,41 @@ class MediaTests(unittest.TestCase):
             self.assertNotIn("src", sc["props"])
             self.assertNotIn("from", sc["props"])
 
+    def test_uploads_from_the_studio_are_unpacked(self):
+        import base64, os, tempfile
+        from pipeline.build import unpack_uploads
+
+        with tempfile.TemporaryDirectory() as d:
+            os.makedirs(os.path.join(d, "media"))
+            data = bytes(range(256)) * 10
+            with open(os.path.join(d, "media", "photo.jpg.b64"), "w") as f:
+                f.write(base64.b64encode(data).decode())
+            notes = unpack_uploads(d)
+            with open(os.path.join(d, "media", "photo.jpg"), "rb") as f:
+                self.assertEqual(f.read(), data)
+            self.assertTrue(any("photo.jpg" in n for n in notes))
+            self.assertEqual(unpack_uploads(d), [])  # already unpacked: nothing to do
+
+    def test_media_edits_and_stickers_reach_the_storyboard(self):
+        import os, tempfile
+        from pipeline.build import resolve_media
+
+        sb = parse_script('# T\n\n[still src="a.jpg" focus="40 20" mag=1.3 rotate=90 flip=h bright=1.1 bw look=sketch]\nHi.\n\n[text sticker="dance.gif" sticker_at=bl sticker_size=0.4 sticker_bw]\nBye.\n\n[text sticker="gone.gif"]\nEnd.\n')
+        p = sb["scenes"][0]["props"]
+        self.assertEqual((p["focus"], p["mag"], p["rotate"], p["flip"], p["look"]), ("40 20", "1.3", "90", "h", "sketch"))
+        self.assertIs(p["bw"], True)
+        q = sb["scenes"][1]["props"]
+        self.assertEqual((q["sticker"], q["sticker_at"], q["sticker_size"]), ("dance.gif", "bl", "0.4"))
+        self.assertIs(q["sticker_bw"], True)
+        with tempfile.TemporaryDirectory() as d:
+            os.makedirs(os.path.join(d, "media"))
+            for n in ("a.jpg", "dance.gif"):
+                open(os.path.join(d, "media", n), "wb").close()
+            notes = resolve_media(sb, d, "t")
+            self.assertEqual(sb["scenes"][1]["props"]["sticker"], "projects/t/media/dance.gif")
+            self.assertNotIn("sticker", sb["scenes"][2]["props"])
+            self.assertTrue(any("gone.gif" in n for n in notes))
+
     def test_still_keeps_its_want_text_for_the_placeholder(self):
         sb = parse_script('# T\n\n[still src="x.jpg" want="a phone in a hand"]\nHi.\n')
         self.assertEqual(sb["scenes"][0]["props"]["want"], "a phone in a hand")
