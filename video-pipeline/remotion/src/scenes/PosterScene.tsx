@@ -22,7 +22,7 @@ export const PosterScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, bran
     <div style={{position: 'absolute', top: -14 * u, left, width: 110 * u, height: 32 * u, background: `${brand.accent2}cc`, transform: `rotate(${rot}deg)`, border: `3px solid ${brand.ink}33`}} />
   );
   return (
-    <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingRight: brand.toon && !isVertical ? pad + 0.3 * 1920 * u : pad}}>
+    <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingRight: brand.toon && !isVertical ? pad + 0.42 * 1920 * u : pad}}>
       <div style={{display: 'flex', flexDirection: isVertical ? 'column' : 'row', gap: 60 * u, alignItems: 'center'}}>
         <Reveal delay={0} from="left" distance={80}>
           <div style={{position: 'relative', width: posterW, height: posterH, ...(brand.toon ? {background: '#fff', padding: 14 * u, paddingBottom: 48 * u, border: `${5 * u}px solid ${brand.ink}`, boxShadow: `${10 * u}px ${10 * u}px 0 ${brand.ink}`, transform: 'rotate(-3deg)', boxSizing: 'border-box'} : {borderRadius: 18 * u, overflow: 'hidden', background: brand.panel, boxShadow: '0 30px 60px rgba(0,0,0,0.5)'})}}>

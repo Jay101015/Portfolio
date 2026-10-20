@@ -248,8 +248,8 @@ def align(storyboard: dict[str, Any], transcript: list[Word], total_sec: float) 
     starts: list[float | None] = [None] * len(a)
     ends: list[float | None] = [None] * len(a)
     # A run of one or two matching words is as likely a common word landing where it was not said
-    # as a real hit, so once there is enough text only runs of a few words anchor anything.
-    min_block = 3 if len(a) >= 20 else 1
+    # as a real hit, so once there is enough text a lone word anchors nothing.
+    min_block = 2 if len(a) >= 20 else 1
     for blk in sm.get_matching_blocks():
         if blk.size < min_block:
             continue

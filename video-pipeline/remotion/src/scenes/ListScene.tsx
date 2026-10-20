@@ -37,7 +37,7 @@ export const ListScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}
   );
   if (brand.toon) {
     return (
-      <AbsoluteFill style={{justifyContent: 'center', alignItems: 'flex-start', padding: pad}}>
+      <AbsoluteFill style={{justifyContent: 'center', alignItems: 'flex-start', padding: pad, paddingBottom: isVertical ? pad : pad + 120 * u}}>
         <Reveal delay={0} from="none">
           <div style={{...card(brand, u, -1), padding: `${36 * u}px ${48 * u}px`, maxWidth: isVertical ? '100%' : '58%', minWidth: isVertical ? '100%' : '46%'}}>{body}</div>
         </Reveal>
