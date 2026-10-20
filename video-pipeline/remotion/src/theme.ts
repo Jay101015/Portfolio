@@ -63,6 +63,28 @@ presets.paper = {
   marker: '#ffe66d',
 };
 
+presets.whiteboard = {
+  // The whiteboard look: the same page layouts as paper, but a clean white board, marker handwriting for everything,
+  // every line written on left to right at a marker's pace, doodles drawn stroke by stroke, and a hand holding the
+  // marker that follows whatever is being written. Three markers: black, green, red (and a blue for charts).
+  name: 'MONEY MOVES',
+  bg: '#fbfbf9',
+  panel: '#ffffff',
+  text: '#1d1d1f',
+  muted: '#767a82',
+  accent: '#1b8a4c',
+  accent2: '#d93025',
+  font: "'Patrick Hand', 'Comic Sans MS', cursive",
+  display: "'Caveat Brush', 'Patrick Hand', cursive",
+  ink: '#1d1d1f',
+  toon: false,
+  paper: true,
+  board: true,
+  hand: "Caveat, 'Patrick Hand', cursive",
+  marker: '#fff176',
+  blue: '#1a56db',
+};
+
 export const defaultBrand: Brand = presets.toon;
 
 /** Card look that follows the theme: ink-outlined white card on paper, soft panel on dark. */

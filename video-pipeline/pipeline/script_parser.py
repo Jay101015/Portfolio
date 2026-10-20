@@ -189,8 +189,8 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
                 p[k] = a[k]
     if "dur" in a:
         p["dur"] = float(a["dur"])
-    # The character can be placed and posed on any scene.
-    for k in ("pos", "pose", "face", "scale"):
+    # The character can be placed and posed on any scene; a doodle (icon=) can be drawn on any scene on the board.
+    for k in ("pos", "pose", "face", "scale", "icon"):
         if k in a:
             p[k] = a[k]
     return p

@@ -32,7 +32,20 @@ to point at your own).
 
 ## The look
 
-`theme: paper` with `host: none` is the channel's look: a page someone
+`theme: whiteboard` with `host: none` is the channel's look: a whiteboard
+being written on, in the spirit of channels like The Swedish Investor. A
+clean white board, marker handwriting (Caveat Brush for the big words,
+Patrick Hand for the rest, Caveat for notes), and nothing fades in: every
+line is written on a character at a time at a marker's pace, boxes, axes,
+underlines and chart lines are drawn stroke by stroke, a doodle (a Lucide
+outline, chosen from the words on the scene or set with `icon=` on any tag)
+is sketched in the corner, and a cartoon hand holding the marker follows
+whatever is being written, switching marker colour with the line. Three
+markers: black, green for the good side, red for the warning side, and a
+blue for charts and doodles. Photos are held to the board with a magnet.
+`projects/first-10k` and `projects/fee-drag` are the samples.
+
+`theme: paper` is the same set of layouts on a page someone
 wrote on. Warm paper with a faint grain and dot grid, a serif (Fraunces) for
 the big words, handwriting (Caveat) for the notes and labels, charts sketched
 with a pen by rough.js, hand-drawn underlines and arrows, a highlighter
@@ -185,8 +198,11 @@ Scene types: `avatar`, `stat`, `chart`, `compare`, `list`, `quote`, `still`,
 review. A script with no tags at all still renders (each paragraph becomes a
 scene), but tags are the point.
 
+Any tag can take `icon="piggy-bank"` (a Lucide icon name) to pick the doodle the
+whiteboard look draws in the corner; without it, one is chosen from the words.
+
 Header keys: `topic` (what the video is about; `film` for a review), `theme`
-(`paper`, `finance`, `toon` or `movie`), `host` (`none` for pure motion graphics, the
+(`whiteboard`, `paper`, `finance`, `toon` or `movie`), `host` (`none` for pure motion graphics, the
 default on the `finance` and `movie` themes; `painted` or `drawn` to put the
 host on screen, the default on `toon`), `slug`, `kicker`, `captions: false`, any
 `brand.*` (`name`, `bg`, `panel`, `text`, `muted`, `accent`, `accent2`,

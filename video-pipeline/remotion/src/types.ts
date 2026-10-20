@@ -17,6 +17,8 @@ export type Brand = {
   paper?: boolean; // the notebook look: warm paper, serif type, sketched charts and handwritten notes
   hand?: string; // handwriting face for annotations on the paper look
   marker?: string; // highlighter colour on the paper look
+  board?: boolean; // the whiteboard look: paper layouts, but everything writes itself with a marker and a hand follows
+  blue?: string; // the third marker on the board
 };
 
 export type Cue = {t: number; pose?: string; face?: string}; // mid-scene change, absolute seconds

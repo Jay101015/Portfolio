@@ -22,6 +22,7 @@ import {AvatarScene} from './scenes/AvatarScene';
 import {OutroScene} from './scenes/OutroScene';
 import {AvatarLayer, type AvatarPos} from './avatar/AvatarLayer';
 import {PaperSwitch} from './paper/scenes';
+import {PenHand} from './paper/write';
 import {FACES, POSES, defaultAvatar, defaultFaceFor, type AvatarConfig, type Face, type Pose} from './avatar/Avatar';
 
 const SceneSwitch: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}) => {
@@ -199,6 +200,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
       })}
       <Chrome brand={brand} durationSec={sb.durationSec} />
       {sb.captions ? <Captions scenes={sb.scenes} brand={brand} host={sb.host} /> : null}
+      {brand.board ? <PenHand brand={brand} /> : null}
     </AbsoluteFill>
   );
 };

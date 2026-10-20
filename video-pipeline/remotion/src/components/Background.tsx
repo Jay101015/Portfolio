@@ -22,6 +22,17 @@ export const Background: React.FC<{brand: Brand}> = ({brand}) => {
       </AbsoluteFill>
     );
   }
+  if (brand.board) {
+    // A whiteboard: near-white, a few ghost smudges where something was wiped off, a soft fall-off at the edges.
+    const u = Math.min(width, height) / 1080;
+    return (
+      <AbsoluteFill style={{backgroundColor: brand.bg}}>
+        <AbsoluteFill style={{background: `radial-gradient(ellipse at 22% 30%, rgba(90,95,110,0.07) 0%, transparent 32%), radial-gradient(ellipse at 74% 68%, rgba(90,95,110,0.06) 0%, transparent 30%), radial-gradient(ellipse at 60% 20%, rgba(90,95,110,0.04) 0%, transparent 24%)`}} />
+        <AbsoluteFill style={{background: 'radial-gradient(ellipse at center, transparent 62%, rgba(40,44,52,0.09) 100%)'}} />
+        <div style={{position: 'absolute', left: 0, right: 0, bottom: 0, height: 10 * u, background: 'linear-gradient(rgba(0,0,0,0.06), rgba(0,0,0,0.12))'}} />
+      </AbsoluteFill>
+    );
+  }
   if (brand.paper) {
     // A page: warm paper with a faint fibre grain, a very light dot grid like a notebook, and a soft edge.
     const dot = Math.round(Math.min(width, height) / 22);

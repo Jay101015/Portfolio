@@ -1,7 +1,7 @@
 # Your first £10,000: what to actually do with it
 slug: first-10k
 topic: What to do with your first £10,000
-theme: paper
+theme: whiteboard
 host: none
 brand.name: MONEY MOVES
 

@@ -12,13 +12,52 @@ type PathInfo = ReturnType<typeof gen.toPaths>;
 
 type Props = {draw?: number; opacity?: number};
 
-const Paths: React.FC<{paths: PathInfo; draw: number; opacity?: number}> = ({paths, draw, opacity}) => (
-  <g opacity={opacity}>
-    {paths.map((p, i) => (
-      <path key={i} d={p.d} stroke={p.stroke} strokeWidth={p.strokeWidth} fill={p.fill === 'none' ? 'none' : p.fill} strokeLinecap="round" strokeLinejoin="round" pathLength={1} strokeDasharray={draw < 1 ? 1 : undefined} strokeDashoffset={draw < 1 ? 1 - draw : undefined} />
-    ))}
-  </g>
-);
+/** rough length of a subpath: the polyline through its coordinates (control points included; close enough to pace a pen) */
+const approxLen = (d: string) => {
+  const nums = d.match(/-?\d*\.?\d+(?:e[-+]?\d+)?/gi)?.map(Number) ?? [];
+  let len = 0;
+  for (let i = 2; i + 1 < nums.length; i += 2) len += Math.hypot(nums[i] - nums[i - 2], nums[i + 1] - nums[i - 1]);
+  return len;
+};
+
+/** split a path into its subpaths and pace them one after another, so the pen finishes a stroke before starting the next */
+const Strokes: React.FC<{p: PathInfo[number]; draw: number; pen: boolean}> = ({p, draw, pen}) => {
+  const parts = React.useMemo(() => {
+    const subs = p.d.split(/(?=M)/i).map((x) => x.trim()).filter(Boolean);
+    const lens = subs.map(approxLen);
+    const total = lens.reduce((a, b) => a + b, 0) || 1;
+    let acc = 0;
+    return subs.map((d, i) => {
+      const from = acc / total;
+      acc += lens[i];
+      return {d, from, to: acc / total};
+    });
+  }, [p.d]);
+  const fill = p.fill === 'none' ? 'none' : p.fill;
+  if (draw >= 1) return <path d={p.d} stroke={p.stroke} strokeWidth={p.strokeWidth} fill={fill} strokeLinecap="round" strokeLinejoin="round" />;
+  return (
+    <>
+      {parts.map((part, i) => {
+        const q = Math.max(0, Math.min(1, (draw - part.from) / Math.max(1e-6, part.to - part.from)));
+        if (q <= 0) return null;
+        const writing = q < 1;
+        return <path key={i} d={part.d} stroke={p.stroke} strokeWidth={p.strokeWidth} fill={fill} strokeLinecap="round" strokeLinejoin="round" pathLength={1} strokeDasharray={writing ? 1 : undefined} strokeDashoffset={writing ? 1 - q : undefined} data-pen={pen && writing ? q : undefined} data-pen-path={pen && writing ? 1 : undefined} data-pen-color={pen && writing ? p.stroke : undefined} />;
+      })}
+    </>
+  );
+};
+
+const Paths: React.FC<{paths: PathInfo; draw: number; opacity?: number}> = ({paths, draw, opacity}) => {
+  // rough.js emits the fill paths first and the pen stroke last; the hand follows the pen stroke
+  const penIdx = paths.length - 1;
+  return (
+    <g opacity={opacity}>
+      {paths.map((p, i) => (
+        <Strokes key={i} p={p} draw={draw} pen={i === penIdx} />
+      ))}
+    </g>
+  );
+};
 
 export const SketchPath: React.FC<Props & {d: string; options?: Options}> = ({d, options, draw = 1, opacity}) => {
   const paths = React.useMemo(() => gen.toPaths(gen.path(d, {roughness: 1.3, bowing: 1, strokeWidth: 4, ...options})), [d, options]);
