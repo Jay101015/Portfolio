@@ -36,14 +36,22 @@ frames and moves on twos so it reads as animated by hand. Borrowed footage sits
 inside a drawn screen beside the host. `theme: movie` and `theme: finance` keep
 the older glossy motion-graphics look.
 
-## Approve the character first
+## Approve the host first
+
+The host is a painted portrait (`projects/host-art/base.jpg`) cut into
+animation layers by `pipeline/host_rig.py`; see `projects/host-art/README.md`
+for changing the portrait. The host holds still like the illustrated host of a
+storytime channel: only the eyes, brows and mouth move, and reactions pop up as
+marks beside the head. Check it close up before making a video:
 
 ```bash
-cd remotion && npx remotion still AvatarSheet avatar.png --frame=20
+cd remotion && npx remotion still Portrait host.png --frame=20
+npx remotion still Portrait host-shocked.png --props='{"pose":"shocked","mouth":0.6,"viseme":1}'
 ```
 
-That renders all ten poses and all ten expressions on one sheet. Tune the look with `avatar.*` lines in
-any script header (or change the defaults in `remotion/src/avatar/Avatar.tsx`):
+`host: drawn` in a script header swaps in the older hand-drawn SVG character
+(`npx remotion still AvatarSheet avatar.png` shows all its poses), styled with
+`avatar.*` header lines:
 
 | key | values |
 |---|---|
@@ -62,8 +70,9 @@ Poses: `idle`, `point`, `crossed`, `think`, `shocked`, `thumbsup`, `facepalm`,
 `laugh`, `wave`, `shrug`. Expressions: `neutral`, `happy`, `angry`, `sad`,
 `smug`, `surprised`, `confused`, `laugh_face`, `closed`, `flat`. Placements:
 `corner-right`, `corner-left`, `side-left`, `side-right`, `full`, `none`.
-Every scene tag accepts `pose=`, `face=` and `pos=`; the character blinks on
-its own and its mouth follows your recording.
+Every scene tag accepts `pose=`, `face=` and `pos=`; the host blinks on its
+own and its mouth follows your recording. A pose is a still and a pose change
+is a cut, so poses mostly pick the reaction marks and the default expression.
 
 **Reaction cues inside the narration** are what make the host feel alive.
 Drop a pose or expression name in braces where the reaction should land:
@@ -73,8 +82,8 @@ It opens in a cemetery, and within three minutes {confused} the movie has
 already broken its own rules. {shocked} The slow man is not a mourner.
 ```
 
-The cue fires on the word that follows it, timed from your recording, with a
-little squash so the change reads as a drawn re-pose. Cues are stripped from
+The cue fires on the word that follows it, timed from your recording, as a
+hard cut to the new expression. Cues are stripped from
 the captions and the alignment text, so read the line without them.
 
 ## Make a video
@@ -241,8 +250,13 @@ releases. Requires `pip install sherpa-onnx`.
 
 ```
 pipeline/               script_parser.py, align.py, preview.py, build.py, film.py, find_footage.py
-remotion/src/avatar/    Avatar.tsx (the character), AvatarLayer.tsx (where it stands)
+remotion/src/avatar/    RasterHost.tsx (the painted host), AvatarLayer.tsx (where it stands),
+                        Avatar.tsx (the drawn fallback character)
+remotion/src/studio/    the host drawing bundled for the studio web page
+projects/host-art/      the host portrait, its landmarks and how to replace it
 remotion/src/scenes/    one component per scene type
+projects/jurassic-park/ the demo review (placeholder voice)
+projects/oppenheimer/   a second demo review
 projects/notld-review/  sample review with placeholder footage and a robot voice
 docs/                   monetisation-plan.md: the plan from zero to a paying channel
 projects/first-10k/     the earlier finance sample (theme: finance)

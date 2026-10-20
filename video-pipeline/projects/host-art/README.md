@@ -22,7 +22,8 @@ built from it by `pipeline/host_rig.py` into `remotion/public/host/`.
 
    If the sandbox cannot download the result, run the **Fetch assets** workflow
    on GitHub with the image URL and `video-pipeline/projects/host-art/gen` as
-   the destination.
+   the destination. `gen/gen2-glasses-original.jpg` is the untouched generation
+   the current `base.jpg` was made from.
 
 2. Save it as `base.jpg` and update `landmarks.json`: the head polygon, the
    neck polygon, the brow boxes, the eye boxes and ellipses, the mouth polygon,
@@ -31,8 +32,9 @@ built from it by `pipeline/host_rig.py` into `remotion/public/host/`.
 
 3. Run `python -m pipeline.host_rig`. It keys out the background, splits the
    head from the body (the neck stays on the body), lifts the brows into their
-   own layers and heals the skin under them, paints skin over the mouth for the
-   drawn mouth shapes, and writes `host.json` with the boxes and sampled colours.
+   own layers and heals the skin under them, lifts the irises and the glasses
+   into their own layers, and writes `host.json` with the boxes, the lip
+   geometry and the sampled colours.
 
 4. Check `remotion/public/host/*.png` and render the `Portrait` composition
    (`npx remotion still Portrait out.png`).
@@ -40,9 +42,15 @@ built from it by `pipeline/host_rig.py` into `remotion/public/host/`.
 ## What the rig animates
 
 Poses and reaction cues are the same as before (`{point}`, `{shocked}` and so
-on). The head bobs, nods and turns on the neck; the brows move and tilt; lids
-and blinks are painted over the eyes in the portrait's skin tone; the mouth
-shapes for speech and expressions are drawn in the portrait's lip colours over
-the healed patch; arms and hands are drawn in the hoodie and skin tones.
+on), but the host is a still: the head never turns, tilts or bobs and there are
+no drawn arms or hands. The brows move and tilt, the pupils glance and blink,
+lids are painted over the eyes in the portrait's skin tone, a small dark
+opening is drawn just under the painted lips when the host talks (the lips,
+chin and jaw are never redrawn), and reaction marks pop beside the head on a
+cue. A pose change is a hard cut, like swapping in a new drawing.
+
+In the render the painted layers are drawn on a canvas from decoded bitmaps,
+so a frame can never be captured without them; the studio page draws the same
+layers as SVG images.
 
 Set `host: drawn` in a script header to use the hand-drawn SVG character instead.

@@ -8,3 +8,4 @@ projects/*/storyboard.json
 projects/*/storyboard.html
 projects/*/media/kit/*.mp4
 projects/*/media/kit/feature.mp4
+.pytest_cache/
