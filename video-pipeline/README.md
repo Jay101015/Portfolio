@@ -1,11 +1,14 @@
-# Review video pipeline
+# Money video pipeline
 
-Script + voiceover in, finished video out, with an animated host character.
-You write the review and record the narration; this repo does the storyboard,
-the timing, the character, and the assembly.
+Script + voiceover in, finished video out, with an illustrated host who
+explains money. You write the explainer and record the narration; this repo
+does the storyboard, the timing, the host, the charts and the assembly. The
+same pipeline reviews a film (`[poster]`, `[score]` and the film kit are still
+here), but the channel plan in `docs/monetisation-plan.md` is finance and
+investing.
 
 ```
-projects/<name>/script.md  +  voiceover.mp3  +  media/ (clips, stills, poster)
+projects/<name>/script.md  +  voiceover.mp3  +  media/ (illustrations, stills, clips)
         │
         ▼  pipeline/script_parser.py   tagged Markdown -> storyboard.json (scene list + visual data)
         ▼  pipeline/align.py           Whisper word timestamps -> every cut lands on your words;
@@ -31,10 +34,10 @@ to point at your own).
 
 Default theme is `toon`: hand-drawn storytime style in the spirit of channels
 like Let Me Explain Studios. Paper background, thick ink outlines, hand-lettered
-type, hard cuts, and a host character whose line work re-draws every few
-frames and moves on twos so it reads as animated by hand. Borrowed footage sits
-inside a drawn screen beside the host. `theme: movie` and `theme: finance` keep
-the older glossy motion-graphics look.
+type, hard cuts, and a painted host who holds still while the charts, numbers
+and cards do the moving. Footage and illustrations sit inside a drawn screen
+beside the host. `theme: finance` and `theme: movie` keep the older glossy
+motion-graphics look.
 
 ## Approve the host first
 
@@ -89,13 +92,13 @@ the captions and the alignment text, so read the line without them.
 ## Make a video
 
 ```bash
-mkdir -p projects/my-review/media
-# write projects/my-review/script.md            (format below)
-# drop  projects/my-review/voiceover.mp3        (wav, m4a, flac... all fine)
-# drop  clips / stills / poster into media/
+mkdir -p projects/my-video/media
+# write projects/my-video/script.md             (format below)
+# drop  projects/my-video/voiceover.mp3         (wav, m4a, flac... all fine)
+# drop  illustrations / stills / clips into media/
 . .venv/bin/activate
-python -m pipeline.build projects/my-review --no-render   # storyboard.json + storyboard.html: review this
-python -m pipeline.build projects/my-review --vertical    # renders my-review.mp4 and my-review-vertical.mp4
+python -m pipeline.build projects/my-video --no-render   # storyboard.json + storyboard.html: review this
+python -m pipeline.build projects/my-video --vertical    # renders my-video.mp4 and my-video-vertical.mp4
 ```
 
 Long renders run in frame chunks (450 frames each, `--chunk` to change, `0`
@@ -114,117 +117,111 @@ aloud for that scene. Read it as written (small ad-libs are fine): the
 narration is what the cut is aligned to.
 
 ```markdown
-# Night of the Living Dead (1968)
-slug: notld-review
-theme: movie
-brand.name: REEL TAKES
-avatar.hair: curly
-avatar.glasses: round
+# The 1% fee that eats a third of your retirement
+slug: fee-drag
+topic: Investment fees
+theme: toon
+brand.name: MONEY MOVES
 
-[avatar headline="The zombie movie that belongs to everyone" pose=wave]
-Host on screen with a headline beside them.
+[avatar headline="The 1% that eats a third of your retirement" pose=wave]
+Host on screen with a headline beside them. {point} A cue in braces changes
+the host's expression on the word that follows.
 
-[poster title="Night of the Living Dead" year="1968" director="George A. Romero" runtime="96 min" genre="Horror" starring="Duane Jones" tagline="They won't stay dead." pose=point]
-Film card. Add src="poster.jpg" for the real poster from media/.
+[stat value="1%" label="A typical fund or adviser fee" sub="Charged every year, on everything" source="Illustrative" pose=crossed]
+One big number with a label and a source line. from="$0" count="3" counts
+it up over three seconds.
 
-[clip src="trailer.mp4" from=12 vol=0.15 fallback="gate.png" credit="Jurassic Park (1993), Universal Pictures. Official trailer." caption="The opening" pose=idle]
-Footage cutaway. `from` trims the start in seconds, `vol` ducks the clip's own
-audio (0 = muted, which is the default). `fallback=` names a still to use
-when the footage file is not in media/ yet, so a script renders before the
-clips arrive. Big files need not be committed: list them in
-`media/sources.txt` as `<name> <direct https link>` and the build fetches
-what is missing (the GitHub workflow does this too).
+[chart line title="$10,000 over 40 years" y="$" x="Year" source="7% a year before fees, illustrative"]
+data: No fee = 0:10000, 10:19672, 20:38697, 30:76123, 40:149745
+data: 1% fee = 0:10000, 10:17908, 20:32071, 30:57435, 40:102857
+A line chart draws itself as you talk. One `data:` line per series.
 
-[still src="farmhouse.jpg" credit="..." caption="One house, one night" pose=think pos=corner-left]
-A still with a slow push-in. zoom=out pulls back instead.
+[chart bar title="Share of funds that beat the index" y="%" source="SPIVA US scorecard, year-end 2023"]
+bars: Over 1 year:40, Over 5 years:21, Over 15 years:12
+Bars rise in turn.
 
-[list title="Why it still works"]
-- The dead are slow, the people are the problem
-- Duane Jones in the lead
-Items animate in when you say them.
-
-[compare title="What works and what doesn't"]
-left: What doesn't | | Barbra is furniture; The middle sags
-right: What works | | The pacing; The ending
+[compare title="Same market, two funds"]
+left: Index fund | 0.03% | Tracks the market; Three dollars a year per ten thousand
+right: Active fund | 1.0% | Tries to beat it; A hundred dollars a year per ten thousand
                                       <- "Title | big value | item; item"
 
-[stat value="$114,000" label="Budget" source="Widely reported" pose=crossed]
-[chart bar title="..." y="$"]
-bars: Opening:1.2M, Total:30M
-[quote by="Roger Ebert"]
-> ...
+[still src="bucket.jpg" credit="Illustration" caption="The leak" want="A bucket of coins with a hole" pose=think]
+A still with a slow push-in (zoom=out pulls back). `want=` is a note for
+whoever finds or draws the picture; `search=` is a free-use footage query.
 
-[score value="8.5" max="10" label="The verdict" verdict="Rough edges, perfect bones." pose=thumbsup]
-Score counts up, stars fill.
+[clip src="broll.mp4" search="stock market trading floor" from=12 vol=0.15 fallback="broll.png" credit="..." caption="The floor" pose=idle]
+Footage cutaway. `from` trims the start in seconds, `vol` ducks the clip's
+own audio (0 = muted, the default). `fallback=` names a still to use when the
+footage file is not in media/ yet, so a script renders before the clips
+arrive. Big files need not be committed: list them in `media/sources.txt`
+as `<name> <direct https link>` and the build fetches what is missing.
 
-[outro title="Watch it tonight." cta="Subscribe for a review every week"]
-End-screen slots are left clear for YouTube's overlay.
+[list title="Find your fees in five minutes"]
+- Look up the expense ratio of every fund you own
+- Ask an adviser what you pay, in dollars
+Items animate in when you say them.
+
+[quote by="John Bogle, founder of Vanguard"]
+> In investing, you get what you don't pay for.
+
+[outro title="Keep your third." cta="Subscribe for one money idea a week"]
+End-screen slots are left clear for YouTube's overlay. Put the "education,
+not advice" line in this scene's narration, every video.
 ```
 
-Scene types: `avatar`, `poster`, `clip`, `still`, `title`, `text`, `list`,
-`compare`, `stat`, `chart`, `quote`, `score`, `outro`. A script with no tags at
-all still renders (each paragraph becomes a scene), but tags are the point.
+Scene types: `avatar`, `stat`, `chart`, `compare`, `list`, `quote`, `still`,
+`image`, `clip`, `title`, `text`, `outro`, plus `poster` and `score` for a film
+review. A script with no tags at all still renders (each paragraph becomes a
+scene), but tags are the point.
 
-Header keys: `theme` (`movie` or `finance`), `slug`, `kicker`,
-`captions: false`, any `brand.*` (`name`, `bg`, `panel`, `text`, `muted`,
-`accent`, `accent2`, `font`) and any `avatar.*` from the table above.
+Header keys: `topic` (what the video is about; `film` for a review), `theme`
+(`toon`, `finance` or `movie`), `slug`, `kicker`, `captions: false`, any
+`brand.*` (`name`, `bg`, `panel`, `text`, `muted`, `accent`, `accent2`,
+`font`) and any `avatar.*` from the table above.
 
-## Footage policy
+## Footage and sources policy
 
 Built in on purpose:
 
-- Every `clip` and `still` carries a `credit=` tag rendered on screen.
+- Every `clip`, `still` and `image` carries a `credit=` tag rendered on screen.
+- Every `stat` and `chart` carries a `source=` line rendered under the figure.
+  Fill it in: a finance channel is quotable only when its numbers are.
 - Clip audio is muted unless you set `vol=`; your narration is always the bed.
-- The character is on screen during footage by default, so a cutaway is
+- The host is on screen during footage by default, so a cutaway is
   commentary, not a re-upload.
 
-What the tooling cannot do for you: there is no "free use" footage from
-current films. Long clips are only safe from public-domain titles. For current
-releases keep cutaways short, use official trailers and stills, and expect the
-occasional Content ID claim on the ad revenue. Public domain lists worth
-knowing: the Internet Archive's feature film collection and Wikipedia's list
-of films in the public domain in the United States.
+What the tooling cannot do for you: screenshots of paid apps, news footage,
+brokerage interfaces and other people's charts are not free use. Draw the
+chart yourself with a `chart` scene, use an illustration, or search free-use
+b-roll. Charts and illustrations also never trigger a Content ID claim,
+which is the quiet advantage of this niche over film reviews.
 
-## Start from a film title
+## Reviewing a film instead
 
 ```bash
 python -m pipeline.film "10 Things I Hate About You" --year 1999 --trailer
 ```
 
-One command turns "I watched X" into a project. It finds the film on Wikidata
-(year, director, cast, runtime, genre, distributor, filming locations,
-copyright status), decides whether it is public domain, and gathers a kit
-into `projects/<title-year>/media/kit/`:
-
-| rights | what | source |
-|---|---|---|
-| free | the feature itself, when it is public domain | Internet Archive |
-| free | CC / public-domain photos of the cast, director and filming locations | Wikimedia Commons |
-| promotional | poster and studio stills (customary in reviews; a fair-use judgement) | TMDB, with `TMDB_API_KEY` |
-| trailer | the official trailer (fair use with commentary; expect a Content ID claim) | TMDB id, fetched with yt-dlp and `--trailer` |
-
-It then writes `script.md` with the film card filled in and scene slots
-pointing at the kit, `media/sources.txt` so the render can re-fetch footage,
-and `footage-report.md` with the rights status of every item. Your opinions
-go into the script; the facts are already there. On GitHub, the **Film kit**
-workflow does the same from a title and commits the project to the branch.
-
-For a film under copyright, nothing of the film itself is free to use; the
-kit says so and gives you the free photos, the promotional material and the
-trailer, each labelled. Public-domain lists worth knowing: the Internet
-Archive's feature film collection and Wikipedia's list of films in the
-public domain in the United States.
+The pipeline started as a review tool and the film kit is still here: it
+finds the film on Wikidata, decides whether it is public domain, gathers a kit
+of free, promotional and trailer material into `projects/<title-year>/media/kit/`
+with the rights of each item labelled, and writes a review script with the
+film card filled in. On GitHub, the **Film kit** workflow does the same from a
+title. For a film under copyright nothing of the film itself is free to use;
+the kit says so. Public-domain lists worth knowing: the Internet Archive's
+feature film collection and Wikipedia's list of films in the public domain in
+the United States.
 
 ## Finding free-use footage
 
 ```bash
-python -m pipeline.find_footage projects/my-review            # searches, downloads, writes credits into the script
-python -m pipeline.find_footage projects/my-review --dry-run  # report only
+python -m pipeline.find_footage projects/my-video             # searches, downloads, writes credits into the script
+python -m pipeline.find_footage projects/my-video --dry-run   # report only
 ```
 
 For every `clip`, `still` or `image` scene without a file, the finder builds
-a query (`search=`, else the caption, else the narration's keywords) and asks,
-in order: the Internet Archive (the film itself when the header says
+a query (`search=`, else the caption, else the narration's keywords, else the
+topic) and asks, in order: the Internet Archive (the film itself when the header says
 `rights: public-domain`, otherwise public-domain and CC items), Wikimedia
 Commons (CC0, public domain, CC BY, CC BY-SA), and Pexels stock b-roll (set
 `PEXELS_API_KEY`; free at pexels.com/api). The first usable hit lands in
@@ -233,10 +230,11 @@ Commons (CC0, public domain, CC BY, CC BY-SA), and Pexels stock b-roll (set
 found. CC BY-NC and CC BY-ND are skipped on purpose: a monetised channel is
 commercial use.
 
-Header keys it reads: `film:` (the title), `rights: public-domain` (search
-for the feature itself), `licenses:` (narrow the accepted set). For a film
-under copyright there is no free-use footage of the film; the finder returns
-thematic b-roll and says so in the report. The GitHub workflow runs the finder
+Header keys it reads: `topic:` (what the video is about; the fallback query),
+`film:` (a review's title), `rights: public-domain` (search for the feature
+itself), `licenses:` (narrow the accepted set). For a film under copyright
+there is no free-use footage of the film; the finder returns thematic b-roll
+and says so in the report. The GitHub workflow runs the finder
 before every render, so a pushed script with `search=` hints comes back with
 footage attached.
 
@@ -255,10 +253,10 @@ remotion/src/avatar/    RasterHost.tsx (the painted host), AvatarLayer.tsx (wher
 remotion/src/studio/    the host drawing bundled for the studio web page
 projects/host-art/      the host portrait, its landmarks and how to replace it
 remotion/src/scenes/    one component per scene type
-projects/jurassic-park/ the demo review (placeholder voice)
-projects/oppenheimer/   a second demo review
-projects/notld-review/  sample review with placeholder footage and a robot voice
-docs/                   monetisation-plan.md: the plan from zero to a paying channel
-projects/first-10k/     the earlier finance sample (theme: finance)
+projects/fee-drag/      the demo explainer: the 1% fee (placeholder voice)
+projects/first-10k/     the earlier finance sample in the glossy finance theme
+projects/jurassic-park/ a film review demo; projects/oppenheimer/ a second
+projects/notld-review/  the original review sample with a robot voice
+docs/                   monetisation-plan.md: the plan from zero to a paying finance channel
 tests/                  python -m unittest discover -s tests
 ```

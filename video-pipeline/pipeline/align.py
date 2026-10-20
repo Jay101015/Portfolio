@@ -174,26 +174,52 @@ def transcribe_sherpa(wav: str, model_dir: str) -> list[Word]:
         rec = sherpa_onnx.OfflineRecognizer.from_nemo_ctc(model=os.path.join(model_dir, sorted(onnx)[-1]), tokens=tokens, num_threads=4)
     samples, sr = sf.read(wav, dtype="float32", always_2d=True)
     samples = samples.mean(axis=1)
-    stream = rec.create_stream()
-    stream.accept_waveform(sr, samples)
-    rec.decode_stream(stream)
-    r = stream.result
     words: list[Word] = []
-    cur: list[str] = []
-    cur_s = 0.0
-    last_t = 0.0
-    for tok, t in zip(r.tokens, r.timestamps):
-        if tok.startswith("▁") or tok.startswith(" "):
-            if cur:
-                words.append({"w": "".join(cur), "s": cur_s, "e": max(cur_s + 0.08, t)})
-            cur = [tok.lstrip("▁ ")]
-            cur_s = float(t)
-        else:
-            cur.append(tok)
-        last_t = float(t)
-    if cur:
-        words.append({"w": "".join(cur), "s": cur_s, "e": last_t + 0.2})
+    # The NeMo conformer exports take at most about 50 s of audio, so the recording is decoded in
+    # windows of up to 30 s, each cut at the quietest moment of its last few seconds, and the
+    # word times are offset back to the whole file.
+    for start, chunk in _windows(samples, sr, max_sec=30.0, look_sec=6.0):
+        stream = rec.create_stream()
+        stream.accept_waveform(sr, chunk)
+        rec.decode_stream(stream)
+        r = stream.result
+        cur: list[str] = []
+        cur_s = 0.0
+        last_t = 0.0
+        for tok, t in zip(r.tokens, r.timestamps):
+            t = float(t) + start
+            if tok.startswith("▁") or tok.startswith(" "):
+                if cur:
+                    words.append({"w": "".join(cur), "s": cur_s, "e": max(cur_s + 0.08, t)})
+                cur = [tok.lstrip("▁ ")]
+                cur_s = t
+            else:
+                cur.append(tok)
+            last_t = t
+        if cur:
+            words.append({"w": "".join(cur), "s": cur_s, "e": last_t + 0.2})
     return [w for w in words if w["w"]]
+
+
+def _windows(samples, sr: int, max_sec: float, look_sec: float):
+    """Yield (start_seconds, samples) windows no longer than max_sec, cut where the audio is quietest in the last look_sec."""
+    import numpy as np
+
+    n = len(samples)
+    max_n = int(max_sec * sr)
+    look_n = int(look_sec * sr)
+    hop = int(0.02 * sr)
+    pos = 0
+    while pos < n:
+        end = min(n, pos + max_n)
+        if end < n:
+            lo = max(pos + hop, end - look_n)
+            frames = np.arange(lo, end - hop, hop)
+            if len(frames):
+                energy = [float(np.abs(samples[i : i + hop]).mean()) for i in frames]
+                end = int(frames[int(np.argmin(energy))]) + hop // 2
+        yield pos / sr, samples[pos:end]
+        pos = end
 
 
 def transcribe(wav: str, backend: str = "faster_whisper", model: str = "base.en", hint: str = "") -> list[Word]:

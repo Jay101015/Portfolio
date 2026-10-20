@@ -3,7 +3,7 @@
     python -m pipeline.find_footage projects/<name> [--dry-run] [--providers archive,commons,pexels]
 
 For every [clip], [still] or [image] scene whose file is not in media/, the
-finder builds a query (search=, else the caption, else the film title) and asks:
+finder builds a query (search=, else the caption, else the topic or film title) and asks:
 
   1. Internet Archive   the film itself, only when the header says `rights: public-domain`,
                         or any public-domain / CC item matching the query
@@ -192,12 +192,13 @@ def keywords(text: str, n: int = 4) -> str:
 
 
 def query_for(scene: dict[str, Any], film: str | None) -> str:
+    """The search query for a scene: its search= hint, else its caption, else the narration's keywords, else the topic."""
     p = scene["props"]
     if p.get("search"):
         return str(p["search"])
     if p.get("caption"):
         return str(p["caption"])
-    return keywords(scene["narration"]) or (film or "film")
+    return keywords(scene["narration"]) or (film or "b-roll")
 
 
 # ----------------------------------------------------------------------------- main
@@ -218,8 +219,10 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
             header[m.group(1).lower()] = m.group(2).strip()
         if line.startswith("["):
             break
-    film = header.get("film")
-    pd_film = header.get("rights", "").lower() in ("public-domain", "public domain", "pd")
+    # `topic:` names what the video is about (a finance explainer); `film:` names a film being reviewed.
+    topic = header.get("topic")
+    film = header.get("film") or topic
+    pd_film = bool(header.get("film")) and header.get("rights", "").lower() in ("public-domain", "public domain", "pd")
     allowed = set(x.strip() for x in header.get("licenses", ",".join(sorted(DEFAULT_LICENSES))).split(","))
     media = os.path.join(project, "media")
     os.makedirs(media, exist_ok=True)
@@ -228,7 +231,7 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
 
         fetch_sources(project)  # footage you already pointed at (a trailer, your own link) wins over a search
 
-    report: dict[str, Any] = {"film": film, "public_domain_film": pd_film, "scenes": []}
+    report: dict[str, Any] = {"film": header.get("film"), "topic": topic, "public_domain_film": pd_film, "scenes": []}
     new_md = md
     for sc in sb["scenes"]:
         if sc["type"] not in ("clip", "still", "image"):
@@ -311,6 +314,9 @@ def write_report(project: str, report: dict[str, Any]) -> None:
     if report.get("film"):
         out.append(f"Film: {report['film']}" + (" (declared public domain: the feature itself is searched on the Internet Archive)" if report["public_domain_film"] else " (under copyright: only thematic free-use b-roll is searched; trailer or studio clips are your call)"))
         out.append("")
+    elif report.get("topic"):
+        out.append(f"Topic: {report['topic']} (free-use b-roll and illustrations only)")
+        out.append("")
     out.append("| scene | query | result | licence | attribution |")
     out.append("|---|---|---|---|---|")
     for s in report["scenes"]:
@@ -324,7 +330,7 @@ def write_report(project: str, report: dict[str, Any]) -> None:
         for s in missing:
             cands = ", ".join(f"{c.get('provider')}: {c.get('title', c.get('error', ''))} ({c.get('license', '')})" for c in s["candidates"][:4]) or "no candidates"
             out.append(f"- scene {s['id']} ({s.get('query')}): {cands}")
-    out += ["", "## What counts as free use here", "", "Public domain and CC0 (no conditions), CC BY and CC BY-SA (attribution shown on screen, which the credit= tag does), and the Pexels licence. CC BY-NC and CC BY-ND are skipped: a monetised channel is commercial use, and a review is a derivative. Trailers and studio clips are never free use; using them is a fair-use judgement and a Content ID question, covered in docs/monetisation-plan.md."]
+    out += ["", "## What counts as free use here", "", "Public domain and CC0 (no conditions), CC BY and CC BY-SA (attribution shown on screen, which the credit= tag does), and the Pexels licence. CC BY-NC and CC BY-ND are skipped: a monetised channel is commercial use. Trailers, studio clips, screenshots of paid apps and news footage are never free use; using them is a fair-use judgement and a Content ID question, covered in docs/monetisation-plan.md."]
     with open(os.path.join(project, "footage-report.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(out) + "\n")
 

@@ -1,4 +1,4 @@
-name: Render review video
+name: Render video
 
 # Hosted rendering: push a project folder (script.md + voiceover + media) or
 # run this workflow by hand with the project name, and GitHub's runner does the
@@ -117,7 +117,7 @@ jobs:
           PROJECT: ${{ steps.pick.outputs.project }}
         run: |
           tag="demo-$PROJECT"
-          gh release view "$tag" >/dev/null 2>&1 || gh release create "$tag" --title "Demo: $PROJECT" --notes "Rendered by the Render review video workflow. See footage-report.md for every piece of footage and its licence." --target "${{ github.sha }}"
+          gh release view "$tag" >/dev/null 2>&1 || gh release create "$tag" --title "Demo: $PROJECT" --notes "Rendered by the Render video workflow. See footage-report.md for every piece of footage and its licence." --target "${{ github.sha }}"
           gh release upload "$tag" projects/$PROJECT/*.mp4 projects/$PROJECT/footage-report.md projects/$PROJECT/storyboard.html --clobber
 
       - name: Upload the videos and storyboard

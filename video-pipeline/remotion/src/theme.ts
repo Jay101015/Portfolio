@@ -3,7 +3,7 @@ import type {Brand} from './types';
 export const presets: Record<string, Brand> = {
   // Hand-drawn storytime look: paper background, ink text, marker colours, hard cuts.
   toon: {
-    name: 'REEL TAKES',
+    name: 'MONEY MOVES',
     bg: '#f7f0e3',
     panel: '#ffffff',
     text: '#1a1714',
