@@ -1,7 +1,7 @@
 # The 1% fee that eats a third of your retirement
 slug: fee-drag
 topic: Investment fees
-theme: finance
+theme: paper
 host: none
 brand.name: MONEY MOVES
 

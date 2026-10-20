@@ -22,6 +22,23 @@ export const Background: React.FC<{brand: Brand}> = ({brand}) => {
       </AbsoluteFill>
     );
   }
+  if (brand.paper) {
+    // A page: warm paper with a faint fibre grain, a very light dot grid like a notebook, and a soft edge.
+    const dot = Math.round(Math.min(width, height) / 22);
+    return (
+      <AbsoluteFill style={{backgroundColor: brand.bg}}>
+        <svg width={width} height={height} style={{position: 'absolute', inset: 0}}>
+          <filter id="fibre">
+            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves={2} seed={7} />
+            <feColorMatrix type="saturate" values="0" />
+          </filter>
+          <rect width={width} height={height} filter="url(#fibre)" opacity={0.09} />
+        </svg>
+        <AbsoluteFill style={{backgroundImage: `radial-gradient(${brand.text}1f 1.5px, transparent 1.6px)`, backgroundSize: `${dot}px ${dot}px`, backgroundPosition: `${dot / 2}px ${dot / 2}px`}} />
+        <AbsoluteFill style={{background: 'radial-gradient(ellipse at center, transparent 65%, rgba(80,60,30,0.12) 100%)'}} />
+      </AbsoluteFill>
+    );
+  }
   // Motion-graphics look: two slow colour blobs, a faint grid, a drift of soft dots, a light band that crosses every half minute.
   const t = frame / 900;
   const x1 = 20 + Math.sin(t) * 10;

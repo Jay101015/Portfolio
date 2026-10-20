@@ -32,11 +32,16 @@ to point at your own).
 
 ## The look
 
-`theme: finance` with `host: none` is the channel's look: a deep navy
-motion-graphics style with no presenter, where big numbers spring in and
-count up, charts draw themselves with a live value tag, list rows light up as
-they are said, comparison cards swing in with share bars, and every scene
-pushes in and lifts away. `projects/first-10k` is the sample.
+`theme: paper` with `host: none` is the channel's look: a page someone
+wrote on. Warm paper with a faint grain and dot grid, a serif (Fraunces) for
+the big words, handwriting (Caveat) for the notes and labels, charts sketched
+with a pen by rough.js, hand-drawn underlines and arrows, a highlighter
+swipe on the word being said, photos taped to the page, and no presenter.
+`projects/first-10k` and `projects/fee-drag` are the samples.
+
+`theme: finance` is the alternative: a deep navy motion-graphics style with
+glowing numbers, charts with a live value pill and comparison cards that
+swing in.
 
 The older default is `toon`: hand-drawn storytime style in the spirit of channels
 like Let Me Explain Studios. Paper background, thick ink outlines, hand-lettered
@@ -181,7 +186,7 @@ review. A script with no tags at all still renders (each paragraph becomes a
 scene), but tags are the point.
 
 Header keys: `topic` (what the video is about; `film` for a review), `theme`
-(`toon`, `finance` or `movie`), `host` (`none` for pure motion graphics, the
+(`paper`, `finance`, `toon` or `movie`), `host` (`none` for pure motion graphics, the
 default on the `finance` and `movie` themes; `painted` or `drawn` to put the
 host on screen, the default on `toon`), `slug`, `kicker`, `captions: false`, any
 `brand.*` (`name`, `bg`, `panel`, `text`, `muted`, `accent`, `accent2`,

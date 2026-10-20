@@ -44,6 +44,25 @@ export const presets: Record<string, Brand> = {
   },
 };
 
+presets.paper = {
+  // The notebook look: a page someone wrote on. Warm paper, ink, a serif for the big words, handwriting for the notes,
+  // charts sketched by hand, a highlighter for the word being said. No glow, no gradients, no pills.
+  name: 'MONEY MOVES',
+  bg: '#f4efe6',
+  panel: '#fffdf8',
+  text: '#1b1a17',
+  muted: '#6f6a60',
+  accent: '#1f6f4a',
+  accent2: '#c2410c',
+  font: 'Inter, "Helvetica Neue", Arial, sans-serif',
+  display: 'Fraunces, Georgia, "Times New Roman", serif',
+  ink: '#1b1a17',
+  toon: false,
+  paper: true,
+  hand: 'Caveat, "Comic Sans MS", cursive',
+  marker: '#ffe66d',
+};
+
 export const defaultBrand: Brand = presets.toon;
 
 /** Card look that follows the theme: ink-outlined white card on paper, soft panel on dark. */

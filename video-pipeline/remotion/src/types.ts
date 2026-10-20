@@ -14,6 +14,9 @@ export type Brand = {
   display: string; // headline face
   ink: string; // outline / primary text colour
   toon: boolean; // hand-drawn styling on (paper, outlines, hard cuts)
+  paper?: boolean; // the notebook look: warm paper, serif type, sketched charts and handwritten notes
+  hand?: string; // handwriting face for annotations on the paper look
+  marker?: string; // highlighter colour on the paper look
 };
 
 export type Cue = {t: number; pose?: string; face?: string}; // mid-scene change, absolute seconds

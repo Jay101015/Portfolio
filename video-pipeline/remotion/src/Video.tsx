@@ -21,9 +21,11 @@ import {ScoreScene} from './scenes/ScoreScene';
 import {AvatarScene} from './scenes/AvatarScene';
 import {OutroScene} from './scenes/OutroScene';
 import {AvatarLayer, type AvatarPos} from './avatar/AvatarLayer';
+import {PaperSwitch} from './paper/scenes';
 import {FACES, POSES, defaultAvatar, defaultFaceFor, type AvatarConfig, type Face, type Pose} from './avatar/Avatar';
 
 const SceneSwitch: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}) => {
+  if (brand.paper && ['title', 'stat', 'text', 'list', 'compare', 'chart', 'quote', 'outro', 'still', 'image'].includes(scene.type)) return <PaperSwitch scene={scene} brand={brand} />;
   switch (scene.type) {
     case 'title':
       return <TitleScene scene={scene} brand={brand} />;

@@ -59,6 +59,25 @@ export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string}> 
       </AbsoluteFill>
     );
   }
+  if (brand.paper) {
+    // ink on the page, the word being said swiped with a highlighter
+    return (
+      <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: (isVertical ? 120 : 52) * u, ...sideStyle}}>
+        <div style={{maxWidth: `calc(100% - ${pad * 2}px)`, fontFamily: brand.font, fontSize: (isVertical ? 46 : 40) * u, fontWeight: 700, lineHeight: 1.3, textAlign: 'center', color: brand.ink}}>
+          {chunk.words.map((w, i) => {
+            const since = t - w.s;
+            const swipe = Math.max(0, Math.min(1, (since + 0.02) / 0.16));
+            return (
+              <span key={i} style={{display: 'inline-block', marginRight: 12 * u, position: 'relative', color: since >= -0.02 ? brand.ink : brand.muted}}>
+                <span style={{position: 'absolute', left: -4 * u, right: -4 * u, top: '14%', bottom: '4%', background: brand.marker ?? '#ffe66d', opacity: 0.8, transform: `skewX(-6deg) scaleX(${swipe})`, transformOrigin: 'left center', borderRadius: 3}} />
+                <span style={{position: 'relative'}}>{w.w}</span>
+              </span>
+            );
+          })}
+        </div>
+      </AbsoluteFill>
+    );
+  }
   return (
     <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: (isVertical ? 120 : 56) * u, ...sideStyle}}>
       <div style={{maxWidth: shift === 0 ? `calc(100% - ${pad * 2}px)` : width * 0.52, padding: `${14 * u}px ${30 * u}px`, borderRadius: 18 * u, background: 'rgba(5,8,20,0.74)', border: `1px solid ${brand.text}14`, fontSize: (isVertical ? 46 : 40) * u, fontWeight: 700, lineHeight: 1.25, textAlign: 'center', textShadow: '0 2px 8px rgba(0,0,0,0.6)'}}>

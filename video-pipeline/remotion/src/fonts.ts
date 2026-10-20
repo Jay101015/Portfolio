@@ -14,4 +14,10 @@ export const fontsReady = Promise.all([
   f('Inter', 'inter-latin-800-normal.woff2', '800'),
   f('Space Grotesk', 'space-grotesk-latin-500-normal.woff2', '500'),
   f('Space Grotesk', 'space-grotesk-latin-700-normal.woff2', '700'),
+  f('Fraunces', 'fraunces-latin-400-normal.woff2', '400'),
+  f('Fraunces', 'fraunces-latin-700-normal.woff2', '700'),
+  f('Fraunces', 'fraunces-latin-900-normal.woff2', '900'),
+  loadFont({family: 'Fraunces', url: staticFile('fonts/fraunces-latin-400-italic.woff2'), format: 'woff2', weight: '400', style: 'italic'}),
+  f('Caveat', 'caveat-latin-400-normal.woff2', '400'),
+  f('Caveat', 'caveat-latin-700-normal.woff2', '700'),
 ]).catch(() => undefined);

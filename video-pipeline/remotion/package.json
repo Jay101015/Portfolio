@@ -7,16 +7,21 @@
     "render": "remotion render"
   },
   "dependencies": {
+    "@fontsource/caveat": "^5.1.0",
     "@fontsource/caveat-brush": "^5.1.0",
+    "@fontsource/fraunces": "^5.1.0",
     "@fontsource/gochi-hand": "^5.1.0",
+    "@fontsource/instrument-serif": "^5.1.0",
     "@fontsource/inter": "^5.1.0",
     "@fontsource/patrick-hand": "^5.1.0",
     "@fontsource/space-grotesk": "^5.1.0",
     "@remotion/cli": "^4.0.300",
     "@remotion/fonts": "^4.0.300",
+    "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "remotion": "^4.0.300"
+    "remotion": "^4.0.300",
+    "roughjs": "^4.6.6"
   },
   "devDependencies": {
     "@types/react": "^18.3.12",

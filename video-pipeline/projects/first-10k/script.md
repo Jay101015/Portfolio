@@ -1,7 +1,7 @@
 # Your First $10,000
 kicker: Money basics
 slug: first-10k
-theme: finance
+theme: paper
 host: none
 brand.name: MONEY MOVES
 
