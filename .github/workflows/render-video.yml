@@ -107,8 +107,8 @@ jobs:
           git config user.name "render-bot"
           git config user.email "render-bot@users.noreply.github.com"
           find "projects/$PROJECT/media" -type f -size -20M \( -name '*.jpg' -o -name '*.jpeg' -o -name '*.png' -o -name '*.webm' -o -name '*.mp4' \) -exec git add -f {} +
-          git add "projects/$PROJECT/script.md" "projects/$PROJECT/footage-report.md" 2>/dev/null || true
-          git commit -m "Render run: footage found for $PROJECT" || echo "nothing new to commit"
+          git add "projects/$PROJECT/script.md" "projects/$PROJECT/footage-report.md" "projects/$PROJECT/timing.json" 2>/dev/null || true
+          git commit -m "Render run: footage and timings for $PROJECT" || echo "nothing new to commit"
           git push || echo "push skipped"
 
       - name: Publish the videos as a release (downloadable without logging in to Actions)

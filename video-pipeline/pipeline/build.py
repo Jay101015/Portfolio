@@ -28,7 +28,7 @@ from .script_parser import parse_script
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 REMOTION = os.path.join(ROOT, "remotion")
-AUDIO_EXT = ("wav", "mp3", "m4a", "aac", "flac", "ogg", "opus")
+AUDIO_EXT = ("wav", "mp3", "m4a", "aac", "flac", "ogg", "opus", "webm", "weba", "mp4", "mov", "caf")
 
 
 def find_audio(project: str) -> str | None:
@@ -266,8 +266,13 @@ def main(argv: list[str] | None = None) -> int:
         else:
             print("WARNING: voiceover present but not transcribed (--backend none, no cache): timings are estimates")
             sb["durationSec"] = round(total + 0.5, 3)
-        ext = os.path.splitext(audio)[1]
-        shutil.copyfile(audio, os.path.join(public_dir, f"voiceover{ext}"))
+        ext = os.path.splitext(audio)[1].lower()
+        if ext in (".wav", ".mp3"):
+            shutil.copyfile(audio, os.path.join(public_dir, f"voiceover{ext}"))
+        else:
+            # a browser or phone recording (webm, m4a, mp4...): the renderer's browser cannot play every codec, so it gets an mp3
+            ext = ".mp3"
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", audio, "-vn", "-ac", "1", "-codec:a", "libmp3lame", "-q:a", "2", os.path.join(public_dir, "voiceover.mp3")], check=True)
         sb["audio"] = f"projects/{slug}/voiceover{ext}"
         sb["mouth"] = al.mouth_envelope(wav, sb["fps"], sb["durationSec"])
         sb["visemes"] = al.visemes_from_words(sb["scenes"], sb["fps"], sb["durationSec"])
@@ -290,6 +295,12 @@ def main(argv: list[str] | None = None) -> int:
     sb_path = os.path.join(project, "storyboard.json")
     with open(sb_path, "w", encoding="utf-8") as f:
         json.dump(sb, f, indent=1)
+    # timing.json: the aligned scene and word times, small enough to keep on the branch, so the studio can play the
+    # preview to the real recording and edit around it
+    timing = {"slug": slug, "durationSec": sb["durationSec"], "audio": sb.get("audio"),
+              "scenes": [{"id": sc["id"], "type": sc["type"], "start": sc["start"], "end": sc["end"], "words": sc.get("words") or []} for sc in sb["scenes"]]}
+    with open(os.path.join(project, "timing.json"), "w", encoding="utf-8") as f:
+        json.dump(timing, f, separators=(",", ":"))
     write_preview(sb, os.path.join(project, "storyboard.html"), align_report)
     print(f"wrote {sb_path} and storyboard.html")
     if args.no_render:

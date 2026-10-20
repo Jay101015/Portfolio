@@ -63,6 +63,36 @@ and cards do the moving. Footage and illustrations sit inside a drawn screen
 beside the host. `theme: finance` and `theme: movie` keep the older glossy
 motion-graphics look.
 
+## Read, record, upload: the video cuts itself around your voice
+
+The order of work is: Claude turns what you dictated into a script; you read
+it; you record it; the video is built around the recording.
+
+1. In the studio, **Read** shows the script as a teleprompter: your words per
+   scene, big, with an auto-scroll you can set to your pace. Tap a scene to see
+   its picture in the preview. "Copy the reading script" gives you the same
+   text for any other prompter.
+2. Record in the studio (the microphone, when the page is allowed to use it)
+   or on your phone (Voice Memos, Recorder, anything). "Play it with the
+   preview" plays the recording against the preview, with the scenes
+   stretched to its length, so you can hear whether a scene is too long
+   before anything is rendered.
+3. "Save the file", then "Upload to GitHub" opens the project folder on
+   GitHub; drop the file in as `voiceover.<ext>` (`m4a`, `mp3`, `webm`,
+   `wav`, `mp4` all work) and commit. That push renders the video: the
+   recording is transcribed, every word is aligned, and each scene starts
+   when you start saying it. Phone and browser recordings are transcoded to
+   mp3 for the renderer.
+4. After the render, "Use the voice and timings from the last render" loads
+   the real word timings and the voice into the studio, so the preview plays
+   to the actual recording and you edit scenes around it. Change a scene's
+   words and re-ship; the alignment is re-run on the same recording (the
+   transcript is cached), so a re-render takes minutes, not a re-record.
+
+Keep the tags; change the words. If you drift from the script while
+recording, the aligner follows the voice, not the page: scenes still land
+where you say them.
+
 ## Approve the host first
 
 The host is a painted portrait (`projects/host-art/base.jpg`) cut into
