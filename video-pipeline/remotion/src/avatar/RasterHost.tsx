@@ -61,36 +61,28 @@ type Motion = {f2: number; talk: number};
 const REST_L: ArmP = {hand: [250, 2650], kind: 'none', bend: 0, front: false};
 const REST_R: ArmP = {hand: [1610, 2650], kind: 'none', bend: 0, front: false};
 
-const poseParams = (pose: Pose | 'gesture', m: Motion): PoseP => {
+/** Each pose is a still: the hand sits where it sits and nothing sways, beats or wobbles. */
+const poseParams = (pose: Pose | 'gesture', _m: Motion): PoseP => {
   const base: PoseP = {L: REST_L, R: REST_R, tilt: 0, lean: 0, headY: 0, shoulderY: 0, bodyRot: 0};
   switch (pose) {
-    case 'gesture': {
-      const beat = Math.round(m.talk * 70);
-      const sway = Math.round(Math.sin(m.f2 / 9) * 28);
-      return {...base, R: {hand: [1540 + sway, 1150 - beat], kind: 'open', bend: 18 + sway / 2, front: true}, lean: 6};
-    }
     case 'point':
-      return {...base, L: {hand: [430, 1300], kind: 'point', bend: -72, abs: true, front: true}, lean: -22, tilt: -3, bodyRot: -1.5};
+      return {...base, L: {hand: [430, 1300], kind: 'point', bend: -72, abs: true, front: true}, lean: -10, tilt: -2};
     case 'crossed':
-      return {...base, L: {hand: [1250, 2050], kind: 'none', bend: 0, front: false}, R: {hand: [560, 1600], kind: 'fist', bend: 84, front: true}, tilt: 4, headY: 10};
+      return {...base, L: {hand: [1250, 2050], kind: 'none', bend: 0, front: false}, R: {hand: [560, 1600], kind: 'fist', bend: 84, front: true}, tilt: 2, headY: 6};
     case 'think':
-      return {...base, R: {hand: [1010, 1440], kind: 'fist', bend: -8, front: true}, tilt: -6, lean: 16, headY: 6};
+      return {...base, R: {hand: [1010, 1440], kind: 'fist', bend: -8, front: true}, tilt: -4, lean: 10, headY: 4};
     case 'shocked':
-      return {...base, L: {hand: [230, 870], kind: 'open', bend: -16, abs: true, front: true}, R: {hand: [1630, 870], kind: 'open', bend: 16, abs: true, front: true}, headY: -36, shoulderY: -24};
+      return {...base, L: {hand: [230, 870], kind: 'open', bend: -16, abs: true, front: true}, R: {hand: [1630, 870], kind: 'open', bend: 16, abs: true, front: true}, headY: -20, shoulderY: -16};
     case 'thumbsup':
-      return {...base, R: {hand: [1560, 1120], kind: 'thumb', bend: 14, abs: true, front: true}, tilt: 3, lean: -8};
+      return {...base, R: {hand: [1560, 1120], kind: 'thumb', bend: 14, abs: true, front: true}, tilt: 2, lean: -6};
     case 'facepalm':
-      return {...base, R: {hand: [1090, 1030], kind: 'open', bend: -62, abs: true, elbowUp: true, front: true}, tilt: 6, headY: 36, lean: 10};
-    case 'laugh': {
-      const ha = Math.abs(Math.sin(m.f2 / 4)) * 28;
-      return {...base, L: {hand: [560, 1660 - ha], kind: 'fist', bend: 70, front: true}, headY: -22 + ha, tilt: 5, shoulderY: -ha * 0.6};
-    }
-    case 'wave': {
-      const wob = Math.round(Math.sin(m.f2 / 5) * 110);
-      return {...base, R: {hand: [1700 + wob, 1000], kind: 'open', bend: 12 + wob / 3, abs: true, front: true}, tilt: 2};
-    }
+      return {...base, R: {hand: [1090, 1030], kind: 'open', bend: -62, abs: true, elbowUp: true, front: true}, tilt: 4, headY: 24, lean: 8};
+    case 'laugh':
+      return {...base, L: {hand: [560, 1640], kind: 'fist', bend: 70, front: true}, headY: -10, tilt: 3};
+    case 'wave':
+      return {...base, R: {hand: [1700, 1000], kind: 'open', bend: 14, abs: true, front: true}, tilt: 2};
     case 'shrug':
-      return {...base, L: {hand: [-40, 1480], kind: 'open', bend: -100, abs: true, front: true}, R: {hand: [1900, 1480], kind: 'open', bend: 100, abs: true, front: true}, tilt: 6, shoulderY: -40, headY: 16};
+      return {...base, L: {hand: [-40, 1480], kind: 'open', bend: -100, abs: true, front: true}, R: {hand: [1900, 1480], kind: 'open', bend: 100, abs: true, front: true}, tilt: 4, shoulderY: -30, headY: 10};
     default:
       return base;
   }
@@ -187,12 +179,11 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
   const uid = React.useId().replace(/[^a-zA-Z0-9]/g, '');
   const f2 = Math.floor(frame / 2) * 2;
   const since2 = Math.floor(Math.max(0, sinceChange) / 2) * 2;
-  const tw = poseTween(since2, 10);
+  const tw = 1; // a pose change is a cut, like a new drawing, not a slide
   const twFace = clamp01(since2 / 6);
   const expr: Face = face ?? defaultFaceFor(pose);
   const prevExpr: Face = prevFace ?? (prevPose ? defaultFaceFor(prevPose) : expr);
   const loud = clamp01(mouth);
-  const talking = talk > 0.2;
   const C = info.colors;
   const skin = C.skin;
   const skinS = C.skin_shadow;
@@ -205,23 +196,22 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
 
   // ------------------------------------------------------------ body tween
   const motion: Motion = {f2, talk: loud};
-  const effective = (p: Pose, isCurrent: boolean): Pose | 'gesture' => (p === 'idle' && talking && (isCurrent ? sinceChange > 12 : true) ? 'gesture' : p);
+  const effective = (p: Pose, _isCurrent: boolean): Pose | 'gesture' => p; // no talking-hand gesture: idle is still
   const cur = poseParams(effective(pose, true), motion);
   const prev = poseParams(effective(prevPose ?? pose, false), motion);
-  let B = blendPose(prev, cur, tw);
-  if (pose === 'idle' && sinceChange > 12) B = blendPose(poseParams('idle', motion), cur, easeOutBack(clamp01((talk - 0.2) / 0.3)));
+  const B = blendPose(prev, cur, tw);
 
   // ------------------------------------------------------------ idle acting
   const breath = Math.sin(f2 / 22);
-  const bob = Math.round(Math.sin(f2 / 16) * 5 + breath * 4);
-  const nod = Math.round(loud * 14);
-  const slowTilt = Math.sin(f2 / 44) * 1.2;
+  const bob = 0; // the head holds still; only the breathing scale and the eyes move
+  const nod = 0;
+  const slowTilt = 0;
   const cycle = 120;
   const ci = Math.floor(frame / cycle);
   const phase = (frame + Math.floor(hash(ci) * 40)) % cycle;
   const glanceLen = 20 + attention * 40;
   const glancing = lookX !== 0 && hash(ci + 7) < attention + 0.2 && phase < glanceLen && sinceChange > 24;
-  const headTurn = glancing ? lookX * 2.5 : 0;
+  const headTurn = glancing ? lookX * 1.2 : 0;
   const microX = Math.round((hash(Math.floor(frame / 9)) - 0.5) * 6);
   const microY = Math.round((hash(Math.floor(frame / 11) + 3) - 0.5) * 4);
   const gazeX = glancing ? lookX * 22 : microX;
@@ -233,7 +223,7 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
   const blinking = randomBlink || sinceChange < 3 || (glancing && phase < 3);
 
   const F = blendFace(faceParams(prevExpr), faceParams(expr), easeOutBack(twFace));
-  const browLift = Math.round(loud * 8) + (glancing ? 3 : 0);
+  const browLift = glancing ? 2 : 0;
 
   // ------------------------------------------------------------ layers
   const box = (name: keyof typeof info.boxes) => info.boxes[name];
@@ -303,23 +293,25 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
   // The art draws the mouth as an outlined upper lip, a thick mouth line and a chin crease, with no lower-lip line.
   // Every shape here keeps that vocabulary: the upper lip lifts and narrows, the mouth line becomes the roof of the
   // opening, the lower lip is the same kind of line, and the crease drops with the jaw.
-  type LipShape = {sx: number; gap: number; lift: number; teeth: number; lowerTeeth: number; tongue: number};
+  type LipShape = {gap: number; sx: number};
+  // Only the lips move. The chin and jaw stay painted; the mouth line is the fixed roof of a small
+  // opening and the lower lip line drops a little below it. Nothing lifts, nothing stretches.
   const lipShape = (v: number, open: number): LipShape => {
     switch (v) {
       case 1:
-        return {sx: 1, gap: 24 + open * 70, lift: 4, teeth: 0.6, lowerTeeth: 0, tongue: open > 0.6 ? 0.6 : 0};
+        return {gap: 14 + open * 22, sx: 1};
       case 2:
-        return {sx: 1.14, gap: 12 + open * 30, lift: 3, teeth: 1, lowerTeeth: 0, tongue: 0};
+        return {gap: 8 + open * 12, sx: 1.04};
       case 3:
-        return {sx: 0.62, gap: 40 + open * 50, lift: 12, teeth: 0, lowerTeeth: 0, tongue: 0};
+        return {gap: 16 + open * 18, sx: 0.86};
       case 4:
-        return {sx: 0.96, gap: 0, lift: 0, teeth: 0, lowerTeeth: 0, tongue: 0};
+        return {gap: 0, sx: 1};
       case 5:
-        return {sx: 1.06, gap: 14, lift: 2, teeth: 1, lowerTeeth: 0, tongue: 0};
+        return {gap: 7, sx: 1};
       case 6:
-        return {sx: 1, gap: 22 + open * 40, lift: 3, teeth: 0.3, lowerTeeth: 0, tongue: 1};
+        return {gap: 12 + open * 14, sx: 1};
       default:
-        return {sx: 1, gap: 0, lift: 0, teeth: 0, lowerTeeth: 0, tongue: 0};
+        return {gap: 0, sx: 1};
     }
   };
   const Mouth: React.FC = () => {
@@ -334,18 +326,18 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
     if (expr === 'closed' || expr === 'flat') v = 0;
     if (v === 0 && loud > 0.3 && expr !== 'closed' && expr !== 'flat') v = 1;
     let S: LipShape;
-    if (isLaugh) S = {sx: 1.18, gap: 110, lift: 8, teeth: 1, lowerTeeth: 0, tongue: 1};
-    else if (isSurprised && v === 0) S = {sx: 0.58, gap: 70, lift: 14, teeth: 0, lowerTeeth: 0, tongue: 0};
-    else if (expr === 'happy' && v === 0 && twFace >= 1) S = {sx: 1.12, gap: 0, lift: 0, teeth: 0, lowerTeeth: 0, tongue: 0};
+    if (isLaugh) S = {gap: 40, sx: 1.06};
+    else if (isSurprised && v === 0) S = {gap: 26, sx: 0.86};
     else S = lipShape(v, open);
-    const cl = F.cornerL * 2.4; // + = corners down
-    const cr = F.cornerR * 2.4;
-    const mid = F.lipMid * 2.4; // + = the middle of the line sits lower (a smile)
+    const cl = F.cornerL * 1.6; // + = corners down
+    const cr = F.cornerR * 1.6;
+    const mid = F.lipMid * 1.2; // + = the middle of the line sits lower (a smile)
+    const neutralCorners = Math.abs(cl) < 1 && Math.abs(cr) < 1 && Math.abs(mid) < 1;
+    if (S.gap < 3 && neutralCorners && S.sx === 1) return null; // the painted lips, untouched
     const lipHalf = ((Lp.corner_r[0] - Lp.corner_l[0]) / 2) * S.sx;
     const half = Lp.line_half * S.sx;
-    const cornerY = Lp.corner_l[1] - S.lift;
-    const P: Pt[] = [[cx - lipHalf, cornerY + cl], ...Lp.top.map(([x, y]): Pt => [cx + (x - cx) * S.sx, y - S.lift + (mid < 0 ? mid * 0.3 : 0)]), [cx + lipHalf, cornerY + cr]];
-    // the upper-lip outline as a smooth curve through its points
+    const cornerY = Lp.corner_l[1];
+    const P: Pt[] = [[cx - lipHalf, cornerY + cl], ...Lp.top.map(([x, y]): Pt => [cx + (x - cx) * S.sx, y]), [cx + lipHalf, cornerY + cr]];
     let top = `M${P[0][0]},${P[0][1]}`;
     for (let k = 0; k < P.length - 1; k++) {
       const p0 = P[Math.max(0, k - 1)];
@@ -354,49 +346,35 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
       const p3 = P[Math.min(P.length - 1, k + 2)];
       top += ` C${p1[0] + (p2[0] - p0[0]) / 6},${p1[1] + (p2[1] - p0[1]) / 6} ${p2[0] - (p3[0] - p1[0]) / 6},${p2[1] - (p3[1] - p1[1]) / 6} ${p2[0]},${p2[1]}`;
     }
-    const lineL: Pt = [cx - half, lineY + cl * 0.8 - S.lift * 0.5];
-    const lineR: Pt = [cx + half, lineY + cr * 0.8 - S.lift * 0.5];
-    const roofY = lineY + Lp.line_dip + mid - S.lift * 0.5 - S.gap * 0.22;
+    const lineL: Pt = [cx - half, lineY + cl * 0.8];
+    const lineR: Pt = [cx + half, lineY + cr * 0.8];
+    const roofY = lineY + Lp.line_dip + mid;
     const roof = `M${lineL[0]},${lineL[1]} Q${cx},${roofY} ${lineR[0]},${lineR[1]}`;
-    const creaseDrop = S.gap * 0.6;
-    const crease = `M${cx + (Lp.crease[0][0] - cx) * Math.max(0.9, S.sx)},${Lp.crease[0][1] + creaseDrop} Q${cx},${Lp.crease[1][1] + creaseDrop + S.gap * 0.08} ${cx + (Lp.crease[2][0] - cx) * Math.max(0.9, S.sx)},${Lp.crease[2][1] + creaseDrop}`;
     const heal = <Layer name="mouth-heal.png" />;
-    // the upper lip: fill between the outline and the mouth line
     const upperLip = (
       <g>
         <path d={`${top} L${lineR[0]},${lineR[1]} Q${cx},${roofY} ${lineL[0]},${lineL[1]} Z`} fill={lipU} />
         <path d={top} stroke={INK} strokeWidth={sw} fill="none" strokeLinecap="round" strokeLinejoin="round" />
       </g>
     );
-    if (S.gap < 4) {
+    if (S.gap < 3) {
       return (
         <g>
           {heal}
           {upperLip}
           <path d={roof} stroke={INK} strokeWidth={sw * 1.25} fill="none" strokeLinecap="round" />
-          <path d={crease} stroke={INK} strokeWidth={sw} fill="none" strokeLinecap="round" opacity={0.9} />
         </g>
       );
     }
-    const floorY = lineY + Lp.line_dip + mid + S.gap * 0.78;
-    const bulge = S.gap * 0.5;
-    const opening = `${roof} Q${cx},${floorY + bulge} ${lineL[0]},${lineL[1]} Z`;
-    const teethH = Math.min(22, S.gap * 0.3);
+    const floorY = roofY + S.gap;
+    const opening = `${roof} Q${cx},${floorY + S.gap * 0.35} ${lineL[0]},${lineL[1]} Z`;
     return (
       <g>
         {heal}
         {upperLip}
         <path d={opening} fill={MOUTH} />
-        <clipPath id={`mouth-${uid}`}>
-          <path d={opening} />
-        </clipPath>
-        <g clipPath={`url(#mouth-${uid})`}>
-          {S.teeth > 0 ? <path d={`M${lineL[0]},${lineL[1] - 10} L${lineR[0]},${lineR[1] - 10} L${lineR[0] - 14},${lineR[1] + teethH * 0.5} Q${cx},${roofY + teethH + 6} ${lineL[0] + 14},${lineL[1] + teethH * 0.5} Z`} fill={TEETH} opacity={S.teeth * 0.9} /> : null}
-          {S.tongue > 0 ? <ellipse cx={cx} cy={floorY + bulge * 0.4} rx={half * 0.5} ry={Math.max(14, S.gap * 0.24)} fill={TONGUE} opacity={S.tongue * 0.9} /> : null}
-        </g>
         <path d={roof} stroke={INK} strokeWidth={sw} fill="none" strokeLinecap="round" />
-        <path d={`M${lineL[0]},${lineL[1]} Q${cx},${floorY + bulge} ${lineR[0]},${lineR[1]}`} stroke={INK} strokeWidth={sw * 1.15} fill="none" strokeLinecap="round" />
-        <path d={crease} stroke={INK} strokeWidth={sw} fill="none" strokeLinecap="round" opacity={0.9} />
+        <path d={`M${lineL[0]},${lineL[1]} Q${cx},${floorY + S.gap * 0.35} ${lineR[0]},${lineR[1]}`} stroke={INK} strokeWidth={sw * 1.1} fill="none" strokeLinecap="round" />
       </g>
     );
   };
@@ -410,7 +388,6 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
     const finger = (x: number, rot: number, len: number, w = 40) => (
       <g key={`${x}${rot}`} transform={`translate(${x} -70) rotate(${rot})`}>
         <path d={`M${-w / 2},0 L${-w / 2 + 4},${-len + 18} Q${-w / 2 + 4},${-len} ${0},${-len} Q${w / 2 - 4},${-len} ${w / 2 - 4},${-len + 18} L${w / 2},0 Z`} fill={fill} stroke={INK} strokeWidth={line} strokeLinejoin="round" />
-        <path d={`M${-w / 2 + 8},${-len * 0.55} Q0,${-len * 0.5} ${w / 2 - 8},${-len * 0.55}`} stroke={INK} strokeWidth={3} fill="none" opacity={0.5} strokeLinecap="round" />
       </g>
     );
     const palm = <path d="M-78,80 L-82,-40 Q-82,-78 -44,-80 L54,-80 Q86,-78 86,-40 L82,80 Q0,110 -78,80 Z" fill={fill} stroke={INK} strokeWidth={line} strokeLinejoin="round" />;
@@ -428,7 +405,7 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
     );
     const thumbAcross = <path d="M-74,-30 Q-20,-10 40,-12 Q72,-10 70,16 Q66,40 36,38 Q-20,40 -74,20 Z" fill={fill} stroke={INK} strokeWidth={line} strokeLinejoin="round" />;
     return (
-      <g transform={`rotate(${angle}) scale(${mirror ? -1.3 : 1.3} 1.3)`}>
+      <g transform={`rotate(${angle}) scale(${mirror ? -1.15 : 1.15} 1.15)`}>
         {kind === 'open' ? [finger(-62, -16, 150, 42), finger(-20, -5, 178, 42), finger(22, 5, 172, 42), finger(60, 15, 140, 40)] : null}
         {kind === 'point' ? finger(-20, -4, 190, 42) : null}
         {kind === 'thumb' ? <g transform="translate(-56 6) rotate(-20)">{finger(0, 0, 150, 50)}</g> : null}
@@ -436,7 +413,6 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
         {palm}
         {kind === 'fist' || kind === 'point' || kind === 'thumb' ? knuckles : null}
         {kind === 'fist' || kind === 'point' || kind === 'thumb' ? thumbAcross : null}
-        <path d="M-66,60 Q0,96 70,60" fill={skinS} opacity={0.35} />
       </g>
     );
   };
@@ -475,8 +451,8 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
       const a2 = wq / 2 + grow;
       return `M${p[0] + px * a1},${p[1] + py * a1} L${q[0] + px * a2},${q[1] + py * a2} L${q[0] - px * a2},${q[1] - py * a2} L${p[0] - px * a1},${p[1] - py * a1} Z`;
     };
-    const wS = 240;
-    const wE = 200;
+    const wS = 220;
+    const wE = 190;
     const wW = 150;
     const fvx = W[0] - E[0];
     const fvy = W[1] - E[1];
@@ -487,7 +463,6 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
     // a relative bend turns the hand off the forearm; an absolute one sets where the fingers point
     const handAngle = arm.abs ? arm.bend : forearmAngle + arm.bend;
     const cuffA: Pt = [W[0] - fux * 46, W[1] - fuy * 46];
-    const cuffB: Pt = [W[0] + fux * 10, W[1] + fuy * 10];
     const ink = 10;
     return (
       <g>
@@ -505,7 +480,7 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
           <path d={piece(E, W, wE, wW)} />
           <circle cx={W[0]} cy={W[1]} r={wW / 2} />
         </g>
-        <path d={piece(cuffA, cuffB, wW + 4, wW + 4)} fill={darken(sleeve, 0.18)} stroke={INK} strokeWidth={6} strokeLinejoin="round" />
+        <path d={`M${cuffA[0] + (wW / 2) * -fuy},${cuffA[1] + (wW / 2) * fux} L${cuffA[0] - (wW / 2) * -fuy},${cuffA[1] - (wW / 2) * fux}`} stroke={INK} strokeWidth={6} strokeLinecap="round" />
         <g transform={`translate(${W[0]} ${W[1]})`}>
           {/* the thumbs face the body: the viewer's-left hand is the drawing mirrored */}
           <Hand kind={arm.kind} angle={handAngle} mirror={side === 'L'} />
@@ -529,7 +504,7 @@ export const RasterHost: React.FC<RasterHostProps> = ({pose, face, prevPose, pre
     );
     const kind = expr === 'surprised' ? 'bang' : expr === 'confused' ? 'question' : expr === 'angry' ? 'anger' : expr === 'laugh' ? 'ha' : expr === 'sad' || pose === 'facepalm' ? 'sweat' : pose === 'thumbsup' ? 'sparkle' : expr === 'smug' ? 'smug' : null;
     if (!kind) return null;
-    const wob = Math.sin(sinceChange / 3) * 10;
+    const wob = 0;
     const top = Math.max(0, ((info as {head_top?: number}).head_top ?? 260) - 260); // marks sit relative to the top of the hair, inside the drawing
     return (
       <g opacity={fade} transform={`${flip ? `translate(${W} 0) scale(-1 1)` : ''} translate(0 ${top})`}>

@@ -36,11 +36,11 @@ export const AvatarLayer: React.FC<Props> = ({config, pose, face, prevPose, prev
   const enter = toon ? interpolate(frame, [0, 3], [0, 1], {extrapolateRight: 'clamp'}) : interpolate(frame, [0, 10], [0, 1], {extrapolateRight: 'clamp'});
   // re-pose: a small squash as the body lands, on top of the rig's own tween
   const s2 = Math.floor(sinceChange / 2) * 2;
-  const snap = toon ? interpolate(s2, [0, 4, 8, 12], [1, 1.03, 0.97, 1], {extrapolateRight: 'clamp', extrapolateLeft: 'clamp'}) : 1;
+  const snap = 1; // no squash on a re-pose: a pose change is a cut
   const sx = 2 - snap;
   const sy = snap;
   // big reactions bounce the whole drawing
-  const react = pose === 'shocked' ? interpolate(s2, [0, 4, 10], [1, 1.12, 1], {extrapolateRight: 'clamp'}) : pose === 'laugh' ? 1 + Math.abs(Math.sin(s2 / 4)) * 0.03 : 1;
+  const react = 1; // no bounce either
   const shake = pose === 'crossed' && sinceChange < 12 ? Math.round(Math.sin(sinceChange * 2.6) * 6 * (1 - sinceChange / 12)) : 0;
 
   // On 9:16 the body overflows the drawing box by ~12%, and the captions sit in the bottom 250u: stand above both.
