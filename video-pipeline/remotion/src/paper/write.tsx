@@ -1,9 +1,8 @@
 import React, {useLayoutEffect, useRef, useState} from 'react';
-import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Img, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {Brand} from '../types';
 import {DOODLES} from './doodles';
 import {rnd} from '../components/motion';
-import {handMarkup} from './hand';
 
 /**
  * The whiteboard look's writing. Text is revealed one character at a time, left to right inside each glyph, at a
@@ -147,14 +146,17 @@ export const Doodle: React.FC<DoodleProps> = ({name, size, draw, stroke, width =
 // ------------------------------------------------------------------ the hand
 type Tip = {x: number; y: number; color?: string} | null;
 
-/** The hand, rotated so the barrel runs down and to the right from the tip at the top-left of the box. */
-export const MarkerHand: React.FC<{size: number; color?: string; brand: Brand}> = ({size, color, brand}) => {
-  const cap = color && color !== brand.ink ? color : '#1d1d1f';
-  return (
-    <svg width={size} height={size} viewBox="0 0 300 300" style={{overflow: 'visible', display: 'block'}}>
-      <g transform="rotate(52)" dangerouslySetInnerHTML={{__html: handMarkup(cap, brand.ink)}} />
-    </svg>
-  );
+/**
+ * Jeffrey's own line drawing of a hand holding a pencil (public/hand.png, white background cut out, the hand filled
+ * opaque so it covers what it writes over). The pencil tip is at HAND_TIP in the image; the image is placed so that
+ * point sits at (0,0) of its box, and the arm runs off the bottom of the frame.
+ */
+const HAND_TIP = {x: 2 / 404, y: 0 / 752}; // the tip, as a fraction of the image's width and height
+const HAND_RATIO = 752 / 404;
+export const MarkerHand: React.FC<{size: number; color?: string; brand: Brand}> = ({size}) => {
+  const w = size * 0.62;
+  const h = w * HAND_RATIO;
+  return <Img src={staticFile('hand.png')} style={{display: 'block', width: w, height: h, transform: `translate(${-HAND_TIP.x * 100}%, ${-HAND_TIP.y * 100}%)`}} />;
 };
 
 /**
@@ -206,7 +208,7 @@ export const PenHand: React.FC<{brand: Brand}> = ({brand}) => {
   return (
     <AbsoluteFill ref={own} style={{pointerEvents: 'none'}}>
       {tip ? (
-        <div style={{position: 'absolute', left: tip.x, top: tip.y, filter: 'drop-shadow(6px 10px 10px rgba(0,0,0,0.18))'}}>
+        <div style={{position: 'absolute', left: tip.x, top: tip.y, filter: 'drop-shadow(4px 8px 8px rgba(0,0,0,0.14))'}}>
           <MarkerHand size={size} color={tip.color} brand={brand} />
         </div>
       ) : null}
