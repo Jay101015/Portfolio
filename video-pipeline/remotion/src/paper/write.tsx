@@ -189,7 +189,8 @@ export const PenHand: React.FC<{brand: Brand}> = () => {
       }
     });
     const scene = sceneEl as HTMLElement | null;
-    const REST: Pt = {x: width * 0.95, y: height * 1.3};
+    // off the board to the right, so the hand leaves and returns sideways instead of crossing the captions
+    const REST: Pt = {x: width * 1.3, y: height * 0.72};
     if (!scene) {
       setPose(null);
       return;
@@ -299,7 +300,7 @@ export const PenHand: React.FC<{brand: Brand}> = () => {
   const size = Math.min(width, height) * 0.42;
   return (
     <AbsoluteFill ref={own} style={{pointerEvents: 'none'}}>
-      {pose && pose.y < height * 1.2 ? (
+      {pose && pose.x < width * 1.15 ? (
         <div style={{position: 'absolute', left: pose.x, top: pose.y, transform: `rotate(${pose.rot}deg)`, transformOrigin: '0 0', filter: 'drop-shadow(4px 8px 8px rgba(0,0,0,0.14))'}}>
           <MarkerHand size={size} />
         </div>
