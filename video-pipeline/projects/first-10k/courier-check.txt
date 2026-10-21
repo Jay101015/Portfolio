@@ -1,0 +1,1 @@
+Courier check from the studio: this file proves the Claude Code route works. Safe to delete.
