@@ -60,10 +60,16 @@ def entry_bytes(entry: dict, fetched: str) -> bytes:
     return text.encode("utf-8")
 
 
+PROJECTS = os.path.join("video-pipeline", "projects")
+
+
 def _safe(path: str) -> str:
+    """Only a project's own folder: the studio sends recordings, drafts, scripts and pictures, never code."""
     full = os.path.realpath(os.path.join(ROOT, path))
-    if not full.startswith(os.path.realpath(ROOT) + os.sep) or "/.git/" in full + "/":
-        raise SystemExit(f"refusing to write outside the repository: {path}")
+    base = os.path.realpath(os.path.join(ROOT, PROJECTS))
+    rel = os.path.relpath(full, base)
+    if rel.startswith("..") or os.sep not in rel or "/." in "/" + rel:
+        raise SystemExit(f"refusing to write {path}: the studio may only write inside {PROJECTS}/<project>/")
     return full
 
 
