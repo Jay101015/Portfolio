@@ -1,7 +1,16 @@
 # Footage report
 
+Topic: What to do with your first £10,000 (free-use b-roll and illustrations only)
+
 | scene | query | result | licence | attribution |
 |---|---|---|---|---|
+| 5 | cryptocurrency chart phone hand | not found |  |  |
+
+## Not found
+
+These scenes keep their fallback= still (or show a placeholder). Add a search= hint with different words, or drop a file into media/ yourself:
+
+- scene 5 (cryptocurrency chart phone hand): commons: HTTP Error 429: Too Many Requests ()
 
 ## What counts as free use here
 
