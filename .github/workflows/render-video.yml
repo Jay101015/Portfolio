@@ -106,13 +106,18 @@ jobs:
         run: |
           git config user.name "render-bot"
           git config user.email "render-bot@users.noreply.github.com"
-          # uploads from the studio arrive as <name>.b64; the build decoded them, so keep the real file and drop the text copy
+          # uploads from the studio arrive as <name>.b64 (big ones in pieces under uploads/); the build decoded them,
+          # so keep the real file and drop the text copies
+          git rm -r -q --ignore-unmatch "projects/$PROJECT/uploads" 2>/dev/null || true
+          rm -rf "projects/$PROJECT/uploads"
           find "projects/$PROJECT/media" -name '*.b64' -exec git rm -q --ignore-unmatch {} + 2>/dev/null || true
+          find "projects/$PROJECT/media" -name '*.b64' -delete 2>/dev/null || true
           find "projects/$PROJECT/media" -type f -size -40M \( -name '*.jpg' -o -name '*.jpeg' -o -name '*.png' -o -name '*.gif' -o -name '*.webp' -o -name '*.webm' -o -name '*.mp4' -o -name '*.mov' \) -exec git add -f {} +
           # a recording sent from the studio: keep the decoded voice (it replaced any older one), drop the text copy
           if ls "projects/$PROJECT"/voiceover.*.b64 >/dev/null 2>&1; then
             git rm -q --ignore-unmatch "projects/$PROJECT"/voiceover.*.b64
-            git add -A "projects/$PROJECT"/voiceover.* 2>/dev/null || true
+            rm -f "projects/$PROJECT"/voiceover.*.b64
+            find "projects/$PROJECT" -maxdepth 1 -name 'voiceover.*' -size -40M -exec git add -f {} +
             git add -u "projects/$PROJECT" 2>/dev/null || true
           fi
           # the script (built from the voice when there was none), the transcript and the timings, for the studio

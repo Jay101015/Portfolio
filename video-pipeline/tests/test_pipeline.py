@@ -230,6 +230,33 @@ class MediaTests(unittest.TestCase):
             self.assertFalse(os.path.exists(os.path.join(d, "voiceover.mp3")))
             self.assertTrue(any("replaced voiceover.mp3" in n for n in notes))
 
+    def test_a_big_upload_arrives_in_pieces(self):
+        import base64, os, tempfile
+        from pipeline.build import find_audio, unpack_uploads
+
+        data = os.urandom(9000)
+        b = base64.b64encode(data).decode()
+        cuts = [0, 4000, 6000, 9000, len(b)]  # pieces of different sizes, as the studio sends them after a refusal
+        with tempfile.TemporaryDirectory() as d:
+            os.makedirs(os.path.join(d, "uploads"))
+            for i in range(len(cuts) - 1):
+                with open(os.path.join(d, "uploads", f"part{i + 1:04d}--voiceover.m4a"), "w") as f:
+                    f.write(b[cuts[i]:cuts[i + 1]])
+            unpack_uploads(d)
+            self.assertIsNone(find_audio(d))  # no done marker yet: nothing joined
+            with open(os.path.join(d, "uploads", f"done{len(cuts) - 1}--voiceover.m4a"), "w") as f:
+                f.write("")
+            unpack_uploads(d)
+            with open(find_audio(d), "rb") as f:
+                self.assertEqual(f.read(), data)
+
+    def test_share_links_become_download_links(self):
+        from pipeline.build import _direct_link
+
+        self.assertEqual(_direct_link("https://drive.google.com/file/d/1AbC-xyz/view?usp=sharing"), "https://drive.google.com/uc?export=download&confirm=t&id=1AbC-xyz")
+        self.assertTrue(_direct_link("https://www.dropbox.com/scl/fi/abc/v.m4a?rlkey=x&dl=0").endswith("dl=1"))
+        self.assertEqual(_direct_link("https://example.com/a.mp3"), "https://example.com/a.mp3")
+
     def test_spoken_figures(self):
         from pipeline.auto_script import _figure
 

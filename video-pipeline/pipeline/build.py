@@ -99,10 +99,109 @@ def fetch_sources(project: str) -> None:
                     os.remove(dst)
 
 
+def _join_parts(project: str) -> list[str]:
+    """uploads/partNNNN--<name> plus uploads/doneN--<name>: a big file sent from the studio in pieces (the connector
+    refuses very large messages, and the studio halves the piece size until one goes through, so pieces vary in
+    size). The done marker says how many pieces there are; when every one is there they are joined into <name>.b64
+    where the file belongs: the project folder for the recording, media/ for anything else."""
+    notes = []
+    up = os.path.join(project, "uploads")
+    if not os.path.isdir(up):
+        return notes
+    parts: dict[str, dict[int, str]] = {}
+    done: dict[str, int] = {}
+    for n in os.listdir(up):
+        m = re.match(r"^part(\d+)--(.+)$", n)
+        if m:
+            parts.setdefault(m.group(2), {})[int(m.group(1))] = os.path.join(up, n)
+            continue
+        m = re.match(r"^done(\d+)--(.+)$", n)
+        if m:
+            done[m.group(2)] = int(m.group(1))
+    for name, want in done.items():
+        have = parts.get(name, {})
+        if sorted(have) != list(range(1, want + 1)):
+            notes.append(f"WARNING: {name}: {len(have)} of {want} pieces arrived; send it again")
+            continue
+        dst_dir = project if name.startswith("voiceover.") else os.path.join(project, "media")
+        os.makedirs(dst_dir, exist_ok=True)
+        with open(os.path.join(dst_dir, name + ".b64"), "w", encoding="ascii") as out:
+            for i in range(1, want + 1):
+                with open(have[i], encoding="ascii") as f:
+                    out.write("".join(f.read().split()))
+        notes.append(f"joined {want} pieces of {name}")
+    return notes
+
+
+def _direct_link(url: str) -> str:
+    """Share links that point at a page, turned into links to the file itself."""
+    url = url.strip()
+    m = re.search(r"drive\.google\.com/(?:file/d/|open\?id=|uc\?(?:export=download&)?id=)([\w-]+)", url)
+    if m:
+        return f"https://drive.google.com/uc?export=download&confirm=t&id={m.group(1)}"
+    if "dropbox.com" in url:
+        return re.sub(r"([?&])dl=0", r"\1dl=1", url) if "dl=0" in url else url + ("&" if "?" in url else "?") + "dl=1"
+    if "1drv.ms" in url or "onedrive.live.com" in url:
+        return url + ("&" if "?" in url else "?") + "download=1"
+    return url
+
+
+def fetch_voice_link(project: str) -> list[str]:
+    """voiceover.url: a link to the recording (Google Drive, Dropbox, OneDrive or any direct link), for recordings
+    too big to send from the phone. Downloaded to voiceover.<ext> unless that recording is already here."""
+    notes = []
+    link_file = os.path.join(project, "voiceover.url")
+    if not os.path.exists(link_file):
+        return notes
+    with open(link_file, encoding="utf-8") as f:
+        text = f.read().strip()
+    url = text.split()[0] if text else ""
+    if not url:
+        return notes
+    stamp = os.path.join(project, ".cache", "voiceover-url.txt")
+    have = [p for p in glob.glob(os.path.join(project, "voiceover.*")) if not p.endswith((".url", ".b64"))]
+    if have and os.path.exists(stamp) and open(stamp, encoding="utf-8").read().strip() == url:
+        return notes
+    direct = _direct_link(url)
+    tmp = os.path.join(project, ".cache", "voiceover.download")
+    os.makedirs(os.path.dirname(tmp), exist_ok=True)
+    try:
+        req = urllib.request.Request(direct, headers={"User-Agent": "Mozilla/5.0 (render-bot)"})
+        with urllib.request.urlopen(req, timeout=300) as r, open(tmp, "wb") as out:
+            ctype = r.headers.get("Content-Type", "")
+            shutil.copyfileobj(r, out)
+    except Exception as e:  # noqa: BLE001
+        notes.append(f"WARNING: could not download the recording from {url}: {e}")
+        return notes
+    if ctype.startswith("text/html"):
+        notes.append(f"WARNING: {url} gave a web page, not a recording; share it as 'anyone with the link' and send the link again")
+        return notes
+    ext = {"audio/mpeg": "mp3", "audio/mp4": "m4a", "audio/x-m4a": "m4a", "audio/wav": "wav", "audio/x-wav": "wav", "audio/webm": "webm", "video/mp4": "mp4", "video/quicktime": "mov", "audio/ogg": "ogg", "audio/aac": "aac"}.get(ctype.split(";")[0].strip())
+    if not ext:
+        m = re.search(r"\.(mp3|m4a|wav|webm|mp4|mov|ogg|aac|caf|flac|opus)(?:\?|$)", url, re.I)
+        ext = (m.group(1).lower() if m else "m4a")
+    for old in have:
+        os.remove(old)
+    shutil.move(tmp, os.path.join(project, f"voiceover.{ext}"))
+    with open(stamp, "w", encoding="utf-8") as f:
+        f.write(url)
+    notes.append(f"downloaded the recording from the link as voiceover.{ext}")
+    return notes
+
+
 def unpack_uploads(project: str) -> list[str]:
     """media/<name>.b64: a file sent from the studio on a phone, base64 text (the GitHub connector carries text only).
-    Each is decoded to media/<name> before the build; a newer upload replaces an older decoded copy."""
-    notes = []
+    Each is decoded to media/<name> before the build; a newer upload replaces an older decoded copy. Big files arrive
+    in pieces under uploads/ and are joined first; a recording can also arrive as a link (voiceover.url)."""
+    notes = _join_parts(project)
+    if glob.glob(os.path.join(project, "voiceover.*.b64")):
+        # a recording sent directly supersedes one sent earlier as a link
+        link = os.path.join(project, "voiceover.url")
+        if os.path.exists(link):
+            os.remove(link)
+            notes.append("the new recording replaces the linked one")
+    else:
+        notes += fetch_voice_link(project)
     media = os.path.join(project, "media")
     candidates = []
     if os.path.isdir(media):

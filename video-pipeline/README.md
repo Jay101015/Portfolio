@@ -84,6 +84,14 @@ keeping your words untouched. Ship again and the new scenes are lined up
 with the same recording; the transcript is kept, so this re-render does not
 transcribe again.
 
+Getting the recording in: **Use a recording** takes any audio or video
+file. On an iPhone a Voice Memo has to be saved to Files first (open the
+memo, ⋯ → Share → Save to Files). Big recordings are sent in pieces (each
+piece is its own small commit under `uploads/`; the studio halves the piece
+size if GitHub refuses one, and the render joins them), or paste a Google
+Drive or Dropbox link instead (shared as "anyone with the link"): the
+studio commits `voiceover.url` and the render downloads the file.
+
 If you did write the script first, **Send my voice with this script** keeps
 your scenes and moves them to your timing. Either way a new recording
 replaces the old one, and the recording, the script and any pictures go up
