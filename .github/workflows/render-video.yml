@@ -16,10 +16,10 @@ on:
         description: "Also render the 9:16 version"
         type: boolean
         default: true
+  # a recording on its own is transcribed by transcribe.yml (minutes); the video is rendered when the script ships
   push:
     paths:
       - "video-pipeline/projects/**/script.md"
-      - "video-pipeline/projects/**/voiceover.*"
 
 concurrency:
   group: render-${{ github.ref }}
@@ -121,9 +121,9 @@ jobs:
             git add -u "projects/$PROJECT" 2>/dev/null || true
           fi
           # the script (built from the voice when there was none), the transcript and the timings, for the studio
-          git add "projects/$PROJECT/script.md" "projects/$PROJECT/footage-report.md" "projects/$PROJECT/timing.json" "projects/$PROJECT/transcript.json" 2>/dev/null || true
+          git add "projects/$PROJECT/script.md" "projects/$PROJECT/footage-report.md" "projects/$PROJECT/timing.json" "projects/$PROJECT/transcript.json" "projects/$PROJECT/voice-preview.mp3" 2>/dev/null || true
           git commit -m "Render run: footage, transcript and timings for $PROJECT" || echo "nothing new to commit"
-          git push || echo "push skipped"
+          for i in 1 2 3; do git pull -q --rebase && git push && break || sleep 5; done
 
       - name: Publish the videos as a release (downloadable without logging in to Actions)
         env:

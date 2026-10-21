@@ -257,6 +257,35 @@ class MediaTests(unittest.TestCase):
         self.assertTrue(_direct_link("https://www.dropbox.com/scl/fi/abc/v.m4a?rlkey=x&dl=0").endswith("dl=1"))
         self.assertEqual(_direct_link("https://example.com/a.mp3"), "https://example.com/a.mp3")
 
+    def test_the_draft_is_rewritten_to_what_was_said(self):
+        from pipeline import align as al
+        from pipeline.sync import matched_share, rewrite_prose, spoken_by_scene
+
+        md = ('# T\nslug: x\n\n[title kicker="Ep one"]\nHi guys, welcome to the channel. Today: your first ten thousand.\n\n'
+              '[list title="The order"]\n- Emergency fund\n- Debt\nFirst, a small emergency fund. Second, clear the debt.\n\n'
+              '[text headline="Never recorded"]\nThis line was written and never said.\n\n'
+              '[stat value="7%"]\nIndex funds have averaged about seven percent a year.\n')
+        said = ("Hey everyone, welcome to the channel. Today: what to do with your first ten thousand. "
+                "First, build a small emergency fund. Second, clear any expensive debt. "
+                "Index funds have averaged roughly seven percent a year over the long run.")
+        words, t = [], 0.0
+        for w in said.split():
+            words.append({"w": w, "s": t, "e": t + 0.3})
+            t += 0.36 + (0.6 if w.endswith(".") else 0)
+        sb = al.align(parse_script(md), words, t + 0.5)
+        new, kept = rewrite_prose(md, spoken_by_scene(sb["scenes"], words, matched=matched_share(sb)))
+        sc = parse_script(new)["scenes"]
+        self.assertEqual(sc[0]["narration"], "Hey everyone, welcome to the channel. Today: what to do with your first ten thousand.")
+        self.assertEqual(sc[1]["narration"], "First, build a small emergency fund. Second, clear any expensive debt.")
+        self.assertEqual(sc[2]["narration"], "This line was written and never said.")  # not said: kept as written
+        self.assertEqual(kept, [3])
+        self.assertTrue(sc[3]["narration"].startswith("Index funds have averaged roughly"))
+        # everything that is not spoken words is untouched
+        self.assertIn('[title kicker="Ep one"]', new)
+        self.assertIn("- Emergency fund\n- Debt", new)
+        self.assertIn('[stat value="7%"]', new)
+        self.assertTrue(new.startswith("# T\nslug: x\n"))
+
     def test_spoken_figures(self):
         from pipeline.auto_script import _figure
 

@@ -1,0 +1,100 @@
+name: Transcribe a recording
+
+# A recording lands (sent from the studio, uploaded on GitHub, or as a link in voiceover.url): transcribe it, make
+# the draft match what was said (or build the scenes from it when the draft has none), and commit the draft, the
+# transcript, the timings and a small mp3 of the voice back. A couple of minutes; nothing is rendered. The studio
+# waits for draft.md to come back with `synced:` in its header, loads it, and you edit and ship from there.
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: "Project folder under video-pipeline/projects"
+        required: true
+  push:
+    paths:
+      - "video-pipeline/projects/**/voiceover.*"
+      - "video-pipeline/projects/**/uploads/done*"
+
+concurrency:
+  group: transcribe-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  transcribe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: video-pipeline
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Pick the project
+        id: pick
+        shell: bash
+        run: |
+          if [ -n "${{ github.event.inputs.project }}" ]; then
+            echo "project=${{ github.event.inputs.project }}" >> "$GITHUB_OUTPUT"
+          else
+            base="${{ github.event.before }}"
+            git cat-file -e "$base" 2>/dev/null || base="HEAD~1"
+            git cat-file -e "$base" 2>/dev/null || base="$(git hash-object -t tree /dev/null)"
+            p=""; newest=0
+            for q in $(git diff --name-only "$base" HEAD -- . | sed -n 's#^video-pipeline/projects/\([^/]*\)/.*#\1#p' | sort -u); do
+              t=$(git log -1 --format=%ct -- "video-pipeline/projects/$q" 2>/dev/null || echo 0)
+              if [ "${t:-0}" -ge "$newest" ]; then newest=$t; p=$q; fi
+            done
+            echo "project=$p" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: video-pipeline/requirements.txt
+
+      - name: System packages
+        run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Cache the Whisper model
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: whisper-base-en
+
+      - name: Transcribe and match the draft
+        env:
+          PROJECT: ${{ steps.pick.outputs.project }}
+        run: python -m pipeline.transcribe "projects/$PROJECT" --model base.en
+
+      - name: Commit the draft, transcript, timings and voice
+        env:
+          PROJECT: ${{ steps.pick.outputs.project }}
+        run: |
+          git config user.name "render-bot"
+          git config user.email "render-bot@users.noreply.github.com"
+          git rm -r -q --ignore-unmatch "projects/$PROJECT/uploads" 2>/dev/null || true
+          rm -rf "projects/$PROJECT/uploads"
+          if ls "projects/$PROJECT"/voiceover.*.b64 >/dev/null 2>&1; then
+            git rm -q --ignore-unmatch "projects/$PROJECT"/voiceover.*.b64
+            rm -f "projects/$PROJECT"/voiceover.*.b64
+            find "projects/$PROJECT" -maxdepth 1 -name 'voiceover.*' -size -40M -exec git add -f {} +
+            git add -u "projects/$PROJECT" 2>/dev/null || true
+          fi
+          if [ -d "projects/$PROJECT/media" ]; then
+            find "projects/$PROJECT/media" -name '*.b64' -exec git rm -q --ignore-unmatch {} + 2>/dev/null || true
+            find "projects/$PROJECT/media" -name '*.b64' -delete 2>/dev/null || true
+            find "projects/$PROJECT/media" -type f -size -40M \( -name '*.jpg' -o -name '*.jpeg' -o -name '*.png' -o -name '*.gif' -o -name '*.webp' -o -name '*.webm' -o -name '*.mp4' -o -name '*.mov' \) -exec git add -f {} +
+          fi
+          git add "projects/$PROJECT/draft.md" "projects/$PROJECT/transcript.json" "projects/$PROJECT/timing.json" "projects/$PROJECT/voice-preview.mp3"
+          git commit -m "Transcribed $PROJECT: draft matched to the recording" || { echo "nothing new"; exit 0; }
+          for i in 1 2 3; do git pull -q --rebase && git push && break || sleep 5; done

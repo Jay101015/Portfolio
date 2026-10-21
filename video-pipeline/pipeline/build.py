@@ -278,6 +278,24 @@ def _keep_transcript(path: str, audio: str, h: str, total: float, words: list) -
         json.dump({"audio": os.path.basename(audio), "hash": h, "durationSec": round(total, 3), "text": " ".join(w["w"] for w in words), "words": words}, f, separators=(",", ":"))
 
 
+def voice_preview(project: str, audio: str) -> str:
+    """voice-preview.mp3: the recording as a small mono mp3 that plays on every phone (a browser recording is often
+    webm, which some phones cannot play), for the studio to play the preview against."""
+    dst = os.path.join(project, "voice-preview.mp3")
+    if not (os.path.exists(dst) and os.path.getmtime(dst) >= os.path.getmtime(audio)):
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", audio, "-vn", "-ac", "1", "-ar", "24000", "-b:a", "48k", dst], check=True)
+    return "voice-preview.mp3"
+
+
+def write_timing(project: str, sb: dict, slug: str, audio_name: str | None) -> None:
+    """timing.json: the aligned scene and word times, small enough to keep on the branch, so the studio can play the
+    preview to the real recording and edit around it."""
+    timing = {"slug": slug, "durationSec": sb["durationSec"], "audio": audio_name,
+              "scenes": [{"id": sc["id"], "type": sc["type"], "start": sc["start"], "end": sc["end"], "words": sc.get("words") or []} for sc in sb["scenes"]]}
+    with open(os.path.join(project, "timing.json"), "w", encoding="utf-8") as f:
+        json.dump(timing, f, separators=(",", ":"))
+
+
 def fit_clip(sc: dict, path: str) -> list[str]:
     """Keep a clip's playback inside the file: a frame requested past the end of a video never returns
     and the render hangs. Pulls the start offset back when the scene would run off the end, and loops
@@ -496,12 +514,7 @@ def main(argv: list[str] | None = None) -> int:
     sb_path = os.path.join(project, "storyboard.json")
     with open(sb_path, "w", encoding="utf-8") as f:
         json.dump(sb, f, indent=1)
-    # timing.json: the aligned scene and word times, small enough to keep on the branch, so the studio can play the
-    # preview to the real recording and edit around it
-    timing = {"slug": slug, "durationSec": sb["durationSec"], "audio": sb.get("audio"),
-              "scenes": [{"id": sc["id"], "type": sc["type"], "start": sc["start"], "end": sc["end"], "words": sc.get("words") or []} for sc in sb["scenes"]]}
-    with open(os.path.join(project, "timing.json"), "w", encoding="utf-8") as f:
-        json.dump(timing, f, separators=(",", ":"))
+    write_timing(project, sb, slug, voice_preview(project, audio) if audio else None)
     write_preview(sb, os.path.join(project, "storyboard.html"), align_report)
     print(f"wrote {sb_path} and storyboard.html")
     if args.no_render:
