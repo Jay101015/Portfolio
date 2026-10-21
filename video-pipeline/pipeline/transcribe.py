@@ -46,12 +46,15 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--retranscribe", action="store_true")
     args = ap.parse_args(argv)
     project = os.path.abspath(args.project)
+    if not os.path.isdir(project):
+        print(f"{project} is not there (removed in this push?): nothing to transcribe")
+        return 0
     for note in unpack_uploads(project):
         print(note)
     audio = find_audio(project)
     if not audio:
-        print(f"no recording in {project}", file=sys.stderr)
-        return 2
+        print(f"no recording in {project} yet (pieces still arriving, or it was removed): nothing to transcribe")
+        return 0
     draft_path = os.path.join(project, "draft.md")
     src = draft_path if os.path.exists(draft_path) else os.path.join(project, "script.md")
     md = open(src, encoding="utf-8").read() if os.path.exists(src) else ""

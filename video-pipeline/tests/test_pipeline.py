@@ -230,6 +230,23 @@ class MediaTests(unittest.TestCase):
             self.assertFalse(os.path.exists(os.path.join(d, "voiceover.mp3")))
             self.assertTrue(any("replaced voiceover.mp3" in n for n in notes))
 
+    def test_a_recording_uploaded_under_its_own_name_becomes_the_voice(self):
+        import os, tempfile
+        from pipeline.build import find_audio, unpack_uploads
+
+        with tempfile.TemporaryDirectory() as d:
+            for name, body in (("voiceover.mp3", b"old"), ("voice-preview.mp3", b"preview"), ("New Recording 3.m4a", b"new take")):
+                with open(os.path.join(d, name), "wb") as f:
+                    f.write(body)
+            notes = unpack_uploads(d)
+            self.assertTrue(find_audio(d).endswith("voiceover.m4a"))
+            with open(find_audio(d), "rb") as f:
+                self.assertEqual(f.read(), b"new take")
+            self.assertFalse(os.path.exists(os.path.join(d, "voiceover.mp3")))
+            self.assertTrue(os.path.exists(os.path.join(d, "voice-preview.mp3")))  # the studio's copy is not a recording
+            self.assertTrue(any("New Recording 3.m4a" in n for n in notes))
+            self.assertEqual(unpack_uploads(d), [])  # nothing left to adopt
+
     def test_a_big_upload_arrives_in_pieces(self):
         import base64, os, tempfile
         from pipeline.build import find_audio, unpack_uploads

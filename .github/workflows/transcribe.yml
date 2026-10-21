@@ -15,6 +15,18 @@ on:
     paths:
       - "video-pipeline/projects/**/voiceover.*"
       - "video-pipeline/projects/**/uploads/done*"
+      # a recording uploaded on GitHub under its own name ("New Recording 3.m4a"): it becomes voiceover.<ext>
+      - "video-pipeline/projects/*/*.m4a"
+      - "video-pipeline/projects/*/*.mp3"
+      - "video-pipeline/projects/*/*.wav"
+      - "video-pipeline/projects/*/*.aac"
+      - "video-pipeline/projects/*/*.caf"
+      - "video-pipeline/projects/*/*.ogg"
+      - "video-pipeline/projects/*/*.opus"
+      - "video-pipeline/projects/*/*.webm"
+      - "video-pipeline/projects/*/*.flac"
+      - "video-pipeline/projects/*/*.mp4"
+      - "video-pipeline/projects/*/*.mov"
 
 concurrency:
   group: transcribe-${{ github.ref }}
@@ -72,11 +84,13 @@ jobs:
           key: whisper-base-en
 
       - name: Transcribe and match the draft
+        if: steps.pick.outputs.project != ''
         env:
           PROJECT: ${{ steps.pick.outputs.project }}
         run: python -m pipeline.transcribe "projects/$PROJECT" --model base.en
 
       - name: Commit the draft, transcript, timings and voice
+        if: steps.pick.outputs.project != ''
         env:
           PROJECT: ${{ steps.pick.outputs.project }}
         run: |
@@ -95,6 +109,10 @@ jobs:
             find "projects/$PROJECT/media" -name '*.b64' -delete 2>/dev/null || true
             find "projects/$PROJECT/media" -type f -size -40M \( -name '*.jpg' -o -name '*.jpeg' -o -name '*.png' -o -name '*.gif' -o -name '*.webp' -o -name '*.webm' -o -name '*.mp4' -o -name '*.mov' \) -exec git add -f {} +
           fi
-          git add "projects/$PROJECT/draft.md" "projects/$PROJECT/transcript.json" "projects/$PROJECT/timing.json" "projects/$PROJECT/voice-preview.mp3"
+          [ -d "projects/$PROJECT" ] || { echo "project removed: nothing to commit"; exit 0; }
+          # a recording uploaded under its own name was renamed to voiceover.<ext>: record the rename
+          find "projects/$PROJECT" -maxdepth 1 -name 'voiceover.*' ! -name '*.b64' ! -name '*.url' -size -40M -exec git add -f {} +
+          git add -u "projects/$PROJECT" 2>/dev/null || true
+          git add "projects/$PROJECT/draft.md" "projects/$PROJECT/transcript.json" "projects/$PROJECT/timing.json" "projects/$PROJECT/voice-preview.mp3" 2>/dev/null || true
           git commit -m "Transcribed $PROJECT: draft matched to the recording" || { echo "nothing new"; exit 0; }
           for i in 1 2 3; do git pull -q --rebase && git push && break || sleep 5; done

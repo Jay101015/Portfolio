@@ -151,12 +151,15 @@ it; you record it; the video is built around the recording.
    preview" plays the recording against the preview, with the scenes
    stretched to its length, so you can hear whether a scene is too long
    before anything is rendered.
-3. "Save the file", then "Upload to GitHub" opens the project folder on
-   GitHub; drop the file in as `voiceover.<ext>` (`m4a`, `mp3`, `webm`,
-   `wav`, `mp4` all work) and commit. That push renders the video: the
-   recording is transcribed, every word is aligned, and each scene starts
-   when you start saying it. Phone and browser recordings are transcoded to
-   mp3 for the renderer.
+3. "Transcribe…" sends it from the studio. When the connector cannot (the
+   studio shows each step, how long it has waited, and why it stopped),
+   "Send it through GitHub instead" opens the project folder on GitHub: drop
+   the recording in under any name ("New Recording 3.m4a" is fine; `m4a`,
+   `mp3`, `webm`, `wav`, `mp4`, `mov` all work) and commit. That push starts
+   the transcription: the file becomes `voiceover.<ext>` (replacing the old
+   recording), the draft is matched to what you said, and "Load the latest
+   transcription" brings it back. Phone and browser recordings are
+   transcoded to mp3 for the renderer.
 4. After the render, "Use the voice and timings from the last render" loads
    the real word timings and the voice into the studio, so the preview plays
    to the actual recording and you edit scenes around it. Change a scene's

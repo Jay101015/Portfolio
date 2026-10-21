@@ -228,6 +228,33 @@ def unpack_uploads(project: str) -> list[str]:
         with open(dst, "wb") as f:
             f.write(raw)
         notes.append(f"unpacked {name} -> {name[:-4]} ({len(raw) // 1024} KB)")
+    notes += adopt_recording(project)
+    return notes
+
+
+def adopt_recording(project: str) -> list[str]:
+    """A recording uploaded on GitHub keeps its own name ("New Recording 3.m4a"): any audio file in the project folder
+    that is not voiceover.* (or the studio's voice-preview.mp3) is a new recording. It becomes voiceover.<ext> and
+    replaces the old one; with several, the largest wins."""
+    strays = [
+        os.path.join(project, n)
+        for n in sorted(os.listdir(project))
+        if os.path.isfile(os.path.join(project, n))
+        and n.rsplit(".", 1)[-1].lower() in AUDIO_EXT
+        and not n.startswith("voiceover.")
+        and n != "voice-preview.mp3"
+    ]
+    if not strays:
+        return []
+    src = max(strays, key=os.path.getsize)
+    ext = src.rsplit(".", 1)[-1].lower()
+    notes = []
+    for old in glob.glob(os.path.join(project, "voiceover.*")):
+        if not old.endswith(".b64"):
+            os.remove(old)
+            notes.append(f"replaced {os.path.basename(old)} with the new recording")
+    os.replace(src, os.path.join(project, f"voiceover.{ext}"))
+    notes.append(f"{os.path.basename(src)} -> voiceover.{ext}")
     return notes
 
 
