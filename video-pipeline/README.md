@@ -174,6 +174,30 @@ Keep the tags; change the words. If you drift from the script while
 recording, the aligner follows the voice, not the page: scenes still land
 where you say them.
 
+## Drawings: the art library
+
+`remotion/src/paper/art.tsx` is a catalogue of little animated drawings in the marker look, one per situation a
+money video runs into: a piggy bank that coins drop into, a snowball rolling down a slope and growing, a plant
+growing out of a pot, a rocket taking off, an hourglass that flips, a card being cut up, a target an arrow flies
+into, and forty-odd more. Each is a few Lucide outlines and sketched strokes drawn on stroke by stroke (the hand
+follows), then set in motion.
+
+- Every scene picks one up by itself from the words on it, in the top corner, so two videos never use the same
+  handful. `art=off` keeps a scene's corner clear; `icon=<lucide name>` draws a still outline instead.
+- `art=snowball` puts a named one on any scene, with `art_at` (tl, tr, l, c, r, bl, br), `art_size` (of the height,
+  0.12 to 0.8) and `art_start` (seconds).
+- `[art name=rocket headline="Lift off" caption="the first ten grand"]` is a scene that is one big drawing, the
+  headline written above it and the caption under.
+- `scripts/art-gifs.sh` renders the whole catalogue to looping GIFs in `library/art/` (480 px, 12 fps); the
+  studio's Drawings library shows them, puts them on scenes and saves them to the phone.
+
+### The looks
+
+The board look comes in five skins, all the same writing, hand and drawings: `theme: whiteboard` (the default),
+`chalkboard` (deep green, chalk colours, a wooden ledge), `notebook` (a ruled page with a red margin, blue ink),
+`graph` (squared paper, teal and orange) and `cream` (a warm card, brown ink). The studio's ⋯ menu switches them
+and the preview follows.
+
 ## Pictures, GIFs and video from your phone
 
 In the studio, Add → "Photo or video from camera roll" (or "Take a photo",

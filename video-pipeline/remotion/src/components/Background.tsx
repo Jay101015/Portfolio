@@ -22,6 +22,53 @@ export const Background: React.FC<{brand: Brand}> = ({brand}) => {
       </AbsoluteFill>
     );
   }
+  if (brand.board && brand.surface === 'chalk') {
+    // A chalkboard: deep green, chalk dust where things were wiped, a wooden ledge along the bottom.
+    const u = Math.min(width, height) / 1080;
+    return (
+      <AbsoluteFill style={{backgroundColor: brand.bg}}>
+        <svg width={width} height={height} style={{position: 'absolute', inset: 0}}>
+          <filter id="chalk">
+            <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves={3} seed={11} />
+            <feColorMatrix type="saturate" values="0" />
+          </filter>
+          <rect width={width} height={height} filter="url(#chalk)" opacity={0.16} />
+        </svg>
+        <AbsoluteFill style={{background: `radial-gradient(ellipse at 30% 40%, rgba(255,255,255,0.09) 0%, transparent 38%), radial-gradient(ellipse at 72% 62%, rgba(255,255,255,0.07) 0%, transparent 34%)`}} />
+        <AbsoluteFill style={{background: 'radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.28) 100%)'}} />
+        <div style={{position: 'absolute', left: 0, right: 0, bottom: 0, height: 26 * u, background: 'linear-gradient(#a9743f, #7a5024)', boxShadow: `0 -${3 * u}px ${8 * u}px rgba(0,0,0,0.3)`}} />
+      </AbsoluteFill>
+    );
+  }
+  if (brand.board && (brand.surface === 'lined' || brand.surface === 'grid')) {
+    // A notebook page (ruled lines, a red margin) or squared paper (a light grid), with a soft edge.
+    const step = Math.round(Math.min(width, height) / (brand.surface === 'grid' ? 20 : 14));
+    const lines = brand.surface === 'grid'
+      ? `linear-gradient(${brand.text}14 1px, transparent 1px), linear-gradient(90deg, ${brand.text}14 1px, transparent 1px)`
+      : `linear-gradient(${brand.blue ?? brand.text}22 1px, transparent 1px)`;
+    return (
+      <AbsoluteFill style={{backgroundColor: brand.bg}}>
+        <AbsoluteFill style={{backgroundImage: lines, backgroundSize: `${step}px ${step}px`, backgroundPosition: `0 ${Math.round(step * 0.6)}px`}} />
+        {brand.surface === 'lined' ? <div style={{position: 'absolute', top: 0, bottom: 0, left: Math.round(width * 0.07), width: 2, background: `${brand.accent2}66`}} /> : null}
+        <AbsoluteFill style={{background: 'radial-gradient(ellipse at center, transparent 68%, rgba(60,50,30,0.10) 100%)'}} />
+      </AbsoluteFill>
+    );
+  }
+  if (brand.board && brand.surface === 'cream') {
+    // A warm card: cream paper with a fibre grain and a soft vignette.
+    return (
+      <AbsoluteFill style={{backgroundColor: brand.bg}}>
+        <svg width={width} height={height} style={{position: 'absolute', inset: 0}}>
+          <filter id="cream">
+            <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves={2} seed={5} />
+            <feColorMatrix type="saturate" values="0" />
+          </filter>
+          <rect width={width} height={height} filter="url(#cream)" opacity={0.08} />
+        </svg>
+        <AbsoluteFill style={{background: 'radial-gradient(ellipse at center, transparent 62%, rgba(90,60,20,0.14) 100%)'}} />
+      </AbsoluteFill>
+    );
+  }
   if (brand.board) {
     // A whiteboard: near-white, a few ghost smudges where something was wiped off, a soft fall-off at the edges.
     const u = Math.min(width, height) / 1080;

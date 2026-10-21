@@ -24,10 +24,11 @@ import {AvatarLayer, type AvatarPos} from './avatar/AvatarLayer';
 import {PaperSwitch, Sticker} from './paper/scenes';
 import {SketchFilterDefs} from './paper/media';
 import {PenHand} from './paper/write';
+import {ArtLayer} from './paper/art';
 import {FACES, POSES, defaultAvatar, defaultFaceFor, type AvatarConfig, type Face, type Pose} from './avatar/Avatar';
 
 const SceneSwitch: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}) => {
-  if (brand.paper && ['title', 'stat', 'text', 'list', 'compare', 'chart', 'quote', 'outro', 'still', 'image', 'clip'].includes(scene.type)) return <PaperSwitch scene={scene} brand={brand} />;
+  if (brand.paper && ['title', 'stat', 'text', 'list', 'compare', 'chart', 'quote', 'outro', 'still', 'image', 'clip', 'art'].includes(scene.type)) return <PaperSwitch scene={scene} brand={brand} />;
   switch (scene.type) {
     case 'title':
       return <TitleScene scene={scene} brand={brand} />;
@@ -196,6 +197,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
                 <AbsoluteFill data-pen-scene={scene.id} data-pen-from={from}>
                   <SceneSwitch scene={scene} brand={brand} />
                   <Sticker scene={scene} brand={brand} />
+                  <ArtLayer scene={scene} brand={brand} />
                 </AbsoluteFill>
                 {sb.host === 'none' ? null : <HostLayer sb={sb} scene={scene} avatar={avatar} toon={brand.toon} />}
               </Camera>

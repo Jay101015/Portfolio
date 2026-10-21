@@ -85,6 +85,61 @@ presets.whiteboard = {
   blue: '#1a56db',
 };
 
+// The board look in other skins, so videos do not all look the same: the same writing, hand and drawings on a
+// chalkboard, a lined notebook page, squared paper and a warm cream card. Each keeps three marker colours.
+presets.chalkboard = {
+  ...presets.whiteboard,
+  bg: '#1f3a2f',
+  panel: '#24453a',
+  text: '#f3f1e6',
+  muted: '#b9c3b6',
+  accent: '#ffd166',
+  accent2: '#ff8fa3',
+  ink: '#f3f1e6',
+  marker: '#5fb4a2',
+  blue: '#8ecae6',
+  surface: 'chalk',
+};
+presets.notebook = {
+  ...presets.whiteboard,
+  bg: '#fdfcf7',
+  panel: '#ffffff',
+  text: '#1e2a5a',
+  muted: '#6b7390',
+  accent: '#1e2a5a',
+  accent2: '#d62839',
+  ink: '#1e2a5a',
+  marker: '#ffe66d',
+  blue: '#2a7de1',
+  surface: 'lined',
+};
+presets.graph = {
+  ...presets.whiteboard,
+  bg: '#f6fbfb',
+  panel: '#ffffff',
+  text: '#143d4a',
+  muted: '#6f8a93',
+  accent: '#0f766e',
+  accent2: '#e76f51',
+  ink: '#143d4a',
+  marker: '#fff176',
+  blue: '#2a6f97',
+  surface: 'grid',
+};
+presets.cream = {
+  ...presets.whiteboard,
+  bg: '#f7efe1',
+  panel: '#fffaf0',
+  text: '#3b2a1a',
+  muted: '#8a7560',
+  accent: '#2a7f62',
+  accent2: '#c0392b',
+  ink: '#3b2a1a',
+  marker: '#ffd980',
+  blue: '#3a5ba0',
+  surface: 'cream',
+};
+
 export const defaultBrand: Brand = presets.toon;
 
 /** Card look that follows the theme: ink-outlined white card on paper, soft panel on dark. */

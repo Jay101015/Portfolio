@@ -75,6 +75,17 @@ class ParserTests(unittest.TestCase):
         self.assertEqual(sb["scenes"][1]["props"]["value"], "$1.1T")
 
 
+class ArtTests(unittest.TestCase):
+    def test_a_drawing_on_a_scene_and_a_drawing_scene_parse(self):
+        md = "# T\ntheme: whiteboard\n\n[text headline=\"x\" art=snowball art_at=br art_size=0.4]\nCompound interest.\n\n[art name=rocket headline=\"Lift off\" caption=\"the first 10k\"]\nThen it takes off.\n"
+        sb = parse_script(md)
+        self.assertEqual([sc["type"] for sc in sb["scenes"]], ["text", "art"])
+        self.assertEqual(sb["scenes"][0]["props"]["art"], "snowball")
+        self.assertEqual(sb["scenes"][0]["props"]["art_at"], "br")
+        self.assertEqual(sb["scenes"][1]["props"]["name"], "rocket")
+        self.assertEqual(sb["scenes"][1]["props"]["caption"], "the first 10k")
+
+
 class MovieParserTests(unittest.TestCase):
     def test_movie_scene_types_and_avatar_config(self):
         sb = parse_script(MOVIE)

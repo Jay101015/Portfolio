@@ -31,7 +31,7 @@ from typing import Any
 
 WORDS_PER_SEC = 2.6  # typical YouTube narration pace; replaced by real timings after alignment
 SCENE_GAP_SEC = 0.35
-SCENE_TYPES = {"title", "text", "stat", "list", "chart", "compare", "quote", "image", "still", "clip", "poster", "score", "avatar", "outro"}
+SCENE_TYPES = {"title", "text", "stat", "list", "chart", "compare", "quote", "image", "still", "clip", "poster", "score", "avatar", "outro", "art"}
 
 TAG_RE = re.compile(r"^\[(\w+)([^\]]*)\]\s*$")
 ATTR_RE = re.compile(r'(\w+)=(?:"([^"]*)"|(\S+))')
@@ -187,15 +187,21 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
         for k in ("title", "cta"):
             if k in a:
                 p[k] = a[k]
+    elif b.type == "art":
+        # one big drawing from the art library, with a handwritten line above and a note under it
+        for k in ("name", "headline", "title", "caption", "sub"):
+            if k in a:
+                p[k] = a[k]
     if "dur" in a:
         p["dur"] = float(a["dur"])
     # The character can be placed and posed on any scene; a doodle (icon=) can be drawn on any scene on the board.
     for k in ("pos", "pose", "face", "scale", "icon"):
         if k in a:
             p[k] = a[k]
-    # a sticker (GIF or picture) on any scene, with its own edits as sticker_<edit>
+    # a sticker (GIF or picture) on any scene, with its own edits as sticker_<edit>; a drawing from the art library
+    # on any scene as art=<name> with art_at, art_size, art_start (art=off keeps the corner clear)
     for k, v in a.items():
-        if k == "sticker" or k.startswith("sticker_"):
+        if k == "sticker" or k.startswith("sticker_") or k == "art" or k.startswith("art_"):
             p[k] = v
     return p
 
