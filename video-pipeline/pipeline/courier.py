@@ -149,6 +149,78 @@ def wait(job: dict, limit: float, every: float = 15.0) -> dict | None:
         time.sleep(every)
 
 
+PIECE = 15 * 1024 * 1024  # the page's asset store takes files up to 20 MiB; a cut of a few minutes is bigger than that
+
+
+def _commit_time(sha: str) -> float:
+    out = _git("show", "-s", "--format=%ct", sha, check=False).stdout.strip()
+    return float(out) if out else 0.0
+
+
+def release_assets(slug: str) -> dict:
+    """The render's release (demo-<slug>): each mp4 asset with its download URL and when it was last replaced."""
+    import urllib.request
+
+    url = f"https://api.github.com/repos/Jay101015/Portfolio/releases/tags/demo-{slug}"
+    req = urllib.request.Request(url, headers={"Accept": "application/vnd.github+json", "User-Agent": "money-moves-courier"})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        data = json.load(r)
+    out = {}
+    for a in data.get("assets", []):
+        if a["name"].endswith(".mp4"):
+            t = a.get("updated_at") or a.get("created_at")
+            out[a["name"]] = {"url": a["browser_download_url"], "bytes": a["size"], "at": t}
+    return out
+
+
+def _iso_to_ts(t: str) -> float:
+    import datetime as dt
+
+    return dt.datetime.strptime(t, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc).timestamp()
+
+
+def video(job: dict, commit: str, out_dir: str, limit: float, every: float = 30.0) -> dict | None:
+    """Wait until the render that `commit` started has replaced the release's videos, then fetch them into `out_dir`
+    cut into pieces of at most PIECE bytes. Returns the manifest, or None while the render is still running."""
+    import urllib.request
+
+    slug = os.path.basename(os.path.dirname((job.get("wait") or {}).get("file") or next(f["path"] for f in job["files"] if f["path"].endswith("script.md"))))
+    since = _commit_time(commit)
+    end = time.time() + limit
+    while True:
+        try:
+            assets = release_assets(slug)
+        except Exception as e:  # noqa: BLE001 - the API hiccups; try again
+            print(f"release lookup failed ({e}); trying again")
+            assets = {}
+        fresh = {n: a for n, a in assets.items() if _iso_to_ts(a["at"]) > since}
+        if len(fresh) >= 2 or (fresh and time.time() >= end):
+            break
+        if time.time() >= end:
+            return None
+        time.sleep(every)
+    os.makedirs(out_dir, exist_ok=True)
+    manifest = {"status": "rendered", "video": {}}
+    for name, a in sorted(fresh.items()):
+        kind = "vertical" if "vertical" in name else "landscape"
+        local = os.path.join(out_dir, name)
+        req = urllib.request.Request(a["url"], headers={"User-Agent": "money-moves-courier"})
+        with urllib.request.urlopen(req, timeout=120) as r, open(local, "wb") as f:
+            for chunk in iter(lambda: r.read(1 << 20), b""):
+                f.write(chunk)
+        size = os.path.getsize(local)
+        pieces = []
+        with open(local, "rb") as f:
+            for i in range(0, max(1, (size + PIECE - 1) // PIECE)):
+                piece = os.path.join(out_dir, f"{slug}-{kind}.part{i + 1:02d}.mp4")
+                with open(piece, "wb") as g:
+                    g.write(f.read(PIECE))
+                pieces.append(piece)
+        manifest["video"][kind] = {"name": name, "bytes": size, "pieces": pieces, "at": a["at"]}
+        print(f"{name}: {size // 1_000_000} MB in {len(pieces)} piece(s)")
+    return manifest
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -159,8 +231,22 @@ def main(argv: list[str] | None = None) -> int:
     w.add_argument("job")
     w.add_argument("result")
     w.add_argument("--limit", type=float, default=540.0, help="seconds (stay under the 10-minute command limit)")
+    v = sub.add_parser("video")
+    v.add_argument("job")
+    v.add_argument("commit", help="the commit the push made: the render it started replaces the release's videos")
+    v.add_argument("out_dir")
+    v.add_argument("--limit", type=float, default=540.0)
     args = ap.parse_args(argv)
     job = load_job(args.job)
+    if args.cmd == "video":
+        res = video(job, args.commit, args.out_dir, args.limit)
+        if res is None:
+            print("still rendering: run this again")
+            return 2
+        with open(os.path.join(args.out_dir, "manifest.json"), "w", encoding="utf-8") as f:
+            json.dump(res, f)
+        print(f"rendered: wrote {os.path.join(args.out_dir, 'manifest.json')}")
+        return 0
     if args.cmd == "place":
         sha = place(job, args.fetched)
         print(f"pushed {sha}")
