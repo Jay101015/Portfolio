@@ -295,6 +295,15 @@ class MediaTests(unittest.TestCase):
         self.assertEqual(_figure("a hundred thousand invested"), "100,000")
         self.assertEqual(_figure("it costs £2,000 a month"), "£2,000")
         self.assertIsNone(_figure("I was young and in a hurry"))
+        self.assertEqual(_figure("If you save 200 pounds a month"), "£200")
+        self.assertEqual(_figure("about 1,500 dollars"), "$1,500")
+
+    def test_list_items_end_on_a_real_word(self):
+        from pipeline.auto_script import _short
+
+        self.assertEqual(_short("First, work out one month of your bare bones costs."), "Work out one month of your bare bones costs")
+        self.assertEqual(_short("Second, open an easy access savings account."), "Open an easy access savings account")
+        self.assertEqual(_short("Third, put the money you saved into a fund for the long term."), "Put the money you saved into a fund")
 
     def test_still_keeps_its_want_text_for_the_placeholder(self):
         sb = parse_script('# T\n\n[still src="x.jpg" want="a phone in a hand"]\nHi.\n')

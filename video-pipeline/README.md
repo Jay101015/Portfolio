@@ -63,6 +63,42 @@ and cards do the moving. Footage and illustrations sit inside a drawn screen
 beside the host. `theme: finance` and `theme: movie` keep the older glossy
 motion-graphics look.
 
+## Record, and the script catches up with what you said
+
+Transcription starts the moment a recording arrives. In the studio's Read
+tab, after recording or picking a file (or pasting a Drive / Dropbox link):
+
+- **Transcribe and match my script**: your scenes stay as they are, and the
+  words under each one change to what you actually said, so the captions and
+  the writing on the board match your voice. Layouts, numbers, list items,
+  chart data and headlines are kept. A scene you skipped keeps its written
+  words and is reported.
+- **Transcribe and build scenes from my voice**: the scenes are written from
+  the recording (see below).
+
+The studio sends the recording with `draft.md` (your script, stamped with a
+request id). That push runs `transcribe.yml`, which does no rendering:
+`pipeline/transcribe.py` transcribes once (Whisper, about a minute on
+GitHub), aligns, rewrites the draft (`pipeline/sync.py`) and commits
+`draft.md`, `transcript.json`, `timing.json` and `voice-preview.mp3`. The
+studio waits for its answer (a couple of minutes, with a timer) and loads the
+matched script with your voice and the real timings. Edit, then **Ship**:
+that writes `script.md`, which is what renders, and the render reuses the
+transcript. Close the page while it waits and it picks the wait up next time.
+
+Locally the same step is:
+
+    python -m pipeline.transcribe projects/<name>
+
+## Drafts
+
+**Save** in the top bar opens Drafts: name the version and save it. Drafts
+are kept in the studio's storage on your claude.ai account under a path only
+you can read, so they are there on any device; a recording you made or picked
+is kept with the draft on the device it was made on. Open brings a draft
+back (with its recording on that device); delete asks for a second tap. The
+script is also autosaved on the device as you work.
+
 ## Just talk: a recording is enough
 
 You do not need a finished script. Record yourself (in the studio's Read

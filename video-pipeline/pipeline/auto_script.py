@@ -66,7 +66,12 @@ CURRENCY = {"pounds": "£", "pound": "£", "quid": "£", "dollars": "$", "dollar
 
 def _spoken_figure(text: str) -> str | None:
     """'ten thousand pounds' -> '£10,000', 'twenty four percent' -> '24%', 'a hundred thousand' -> '100,000'."""
-    toks = re.findall(r"[a-z]+|\d[\d,.]*", text.lower())
+    toks = re.findall(r"[a-z]+|\d[\d,.]*\d|\d", text.lower())
+    # digits followed by a currency word: "200 pounds" -> "£200"
+    for i, t in enumerate(toks[:-1]):
+        if t[0].isdigit() and toks[i + 1] in CURRENCY:
+            n = float(t.replace(",", ""))
+            return f"{CURRENCY[toks[i + 1]]}{n:,.0f}" if n == int(n) else f"{CURRENCY[toks[i + 1]]}{n:,.2f}"
     i = 0
     while i < len(toks):
         if toks[i] in UNITS or toks[i] in TENS or (toks[i] in ("a", "one") and i + 1 < len(toks) and toks[i + 1] in ("hundred", "thousand", "million")):
@@ -119,11 +124,18 @@ def _figure(text: str) -> str | None:
     return v
 
 
-def _short(text: str, n: int = 7) -> str:
-    """The gist of a sentence for a list item or a headline: its first words, without the ordinal and trailing punctuation."""
+SMALL = {"a", "an", "the", "of", "to", "and", "or", "your", "my", "our", "on", "in", "for", "with", "at", "by", "from", "is", "are", "it", "that", "this", "so"}
+
+
+def _short(text: str, n: int = 9) -> str:
+    """The gist of a sentence for a list item: up to its first comma or `n` words, without the ordinal, ending on a
+    word that carries meaning (not "of", "your", "the"...)."""
     t = ORDINAL_RE.sub("", text).strip(" ,:;.-")
-    ws = t.split()
-    s = " ".join(ws[:n])
+    t = re.split(r"[,;:.!?]", t)[0].strip()
+    ws = t.split()[:n]
+    while len(ws) > 2 and ws[-1].lower().strip(",.") in SMALL:
+        ws.pop()
+    s = " ".join(ws)
     return (s[0].upper() + s[1:]) if s else s
 
 
