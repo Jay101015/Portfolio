@@ -114,6 +114,25 @@ class ArtTests(unittest.TestCase):
         self.assertEqual(sb["scenes"][1]["props"]["caption"], "the first 10k")
 
 
+class ArtLibraryTests(unittest.TestCase):
+    def test_the_catalogue_is_large_and_searchable(self):
+        import json
+
+        cat = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "library", "art", "catalogue.json"), encoding="utf-8"))
+        names = [d["name"] for d in cat]
+        self.assertGreaterEqual(len(cat), 120)
+        self.assertEqual(len(names), len(set(names)))
+        for d in cat:
+            self.assertTrue(d["about"] and d["tags"], d["name"])
+            self.assertIsInstance(d.get("search", []), list)
+        # the reaction half carries everyday words for the library search but not as scene triggers
+        by = {d["name"]: d for d in cat}
+        self.assertIn("lol", by["laugh"]["search"])
+        self.assertNotIn("no", by["nope"]["tags"])
+        self.assertIn("scam", by["siren"]["tags"])
+        self.assertTrue(all(len(t) >= 3 for d in cat for t in d["tags"]), "a two-letter tag would stamp a drawing on every scene")
+
+
 class MovieParserTests(unittest.TestCase):
     def test_movie_scene_types_and_avatar_config(self):
         sb = parse_script(MOVIE)

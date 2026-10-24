@@ -257,6 +257,27 @@ The board look comes in five skins, all the same writing, hand and drawings: `th
 `graph` (squared paper, teal and orange) and `cream` (a warm card, brown ink). The studio's ⋯ menu switches them
 and the preview follows.
 
+### Searching it like a GIF keyboard
+
+In the studio, **GIFs & drawings** (in the ⋯ menu, the **+ GIF or drawing**
+chip in Edit, or "Choose a drawing" on a scene) is a search box over the
+whole library, the way the GIF button in WhatsApp works: type what you mean
+(`lol`, `money`, `scam`, `holiday`, `tired`, `night out`) and the drawings
+that fit appear as you type, best first. Chips narrow it to Money, Feelings,
+Time, Ups & downs, Warnings, Life, or Work & travel. Tap one, then put it on
+the scene you are on, add it as a scene, or save the GIF to your phone.
+
+Each drawing has two word lists in `art.tsx`: `tags` are the specific phrases
+that put it on a scene by themselves from the narration ("make it rain",
+"scam alert"), and `search` are the everyday words that find it in the
+library ("money", "lol", "no") but are too common to trigger it on a scene.
+
+When nothing fits, the sheet offers a GIPHY search for the same words (it
+opens in Safari, because the page cannot call GIPHY from inside claude.ai);
+copy the GIF's link, paste it into the box under the grid and **Use it**: it
+goes on the scene as a sticker or in as a picture scene, and the render
+fetches it.
+
 ## Pictures, GIFs and video from your phone
 
 In the studio, Add → "Photo or video from camera roll" (or "Take a photo",

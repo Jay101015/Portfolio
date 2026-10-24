@@ -187,7 +187,13 @@ type Layer = {
   seed?: number;
   origin?: string; // transform-origin for sway/tip/spin
 };
-export type ArtDef = {tags: string[]; layers: Layer[]; loop?: number; about: string};
+export type ArtDef = {
+  tags: string[]; // the phrases that call the drawing up on a scene by themselves (specific, so it is not everywhere)
+  search?: string[]; // everyday words that find it in the studio's library search, the way a GIF keyboard works
+  layers: Layer[];
+  loop?: number;
+  about: string;
+};
 
 const rays = (cx: number, cy: number, r1: number, r2: number, n: number, at: number, color: Color = 'accent2'): Layer[] =>
   Array.from({length: n}, (_, i) => {
@@ -523,6 +529,613 @@ export const ART: Record<string, ArtDef> = {
       {doodle: 'calculator', x: 56, y: 40, size: 40, draw: [1.3, 2.0], color: 'blue', width: 1.5, motion: [{kind: 'pop', at: 2.0}]},
     ],
   },
+
+  // ---- reactions and everyday life: the GIF-keyboard half of the library
+  laugh: {
+    about: 'a laughing face, shaking with it',
+    tags: ['hilarious', 'laughing', 'joke', 'funny'],
+    search: ['lol', 'haha', 'lmao', 'laugh', 'laughs', 'funny', 'joke', 'ridiculous', 'comedy', 'crying laughing', 'dead'],
+    layers: [{doodle: 'laugh', x: 18, y: 14, size: 64, draw: [0, 1.2], width: 1.5, motion: [{kind: 'shake', deg: 6, period: 0.22}, {kind: 'bob', amp: 3, period: 0.44}]}],
+  },
+  smile: {
+    about: 'a happy face',
+    tags: ['happy', 'delighted', 'feels good', 'good news'],
+    search: ['smile', 'happy', 'glad', 'nice', 'good', 'pleased', 'cheer', 'cheerful', 'yay', 'joy', 'content', 'great'],
+    layers: [{doodle: 'smile', x: 18, y: 14, size: 64, draw: [0, 1.2], color: 'accent2', width: 1.5, motion: [{kind: 'pulse', amp: 0.06, period: 1.2}, {kind: 'sway', deg: 4, period: 2}]}],
+  },
+  sad: {
+    about: 'a sad face with a tear',
+    tags: ['sad', 'heartbreaking', 'gutted', 'devastated'],
+    search: ['sad', 'unhappy', 'cry', 'crying', 'tear', 'tears', 'upset', 'down', 'bad news', 'loss', 'lost', 'miserable', 'oh no', 'sorry'],
+    layers: [
+      {doodle: 'frown', x: 18, y: 12, size: 64, draw: [0, 1.2], width: 1.5},
+      {path: 'M62 52 q6 10 0 14 q-6 -4 0 -14z', x: 0, y: 0, size: 100, draw: [1.2, 1.5], color: 'blue', width: 2, motion: [{kind: 'drop', from: 0, at: 1.5, every: 1.4, dur: 0.8}]},
+    ],
+    loop: 2.9,
+  },
+  angry: {
+    about: 'an angry face, fuming',
+    tags: ['furious', 'infuriating', 'rage', 'makes me angry'],
+    search: ['angry', 'mad', 'annoyed', 'annoying', 'rage', 'furious', 'frustrated', 'frustrating', 'hate', 'grr', 'fuming', 'livid', 'cross'],
+    layers: [
+      {doodle: 'angry', x: 18, y: 14, size: 64, draw: [0, 1.2], color: 'accent', width: 1.6, motion: [{kind: 'shake', deg: 4, period: 0.14}]},
+      ...rays(50, 12, 10, 20, 3, 1.3, 'accent'),
+    ],
+  },
+  meh: {
+    about: 'a face that is not impressed',
+    tags: ['unimpressed', 'underwhelming', 'not impressed'],
+    search: ['meh', 'whatever', 'boring', 'bored', 'average', 'so so', 'fine', 'ok', 'okay', 'shrug', 'dull', 'mediocre', 'nothing special'],
+    layers: [{doodle: 'meh', x: 18, y: 14, size: 64, draw: [0, 1.2], width: 1.5, motion: [{kind: 'tip', deg: 6, period: 2.6}]}],
+  },
+  shock: {
+    about: 'a wide eye with rays: shocked',
+    tags: ['shocked', 'shocking', 'mind blown', 'jaw dropped', 'cannot believe'],
+    search: ['shock', 'shocked', 'wow', 'omg', 'what', 'surprise', 'surprised', 'unbelievable', 'no way', 'really', 'seriously', 'whoa', 'eyes', 'stunned'],
+    layers: [
+      {doodle: 'eye', x: 22, y: 26, size: 56, draw: [0, 1.0], width: 1.5, motion: [{kind: 'pulse', amp: 0.12, period: 0.5}]},
+      ...rays(50, 50, 32, 44, 7, 1.0),
+    ],
+  },
+  love: {
+    about: 'a heart beating, with little hearts floating up',
+    tags: ['love it', 'love this', 'adore', 'favourite'],
+    search: ['love', 'heart', 'hearts', 'like', 'adore', 'favourite', 'favorite', 'thanks', 'thank you', 'grateful', 'appreciate', 'xoxo', 'romance', 'valentine'],
+    layers: [
+      {doodle: 'heart', x: 20, y: 18, size: 60, draw: [0, 1.0], color: 'accent', width: 1.6, fill: true, motion: [{kind: 'pulse', amp: 0.1, period: 0.9}]},
+      {doodle: 'heart', x: 68, y: 40, size: 16, draw: [1.0, 1.2], color: 'accent', width: 1.8, motion: [{kind: 'rise', dy: -36, dx: 6, at: 1.3, dur: 1.6}, {kind: 'sway', deg: 10, period: 0.8}]},
+      {doodle: 'heart', x: 12, y: 46, size: 12, draw: [1.2, 1.4], color: 'accent', width: 1.8, motion: [{kind: 'rise', dy: -30, dx: -4, at: 1.9, dur: 1.6}, {kind: 'sway', deg: 10, period: 0.7}]},
+    ],
+    loop: 3.6,
+  },
+  nope: {
+    about: 'a thumbs down',
+    tags: ['thumbs down', 'avoid this', 'stay away', 'do not do this'],
+    search: ['no', 'nope', 'nah', 'bad', 'dont', "don't", 'avoid', 'dislike', 'wrong', 'thumbs down', 'fail', 'boo', 'not this', 'never', 'reject', 'rejected'],
+    layers: [{doodle: 'thumbs-down', x: 20, y: 16, size: 60, draw: [0, 1.1], color: 'accent', width: 1.5, origin: '50% 20%', motion: [{kind: 'tip', deg: 8, period: 1.4}, {kind: 'bob', amp: 4, period: 1.4}]}],
+  },
+  cross: {
+    about: 'a big red cross',
+    tags: ['scrap that', 'cross it off', 'rule that out'],
+    search: ['x', 'cross', 'wrong', 'no', 'cancel', 'cancelled', 'stop', 'delete', 'remove', 'not allowed', 'banned', 'nope', 'incorrect', 'mistake', 'denied'],
+    layers: [
+      {line: [22, 22, 78, 78], x: 0, y: 0, size: 100, draw: [0, 0.4], color: 'accent', width: 3.2},
+      {line: [78, 22, 22, 78], x: 0, y: 0, size: 100, draw: [0.45, 0.85], color: 'accent', width: 3.2, motion: [{kind: 'shake', deg: 2, period: 0.2, at: 0.85, for: 0.5}]},
+    ],
+  },
+  wave: {
+    about: 'a hand waving hello',
+    tags: ['welcome back', 'welcome to the channel', 'hello everyone', 'hi everyone', 'see you next time'],
+    search: ['hello', 'hi', 'hey', 'welcome', 'bye', 'goodbye', 'see you', 'wave', 'waving', 'greetings', 'later', 'cheers', 'yo', 'hey guys'],
+    layers: [{doodle: 'hand', x: 22, y: 12, size: 56, draw: [0, 1.1], width: 1.5, origin: '50% 100%', motion: [{kind: 'sway', deg: 18, period: 0.9}]}],
+  },
+  clap: {
+    about: 'two hands clapping with sparkles',
+    tags: ['round of applause', 'well done', 'hats off', 'bravo'],
+    search: ['clap', 'clapping', 'applause', 'well done', 'bravo', 'congrats', 'congratulations', 'respect', 'nice one', 'good job', 'proud', 'yes'],
+    layers: [
+      {doodle: 'hand', x: 8, y: 22, size: 46, draw: [0, 0.9], width: 1.5, origin: '100% 100%', motion: [{kind: 'sway', deg: -12, period: 0.5}]},
+      {doodle: 'hand', x: 46, y: 22, size: 46, draw: [0.9, 1.8], width: 1.5, origin: '0% 100%', motion: [{kind: 'sway', deg: 12, period: 0.5}]},
+      {doodle: 'sparkles', x: 34, y: 2, size: 32, draw: [1.8, 2.2], color: 'accent2', width: 1.6, motion: [{kind: 'pulse', amp: 0.14, period: 0.5}]},
+    ],
+  },
+  oops: {
+    about: 'a plaster: a mistake that hurt a bit',
+    tags: ['my mistake', 'rookie error', 'lesson learned', 'learned the hard way'],
+    search: ['oops', 'mistake', 'mistakes', 'error', 'messed up', 'slip', 'ouch', 'hurt', 'injury', 'plaster', 'bandage', 'whoops', 'my bad', 'regret'],
+    layers: [{doodle: 'bandage', x: 16, y: 16, size: 68, draw: [0, 1.1], color: 'accent', width: 1.5, motion: [{kind: 'tip', deg: 5, period: 2}]}],
+  },
+  sleep: {
+    about: 'a moon and some zzz',
+    tags: ['while you sleep', 'in your sleep', 'set and forget', 'sit back'],
+    search: ['sleep', 'asleep', 'tired', 'zzz', 'snooze', 'lazy', 'rest', 'nap', 'night', 'bedtime', 'passive', 'relax', 'chill'],
+    layers: [
+      {doodle: 'moon', x: 10, y: 24, size: 52, draw: [0, 0.9], color: 'blue', width: 1.5, motion: [{kind: 'sway', deg: 4, period: 3}]},
+      {path: 'M60 50 h12 l-12 12 h12', x: 0, y: 0, size: 100, draw: [0.9, 1.2], width: 2.2, motion: [{kind: 'rise', dy: -10, at: 1.3, dur: 2.2}, {kind: 'pulse', amp: 0.1, period: 1.1}]},
+      {path: 'M72 32 h9 l-9 9 h9', x: 0, y: 0, size: 100, draw: [1.3, 1.6], width: 2, motion: [{kind: 'rise', dy: -12, at: 1.7, dur: 2.2}, {kind: 'pulse', amp: 0.1, period: 1.1}]},
+      {path: 'M84 18 h6 l-6 6 h6', x: 0, y: 0, size: 100, draw: [1.7, 1.9], width: 1.8, motion: [{kind: 'rise', dy: -12, at: 2.1, dur: 2.2}, {kind: 'pulse', amp: 0.1, period: 1.1}]},
+    ],
+    loop: 4.4,
+  },
+  eyes: {
+    about: 'two eyes, watching',
+    tags: ['keep an eye on', 'watch out for', 'keep watching', 'eyes on'],
+    search: ['eyes', 'look', 'looking', 'watch', 'watching', 'see', 'notice', 'spot', 'spy', 'stare', 'observe', 'attention', 'alert'],
+    layers: [
+      {doodle: 'eye', x: 4, y: 30, size: 44, draw: [0, 0.8], width: 1.5, motion: [{kind: 'slide', dx: 6, at: 1.2, dur: 1.2, every: 2.6}]},
+      {doodle: 'eye', x: 52, y: 30, size: 44, draw: [0.8, 1.6], width: 1.5, motion: [{kind: 'slide', dx: 6, at: 1.2, dur: 1.2, every: 2.6}]},
+    ],
+    loop: 3.9,
+  },
+  skull: {
+    about: 'a skull: that would kill you',
+    tags: ['kills your returns', 'kill your', 'financial death', 'wipes you out', 'wiped out'],
+    search: ['dead', 'death', 'die', 'died', 'kill', 'killer', 'deadly', 'rip', 'danger', 'toxic', 'disaster', 'skull', 'poison', 'fatal', 'game over'],
+    layers: [{doodle: 'skull', x: 20, y: 12, size: 60, draw: [0, 1.3], width: 1.5, motion: [{kind: 'shake', deg: 5, period: 0.3, at: 1.3, for: 0.7}, {kind: 'bob', amp: 2, period: 2}]}],
+  },
+  ghost: {
+    about: 'a ghost drifting about',
+    tags: ['ghosted', 'disappears', 'vanishes', 'vanish into thin air', 'gone for good'],
+    search: ['ghost', 'ghosted', 'disappear', 'vanish', 'gone', 'scary', 'spooky', 'fear', 'afraid', 'scared', 'haunted', 'halloween', 'boo', 'invisible'],
+    layers: [{doodle: 'ghost', x: 22, y: 12, size: 56, draw: [0, 1.1], width: 1.5, motion: [{kind: 'bob', amp: 5, period: 1.6}, {kind: 'sway', deg: 6, period: 2.2}]}],
+  },
+  bomb: {
+    about: 'a bomb with a lit fuse',
+    tags: ['blows up', 'blow up in your face', 'ticking time bomb', 'time bomb'],
+    search: ['bomb', 'explode', 'explosion', 'blow up', 'boom', 'disaster', 'risky', 'crash', 'meltdown', 'dangerous', 'danger', 'bust', 'implode'],
+    layers: [
+      {doodle: 'bomb', x: 18, y: 16, size: 64, draw: [0, 1.2], width: 1.5, motion: [{kind: 'shake', deg: 2, period: 0.12}]},
+      {doodle: 'sparkles', x: 64, y: 2, size: 24, draw: [1.2, 1.5], color: 'accent2', width: 1.6, motion: [{kind: 'pulse', amp: 0.3, period: 0.3}]},
+    ],
+  },
+  dice: {
+    about: 'a die tumbling: a gamble',
+    tags: ['gamble', 'gambling', 'roll the dice', 'casino', 'lottery ticket'],
+    search: ['dice', 'gamble', 'gambling', 'bet', 'betting', 'luck', 'lucky', 'chance', 'casino', 'risk', 'risky', 'roll', 'odds', 'lottery', 'jackpot'],
+    layers: [{doodle: 'dice-5', x: 22, y: 20, size: 56, draw: [0, 1.1], width: 1.5, motion: [{kind: 'tip', deg: 16, period: 1.1}, {kind: 'bob', amp: 6, period: 1.1}]}],
+  },
+  lock: {
+    about: 'a padlock clicking shut',
+    tags: ['locked in', 'lock it in', 'fixed rate', 'locked away', 'under lock and key'],
+    search: ['lock', 'locked', 'secure', 'security', 'safe', 'safety', 'protect', 'protected', 'private', 'password', 'fixed', 'tied up', 'padlock'],
+    layers: [
+      {doodle: 'lock', x: 22, y: 14, size: 56, draw: [0, 1.1], width: 1.5, motion: [{kind: 'shake', deg: 2, period: 0.15, at: 1.2, for: 0.4}, {kind: 'pulse', amp: 0.03, period: 2.4}]},
+      {doodle: 'key', x: 64, y: 62, size: 26, draw: [1.1, 1.6], color: 'accent2', width: 1.6, motion: [{kind: 'sway', deg: 12, period: 1.3}]},
+    ],
+  },
+  hammer: {
+    about: 'a hammer, hard at work',
+    tags: ['hard work', 'graft', 'grind', 'hustle', 'build it yourself', 'diy'],
+    search: ['hammer', 'build', 'building', 'work', 'working', 'hard work', 'grind', 'hustle', 'diy', 'fix', 'repair', 'tools', 'effort', 'labour', 'labor'],
+    layers: [{doodle: 'hammer', x: 18, y: 14, size: 64, draw: [0, 1.1], width: 1.5, origin: '20% 85%', motion: [{kind: 'sway', deg: -22, period: 0.7}]}],
+  },
+  book: {
+    about: 'an open book',
+    tags: ['read up', 'do your homework', 'do your research', 'read the book', 'learn the basics'],
+    search: ['book', 'books', 'learn', 'learning', 'read', 'reading', 'study', 'studying', 'education', 'knowledge', 'research', 'guide', 'library', 'lesson', 'school'],
+    layers: [{doodle: 'book-open', x: 12, y: 20, size: 76, draw: [0, 1.2], width: 1.5, motion: [{kind: 'bob', amp: 2, period: 2.4}, {kind: 'pulse', amp: 0.03, period: 2.4}]}],
+  },
+  mail: {
+    about: 'an envelope arriving',
+    tags: ['in the post', 'through the letterbox', 'letter from', 'newsletter'],
+    search: ['mail', 'email', 'letter', 'message', 'inbox', 'newsletter', 'post', 'envelope', 'send', 'sent', 'notification', 'dm', 'contact'],
+    layers: [{doodle: 'mail', x: 16, y: 20, size: 68, draw: [0, 1.0], width: 1.5, motion: [{kind: 'fly', from: [-60, -30], at: 1.1, dur: 0.9}, {kind: 'bob', amp: 3, period: 1.8}]}],
+  },
+  gift: {
+    about: 'a wrapped present with sparkles',
+    tags: ['free money', 'bonus', 'freebie', 'giveaway', 'sign up bonus', 'cashback'],
+    search: ['gift', 'present', 'bonus', 'free', 'freebie', 'reward', 'giveaway', 'birthday', 'christmas', 'surprise', 'treat', 'prize', 'perk', 'perks'],
+    layers: [
+      {doodle: 'gift', x: 20, y: 20, size: 60, draw: [0, 1.1], color: 'accent', width: 1.5, motion: [{kind: 'bob', amp: 4, period: 1.4}]},
+      {doodle: 'sparkles', x: 62, y: 4, size: 28, draw: [1.1, 1.4], color: 'accent2', width: 1.6, motion: [{kind: 'pulse', amp: 0.2, period: 0.7}]},
+    ],
+  },
+  cake: {
+    about: 'a cake with candles',
+    tags: ['happy birthday', 'milestone', 'anniversary', 'celebrate'],
+    search: ['cake', 'birthday', 'celebrate', 'celebration', 'party', 'treat', 'anniversary', 'milestone', 'dessert', 'sweet', 'baking', 'candles'],
+    layers: [
+      {doodle: 'cake', x: 18, y: 18, size: 64, draw: [0, 1.2], width: 1.5},
+      {doodle: 'flame', x: 42, y: 4, size: 16, draw: [1.2, 1.4], color: 'accent2', width: 1.6, fill: true, motion: [{kind: 'sway', deg: 8, period: 0.5}, {kind: 'pulse', amp: 0.12, period: 0.5}]},
+    ],
+  },
+  coffee: {
+    about: 'a cup of coffee, steaming',
+    tags: ['daily coffee', 'latte', 'a coffee a day', 'coffee a day', 'takeaway coffee'],
+    search: ['coffee', 'latte', 'cafe', 'morning', 'daily', 'every day', 'routine', 'habit', 'cup', 'tea', 'break', 'small spend', 'caffeine'],
+    layers: [
+      {doodle: 'coffee', x: 20, y: 24, size: 60, draw: [0, 1.1], width: 1.5},
+      {path: 'M38 16 q4 -6 0 -12', x: 0, y: 0, size: 100, draw: [1.1, 1.3], color: 'muted', width: 1.8, motion: [{kind: 'rise', dy: -8, at: 1.3, dur: 1.4}, {kind: 'sway', deg: 10, period: 1}]},
+      {path: 'M50 14 q4 -6 0 -12', x: 0, y: 0, size: 100, draw: [1.3, 1.5], color: 'muted', width: 1.8, motion: [{kind: 'rise', dy: -8, at: 1.6, dur: 1.4}, {kind: 'sway', deg: 10, period: 1.1}]},
+    ],
+    loop: 3,
+  },
+  bed: {
+    about: 'a bed: rest',
+    tags: ['lie in', 'stay in bed', 'day off', 'put your feet up'],
+    search: ['bed', 'rest', 'relax', 'chill', 'lazy', 'weekend', 'lie in', 'sleep', 'sofa', 'day off', 'comfort', 'cosy', 'home'],
+    layers: [{doodle: 'bed', x: 10, y: 22, size: 80, draw: [0, 1.2], width: 1.5, motion: [{kind: 'bob', amp: 2, period: 2.8}]}],
+  },
+  sun: {
+    about: 'the sun, shining',
+    tags: ['sunny days', 'sunshine', 'good times', 'brighter days'],
+    search: ['sun', 'sunny', 'sunshine', 'bright', 'summer', 'holiday', 'warm', 'hot', 'weather', 'day', 'positive', 'good times', 'shine', 'glow'],
+    layers: [{doodle: 'sun', x: 18, y: 14, size: 64, draw: [0, 1.3], color: 'accent2', width: 1.5, motion: [{kind: 'spin', period: 9}, {kind: 'pulse', amp: 0.05, period: 1.5}]}],
+  },
+  rain: {
+    about: 'a rain cloud: a rough patch',
+    tags: ['rough patch', 'bad times', 'downturn', 'recession', 'when it rains'],
+    search: ['rain', 'raining', 'rainy', 'cloud', 'storm', 'gloomy', 'bad day', 'rough', 'downturn', 'recession', 'weather', 'wet', 'miserable', 'winter'],
+    layers: [
+      {doodle: 'cloud-rain', x: 16, y: 12, size: 68, draw: [0, 1.2], color: 'blue', width: 1.5, motion: [{kind: 'bob', amp: 2, period: 2.2}]},
+      {line: [34, 74, 30, 86], x: 0, y: 0, size: 100, draw: [1.2, 1.3], color: 'blue', width: 2, motion: [{kind: 'drop', from: -10, at: 1.3, every: 0.8, dur: 0.5}]},
+      {line: [54, 76, 50, 88], x: 0, y: 0, size: 100, draw: [1.3, 1.4], color: 'blue', width: 2, motion: [{kind: 'drop', from: -10, at: 1.6, every: 0.8, dur: 0.5}]},
+      {line: [72, 72, 68, 84], x: 0, y: 0, size: 100, draw: [1.4, 1.5], color: 'blue', width: 2, motion: [{kind: 'drop', from: -10, at: 1.45, every: 0.8, dur: 0.5}]},
+    ],
+    loop: 3.2,
+  },
+  globe: {
+    about: 'the world, turning',
+    tags: ['around the world', 'global markets', 'worldwide', 'international', 'overseas'],
+    search: ['world', 'globe', 'global', 'international', 'abroad', 'overseas', 'everywhere', 'earth', 'planet', 'countries', 'foreign', 'travel'],
+    layers: [{doodle: 'globe', x: 18, y: 14, size: 64, draw: [0, 1.3], color: 'blue', width: 1.5, motion: [{kind: 'sway', deg: 6, period: 2.6}, {kind: 'bob', amp: 2, period: 2.6}]}],
+  },
+  plane: {
+    about: 'a plane taking off',
+    tags: ['holiday', 'holidays', 'flights', 'flight', 'trip abroad', 'vacation'],
+    search: ['plane', 'travel', 'holiday', 'flight', 'fly', 'flying', 'trip', 'abroad', 'vacation', 'jet', 'airport', 'away', 'adventure', 'explore'],
+    layers: [{doodle: 'plane', x: 18, y: 24, size: 60, draw: [0, 1.1], width: 1.5, motion: [{kind: 'rise', dy: -26, dx: 22, at: 1.3, dur: 2.4}, {kind: 'bob', amp: 2, period: 1.1}]}],
+    loop: 4.2,
+  },
+  medal: {
+    about: 'a medal, dropping in and swinging',
+    tags: ['first place', 'gold medal', 'champion', 'winner winner', 'top of the class'],
+    search: ['medal', 'winner', 'first', 'champion', 'best', 'achievement', 'gold', 'award', 'prize', 'win', 'won', 'victory', 'top', 'number one'],
+    layers: [{doodle: 'medal', x: 24, y: 10, size: 52, draw: [0, 1.1], color: 'accent2', width: 1.5, origin: '50% 10%', motion: [{kind: 'sway', deg: 7, period: 1.6}]}],
+  },
+  bars: {
+    about: 'a bar chart',
+    tags: ['the data', 'the numbers show', 'statistics', 'the figures', 'bar chart'],
+    search: ['chart', 'graph', 'data', 'stats', 'statistics', 'numbers', 'bar', 'bars', 'figures', 'compare', 'comparison', 'report', 'results', 'analysis'],
+    layers: [{doodle: 'chart-column', x: 16, y: 14, size: 68, draw: [0, 1.3], color: 'blue', width: 1.5, motion: [{kind: 'pulse', amp: 0.04, period: 1.6}]}],
+  },
+  percent: {
+    about: 'a percent sign, spinning',
+    tags: ['interest rate', 'interest rates', 'apr', 'apy', 'annual rate', 'rate of return', 'per cent'],
+    search: ['percent', 'percentage', '%', 'rate', 'rates', 'interest', 'apr', 'yield', 'fee', 'fees', 'discount', 'off', 'sale', 'inflation'],
+    layers: [{doodle: 'percent', x: 20, y: 16, size: 60, draw: [0, 1.0], color: 'accent', width: 1.8, motion: [{kind: 'flip', period: 3, at: 1.2}]}],
+  },
+  maths: {
+    about: 'a calculator working it out',
+    tags: ['do the maths', 'do the math', 'work it out', 'run the numbers', 'add it up', 'adds up'],
+    search: ['maths', 'math', 'calculate', 'calculator', 'sums', 'add up', 'work out', 'numbers', 'count', 'total', 'formula', 'equation', 'budget'],
+    layers: [{doodle: 'calculator', x: 24, y: 10, size: 52, draw: [0, 1.2], width: 1.5, motion: [{kind: 'shake', deg: 2, period: 0.25, at: 1.2, for: 0.6}, {kind: 'pulse', amp: 0.03, period: 1.2}]}],
+  },
+  'money-rain': {
+    about: 'banknotes raining down',
+    tags: ['make it rain', 'raining money', 'loads of money', 'rolling in it', 'money money money', 'payday'],
+    search: ['money', 'cash', 'rich', 'wealth', 'wealthy', 'notes', 'paid', 'payday', 'salary', 'income', 'pounds', 'dollars', 'quid', 'dosh', 'loaded', 'bank'],
+    layers: [
+      {doodle: 'banknote', x: 6, y: 14, size: 36, draw: [0, 0.6], color: 'accent', width: 1.5, motion: [{kind: 'drop', from: -24, at: 0.8, every: 2.1, dur: 1.4, stay: true}, {kind: 'sway', deg: 14, period: 0.9}]},
+      {doodle: 'banknote', x: 54, y: 8, size: 36, draw: [0.6, 1.2], color: 'accent', width: 1.5, motion: [{kind: 'drop', from: -24, at: 1.5, every: 2.1, dur: 1.4, stay: true}, {kind: 'sway', deg: -14, period: 1.1}]},
+      {doodle: 'banknote', x: 30, y: 44, size: 36, draw: [1.2, 1.8], color: 'accent', width: 1.5, motion: [{kind: 'drop', from: -24, at: 2.2, every: 2.1, dur: 1.4, stay: true}, {kind: 'sway', deg: 10, period: 1}]},
+    ],
+    loop: 4.2,
+  },
+  coins: {
+    about: 'a few coins',
+    tags: ['spare change', 'small change', 'loose change', 'pennies', 'round up', 'round ups', 'pocket money'],
+    search: ['coins', 'coin', 'change', 'pennies', 'penny', 'cents', 'pence', 'small', 'little', 'tiny', 'bits', 'pocket money', 'spare'],
+    layers: [{doodle: 'coins', x: 18, y: 16, size: 64, draw: [0, 1.2], color: 'accent2', width: 1.5, motion: [{kind: 'bob', amp: 3, period: 1.3}, {kind: 'tip', deg: 4, period: 1.3}]}],
+  },
+  pound: {
+    about: 'a pound sign',
+    tags: ['pound sterling', 'sterling', 'the pound', 'in pounds'],
+    search: ['pound', 'pounds', '£', 'sterling', 'gbp', 'uk', 'british', 'britain', 'england', 'quid', 'currency', 'money'],
+    layers: [{doodle: 'pound-sterling', x: 20, y: 14, size: 60, draw: [0, 1.0], color: 'accent', width: 1.8, motion: [{kind: 'pulse', amp: 0.08, period: 1.2}]}],
+  },
+  dollar: {
+    about: 'a dollar sign',
+    tags: ['us dollar', 'us dollars', 'the dollar', 'in dollars', 'greenback'],
+    search: ['dollar', 'dollars', '$', 'usd', 'us', 'usa', 'america', 'american', 'bucks', 'currency', 'money', 'cash'],
+    layers: [{doodle: 'dollar-sign', x: 20, y: 14, size: 60, draw: [0, 1.0], color: 'accent', width: 1.8, motion: [{kind: 'pulse', amp: 0.08, period: 1.2}]}],
+  },
+  euro: {
+    about: 'a euro sign',
+    tags: ['the euro', 'in euros', 'eurozone'],
+    search: ['euro', 'euros', '€', 'eur', 'europe', 'european', 'eu', 'currency', 'money'],
+    layers: [{doodle: 'euro', x: 20, y: 14, size: 60, draw: [0, 1.0], color: 'accent', width: 1.8, motion: [{kind: 'pulse', amp: 0.08, period: 1.2}]}],
+  },
+  bitcoin: {
+    about: 'a bitcoin, flipping',
+    tags: ['bitcoin', 'crypto', 'cryptocurrency', 'blockchain', 'ethereum', 'altcoin', 'altcoins'],
+    search: ['bitcoin', 'crypto', 'btc', 'blockchain', 'ethereum', 'eth', 'token', 'coin', 'digital', 'web3', 'nft', 'defi', 'hodl', 'moon'],
+    layers: [{doodle: 'bitcoin', x: 20, y: 14, size: 60, draw: [0, 1.1], color: 'accent2', width: 1.6, motion: [{kind: 'flip', period: 2.6, at: 1.2}]}],
+  },
+  recycle: {
+    about: 'the recycling arrows, turning: again and again',
+    tags: ['reinvest', 'reinvested', 'reinvesting', 'rinse and repeat', 'over and over', 'again and again'],
+    search: ['recycle', 'reuse', 'again', 'repeat', 'cycle', 'loop', 'reinvest', 'round', 'rotate', 'recurring', 'routine', 'process', 'circular', 'green'],
+    layers: [{doodle: 'recycle', x: 18, y: 14, size: 64, draw: [0, 1.3], color: 'accent', width: 1.5, motion: [{kind: 'spin', period: 6}]}],
+  },
+  drained: {
+    about: 'a battery running low',
+    tags: ['burnt out', 'burnout', 'running on empty', 'drained', 'exhausted'],
+    search: ['tired', 'drained', 'exhausted', 'burnout', 'empty', 'low', 'running out', 'battery', 'energy', 'flat', 'done', 'worn out', 'spent'],
+    layers: [{doodle: 'battery', x: 10, y: 28, size: 80, draw: [0, 1.0], width: 1.5, motion: [{kind: 'shake', deg: 2, period: 0.2, at: 1.4, for: 0.5}, {kind: 'pulse', amp: 0.03, period: 1.8}]}],
+  },
+  'look-closer': {
+    about: 'a pair of glasses: read the small print',
+    tags: ['small print', 'fine print', 'read the terms', 'look closely', 'closer look', 'the detail'],
+    search: ['look', 'glasses', 'check', 'inspect', 'detail', 'details', 'careful', 'read', 'zoom', 'focus', 'examine', 'review', 'audit', 'scrutiny'],
+    layers: [{doodle: 'glasses', x: 8, y: 26, size: 84, draw: [0, 1.1], width: 1.5, motion: [{kind: 'bob', amp: 2, period: 2}, {kind: 'tip', deg: 3, period: 2.4}]}],
+  },
+  trash: {
+    about: 'a bin: throwing money away',
+    tags: ['throwing money away', 'money down the drain', 'waste of money', 'wasted money', 'rip off', 'rip-off'],
+    search: ['trash', 'bin', 'waste', 'wasted', 'wasting', 'rubbish', 'junk', 'useless', 'scrap', 'delete', 'garbage', 'throw away', 'dump', 'pointless'],
+    layers: [{doodle: 'trash-2', x: 24, y: 12, size: 52, draw: [0, 1.1], width: 1.5, origin: '50% 100%', motion: [{kind: 'tip', deg: 5, period: 1.8}]}],
+  },
+  puzzle: {
+    about: 'a puzzle piece',
+    tags: ['piece of the puzzle', 'pieces of the puzzle', 'fits together', 'the missing piece'],
+    search: ['puzzle', 'confusing', 'confused', 'complicated', 'complex', 'figure out', 'strategy', 'plan', 'problem', 'solve', 'solution', 'piece', 'fit', 'tricky'],
+    layers: [{doodle: 'puzzle', x: 18, y: 14, size: 64, draw: [0, 1.2], color: 'blue', width: 1.5, motion: [{kind: 'sway', deg: 8, period: 2}, {kind: 'bob', amp: 3, period: 2}]}],
+  },
+  people: {
+    about: 'a few people together',
+    tags: ['most people', 'everyone else', 'the average person', 'your friends and family', 'the community'],
+    search: ['people', 'everyone', 'family', 'friends', 'community', 'team', 'audience', 'viewers', 'crowd', 'society', 'public', 'others', 'group', 'together', 'we'],
+    layers: [{doodle: 'users', x: 14, y: 16, size: 72, draw: [0, 1.3], width: 1.5, motion: [{kind: 'bob', amp: 2, period: 2.2}]}],
+  },
+  you: {
+    about: 'one person: you',
+    tags: ['this is you', 'that is you', 'the average you'],
+    search: ['you', 'yourself', 'me', 'myself', 'person', 'individual', 'personal', 'someone', 'user', 'profile', 'account', 'human', 'single'],
+    layers: [{doodle: 'user', x: 22, y: 12, size: 56, draw: [0, 1.0], width: 1.5, motion: [{kind: 'pulse', amp: 0.05, period: 1.6}, {kind: 'bob', amp: 2, period: 1.6}]}],
+  },
+  laptop: {
+    about: 'a laptop',
+    tags: ['side hustle', 'work from home', 'working from home', 'online business', 'freelance', 'freelancing'],
+    search: ['laptop', 'online', 'internet', 'website', 'app', 'computer', 'remote', 'digital', 'tech', 'work', 'office', 'email', 'screen', 'wfh', 'typing'],
+    layers: [{doodle: 'laptop', x: 10, y: 20, size: 80, draw: [0, 1.2], width: 1.5, motion: [{kind: 'pulse', amp: 0.02, period: 1.4}]}],
+  },
+  ticket: {
+    about: 'a ticket: a night out',
+    tags: ['night out', 'nights out', 'concert tickets', 'cinema trip', 'entertainment'],
+    search: ['ticket', 'tickets', 'event', 'concert', 'gig', 'cinema', 'movie', 'night out', 'fun', 'entertainment', 'show', 'festival', 'match', 'game', 'admission'],
+    layers: [{doodle: 'ticket', x: 14, y: 20, size: 72, draw: [0, 1.1], color: 'accent2', width: 1.5, motion: [{kind: 'tip', deg: 6, period: 1.8}, {kind: 'bob', amp: 2, period: 1.8}]}],
+  },
+  siren: {
+    about: 'a flashing siren: scam alert',
+    tags: ['scam', 'scams', 'scammer', 'scammers', 'fraud', 'red flag', 'red flags', 'scam alert', 'too good to be true'],
+    search: ['siren', 'alert', 'alarm', 'emergency', 'urgent', 'warning', 'danger', 'scam', 'fraud', 'police', 'red flag', 'beware', 'caution', 'stop'],
+    layers: [
+      {doodle: 'siren', x: 20, y: 14, size: 60, draw: [0, 1.2], color: 'accent', width: 1.6, motion: [{kind: 'pulse', amp: 0.06, period: 0.5}]},
+      ...rays(50, 20, 24, 36, 5, 1.2, 'accent'),
+    ],
+  },
+  castle: {
+    about: 'a castle: the dream home',
+    tags: ['dream home', 'dream house', 'mansion', 'living like a king', 'living like royalty'],
+    search: ['castle', 'mansion', 'dream', 'dreams', 'luxury', 'big house', 'goals', 'rich', 'palace', 'royal', 'fancy', 'posh', 'fortress', 'empire'],
+    layers: [{doodle: 'castle', x: 12, y: 14, size: 76, draw: [0, 1.4], width: 1.5, motion: [{kind: 'pulse', amp: 0.02, period: 2.2}]}],
+  },
+  sail: {
+    about: 'a sailing boat, bobbing along',
+    tags: ['smooth sailing', 'plain sailing', 'stay the course', 'ride it out', 'weather the storm'],
+    search: ['sail', 'sailing', 'boat', 'cruise', 'steady', 'journey', 'voyage', 'sea', 'ocean', 'yacht', 'ship', 'drift', 'float', 'wave', 'tide'],
+    layers: [
+      {doodle: 'sailboat', x: 16, y: 10, size: 68, draw: [0, 1.2], width: 1.5, motion: [{kind: 'bob', amp: 4, period: 2.2}, {kind: 'tip', deg: 6, period: 2.2}]},
+      {path: 'M6 86 q12 -8 24 0 t24 0 t24 0 t24 0', x: 0, y: 0, size: 100, draw: [1.2, 1.7], color: 'blue', width: 2, motion: [{kind: 'slide', dx: -12, at: 1.7, dur: 2.2, every: 2.2}]},
+    ],
+    loop: 4.4,
+  },
+  strong: {
+    about: 'a dumbbell being lifted',
+    tags: ['financially strong', 'financial muscle', 'heavy lifting', 'do the heavy lifting', 'get strong'],
+    search: ['strong', 'strength', 'fitness', 'gym', 'training', 'discipline', 'muscle', 'heavy', 'lift', 'workout', 'power', 'tough', 'resilient', 'flex'],
+    layers: [{doodle: 'dumbbell', x: 10, y: 24, size: 80, draw: [0, 1.1], width: 1.6, motion: [{kind: 'rise', dy: -12, at: 1.2, dur: 0.6}, {kind: 'bob', amp: 6, period: 1.4}]}],
+  },
+  news: {
+    about: 'a newspaper: the headlines',
+    tags: ['the headlines', 'headline', 'in the news', 'breaking news', 'the papers', 'the press'],
+    search: ['news', 'headlines', 'headline', 'media', 'press', 'paper', 'newspaper', 'breaking', 'announcement', 'article', 'story', 'journalist', 'report'],
+    layers: [{doodle: 'newspaper', x: 12, y: 14, size: 76, draw: [0, 1.3], width: 1.5, motion: [{kind: 'tip', deg: 2, period: 2.6}, {kind: 'pulse', amp: 0.02, period: 2.6}]}],
+  },
+  mic: {
+    about: 'a microphone',
+    tags: ['podcast', 'on the podcast', 'mic drop', 'interview', 'announcement'],
+    search: ['mic', 'microphone', 'talk', 'speak', 'podcast', 'announce', 'say', 'voice', 'interview', 'speech', 'record', 'recording', 'sing', 'karaoke', 'mic drop'],
+    layers: [{doodle: 'mic', x: 24, y: 10, size: 52, draw: [0, 1.1], width: 1.5, origin: '50% 100%', motion: [{kind: 'sway', deg: 5, period: 1.6}]}],
+  },
+  tv: {
+    about: 'a television',
+    tags: ['on the telly', 'binge watching', 'netflix and', 'streaming subscriptions', 'tv licence'],
+    search: ['tv', 'television', 'telly', 'watch', 'show', 'netflix', 'series', 'binge', 'screen', 'streaming', 'film', 'movie', 'channel', 'remote', 'sofa'],
+    layers: [{doodle: 'tv', x: 12, y: 16, size: 76, draw: [0, 1.3], width: 1.5, motion: [{kind: 'pulse', amp: 0.02, period: 1.2}]}],
+  },
+  health: {
+    about: 'a stethoscope: health',
+    tags: ['health insurance', 'the doctor', 'medical bills', 'sick pay', 'off sick'],
+    search: ['health', 'doctor', 'nhs', 'hospital', 'medical', 'insurance', 'check up', 'illness', 'sick', 'ill', 'medicine', 'nurse', 'healthcare', 'wellbeing', 'dentist'],
+    layers: [{doodle: 'stethoscope', x: 16, y: 12, size: 68, draw: [0, 1.3], color: 'blue', width: 1.5, motion: [{kind: 'sway', deg: 4, period: 2.2}]}],
+  },
+  baby: {
+    about: 'a baby',
+    tags: ['having a baby', 'new baby', 'new parents', 'childcare', 'child benefit', 'nursery fees'],
+    search: ['baby', 'kids', 'children', 'child', 'family', 'parent', 'parents', 'newborn', 'nursery', 'toddler', 'pregnant', 'mum', 'dad', 'cute'],
+    layers: [{doodle: 'baby', x: 18, y: 12, size: 64, draw: [0, 1.3], width: 1.5, motion: [{kind: 'sway', deg: 6, period: 2.4}, {kind: 'bob', amp: 2, period: 1.2}]}],
+  },
+  luck: {
+    about: 'a four-leaf clover',
+    tags: ['good luck', 'got lucky', 'pure luck', 'down to luck', 'lucky break', 'stroke of luck'],
+    search: ['luck', 'lucky', 'fortune', 'chance', 'clover', 'charm', 'fingers crossed', 'hope', 'wish', 'irish', 'green', 'random', 'fate'],
+    layers: [{doodle: 'clover', x: 18, y: 12, size: 64, draw: [0, 1.2], color: 'accent', width: 1.5, motion: [{kind: 'spin', period: 8}, {kind: 'bob', amp: 3, period: 2}]}],
+  },
+  forever: {
+    about: 'an infinity sign, drawn and redrawn',
+    tags: ['for the rest of your life', 'for life', 'forever', 'never ending', 'in perpetuity', 'never stops'],
+    search: ['forever', 'infinite', 'infinity', 'endless', 'unlimited', 'always', 'limitless', 'eternal', 'never ends', 'long term', 'lifetime', 'ongoing', 'loop'],
+    layers: [{doodle: 'infinity', x: 8, y: 26, size: 84, draw: [0, 1.4], color: 'blue', width: 1.8, motion: [{kind: 'pulse', amp: 0.05, period: 2}]}],
+  },
+  rainbow: {
+    about: 'a rainbow: the pot of gold',
+    tags: ['pot of gold', 'end of the rainbow', 'chasing rainbows', 'pipe dream'],
+    search: ['rainbow', 'gold', 'dream', 'dreams', 'fantasy', 'too good to be true', 'hope', 'hopeful', 'optimistic', 'pride', 'colours', 'colors', 'magic', 'unicorn'],
+    layers: [{doodle: 'rainbow', x: 8, y: 22, size: 84, draw: [0, 1.5], color: 'accent', width: 1.6, motion: [{kind: 'pulse', amp: 0.03, period: 2.2}]}],
+  },
+  stopwatch: {
+    about: 'a stopwatch: against the clock',
+    tags: ['against the clock', 'race against time', 'before the deadline', 'the deadline', 'running out of time'],
+    search: ['stopwatch', 'timer', 'seconds', 'quick', 'fast', 'speed', 'race', 'deadline', 'countdown', 'hurry', 'rush', 'time', 'late', 'now'],
+    layers: [{doodle: 'timer', x: 22, y: 12, size: 56, draw: [0, 1.1], width: 1.5, motion: [{kind: 'shake', deg: 3, period: 0.5}, {kind: 'pulse', amp: 0.04, period: 1}]}],
+  },
+  shop: {
+    about: 'a little shop',
+    tags: ['small business', 'local business', 'high street', 'open a shop', 'own business', 'start a business'],
+    search: ['shop', 'store', 'business', 'small business', 'high street', 'retail', 'sell', 'selling', 'market', 'stall', 'owner', 'startup', 'entrepreneur', 'trade'],
+    layers: [{doodle: 'store', x: 12, y: 14, size: 76, draw: [0, 1.4], width: 1.5, motion: [{kind: 'pulse', amp: 0.02, period: 2.2}]}],
+  },
+  location: {
+    about: 'a map pin, dropping in',
+    tags: ['where you live', 'in your area', 'local area', 'postcode', 'location location'],
+    search: ['location', 'place', 'here', 'where', 'local', 'area', 'near me', 'map', 'pin', 'address', 'city', 'town', 'london', 'move', 'moving'],
+    layers: [{doodle: 'map-pin', x: 24, y: 10, size: 52, draw: [0, 1.0], color: 'accent', width: 1.5, origin: '50% 100%', motion: [{kind: 'bob', amp: 5, period: 1.3}, {kind: 'sway', deg: 4, period: 2}]}],
+  },
+  tree: {
+    about: 'a tree: decades of growth',
+    tags: ['plant a tree', 'the best time to plant', 'oak tree', 'decades', 'over decades', 'for decades'],
+    search: ['tree', 'long term', 'patience', 'patient', 'years', 'decades', 'roots', 'oak', 'nature', 'forest', 'wood', 'green', 'grow', 'shade', 'leaves'],
+    layers: [{doodle: 'tree-deciduous', x: 14, y: 8, size: 72, draw: [0, 1.4], color: 'accent', width: 1.5, origin: '50% 100%', motion: [{kind: 'sway', deg: 3, period: 3}]}],
+  },
+  frozen: {
+    about: 'a snowflake: frozen',
+    tags: ['frozen', 'freeze', 'freezes', 'on ice', 'cold feet', 'frozen out'],
+    search: ['frozen', 'freeze', 'cold', 'winter', 'ice', 'snow', 'pause', 'paused', 'on hold', 'stuck', 'chill', 'christmas', 'brr', 'stop'],
+    layers: [{doodle: 'snowflake', x: 18, y: 14, size: 64, draw: [0, 1.3], color: 'blue', width: 1.5, motion: [{kind: 'spin', period: 12}, {kind: 'bob', amp: 3, period: 2.4}]}],
+  },
+  bike: {
+    about: 'a bicycle rolling along',
+    tags: ['cycle to work', 'cycling to work', 'on a bike', 'by bike'],
+    search: ['bike', 'bicycle', 'cycling', 'cycle', 'commute', 'ride', 'riding', 'fitness', 'cheap travel', 'wheels', 'pedal', 'exercise'],
+    layers: [{doodle: 'bike', x: 8, y: 22, size: 84, draw: [0, 1.4], width: 1.5, motion: [{kind: 'slide', dx: 14, at: 1.5, dur: 3, every: 3}, {kind: 'bob', amp: 1.5, period: 0.5}]}],
+    loop: 4.5,
+  },
+  train: {
+    about: 'the front of a train',
+    tags: ['train fares', 'train fare', 'season ticket', 'commuting', 'the commute', 'on the tube'],
+    search: ['train', 'commute', 'commuting', 'travel', 'rail', 'railway', 'tube', 'metro', 'station', 'journey', 'transport', 'public transport', 'bus'],
+    layers: [{doodle: 'train-front', x: 18, y: 10, size: 64, draw: [0, 1.4], width: 1.5, motion: [{kind: 'shake', deg: 1, period: 0.2}, {kind: 'pulse', amp: 0.04, period: 2.4}]}],
+  },
+  'night-out': {
+    about: 'a pint and a glass of wine',
+    tags: ['nights out', 'night out', 'drinks with friends', 'at the pub', 'round of drinks', 'eating out'],
+    search: ['night out', 'drinks', 'drink', 'pub', 'beer', 'wine', 'pint', 'party', 'weekend', 'takeaway', 'eating out', 'bar', 'cheers', 'friday', 'social'],
+    layers: [
+      {doodle: 'beer', x: 6, y: 18, size: 50, draw: [0, 1.0], color: 'accent2', width: 1.5, origin: '70% 100%', motion: [{kind: 'sway', deg: -6, period: 1.6}]},
+      {doodle: 'wine', x: 52, y: 14, size: 46, draw: [1.0, 1.9], color: 'accent', width: 1.5, origin: '30% 100%', motion: [{kind: 'sway', deg: 6, period: 1.6}]},
+    ],
+  },
+  shopping: {
+    about: 'a shopping bag, swinging',
+    tags: ['impulse buy', 'impulse buys', 'impulse purchase', 'retail therapy', 'shopping spree', 'splurge', 'splurged'],
+    search: ['shopping', 'shop', 'buy', 'bought', 'spend', 'spending', 'splurge', 'impulse', 'haul', 'clothes', 'sale', 'bag', 'purchase', 'checkout', 'amazon', 'order'],
+    layers: [{doodle: 'shopping-bag', x: 22, y: 12, size: 56, draw: [0, 1.1], color: 'accent', width: 1.5, origin: '50% 0%', motion: [{kind: 'sway', deg: 7, period: 1.5}]}],
+  },
+  verified: {
+    about: 'a verified badge',
+    tags: ['fca regulated', 'regulated', 'fscs protected', 'legit', 'legitimate', 'the real deal'],
+    search: ['verified', 'approved', 'certified', 'legit', 'official', 'trusted', 'trust', 'genuine', 'real', 'authentic', 'badge', 'tick', 'checked', 'confirmed', 'safe'],
+    layers: [{doodle: 'badge-check', x: 18, y: 14, size: 64, draw: [0, 1.2], color: 'blue', width: 1.5, motion: [{kind: 'pop', at: 1.2}, {kind: 'pulse', amp: 0.04, period: 1.6}]}],
+  },
+  contract: {
+    about: 'a scroll: the paperwork',
+    tags: ['the contract', 'sign the contract', 'terms and conditions', 'the paperwork', 'your will', 'make a will'],
+    search: ['contract', 'agreement', 'terms', 'document', 'paperwork', 'sign', 'signed', 'legal', 'will', 'policy', 'form', 'forms', 'letter', 'deed', 'lease'],
+    layers: [{doodle: 'scroll', x: 16, y: 12, size: 68, draw: [0, 1.3], width: 1.5, motion: [{kind: 'tip', deg: 3, period: 2.4}]}],
+  },
+  compass: {
+    about: 'a compass, finding north',
+    tags: ['which way', 'find your way', 'a sense of direction', 'lost your way', 'the right direction'],
+    search: ['compass', 'direction', 'plan', 'navigate', 'lost', 'strategy', 'route', 'path', 'way', 'guide', 'north', 'map', 'explore', 'find', 'where'],
+    layers: [{doodle: 'compass', x: 18, y: 14, size: 64, draw: [0, 1.3], width: 1.5, motion: [{kind: 'sway', deg: 20, period: 1.8}]}],
+  },
+  rescue: {
+    about: 'a life ring: the safety net',
+    tags: ['safety net', 'bail you out', 'bailed out', 'bail out', 'lifeline', 'a lifeline', 'rainy day fund'],
+    search: ['rescue', 'help', 'lifeline', 'bail out', 'bailout', 'safety net', 'emergency', 'emergency fund', 'saved', 'support', 'save me', 'sos', 'backup', 'cushion'],
+    layers: [{doodle: 'life-buoy', x: 18, y: 14, size: 64, draw: [0, 1.3], color: 'accent', width: 1.5, motion: [{kind: 'spin', period: 10}, {kind: 'bob', amp: 3, period: 2}]}],
+  },
+  office: {
+    about: 'an office block',
+    tags: ['your employer', 'the company', 'big corporation', 'corporate', 'the office', 'nine to five', '9 to 5'],
+    search: ['office', 'company', 'corporate', 'corporation', 'job', 'employer', 'business', 'work', 'hq', 'building', 'career', 'boss', 'employee', 'city'],
+    layers: [{doodle: 'building-2', x: 18, y: 10, size: 64, draw: [0, 1.4], width: 1.5, motion: [{kind: 'pulse', amp: 0.02, period: 2.2}]}],
+  },
+  petrol: {
+    about: 'a fuel pump',
+    tags: ['petrol prices', 'fuel prices', 'price of petrol', 'fill up the car', 'filling up', 'energy bills', 'energy bill'],
+    search: ['petrol', 'fuel', 'gas', 'diesel', 'pump', 'filling up', 'energy', 'bill', 'bills', 'prices', 'car', 'driving', 'station', 'oil', 'electric'],
+    layers: [{doodle: 'fuel', x: 20, y: 12, size: 60, draw: [0, 1.2], width: 1.5, motion: [{kind: 'bob', amp: 2, period: 2}]}],
+  },
+  giving: {
+    about: 'a hand holding out coins',
+    tags: ['give back', 'giving back', 'donate', 'donation', 'to charity', 'generous', 'generosity', 'hand it over'],
+    search: ['give', 'giving', 'donate', 'donation', 'charity', 'tip', 'generous', 'pay', 'paying', 'hand over', 'hand out', 'share', 'sharing', 'offer', 'gift', 'help'],
+    layers: [{doodle: 'hand-coins', x: 14, y: 14, size: 72, draw: [0, 1.3], color: 'accent2', width: 1.5, motion: [{kind: 'bob', amp: 3, period: 1.8}]}],
+  },
+  music: {
+    about: 'a pair of headphones',
+    tags: ['spotify subscription', 'music subscription', 'playlist', 'put your headphones on'],
+    search: ['music', 'song', 'listen', 'spotify', 'playlist', 'tune', 'vibe', 'vibes', 'headphones', 'audio', 'sound', 'dj', 'beat', 'radio', 'jam'],
+    layers: [{doodle: 'headphones', x: 16, y: 14, size: 68, draw: [0, 1.2], width: 1.5, motion: [{kind: 'bob', amp: 3, period: 0.6}, {kind: 'sway', deg: 3, period: 1.2}]}],
+  },
+  game: {
+    about: 'a game controller',
+    tags: ['video games', 'gaming', 'level up', 'levelling up', 'next level', 'the game'],
+    search: ['game', 'games', 'gaming', 'play', 'playing', 'console', 'xbox', 'playstation', 'nintendo', 'fun', 'level up', 'controller', 'gamer', 'win', 'score'],
+    layers: [{doodle: 'gamepad-2', x: 10, y: 20, size: 80, draw: [0, 1.3], width: 1.5, motion: [{kind: 'shake', deg: 3, period: 0.3, at: 1.3, for: 0.6}, {kind: 'bob', amp: 2, period: 1.4}]}],
+  },
+  pet: {
+    about: 'a dog',
+    tags: ['your dog', 'your cat', 'vet bills', 'pet insurance', 'the vet', 'a pet'],
+    search: ['pet', 'dog', 'cat', 'puppy', 'kitten', 'vet', 'animal', 'animals', 'pets', 'doggo', 'woof', 'paw', 'good boy', 'cute'],
+    layers: [{doodle: 'dog', x: 16, y: 12, size: 68, draw: [0, 1.3], width: 1.5, motion: [{kind: 'bob', amp: 3, period: 0.7}, {kind: 'tip', deg: 3, period: 1.4}]}],
+  },
+  food: {
+    about: 'an apple: the food shop',
+    tags: ['food shop', 'food shopping', 'the big shop', 'groceries', 'grocery', 'weekly shop', 'meal prep', 'meal plan'],
+    search: ['food', 'groceries', 'eat', 'eating', 'healthy', 'diet', 'supermarket', 'meal', 'lunch', 'dinner', 'fruit', 'apple', 'snack', 'hungry', 'cook', 'cooking', 'kitchen'],
+    layers: [{doodle: 'apple', x: 20, y: 12, size: 60, draw: [0, 1.1], color: 'accent', width: 1.5, motion: [{kind: 'sway', deg: 6, period: 2}, {kind: 'bob', amp: 2, period: 2}]}],
+  },
+  smoking: {
+    about: 'a cigarette: an expensive habit',
+    tags: ['smoking', 'cigarettes', 'pack a day', 'quit smoking', 'vaping'],
+    search: ['smoking', 'cigarette', 'vape', 'vaping', 'bad habit', 'quit', 'habit', 'addiction', 'addicted', 'smoke', 'tobacco', 'stop smoking'],
+    layers: [{doodle: 'cigarette', x: 8, y: 30, size: 84, draw: [0, 1.0], width: 1.5, motion: [{kind: 'tip', deg: 3, period: 2}]}],
+  },
+  creative: {
+    about: 'a paint palette',
+    tags: ['creative side', 'creative work', 'as a hobby', 'your hobby', 'hobbies'],
+    search: ['creative', 'art', 'design', 'paint', 'painting', 'colour', 'color', 'artist', 'hobby', 'craft', 'drawing', 'draw', 'make', 'maker', 'style'],
+    layers: [{doodle: 'palette', x: 16, y: 14, size: 68, draw: [0, 1.3], color: 'accent', width: 1.5, motion: [{kind: 'sway', deg: 5, period: 2.2}]}],
+  },
+  measure: {
+    about: 'a ruler: measure it',
+    tags: ['measure it', 'track it', 'what gets measured', 'keep track', 'track your spending', 'track your'],
+    search: ['measure', 'measuring', 'track', 'tracking', 'metric', 'size', 'how big', 'how much', 'ruler', 'length', 'scale', 'compare', 'inch', 'cm', 'progress'],
+    layers: [{doodle: 'ruler', x: 14, y: 14, size: 72, draw: [0, 1.2], width: 1.5, motion: [{kind: 'tip', deg: 4, period: 2.4}]}],
+  },
+  night: {
+    about: 'a moon and a star: late at night',
+    tags: ['late at night', 'at night', 'stay up late', 'overnight', 'the small hours'],
+    search: ['night', 'late', 'evening', 'dark', 'tonight', 'overnight', 'stay up', 'midnight', 'moon', 'stars', 'bedtime', 'nocturnal', 'dream'],
+    layers: [
+      {doodle: 'moon', x: 14, y: 20, size: 56, draw: [0, 0.9], color: 'blue', width: 1.5, motion: [{kind: 'sway', deg: 3, period: 3}]},
+      {doodle: 'star', x: 66, y: 10, size: 22, draw: [0.9, 1.2], color: 'accent2', width: 1.6, fill: true, motion: [{kind: 'pulse', amp: 0.2, period: 1.2}]},
+    ],
+  },
+  fishing: {
+    about: 'a fish on the line: patience, and phishing',
+    tags: ['phishing', 'phishing email', 'phishing scam', 'take the bait', 'hook, line and sinker', 'fishing'],
+    search: ['fish', 'fishing', 'phishing', 'bait', 'hook', 'catch', 'patience', 'scam', 'link', 'lure', 'reel', 'sea', 'ocean', 'trap'],
+    layers: [{doodle: 'fish', x: 14, y: 22, size: 72, draw: [0, 1.2], color: 'blue', width: 1.5, motion: [{kind: 'slide', dx: 10, at: 1.3, dur: 1.4, every: 2.8}, {kind: 'bob', amp: 3, period: 1.4}]}],
+    loop: 4.1,
+  },
+  'early-bird': {
+    about: 'a bird: the early one',
+    tags: ['early bird', 'the early bird', 'head start', 'a head start', 'start early', 'started early', 'starting early'],
+    search: ['bird', 'early', 'first', 'morning', 'start early', 'head start', 'ahead', 'before', 'beginner', 'begin', 'sunrise', 'tweet', 'twitter', 'fly'],
+    layers: [{doodle: 'bird', x: 16, y: 16, size: 68, draw: [0, 1.2], width: 1.5, motion: [{kind: 'bob', amp: 4, period: 0.9}, {kind: 'sway', deg: 4, period: 1.8}]}],
+  },
+  bug: {
+    about: 'a bug: something is broken',
+    tags: ['a bug', 'the bug', 'glitch', 'glitchy', 'bugs in', 'is broken', 'went wrong'],
+    search: ['bug', 'glitch', 'problem', 'issue', 'broken', 'error', 'pest', 'fault', 'crash', 'fail', 'failed', 'wrong', 'insect', 'annoying', 'fix'],
+    layers: [{doodle: 'bug', x: 18, y: 14, size: 64, draw: [0, 1.2], width: 1.5, motion: [{kind: 'shake', deg: 4, period: 0.2}, {kind: 'slide', dx: 8, at: 1.4, dur: 1, every: 2}]}],
+    loop: 3.4,
+  },
 };
 
 const PICK: [RegExp, string][] = Object.entries(ART).map(([name, def]) => [new RegExp('\\b(' + def.tags.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'i'), name]);
@@ -546,7 +1159,7 @@ export const pickArt = (explicit: string | undefined, ...texts: (string | undefi
 };
 
 /** Every drawing's name, with what it shows and the words that call it up (for the studio's library). */
-export const artCatalogue = () => Object.entries(ART).map(([name, def]) => ({name, about: def.about, tags: def.tags}));
+export const artCatalogue = () => Object.entries(ART).map(([name, def]) => ({name, about: def.about, tags: def.tags, search: def.search ?? []}));
 
 // ------------------------------------------------------------------ drawing one
 
