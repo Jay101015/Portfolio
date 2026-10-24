@@ -4,6 +4,10 @@ Topic: What to do with your first £10,000 (free-use b-roll and illustrations on
 
 | scene | query | result | licence | attribution |
 |---|---|---|---|---|
+| 9 | | already in media/: gif-261024214141xon.gif | | |
+| 21 | | already in media/: gif-26102421473041l.gif | | |
+| 30 | | already in media/: gif-261024215207fou.gif | | |
+| 35 | | already in media/: gif-261024215602l7d.gif | | |
 
 ## What counts as free use here
 
