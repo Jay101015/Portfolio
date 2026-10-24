@@ -226,6 +226,20 @@ Keep the tags; change the words. If you drift from the script while
 recording, the aligner follows the voice, not the page: scenes still land
 where you say them.
 
+### Editing after the transcription
+
+Once a recording is in, every scene in Edit says what the recording says
+about it: "Heard in your recording (31 of 33 words)", or a warning that only
+a few of its words, or none, were heard. Change the words, add a scene (the
+**+ Add a scene after this** button, or **+ add** at the end of the strip),
+duplicate or delete one, and the timings follow the words rather than the
+scene number: a word you kept keeps its time, a word you changed takes its
+place between the kept ones, a deleted scene hands its stretch to the scene
+before, an added scene sits between its neighbours. The render does the same
+fit against the real transcript, so what the preview shows is what the video
+does. Words that nobody said are shown, not spoken: record again if they
+should be.
+
 ## Drawings: the art library
 
 `remotion/src/paper/art.tsx` is a catalogue of little animated drawings in the marker look, one per situation a
