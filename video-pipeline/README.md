@@ -191,6 +191,13 @@ follows), then set in motion.
 - `scripts/art-gifs.sh` renders the whole catalogue to looping GIFs in `library/art/` (480 px, 12 fps); the
   studio's Drawings library shows them, puts them on scenes and saves them to the phone.
 
+### Thumbnails
+
+The studio's Thumbnail sheet (⋯ menu, or Ship) draws a 1280 × 720 thumbnail in the look you are using, from the
+script: the title split into a small line and the hook, the first big number ringed in red, a drawing from the
+library, the hand. Three layouts (hook, big number, question); edit the words, pick another drawing, shuffle, then
+save it to the camera roll. `library/art/<name>.png` are the finished stills it draws with (`scripts/art-stills.sh`).
+
 ### The looks
 
 The board look comes in five skins, all the same writing, hand and drawings: `theme: whiteboard` (the default),
