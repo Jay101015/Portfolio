@@ -27,6 +27,7 @@ import sys
 import urllib.request
 
 from . import align as al
+from .enhance import enhance, level_from_header
 from .preview import write_preview
 from .auto_script import script_from_words
 from .script_parser import parse_script
@@ -478,6 +479,10 @@ def main(argv: list[str] | None = None) -> int:
     total = 0.0
     wav = None
     if audio:
+        # the recording is cleaned up first (voice: raw in the header keeps it as it is)
+        level = level_from_header(_header_lines(md).get("voice"))
+        audio = enhance(audio, os.path.join(project, ".cache", "voice-clean.mp3"), level)
+        print(f"voice: {'as recorded' if level in ('off', 'raw') else 'enhanced (' + level + ')'}")
         total = al.audio_duration(audio)
         wav = al.to_wav16k(audio, os.path.join(project, ".cache", "asr16k.wav"))
         hint = " ".join(sc["narration"] for sc in sb["scenes"]) if sb else ""

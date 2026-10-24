@@ -21,6 +21,7 @@ import sys
 from . import align as al
 from .auto_script import script_from_words
 from .build import _header_lines, find_audio, transcript_for, unpack_uploads, voice_preview, write_timing
+from .enhance import enhance, level_from_header
 from .script_parser import _parse_tag, parse_script
 from .sync import matched_share, rewrite_prose, spoken_by_scene, tagged_from_storyboard
 
@@ -59,6 +60,11 @@ def main(argv: list[str] | None = None) -> int:
     src = draft_path if os.path.exists(draft_path) else os.path.join(project, "script.md")
     md = open(src, encoding="utf-8").read() if os.path.exists(src) else ""
     sb = parse_script(md) if md.strip() else None
+    # a phone recording is cleaned up first (voice: raw in the header keeps it as it is); everything downstream, the
+    # transcript, the preview the studio plays and the render, uses the clean one
+    level = level_from_header(_header_lines(md).get("voice"))
+    audio = enhance(audio, os.path.join(project, ".cache", "voice-clean.mp3"), level)
+    print(f"voice: {'as recorded' if level in ('off', 'raw') else 'enhanced (' + level + ')'}")
     total = al.audio_duration(audio)
     wav = al.to_wav16k(audio, os.path.join(project, ".cache", "asr16k.wav"))
     hint = " ".join(sc["narration"] for sc in sb["scenes"]) if sb else ""

@@ -75,6 +75,34 @@ class ParserTests(unittest.TestCase):
         self.assertEqual(sb["scenes"][1]["props"]["value"], "$1.1T")
 
 
+class EnhanceTests(unittest.TestCase):
+    def test_the_level_comes_from_the_header(self):
+        from pipeline.enhance import chain, level_from_header
+
+        self.assertEqual(level_from_header(None), "normal")
+        self.assertEqual(level_from_header("enhance"), "normal")
+        self.assertEqual(level_from_header("enhance strong"), "strong")
+        self.assertEqual(level_from_header("light"), "light")
+        self.assertEqual(level_from_header("raw"), "off")
+        self.assertIn("arnndn", chain("strong"))
+        self.assertNotIn("arnndn", chain("normal"))
+        self.assertIn("loudnorm", chain("light"))
+
+    def test_a_recording_comes_out_louder_and_even(self):
+        import os, subprocess, tempfile
+        from pipeline.enhance import enhance, measure
+
+        with tempfile.TemporaryDirectory() as d:
+            src = os.path.join(d, "quiet.wav")
+            # four seconds of a quiet buzzing voice-like tone with hiss
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "sine=f=220:d=4", "-f", "lavfi", "-i", "anoisesrc=d=4:c=white:a=0.02", "-filter_complex", "[0]volume=0.05[a];[a][1]amix=inputs=2", "-ac", "1", src], check=True)
+            out = enhance(src, os.path.join(d, "clean.mp3"), "normal")
+            before, after = measure(src), measure(out)
+            self.assertLess(before["lufs"], -25)
+            self.assertGreater(after["lufs"], before["lufs"] + 6)
+            self.assertEqual(enhance(src, os.path.join(d, "x.mp3"), "raw"), src)
+
+
 class ArtTests(unittest.TestCase):
     def test_a_drawing_on_a_scene_and_a_drawing_scene_parse(self):
         md = "# T\ntheme: whiteboard\n\n[text headline=\"x\" art=snowball art_at=br art_size=0.4]\nCompound interest.\n\n[art name=rocket headline=\"Lift off\" caption=\"the first 10k\"]\nThen it takes off.\n"

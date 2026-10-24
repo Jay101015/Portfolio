@@ -90,6 +90,33 @@ Locally the same step is:
 
     python -m pipeline.transcribe projects/<name>
 
+## Your voice, cleaned up
+
+A phone in a bedroom is not a studio microphone, so every recording is cleaned
+up before it is used: the rumble and hum below 80 Hz go, the hiss is reduced,
+harsh "s" sounds are softened, a little mud is taken out and presence put in,
+the level is evened out and brought to the loudness YouTube expects (-16 LUFS).
+The original file is never touched; the cleaned copy is what the transcription
+listens to and what the video plays, and `voice-preview.mp3` after a
+transcription is the cleaned version, so you can hear it in the studio.
+
+In the studio's Read sheet, under the player, **Your voice** has four choices:
+
+- **As recorded**: no clean-up at all (`voice: raw` in the script header).
+- **Light**: gentle noise removal and light compression.
+- **Normal**: the default; proper noise removal and compression.
+- **Strong**: a neural noise suppressor (RNNoise) in front of all of that, for
+  noisy rooms and bad mics (`voice: strong`).
+
+**Hear it roughly cleaned (preview)** plays your recording through the
+browser's own EQ and compressor so you get an idea; the real clean-up, with
+noise removal, happens when the recording is sent. It adds about twelve
+seconds per minute of audio to the transcription job.
+
+Locally:
+
+    python -m pipeline.enhance in.m4a out.mp3 --level strong --measure
+
 ## Drafts
 
 **Save** in the top bar opens Drafts: name the version and save it. Drafts
