@@ -1,6 +1,6 @@
 # Your first £10,000: what to actually do with it
-synced: 2026-10-21T01:56:12Z
-request: rmvhg5kqo
+synced: 2026-10-24T20:51:46Z
+request: rmvmuz52l
 slug: first-10k
 topic: What to do with your first £10,000
 theme: whiteboard
@@ -8,146 +8,144 @@ host: none
 brand.name: MONEY MOVES
 source: voiceover
 
-[title]
-you guys, welcome to the channel.
+[title title=" I Turned £3K Into £11K… Then Lost Most of It | Road to £100K" kicker="Episode 1" art=snowball art_at=tr art_size=0.37]
+Just after Covid, I turned £3 ,000 into £11 ,000 and then I sat there and watched it all for 10, 8, 6, all the way down to 4 .5, I did almost everything wrong, but that mess taught me
 
 [text]
-Today is going to be an interesting one.
+so much about money more than anything else ever has.
 
-[stat value="£10,000"]
-This is just going to be what you are going to do with your first ten thousand pounds, or dollars, and how to actually start investing.
+[stat value="£0"]
+So now I'm starting again, properly this time, I'm going from 0 to £100 ,000 and I'm going to show you every step,
 
-[stat value="£10,000"]
-So, if you have managed to save ten thousand pounds, or ten thousand dollars, first of all congratulations.
+[text art=off]
+the wins, the mistakes and what it actually feels like. Hi, I'm Jeffrey, this is the Everyday Investor and welcome to episode 1 of my Road to 100k.
 
-[text]
-That is a massive step. It took me a lot of time, mostly because I made a few mistakes along the way.
+[text art=off]
+So let me take you back, it's around the end of Covid, I believe 2021, everybody's at home, everyone's on their phone and people are talking about crypto, right????
 
-[text]
-Most finance channels give you the same saving, and investing E T F content. But here you are just going to try and get some things. Here you will get that as well, but you also get some input into my journey from the ground up.
+[text art=off sticker="gif-261024213825obq.gif" sticker_at=tr]
+I picked up a bit of investing from working in finance at the time, I specifically worked in the tech sector but I was there in a private bank and I thought, why not?
 
-[text]
-So, you know it actually is possible. My name is Jeffrey. I am an AI consultant on a legal advisory. Before that I worked in private banking for about two and a half years, and before that, finally enough I was in university and I actually ended up dropping out and doing a coding bootcamp.
+[stat value="£2000" art=off sticker="gif-2610242139463x4.gif" sticker_at=tr]
+I put it around two or three grand and it went up, it went up and up and up and at one point I was sitting about on around £11 ,000, roughly I think $14 ,000 and honestly I couldn't
 
-[text]
-So, the bootcamp led me like landed during the crypto bull run. So, once I finished that, I was working at a covid site, and then from there, I was slowly investing into the crypto market just at the, I guess, maybe second stage of the bull run.
+[text art=off]
+believe it. I was checking it constantly on the bus in bed, in conversations I was just obsessed with that number, I was so obsessed with that specific number because it was the first time I ever seen five figures in my entire life and then the bear market dropped and this
 
-[text]
-So, I managed to get some higher earnings and higher returns, and it worked out for a little while.
+[still src="gif-261024214141xon.gif" caption="" zoom=none]
 
-[stat value="£10,000"]
-I got to about ten thousand pounds, which is probably what? Around eleven and a half thousand dollars.
-
-[text]
-And then during 2022, the bear market, I think it was around March, the bear market happened. And I thought I had the most brave investor mentality. I had the diamond hands, and I was not going to let go. Sadly, I was greatly mistaken because I lost a lot of money.
+[text art=off]
+This where I made every single mistake, I had diamond hands, I wasn't selling because in my head, it was going to come back, I was going to get to 20k and I just thought that 11 grand was mine, I thought it was in my bank account but it wasn't.
 
 [text]
-That was the first time I ever invested. The first time I got somewhere that I never thought I could reach before.
-
-[stat value="£4,000"]
-And I ended up still, luckily, enough cashing around four thousand pounds, which was technically a profit, but I had lost over half of what I made, which was terrible.
+So, 10 became a, you know, 8 became 6 and then it just kept sliding all the way until I finally said enough that 4 .5 grand and at that point I just had enough, I panicked, I cashed out, so yeah, to be fair, I still walked away in profit but I sold out of emotion and not because of a plan which was my biggest mistake.
 
 [text]
-I wasn't the biggest mistake was I was investing money that I just couldn't afford to lose. I had no emergency fund. I had co -op payments to add to worry about, and I was young. I was greedy. I wanted more money because I was earning minimum wage at the time, you know, working in a COVID site.
+So, looking back, it taught me three things, I'll keep coming back to you on this channel. Only invest money you can genuinely afford to lose, especially with everything, anything as volatile as crypto, if anything, it would wreck your month then it shouldn't be there.
 
-[stat value="£11"]
-You're probably making about eleven pounds, close to twelve pounds an hour. So I really, really wanted to make a lot of money, which was my first mistake. I was putting more money than I knew what to do with. Now, I'm not a financial advisor by any means, and I'm a sure people make mistakes.
-
-[text]
-Luckily, for me, I was young enough to make those mistakes and then learn from them without breaking my future. So this is the plan I wish someone had handed to me.
-
-[stat value="100,000"]
-Now, over the next few weeks, this is probably going to become a series of my road to a hundred thousand invested.
-
-[stat value="1,000,000"]
-And after that, possibly a million, or just to become work optional, that is the real goal, right?
+[text art=off]
+And then to, don't marry the number, the moment started at 11 grand and then I started treating it as it was my own money and the number on screen just wasn't mine, it really wasn't, I was so obsessed with the number but it wasn't mine.
 
 [text]
-For most of us not having to swap our label for survival is the goal, not to get too philosophical, but that is what I believe we all hope for, you know, when we're working.
+And then number three, have a plan on what you're going to do, especially when the market, you know, goes for a test, I didn't have one, I just assumed it was going to be a really long term thing, I was watching a bunch of YouTubers explaining, you know, how maybe once Bitcoin hits a specific number you should just sell, but no, it just wasn't all, it wasn't going to go that.
+
+[text art=off]
+And underneath all of that, the biggest lesson I will tell everyone is to have an emergency fund and please keep that emergency fund away from investments. Have that there so you're always safe and you always know if everything goes wrong, I can just rely on this amount of money.
 
 [text]
-I'm not hiring the numbers. I am about, you know, 55 ,000 based on my salary and somewhere around 63, all included in my total compensation bonus included.
+So, who am I and why should you listen to me? Yeah, I'm not a finance guy at all, I'm pretty much a normal person, I've worked in a financial
 
 [text]
-You know, I've been there before. I've been at the 25, brack them salary. I've been at 30. I've even been at 40. So funny enough, I've literally been every single step along the way. So wherever you are, I've also been there. And if you're ahead and you're earning much more, congrate.
+industry, but more specifically now at the moment I work as a consultant in legal advisory. I come from a working class background , I was the first in my family to go to university and I'll be up front, I didn't even finish, from there I just ended up working in corporate, you know, I did
 
 [text]
-You know, that's great. It gives you an even bigger chance to invest and get to this step as well.
+a boot camp in software engineering and from there, I got a chance to work in private banking and then segued that into consulting, right? I spent two years at that bank and you know, I just picked up a lot of real life things from there.
+
+[text art=off]
+You know, I started working in AI and just, you know, learning how to use AI properly and I'm not going to be the biggest fan of, you know, pushing AI especially in as far as investments, but it is a very useful tool to assist you, right?
 
 [text]
-So if you want to watch somebody from the ground up, reach the top. Ideally, hopefully invest, join my journey, see what I'm investing in, see how I'm going, you know, subscribe, comment, you know, just join the community, help me know what you're stuck on.
+And a lot of the time I felt like an imposter in those rooms, right? So when people online throw in numbers around like 100 grand, I know exactly how unrealistic that number can specifically feel, right? That's why I'm making this channel. I'm going to be honest, I'm not going to glamorise any of this, some months will be hard and I'll tell you when they are.
+
+[still src="gif-26102421473041l.gif" caption="" zoom=none]
+What the GIF shows.
 
 [text]
-I want this to be a conversation, not a lecture because I'm not a financial advisor. I don't know everything. But I would love to grow a community, show out the case everything I'm doing, and see what other people do.
+So here's how I'm going to do it. The step one is essentially building an emergency fund, which is three to six months of living course. I think you've all kind of already heard this before multiple, multiple times.
+
+[stat value="£13,000"]
+I currently do have an emergency fund, which is sitting around 13 ,000 pounds, 14 ,000 pounds, which is really good.
 
 [text]
-So the plan's not complicated. It's in order, you know, step one, start an emergency fund, step two, kill any debt. You know, any debt you may have, you know, in case you don't know, there is good debt and there's bad debt.
+You know, I worked hard and I saved and I saved and that covers me for potential things. My first major investment, I believe, is me getting a house. So that's also a part of the, you know, Roto 100K and planning on buying a house.
 
 [text]
-Anything that has a high interest or maybe that's of a certain percent, kill it immediately. Credit card debt, terrible debt to have.
-
-[stat value="8%"]
-Anything that's stopping you from basically investing, so something with, let's say, an interest rate of seven or eight percent roughly, you know, get rid of it.
+Hopefully it all goes well, but you know, building up this emergency fund with some money I then have left over, might assist to this right.
 
 [text]
-Step three, you know, match your employer pension if you can.
+Step two is building an investment portfolio, right?
 
 [text]
-I know, especially if you're really, really young, you probably don't want this, you want more money coming into your account at the end of the day. But trust me when I say it is free money, especially if they match, you know,
+At the core, it should always be at the S &P 500, right? That's what I believe it's boring. It's broad, but it does all the heavy lifting.
+
+[stat value="30%"]
+And then for me personally, about 20 to 30 % of mine goes into individual, individual stocks, but that's me being a bit more aggressive, especially because I am on the younger side and I don't have any people specifically
+
+[stat value="5%"]
+depending on me. So which is why I haven't learned my lesson, but about a 5 % of it is still going into crypto.
+
+[still src="gif-261024215207fou.gif" caption="" zoom=out]
+
+[text art=off]
+It's a smaller, smaller amount, but yeah, I'm still into crypto. Now, I'll share with you all the real numbers. I'll try my best in the future to add screenshots of these numbers as well. So you can see that, you know, this isn't just a theory.
 
 [text]
-and then step four, just be investing it into index funds really and truly. Probably heard all of that before, so bear with me. I know this is the same thing we've heard all over again and again and again. Luckily for me, I've tried my best to reach all of these steps.
+So, yeah, again, I'm not a financial advisor. So when I'm talking about index funds, you know, I'm happy to explain stuff like the S &P 500, but when it comes to individual stocks, I would advise everyone does their own specific research on what they specifically want
 
 [text]
-Obviously student loans is still there, but it's not necessarily the worst that in the world to have. I've covered my emergency fund, so yeah. Now, step one, not six months of expenses yet, just one month of bear burns. Of bear burns, of course, anything in an easy access savings account that you can have.
+to invest in yet. And, you know, why 100 ,000?
+
+[stat value="100000"]
+I guess if you've watched any investing content, you've heard it a million times. A 100 ,000 is basically the hardest, right? I've seen it from multiple YouTubers. They've explained, you know, Charlie Munger, Warren Buffett, you know, his business partner. He famously said that, you know, the first 100k is the hardest, because once you get there, your money actually starts doing real work for you.
+
+[still src="gif-261024215602l7d.gif" caption="" zoom=none]
+What the GIF shows.
 
 [text]
-In case of a rainy day, you can measure your living expenses and decide whether or not what your emergency fund could look like.
+And at 100 grand, a normal year in the market can add thousands, you know, that's without you doing anything. That's the first time your money is really earning you something like this.
 
-[stat value="4,000"]
-For some of you, your emergency fund for three months could simply be four grand. For some of you, maybe you have a mortgage in kids, your emergency fund could be 12 grand for three months, right? I would say try and push down to extend it to six months, because realistically speaking,
+[stat value="6%"]
+There's, you know, thousands of pounds, let's say, for example, in a 6 % return, you just earn 6 grand.
 
-[text]
-if you were to quit your job, how long could you survive? You know, it's such a scary thought to have to think you wouldn't be able to survive without working for more than a month. Which is why it's so essential to just have an emergency fund.
-
-[text]
-Then step two is debt.
+[text art=off]
+You know, and that's assuming a very modest return in the market, especially in S &P 500. That can do so much for, you know, a normal working class person, I guess he wouldn't be working class with 100k sitting there, but that can just do so much for you, right?
 
 [text]
-Now, if you're carrying any credit card debt, pay it off immediately, please don't even worry about investing, don't worry about anything else, pay off your credit card debt, because you can't start moving forward when something is pushing you two steps back. It's always going to be there, it's always going to affect you.
+And that's when the future I want starts to look visible. You know, not quit tomorrow, but getting to a point where work is optional and not mandatory.
+
+[stat value="10%"]
+That's the feeling I'm chasing. And here's the thing, from just messing around with crypto very briefly, I saw how possible it was, because that was 10 % of the way there,
 
 [text]
-So try your best, even when you are using your credit card to pay off in a poor every single month.
-
-[stat value="50%"]
-And then step three, if your job is offering you a pension match, I've said it before, take it, please, a 50 % match, 60 % match, whatever it may be, if they anything, if they match it fully, do
+you know, in such a short amount of time, especially because, you know, I was really working in a very, very like basic normal job. I was working as a COVID tester prior to that before I went into the bank. So I wasn't earning massive money.
 
 [text]
-it, because it's going to be so important, and it's essentially free money, right?
-
-[stat value="7%"]
-And then the last and final step is just investing in a boring ETF, something that goes out on your return about 7 % or 8 % every year.
+So messing the money I had was from COVID testing at the time and being a tester. So that's the money I used to invest. And that's the money that helped me get to about 10 grand.
 
 [text]
-You're going to hear all the time the Vanguard 100 S &P 500, things like this. These are safe investments because at the end of the day, essentially what they are is just the top 500 companies, you're going to be investing in them. You can trust that your money is safe because if these were to crash and you were to lose all your money, all of your investments,
+Yeah, so here's what's coming from the channel. Road to 100k, regular updates on my portfolio, what I bought, what went up, what went down and how I'm feeling about it, no hiding the bad months as well. And road to my first property, you know, for my first home, I'm going to be transparent about it.
+
+[text art=off]
+I'm going to be transparent about the ups and downs, the fears I might have as well in purchasing this home, how much I believe I'm going to have to deposit, save and prepare for alongside that, you know, just breaking things down as simple as possible, the ISAs, the emergency funds,
+
+[stat value="£1,000"]
+index funds, everything like this, how to get started, even with small amounts, especially, because not everybody can put 500 or 1000 pounds in.
+
+[stat value="£200"]
+It's okay to start with, you know, 50, 100, 200 pounds. And if you're someone who thinks 100 grand is impossible for you, I want you to come alongside me in this journey and just, you know, build this plan together. Essentially, we can work on this and, you know, I can read the comments, see how your journey is going alongside this as well.
 
 [text]
-then the good news is you're probably a bigger fish to fry, right?
-
-[text]
-Because the economy is probably in the floor.
-
-[stat value="£50"]
-And so you'll be fine, trust me, try and invest, try and start simple, putting in 50 pounds to maybe 200 pounds every month if you can.
-
-[text]
-And the compound growth is amazing, especially if you're thinking about 15, 20, 35 years down the line, which is how much you can end up having.
-
-[text]
-So yeah, that is the whole order, emergency fund, get rid of that pension match and then index funds. It's simple, just education, not necessarily advice, and it's my own experience. So it's things I've done to try and get ahead. I will also be trying to make a video discussing about how much I have actually invested and showcasing my investment portfolio as well.
-
-[text]
-So yeah, that's it. And I really hope, you know, we can move here, we chat and this advice is at least bit helpful to all these one of you.
+And yeah, just kind of build a community in this.
 
 [outro title="Thanks for watching" cta="Subscribe for the next one"]
-If it has, I would love for you to like and subscribe and just continue staying tuned to what I have to post in the future. That'll be great. Thank you.
+So if you want to follow my journey, subscribe, you know, tell me in the comments, what's your number, and I'll see you in the next one.
