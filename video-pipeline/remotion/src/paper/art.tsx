@@ -663,6 +663,21 @@ export const ArtPreview: React.FC<{name: string; brand?: Brand; theme?: string}>
   );
 };
 
+/** One drawing, finished and settled, on nothing: the still the studio uses for thumbnails and previews. */
+export const ArtStill: React.FC<{name: string; brand?: Brand}> = ({name, brand}) => {
+  const {width, height, fps} = useVideoConfig();
+  const b = brand ?? ({bg: 'transparent', ink: '#1d1d1f', muted: '#767a82', accent: '#1b8a4c', accent2: '#d93025', blue: '#1a56db', marker: '#fff176', board: true} as Brand);
+  const def = ART[name];
+  const drawn = def ? Math.max(...def.layers.map((l) => l.draw[1])) : 0;
+  const size = Math.min(width, height) * 0.9;
+  // a negative start puts the drawing part-way through its motion (mid-roll, mid-flight), at frame 0
+  return (
+    <AbsoluteFill style={{background: 'transparent', justifyContent: 'center', alignItems: 'center'}}>
+      <Art name={name} size={size} brand={b} start={-Math.round((drawn + 0.45 * (def?.loop ?? 2.4)) * fps)} seed={3} />
+    </AbsoluteFill>
+  );
+};
+
 /** How long a drawing takes to draw and run through one loop, in seconds (for the GIF renders). */
 export const artSeconds = (name: string) => {
   const def = ART[name];
