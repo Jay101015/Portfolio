@@ -19,7 +19,7 @@ import re
 import sys
 
 from . import align as al
-from .auto_script import script_from_words
+from .auto_script import script_from_text, script_from_words
 from .build import _header_lines, find_audio, transcript_for, unpack_uploads, voice_preview, write_timing
 from .enhance import enhance, level_from_header
 from .script_parser import _parse_tag, parse_script
@@ -60,6 +60,19 @@ def main(argv: list[str] | None = None) -> int:
     src = draft_path if os.path.exists(draft_path) else os.path.join(project, "script.md")
     md = open(src, encoding="utf-8").read() if os.path.exists(src) else ""
     sb = parse_script(md) if md.strip() else None
+    # `plan: written.md` in the header: the script you wrote and read from decides the scenes (one per paragraph,
+    # headings, lists, figures); the recording, matched to them below, decides what they say
+    plan = _header_lines(md).get("plan") if md else None
+    if plan and not (sb and sb["scenes"]):
+        plan_path = os.path.join(project, os.path.basename(plan))
+        if os.path.isfile(plan_path):
+            head = {k: v for k, v in _header_lines(md).items() if k != "source"}
+            head.setdefault("slug", os.path.basename(project.rstrip(os.sep)))
+            md = script_from_text(open(plan_path, encoding="utf-8").read(), head, sb["title"] if sb else None)
+            sb = parse_script(md)
+            print(f"built {len(sb['scenes'])} scenes from the written script ({plan}); the recording decides what they say")
+        else:
+            print(f"the header names {plan} but it is not in the project: building the scenes from the recording instead")
     # a phone recording is cleaned up first (voice: raw in the header keeps it as it is); everything downstream, the
     # transcript, the preview the studio plays and the render, uses the clean one
     level = level_from_header(_header_lines(md).get("voice"))

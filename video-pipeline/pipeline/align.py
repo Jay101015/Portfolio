@@ -292,11 +292,12 @@ def align(storyboard: dict[str, Any], transcript: list[Word], total_sec: float) 
             starts[blk.a + k] = transcript[blk.b + k]["s"]
             ends[blk.a + k] = transcript[blk.b + k]["e"]
     # A scene whose words mostly went unmatched has no anchors of its own: the few that did match are
-    # as likely strays as hits, so the whole scene is placed between its neighbours by word count.
+    # as likely strays as hits, so the whole scene is placed between its neighbours by word count. A third of
+    # a scene in runs of two or more words is a scene that was read loosely, not a stray.
     for si in range(len(scenes)):
         idx = [i for i, (sj, _) in enumerate(script_words) if sj == si]
         hit = sum(1 for i in idx if starts[i] is not None)
-        if idx and hit / len(idx) < 0.5:
+        if idx and hit / len(idx) < 0.34:
             for i in idx:
                 starts[i] = None
                 ends[i] = None

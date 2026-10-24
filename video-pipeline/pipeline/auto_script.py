@@ -193,39 +193,136 @@ def _q(v: str) -> str:
     return '"' + v.replace('"', "'") + '"'
 
 
-def script_from_words(words: list[Word], header: dict[str, str] | None = None, title: str | None = None) -> str:
-    """A complete script.md: the header (kept from an existing script, else defaults) and one tag per scene."""
-    if not words:
-        raise ValueError("no words in the transcript")
-    header = dict(header or {})
-    sents = sentences(words)
-    scenes = group(sents)
-    if not title or title.strip().lower() in ("untitled", "from my voice", ""):
-        # the line that says what the video is about, else the first line
-        cands = [_text(x) for x in sents[:4]]
-        pick = next((c for c in cands if TOPIC_RE.search(c)), cands[0])
-        pick = re.sub(r"(?i)^(so,?\s+)?today(\s+is\s+the\s+big\s+one)?[,:]?\s*", "", pick).rstrip(".!?:, ")
-        pick = pick[:1].upper() + pick[1:]
-        title = (pick[:70].rsplit(" ", 1)[0] if len(pick) > 70 else pick) or "My video"
+def _pick_title(cands: list[str]) -> str:
+    """The line that says what the video is about, else the first line."""
+    pick = next((c for c in cands if TOPIC_RE.search(c)), cands[0] if cands else "")
+    pick = re.sub(r"(?i)^(so,?\s+)?today(\s+is\s+the\s+big\s+one)?[,:]?\s*", "", pick).rstrip(".!?:, ")
+    pick = pick[:1].upper() + pick[1:]
+    return (pick[:70].rsplit(" ", 1)[0] if len(pick) > 70 else pick) or "My video"
+
+
+def _tag_for(texts: list[str], i: int, last: bool, heading: str | None = None) -> str:
+    """The layout for a scene from what is in it (see the module docstring); `heading`, from a written script, becomes
+    the scene's handwritten line."""
+    prose = " ".join(texts)
+    h = f" headline={_q(heading)}" if heading else ""
+    if i == 0:
+        return "[title]" if not heading else f"[title kicker={_q(heading)}]"
+    if last and SUBSCRIBE_RE.search(prose):
+        return '[outro title="Thanks for watching" cta="Subscribe for the next one"]'
+    if sum(1 for t in texts if ORDINAL_RE.match(t)) >= 2:
+        items = [_short(t) for t in texts if ORDINAL_RE.match(t)]
+        return "[list" + (f" title={_q(heading)}" if heading else "") + "]\n" + "\n".join(f"- {it}" for it in items)
+    if (fig := _figure(prose)) is not None:
+        return f"[stat value={_q(fig)}" + (f" label={_q(heading)}" if heading else "") + "]"
+    return f"[text{h}]"
+
+
+def _write(header: dict[str, str], title: str, scenes: list[tuple[str, str]]) -> str:
+    header = dict(header)
     header.setdefault("theme", "whiteboard")
     header.setdefault("host", "none")
     header.setdefault("brand.name", "MONEY MOVES")
     header["source"] = "voiceover"
     lines = [f"# {title}"] + [f"{k}: {v}" for k, v in header.items()] + [""]
-    for i, sc in enumerate(scenes):
-        texts = [_text(s) for s in sc]
-        prose = " ".join(texts)
-        last = i == len(scenes) - 1
-        if i == 0:
-            tag = "[title]"
-        elif last and SUBSCRIBE_RE.search(prose):
-            tag = '[outro title="Thanks for watching" cta="Subscribe for the next one"]'
-        elif sum(1 for t in texts if ORDINAL_RE.match(t)) >= 2:
-            items = [_short(t) for t in texts if ORDINAL_RE.match(t)]
-            tag = "[list]\n" + "\n".join(f"- {it}" for it in items)
-        elif (fig := _figure(prose)) is not None:
-            tag = f"[stat value={_q(fig)}]"
-        else:
-            tag = "[text]"
+    for tag, prose in scenes:
         lines += [tag, prose, ""]
     return "\n".join(lines).rstrip() + "\n"
+
+
+def script_from_words(words: list[Word], header: dict[str, str] | None = None, title: str | None = None) -> str:
+    """A complete script.md: the header (kept from an existing script, else defaults) and one tag per scene."""
+    if not words:
+        raise ValueError("no words in the transcript")
+    sents = sentences(words)
+    scenes = group(sents)
+    if not title or title.strip().lower() in ("untitled", "from my voice", ""):
+        title = _pick_title([_text(x) for x in sents[:4]])
+    out = []
+    for i, sc in enumerate(scenes):
+        texts = [_text(s) for s in sc]
+        out.append((_tag_for(texts, i, i == len(scenes) - 1), " ".join(texts)))
+    return _write(header or {}, title, out)
+
+
+BULLET_RE = re.compile(r"^\s*(?:[-*•–]|\d+[.)]|\(\d+\))\s+")
+MD_HEADING_RE = re.compile(r"^#{1,6}\s+")
+
+
+def _is_heading(line: str) -> bool:
+    """`## Step two`, `The catch:` or `THE CATCH` on a line of its own."""
+    if MD_HEADING_RE.match(line):
+        return True
+    ws = line.split()
+    return 1 <= len(ws) <= 8 and (line.endswith(":") or (line.isupper() and any(c.isalpha() for c in line)))
+
+
+def _heading_text(line: str) -> str:
+    t = MD_HEADING_RE.sub("", line).rstrip(":").strip()
+    return t.capitalize() if t.isupper() else t
+
+
+def _text_sentences(prose: str) -> list[str]:
+    return [x for x in re.split(r"(?<=[.!?…])\s+", prose.strip()) if x]
+
+
+def script_from_text(text: str, header: dict[str, str] | None = None, title: str | None = None) -> str:
+    """A tagged script from a plain written script: the one you wrote in Notes and read from. It decides the
+    scenes; the recording, matched to it afterwards, decides what they say.
+
+    - the first line, as `# Title` or `Title: ...`, is the title; else the first sentence is;
+    - a blank line ends a scene (a long paragraph is split at sentence ends past MAX_WORDS);
+    - a short line on its own ending in a colon, `## like this`, or IN CAPITALS is a heading for the next scene:
+      a handwritten line above a text scene, the label of a figure, the title of a list;
+    - lines starting with -, * or 1. make a list; a sentence with a figure makes a big number; a sign-off is the outro.
+    """
+    if not text.strip():
+        raise ValueError("the written script is empty")
+    blocks = [b.strip() for b in re.split(r"\n\s*\n", text.strip()) if b.strip()]
+    found: list[tuple[list[str], str | None]] = []  # (sentences, heading) per scene
+    heading: str | None = None
+    first = True
+    for b in blocks:
+        lines = [ln.strip() for ln in b.splitlines() if ln.strip()]
+        if first and (MD_HEADING_RE.match(lines[0]) or re.match(r"(?i)^title:\s*\S", lines[0])):
+            title = re.sub(r"(?i)^title:\s*", "", MD_HEADING_RE.sub("", lines[0])).strip() or title
+            lines = lines[1:]
+        first = False
+        if not lines:
+            continue
+        if len(lines) == 1 and _is_heading(lines[0]):
+            heading = _heading_text(lines[0])
+            continue
+        if _is_heading(lines[0]):
+            heading = _heading_text(lines[0])
+            lines = lines[1:]
+        if len(lines) >= 2 and all(BULLET_RE.match(ln) for ln in lines):
+            items = [BULLET_RE.sub("", ln).strip() for ln in lines]
+            found.append(([f"{ORDINALS[min(i, len(ORDINALS) - 1)]}, {it.rstrip('.')}." for i, it in enumerate(items)], heading))
+            heading = None
+            continue
+        sents = _text_sentences(" ".join(lines))
+        chunk: list[str] = []
+        n = 0
+        for snt in sents:
+            if chunk and n + len(snt.split()) > MAX_WORDS + 8:
+                found.append((chunk, heading))
+                chunk, n, heading = [], 0, None
+            chunk.append(snt)
+            n += len(snt.split())
+        if chunk:
+            found.append((chunk, heading))
+        heading = None
+    if not found:
+        raise ValueError("the written script has no sentences in it")
+    # a one-line opener stands as the title scene; a long first paragraph gets the title cut off its front
+    if len(found[0][0]) > 1 and sum(len(x.split()) for x in found[0][0]) > 14:
+        head, rest = found[0][0][:1], found[0][0][1:]
+        found[0:1] = [(head, found[0][1]), (rest, None)]
+    if not title or title.strip().lower() in ("untitled", "from my voice", ""):
+        title = _pick_title([x for ch, _ in found[:2] for x in ch][:4])
+    out = [(_tag_for(ch, i, i == len(found) - 1, hd), " ".join(ch)) for i, (ch, hd) in enumerate(found)]
+    return _write(header or {}, title, out)
+
+
+ORDINALS = ["First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth", "Tenth"]

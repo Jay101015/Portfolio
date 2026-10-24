@@ -117,6 +117,31 @@ Locally:
 
     python -m pipeline.enhance in.m4a out.mp3 --level strong --measure
 
+## A written script and your voice
+
+If you wrote a script and read from it, give the studio both. In Read, paste it
+into **Your written script**; the prompter shows it, so you record from it.
+Then **Transcribe and build from my written script**. Your voice is what gets
+transcribed, so the video says exactly what you said, when you said it. The
+written script is not transcribed: it is the plan for how the video is built.
+
+- the first line (`# Title` or `Title: ...`) is the title; else the first
+  sentence is;
+- each paragraph is a scene (a long one is split at sentence ends);
+- a short line on its own ending in a colon, `## like this`, or IN CAPITALS is
+  a heading for the next scene: the handwritten line above a text scene, the
+  label on a figure, the title of a list;
+- lines starting with `-`, `*` or `1.` make a list; a figure (`£10,000`, `24%`)
+  makes a big number; a sign-off is the outro.
+
+The transcription lines your words up with those scenes and swaps the written
+words for the spoken ones; layouts, numbers, headings and lists are kept. A
+scene you skipped keeps its written words and is reported. The written script
+is also the transcriber's vocabulary, so names and figures come out right.
+
+The pieces: the studio sends `written.md` with `plan: written.md` in the
+draft's header; `pipeline/auto_script.py` has `script_from_text`.
+
 ## Drafts
 
 **Save** in the top bar opens Drafts: name the version and save it. Drafts

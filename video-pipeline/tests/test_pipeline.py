@@ -231,6 +231,37 @@ class MediaTests(unittest.TestCase):
             self.assertNotIn("sticker", sb["scenes"][2]["props"])
             self.assertTrue(any("gone.gif" in n for n in notes))
 
+    def test_a_written_script_decides_the_scenes(self):
+        from pipeline.auto_script import script_from_text
+
+        written = """# What to do with your first £10,000
+
+Hi guys, welcome back. Today: what to do with your first ten grand.
+
+The catch:
+A credit card at 24% costs you more than any fund will ever earn. Clear it first.
+
+The order I would go in:
+- Build a one-month emergency fund
+- Clear any expensive debt
+- Take the full employer match
+
+That is the plan. If this helped, subscribe and I will see you next week.
+"""
+        md = script_from_text(written, {"slug": "x", "request": "r1", "plan": "written.md"})
+        sb = parse_script(md)
+        self.assertEqual(sb["title"], "What to do with your first £10,000")
+        types = [sc["type"] for sc in sb["scenes"]]
+        self.assertEqual(types, ["title", "stat", "list", "outro"])
+        self.assertEqual(sb["scenes"][1]["props"]["value"], "24%")
+        self.assertEqual(sb["scenes"][1]["props"].get("label"), "The catch")
+        self.assertEqual(sb["scenes"][2]["props"].get("title"), "The order I would go in")
+        self.assertEqual(len(sb["scenes"][2]["props"]["items"]), 3)
+        self.assertIn("request: r1", md)
+        self.assertIn("plan: written.md", md)
+        # the words are the writer's, ready for the recording to replace them
+        self.assertTrue(sb["scenes"][0]["narration"].startswith("Hi guys"))
+
     def test_a_recording_alone_becomes_a_script(self):
         from pipeline.auto_script import script_from_words
 
