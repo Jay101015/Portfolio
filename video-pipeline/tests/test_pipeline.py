@@ -114,6 +114,19 @@ class ArtTests(unittest.TestCase):
         self.assertEqual(sb["scenes"][1]["props"]["caption"], "the first 10k")
 
 
+class PlacementTests(unittest.TestCase):
+    def test_free_placement_and_outro_cards_pass_through(self):
+        md = ('# T\ntheme: whiteboard\nbrand.corner: off\nbrand.doodles: on\n\n[text sticker="a.gif" sticker_x=0.72 sticker_y=0.3 sticker_size=0.4 art=rocket art_x=0.2 art_y=0.8]\nHi.\n\n[outro cards=on]\nBye.\n')
+        sb = parse_script(md)
+        props = sb["scenes"][0]["props"]
+        self.assertEqual(props["sticker_x"], "0.72")
+        self.assertEqual(props["art_y"], "0.8")
+        self.assertEqual(sb["scenes"][1]["props"]["cards"], "on")
+        self.assertEqual(sb["brand"]["corner"], "off")
+        self.assertEqual(sb["brand"]["doodles"], "on")
+        self.assertNotIn("cards", parse_script("# T\n\n[outro]\nBye.\n")["scenes"][0]["props"])
+
+
 class ArtLibraryTests(unittest.TestCase):
     def test_the_catalogue_is_large_and_searchable(self):
         import json

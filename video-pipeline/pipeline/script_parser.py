@@ -184,7 +184,7 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
             if k in a:
                 p[k] = a[k]
     elif b.type == "outro":
-        for k in ("title", "cta"):
+        for k in ("title", "cta", "cards"):  # cards=on shows the two end-screen boxes (off unless asked for)
             if k in a:
                 p[k] = a[k]
     elif b.type == "art":

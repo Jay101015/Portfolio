@@ -180,7 +180,13 @@ const HostLayer: React.FC<{sb: Storyboard; scene: Scene; avatar: AvatarConfig; t
 
 export const Video: React.FC<Storyboard> = (sb) => {
   const {fps} = useVideoConfig();
-  const brand: Brand = {...(presets[sb.theme ?? 'toon'] ?? presets.toon), ...(sb.brand ?? {})};
+  const flags = (sb.brand ?? {}) as Record<string, unknown>;
+  const brand: Brand = {
+    ...(presets[sb.theme ?? 'toon'] ?? presets.toon),
+    ...(sb.brand ?? {}),
+    autoArt: String(flags.doodles ?? 'off').toLowerCase() === 'on',
+    corner: !['off', 'no', 'false', 'none', '0'].includes(String(flags.corner ?? 'on').toLowerCase()),
+  };
   const avatar: AvatarConfig = {...defaultAvatar, ...(sb.avatar ?? {})};
   return (
     <AbsoluteFill style={{backgroundColor: brand.bg, fontFamily: brand.font, color: brand.text}}>

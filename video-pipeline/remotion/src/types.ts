@@ -20,6 +20,8 @@ export type Brand = {
   board?: boolean; // the whiteboard look: paper layouts, but everything writes itself with a marker and a hand follows
   blue?: string; // the third marker on the board
   surface?: 'board' | 'chalk' | 'lined' | 'grid' | 'cream'; // what the board look is drawn on (default a whiteboard)
+  autoArt?: boolean; // little drawings picked from the words in the corner of scenes (`brand.doodles: on`; off by default)
+  corner?: boolean; // the channel name in the page corner (`brand.corner: off` hides it)
 };
 
 export type Cue = {t: number; pose?: string; face?: string}; // mid-scene change, absolute seconds

@@ -324,6 +324,35 @@ fetch are written to `media/sources.txt` and downloaded by the render.
 Very large videos are better trimmed first, or uploaded on GitHub directly
 into the project's `media/` folder.
 
+### Moving and sizing them on the preview
+
+A GIF, picture or drawing on a scene is grabbed on the preview the way it is
+in Canva: drag it to move it anywhere, drag the white dot at its corner (or
+pinch) to resize, tap ✕ to take it off. The script keeps the place as
+`sticker_x` / `sticker_y` (or `art_x` / `art_y`): the centre, as a share of
+the width and height, so the render puts it exactly there. A corner chip in
+Edit snaps it back to a corner.
+
+A GIF from a link (GIPHY, Tenor) only goes into the rendered video: the
+studio page cannot load other sites, so on the preview it is a labelled box.
+For a GIF you can see and move, save it to your camera roll first (in the
+GIPHY app or site: ⋯ → Save) and add it from there.
+
+### The corner, the little drawings, the outro boxes
+
+**Look & style** (the "Corner & drawings…" chip under the preview, or the
+⋯ menu) has the looks and three switches, kept in the script header:
+
+- `brand.corner: off` hides the handwritten channel name in the top right;
+  `brand.name:` changes it.
+- `brand.doodles: on` gives every scene a small drawing picked from its
+  words. It is off by default: a scene gets a drawing or GIF only when you
+  put one on it.
+- `[outro cards=on]` shows the two empty end-screen boxes on the outro
+  (where YouTube end-screen links sit). They are hidden unless asked for,
+  because a new channel has nothing to put in them; the switch is on the
+  outro scene in Edit.
+
 ## Approve the host first
 
 The host is a painted portrait (`projects/host-art/base.jpg`) cut into

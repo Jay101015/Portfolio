@@ -66,6 +66,11 @@ const Source: React.FC<{brand: Brand; source?: string; delay?: number}> = ({bran
   return <div style={{...style, opacity: fadeIn(frame, delay, 8)}}>source: {source}</div>;
 };
 
+/** The corner drawing a scene gets by itself: an `icon=` always; otherwise one picked from the words only when the
+ * header says `brand.doodles: on` (off by default: a drawing on every scene gets tiring). */
+const autoDoodle = (brand: Brand, icon: string | undefined, ...texts: (string | undefined)[]) => (icon || brand.autoArt ? pickDoodle(icon, ...texts) : undefined);
+const autoArt = (brand: Brand, ...texts: (string | undefined)[]) => (brand.autoArt ? pickArt(undefined, ...texts) : undefined);
+
 /** A doodle in the top-right corner of the board, drawn after the headline is written. */
 const CornerDoodle: React.FC<{brand: Brand; name?: string; art?: string; frame: number; fps: number; start: number; seed?: number; color?: string}> = ({brand, name, art, frame, fps, start, seed = 1, color}) => {
   const {u, pad, isVertical} = useLayout();
@@ -110,7 +115,7 @@ export const PaperTitle: React.FC<P> = ({scene, brand}) => {
         </div>
       ) : null}
       <div style={{fontFamily: hand(brand), fontSize: 28 * u, color: brand.muted, marginTop: 60 * u, opacity: fadeIn(frame, brand.board ? subStart + fps : 30, 10)}}>for education, not advice</div>
-      <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : pickDoodle(scene.props.icon, title, subtitle)} art={scene.props.sticker || scene.props.art || scene.props.icon ? undefined : pickArt(undefined, title, subtitle, scene.narration)} frame={frame} fps={fps} start={titleDone + fps * 0.7} seed={1} color={brand.blue} />
+      <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, title, subtitle)} art={scene.props.sticker || scene.props.art || scene.props.icon ? undefined : autoArt(brand, title, subtitle, scene.narration)} frame={frame} fps={fps} start={titleDone + fps * 0.7} seed={1} color={brand.blue} />
     </AbsoluteFill>
   );
 };
@@ -164,7 +169,7 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
       <div style={{marginTop: 30 * u}}>
         <Source brand={brand} source={scene.props.source} delay={brand.board ? noteStart + (sub ? writeFrames(sub, fps, 30) + 12 : 4) : 24} />
       </div>
-      <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : pickDoodle(scene.props.icon, label, sub, scene.narration)} art={scene.props.sticker || scene.props.art || scene.props.icon ? undefined : pickArt(undefined, label, sub, scene.narration, scene.narration)} frame={frame} fps={fps} start={brand.board ? Math.max(numDone + 6, 10) : 0} seed={scene.id} color={brand.blue} />
+      <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, label, sub, scene.narration)} art={scene.props.sticker || scene.props.art || scene.props.icon ? undefined : autoArt(brand, label, sub, scene.narration, scene.narration)} frame={frame} fps={fps} start={brand.board ? Math.max(numDone + 6, 10) : 0} seed={scene.id} color={brand.blue} />
     </AbsoluteFill>
   );
 };
@@ -216,7 +221,7 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
           })
         )}
       </div>
-      <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : pickDoodle(scene.props.icon, headline, scene.narration)} art={scene.props.sticker || scene.props.art || scene.props.icon ? undefined : pickArt(undefined, headline, scene.narration, scene.narration)} frame={frame} fps={fps} start={headline ? writeFrames(headline, fps, 34) + 4 : 4} seed={scene.id + 3} color={brand.blue} />
+      <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, headline, scene.narration)} art={scene.props.sticker || scene.props.art || scene.props.icon ? undefined : autoArt(brand, headline, scene.narration, scene.narration)} frame={frame} fps={fps} start={headline ? writeFrames(headline, fps, 34) + 4 : 4} seed={scene.id + 3} color={brand.blue} />
     </AbsoluteFill>
   );
 };
@@ -269,7 +274,7 @@ export const PaperList: React.FC<P> = ({scene, brand}) => {
           </div>
         );
       })}
-      <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : pickDoodle(scene.props.icon, title, items.join(' '))} art={scene.props.sticker || scene.props.art || scene.props.icon ? undefined : pickArt(undefined, title, items.join(' '), scene.narration)} frame={frame} fps={fps} start={titleDone + 6} seed={scene.id + 5} color={brand.blue} />
+      <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, title, items.join(' '))} art={scene.props.sticker || scene.props.art || scene.props.icon ? undefined : autoArt(brand, title, items.join(' '), scene.narration)} frame={frame} fps={fps} start={titleDone + 6} seed={scene.id + 5} color={brand.blue} />
     </AbsoluteFill>
   );
 };
@@ -541,6 +546,8 @@ export const PaperOutro: React.FC<P> = ({scene, brand}) => {
   const btnH = 110 * u;
   const ctaAt = btnAt + Math.round(fps * 0.5) + 2;
   const slotsAt = brand.board ? ctaAt + writeFrames(cta, fps, 30) + 6 : 20;
+  // the two end-screen boxes (for YouTube's end-screen links) only when `cards=on`: a new channel has nothing to put in them
+  const cards = ['on', 'yes', 'true', '1'].includes(String(scene.props.cards ?? 'off').toLowerCase());
   return (
     <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.2}}>
       <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: (isVertical ? 84 : 110) * u, lineHeight: 1.04, letterSpacing: brand.board ? 0 : -2 * u, color: brand.ink, maxWidth: isVertical ? '100%' : '70%'}}>
@@ -554,7 +561,7 @@ export const PaperOutro: React.FC<P> = ({scene, brand}) => {
           {brand.board ? <Write text={cta} frame={frame} fps={fps} start={ctaAt} cps={30} /> : cta}
         </div>
       </div>
-      {!isVertical ? (
+      {!isVertical && cards ? (
         <div style={{display: 'flex', gap: 40 * u, marginTop: 70 * u}}>
           {['Next video', 'Playlist'].map((label, i) => {
             const at = slotsAt + i * (brand.board ? Math.round(fps * 0.5) : 6);
@@ -640,15 +647,17 @@ const STICK: Record<string, React.CSSProperties> = {
 export const Sticker: React.FC<P> = ({scene, brand}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const {height} = useLayout();
+  const {height, width} = useLayout();
   const src: string | undefined = scene.props.sticker;
   if (!src) return null;
   const at = String(scene.props.sticker_at ?? 'tr');
   const size = height * Math.max(0.1, Math.min(0.8, Number(scene.props.sticker_size ?? 0.32)));
+  // `sticker_x` / `sticker_y`: where its centre sits, as a share of the width and height (dragged into place in the studio)
+  const free = scene.props.sticker_x !== undefined && scene.props.sticker_y !== undefined;
   const s = pop(frame, fps, Math.round(fps * 0.4), 11);
   const total = Math.max(1, Math.round((scene.end - scene.start) * fps));
   const tilt = (rnd(scene.id * 7) - 0.5) * 8;
-  const place = STICK[at] ?? STICK.tr;
+  const place: React.CSSProperties = free ? {left: Number(scene.props.sticker_x) * width - size / 2, top: Number(scene.props.sticker_y) * height - size / 2} : STICK[at] ?? STICK.tr;
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
       <div style={{position: 'absolute', ...place, width: size, height: size}}>

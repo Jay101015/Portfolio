@@ -1221,15 +1221,18 @@ const PLACE: Record<string, React.CSSProperties> = {
 /** A drawing placed on any scene: `art=snowball`, `art_at=br`, `art_size=0.3` (of the height), `art_start=1.5` (s). */
 export const ArtLayer: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}) => {
   const {fps} = useVideoConfig();
-  const {height, isVertical} = useLayout();
+  const {height, width, isVertical} = useLayout();
   const name = pickArt(scene.props.art, undefined);
   if (!name || !brand.board) return null;
   const at = String(scene.props.art_at ?? (isVertical ? 'br' : 'tr'));
   const size = height * Math.max(0.12, Math.min(0.8, Number(scene.props.art_size ?? (isVertical ? 0.22 : 0.3))));
   const start = Math.round(Number(scene.props.art_start ?? 0.8) * fps);
+  // `art_x` / `art_y`: where its centre sits, as a share of the width and height (dragged into place in the studio)
+  const free = scene.props.art_x !== undefined && scene.props.art_y !== undefined;
+  const place: React.CSSProperties = free ? {left: Number(scene.props.art_x) * width - size / 2, top: Number(scene.props.art_y) * height - size / 2} : PLACE[at] ?? PLACE.tr;
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
-      <div style={{position: 'absolute', ...PLACE[at] ?? PLACE.tr, width: size, height: size}}>
+      <div style={{position: 'absolute', ...place, width: size, height: size}}>
         <Art name={name} size={size} brand={brand} start={start} seed={scene.id * 3 + 1} />
       </div>
     </AbsoluteFill>

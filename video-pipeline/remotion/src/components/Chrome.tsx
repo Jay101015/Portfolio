@@ -13,7 +13,7 @@ export const Chrome: React.FC<{brand: Brand; durationSec: number}> = ({brand, du
     // a page corner: the channel name in handwriting and a thin ink line that fills as the video plays
     return (
       <AbsoluteFill style={{pointerEvents: 'none'}}>
-        <div style={{position: 'absolute', top: (isVertical ? 36 : 30) * u, right: pad, fontFamily: brand.hand, fontSize: 30 * u, color: brand.muted, transform: 'rotate(2deg)'}}>{brand.name.toLowerCase()}</div>
+        {brand.corner !== false && brand.name ? <div style={{position: 'absolute', top: (isVertical ? 36 : 30) * u, right: pad, fontFamily: brand.hand, fontSize: 30 * u, color: brand.muted, transform: 'rotate(2deg)'}}>{brand.name.toLowerCase()}</div> : null}
         <div style={{position: 'absolute', bottom: 0, left: 0, height: 5 * u, width: `${progress * 100}%`, background: brand.accent, opacity: 0.6}} />
       </AbsoluteFill>
     );
@@ -23,7 +23,7 @@ export const Chrome: React.FC<{brand: Brand; durationSec: number}> = ({brand, du
       <div style={{position: 'absolute', top: 0, left: 0, height: 6 * u, width: `${progress * 100}%`, background: brand.accent}} />
       <div style={{position: 'absolute', top: (isVertical ? 40 : 36) * u, left: pad, display: 'flex', alignItems: 'center', gap: 12 * u, fontSize: 22 * u, fontWeight: 700, letterSpacing: 3, color: brand.muted}}>
         <div style={{width: 12 * u, height: 12 * u, borderRadius: 999, background: brand.accent}} />
-        {brand.name}
+        {brand.corner !== false ? brand.name : ''}
       </div>
     </AbsoluteFill>
   );
