@@ -44,7 +44,7 @@ export type SceneType =
   | 'avatar'
   | 'outro'
   | 'art'
-  | 'takeaway'
+  | 'hook' | 'takeaway'
   | 'recap'
   | 'bite'
   | 'grow'

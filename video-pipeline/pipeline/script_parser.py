@@ -31,7 +31,7 @@ from typing import Any
 
 WORDS_PER_SEC = 2.6  # typical YouTube narration pace; replaced by real timings after alignment
 SCENE_GAP_SEC = 0.35
-SCENE_TYPES = {"title", "text", "stat", "list", "chart", "compare", "quote", "image", "still", "clip", "poster", "score", "avatar", "outro", "art", "bite", "grow", "pie", "shrink", "takeaway", "recap"}
+SCENE_TYPES = {"title", "text", "stat", "list", "chart", "compare", "quote", "image", "still", "clip", "poster", "score", "avatar", "outro", "art", "bite", "grow", "pie", "shrink", "takeaway", "recap", "hook"}
 
 TAG_RE = re.compile(r"^\[(\w+)([^\]]*)\]\s*$")
 ATTR_RE = re.compile(r'(\w+)=(?:"([^"]*)"|(\S+))')
@@ -199,6 +199,10 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
         p["items"] = b.items
         if "title" in a:
             p["title"] = a["title"]
+    elif b.type == "hook":
+        # the first five seconds: one line big on a clean board before the title; board= sets the words
+        if "board" in a:
+            p["board"] = a["board"]
     elif b.type == "takeaway":
         # a numbered section card: the big number drawn, the title written; n and of are filled in by number_takeaways
         for k in ("n", "of", "title"):

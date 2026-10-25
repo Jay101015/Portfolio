@@ -9,7 +9,7 @@ import {Doodle, Write, WriteSpoken, pickDoodle, writeFrames} from './write';
 import {Art, PaperArt, isTraced, pickArt, pickArtAmong} from './art';
 import {PaperBite, PaperGrow, PaperPie, PaperShrink} from './money';
 import {Erase} from './erase';
-import {captionLine, keyWords} from './phrase';
+import {captionLine, keyWords, moneyTint} from './phrase';
 import {Media} from './media';
 import {Loop} from 'remotion';
 
@@ -272,11 +272,12 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   const boxW = big && !isVertical ? width * 0.42 - pad * 0.6 : width - pad * 2.4;
   const boxH = (isVertical ? (big ? 0.22 : 0.5) : 0.6) * height;
   const lineStyle: React.CSSProperties = {fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 66 : big ? 80 : 84) * u, lineHeight: 1.18, color: brand.ink, marginBottom: 14 * u, maxWidth: '100%'};
+  const tint = (line: string) => moneyTint(line, brand.accent, brand.accent2); // the figure in green, or red when the line is about a cost
   const renderPage = (pg: typeof lines, offset: number) => (
     <div style={{position: 'absolute', inset: 0}}>
       {pg.map((ln, i) => (
         <div key={offset + i} style={lineStyle}>
-          {explicit ? <Write text={ln.text} frame={frame} fps={fps} start={ln.at} cps={22} /> : <WriteSpoken words={ln.words} t={t} fps={fps} sceneStart={scene.start} />}
+          {explicit ? <Write text={ln.text} frame={frame} fps={fps} start={ln.at} cps={22} tint={tint(ln.text)} /> : <WriteSpoken words={ln.words} t={t} fps={fps} sceneStart={scene.start} tint={tint(ln.words.map((w) => w.w).join(' '))} />}
         </div>
       ))}
     </div>
@@ -337,10 +338,33 @@ export const PaperTakeaway: React.FC<P> = ({scene, brand}) => {
           </div>
         </div>
         <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 70 : 92) * u, lineHeight: 1.15, color: brand.ink, maxWidth: isVertical ? '100%' : width - pad * 2 - R - 60 * u, textAlign: isVertical ? 'center' : 'left'}}>
-          <Write text={title} frame={frame} fps={fps} start={numDone} cps={20} />
+          <Write text={title} frame={frame} fps={fps} start={numDone} cps={20} tint={moneyTint(title, brand.accent, brand.accent2)} />
         </div>
       </div>
       {void height}
+    </AbsoluteFill>
+  );
+};
+
+// ------------------------------------------------------------------ hook
+/** The first five seconds: one line, big, in the middle of a clean board, before the title. `board=` sets the words,
+ * else the first clause of what is said. The figure in it lands in colour and a marker line goes under it. */
+export const PaperHook: React.FC<P> = ({scene, brand}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const {u, pad, isVertical, width} = useLayout();
+  const line: string = scene.props.board ? String(scene.props.board).split('|')[0].trim() : captionLine(scene.narration, 9);
+  const at = Math.max(2, Math.round(((scene.words?.[0]?.s ?? scene.start) - scene.start) * fps) - 2);
+  const done = at + writeFrames(line, fps, 20) + 4;
+  const w = Math.min(width - pad * 2, Math.max(360 * u, line.length * 44 * u));
+  return (
+    <AbsoluteFill style={{padding: pad, justifyContent: 'center', alignItems: 'center'}}>
+      <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 92 : 118) * u, lineHeight: 1.1, color: brand.ink, textAlign: 'center', maxWidth: '92%'}}>
+        <Write text={line} frame={frame} fps={fps} start={at} cps={20} tint={moneyTint(line, brand.accent, brand.accent2)} />
+      </div>
+      <svg width={w} height={30 * u} viewBox={`0 0 ${w} ${30 * u}`} style={{overflow: 'visible', marginTop: 10 * u}}>
+        <SketchPath d={`M${w * 0.04},${16 * u} Q${w * 0.5},${6 * u} ${w * 0.96},${18 * u}`} win={[done, done + Math.round(fps * 0.5)]} easeOut options={{stroke: brand.accent, strokeWidth: 9 * u, seed: scene.id * 5 + 2, roughness: 1.5}} />
+      </svg>
     </AbsoluteFill>
   );
 };
@@ -381,7 +405,7 @@ export const PaperRecap: React.FC<P> = ({scene, brand}) => {
               <SketchPath d="M18,38 L31,51 L56,22" win={tickWin} easeOut options={{stroke: brand.accent, strokeWidth: 7, seed: 50 + i, roughness: 0.8}} />
             </svg>
             <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 44 : 54) * u, lineHeight: 1.2, color: brand.ink}}>
-              <Write text={item} frame={frame} fps={fps} start={at + 8} cps={30} />
+              <Write text={item} frame={frame} fps={fps} start={at + 8} cps={30} tint={moneyTint(item, brand.accent, brand.accent2)} />
             </div>
           </div>
         );
@@ -433,7 +457,7 @@ export const PaperList: React.FC<P> = ({scene, brand}) => {
               )}
             </svg>
             <div style={{fontSize: (isVertical ? 42 : 48) * u * (brand.board ? 1.08 : 1), lineHeight: 1.25, fontWeight: brand.board ? 400 : 600, color: lit ? brand.ink : brand.muted}}>
-              {brand.board ? <Write text={item} frame={frame} fps={fps} start={delays[i] + 10} cps={30} /> : item}
+              {brand.board ? <Write text={item} frame={frame} fps={fps} start={delays[i] + 10} cps={30} tint={moneyTint(item, brand.accent, brand.accent2)} /> : item}
             </div>
           </div>
         );
@@ -854,6 +878,8 @@ export const PaperSwitch: React.FC<P> = ({scene, brand}) => {
       return <PaperOutro scene={scene} brand={brand} />;
     case 'art':
       return <PaperArt scene={scene} brand={brand} />;
+    case 'hook':
+      return <PaperHook scene={scene} brand={brand} />;
     case 'takeaway':
       return <PaperTakeaway scene={scene} brand={brand} />;
     case 'recap':

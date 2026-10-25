@@ -146,6 +146,14 @@ class PlacementTests(unittest.TestCase):
 
 
 class ArtLibraryTests(unittest.TestCase):
+    def test_hook_scene_parses_and_scores_first(self):
+        from pipeline.shorts import score_slice
+        sb = parse_script("# T\nslug: t\ntheme: whiteboard\n\n[hook board=\"£420 a month = £1,000,000\"]\nFour hundred and twenty pounds a month makes you a millionaire.\n\n[title]\nHere is how.\n")
+        self.assertEqual(sb["scenes"][0]["type"], "hook")
+        self.assertEqual(sb["scenes"][0]["props"]["board"], "£420 a month = £1,000,000")
+        score, why = score_slice(sb["scenes"][:2], set())
+        self.assertIn("opens on the hook", why)
+
     def test_hand_is_off_unless_the_header_asks(self):
         base = "# T\nslug: t\ntheme: whiteboard\n\n[text]\nOne line here.\n"
         self.assertFalse(parse_script(base)["hand"])

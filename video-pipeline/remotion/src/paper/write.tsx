@@ -32,10 +32,11 @@ type WriteProps = {
   color?: string;
   style?: React.CSSProperties;
   wordGap?: string;
+  tint?: (word: string) => string | undefined; // a colour for some words (the figure in green or red), ink for the rest
 };
 
 /** Text that writes itself. Words are inline-block so lines wrap; each character clips open left to right. */
-export const Write: React.FC<WriteProps> = ({text, frame, fps, start = 0, cps = CPS, style, wordGap = '0.28em'}) => {
+export const Write: React.FC<WriteProps> = ({text, frame, fps, start = 0, cps = CPS, style, wordGap = '0.28em', tint}) => {
   const per = fps / cps; // frames per character
   let k = 0;
   const words = String(text).split(/\s+/).filter(Boolean);
@@ -43,7 +44,7 @@ export const Write: React.FC<WriteProps> = ({text, frame, fps, start = 0, cps = 
   return (
     <span style={style}>
       {words.map((w, wi) => (
-        <span key={wi} style={{display: 'inline-block', marginRight: wordGap, whiteSpace: 'nowrap'}}>
+        <span key={wi} style={{display: 'inline-block', marginRight: wordGap, whiteSpace: 'nowrap', color: tint?.(w)}}>
           {Array.from(w).map((ch, ci) => {
             // a marker is not a metronome: each letter lands a little early or late (zero-mean, so the line still
             // finishes when writeFrames says), and the first letter of a word lingers as the pen lifts between words
@@ -64,14 +65,14 @@ export const Write: React.FC<WriteProps> = ({text, frame, fps, start = 0, cps = 
 };
 
 /** Write that starts each word when it is spoken (for narration on the board); `words` carry absolute times. */
-export const WriteSpoken: React.FC<{words: {w: string; s: number; e: number}[]; t: number; fps: number; sceneStart: number; color?: string; style?: React.CSSProperties; wordGap?: string}> = ({words, t, fps, sceneStart, style, wordGap = '0.28em'}) => (
+export const WriteSpoken: React.FC<{words: {w: string; s: number; e: number}[]; t: number; fps: number; sceneStart: number; color?: string; style?: React.CSSProperties; wordGap?: string; tint?: (word: string) => string | undefined}> = ({words, t, fps, sceneStart, style, wordGap = '0.28em', tint}) => (
   <span style={style}>
     {words.map((w, wi) => {
       const chars = Array.from(w.w);
       const dur = Math.max(0.12, Math.min(0.6, w.e - w.s + 0.08));
       const per = dur / chars.length;
       return (
-        <span key={wi} style={{display: 'inline-block', marginRight: wordGap, whiteSpace: 'nowrap'}}>
+        <span key={wi} style={{display: 'inline-block', marginRight: wordGap, whiteSpace: 'nowrap', color: tint?.(w.w)}}>
           {chars.map((ch, ci) => {
             const a = w.s - 0.04 + ci * per;
             const p = Math.max(0, Math.min(1, (t - a) / per));

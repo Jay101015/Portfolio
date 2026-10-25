@@ -110,6 +110,9 @@ def score_slice(scenes: list[dict[str, Any]], tags: list[str] | None = None) -> 
     if any(sc["type"] in ("bite", "grow", "pie", "shrink", "stat", "chart") for sc in scenes):
         score += 8
         why.append("a money picture")
+    if scenes[0]["type"] == "hook":
+        score += 10
+        why.append("opens on the hook")
     if scenes[0]["type"] == "title":
         score -= 10
         why.append("starts on the title card")

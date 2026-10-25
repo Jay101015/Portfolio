@@ -632,6 +632,23 @@ host on screen, the default on `toon`), `slug`, `kicker`, `captions: false`, any
 `brand.*` (`name`, `bg`, `panel`, `text`, `muted`, `accent`, `accent2`,
 `font`) and any `avatar.*` from the table above.
 
+### The hook: the first five seconds
+
+A `[hook]` scene goes before the title: one line, big, in the middle of a
+clean board, nothing else on it. `board="£420 a month = £1,000,000"` sets the
+words (else the first clause of what is said); the narration is the very
+first thing said, a number or a question, no greeting. The Draft sheet asks
+for it, the drafted script starts with it, and a Short that opens on it
+scores higher.
+
+### The money words in colour
+
+The figure in a line is the thing the eye should catch, so it lands in
+colour: green when the line is about money growing (£420 a month, 7%, forty
+years), red when the line is about money going (a fee, a loss, a debt, tax,
+interest, inflation). Every other word stays in ink. It applies to the board
+lines of text scenes, takeaway titles, recap and list items and the hook.
+
 ### No hand: the board draws itself
 
 The marker hand that used to follow the writing is off. Words still write

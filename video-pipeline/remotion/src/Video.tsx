@@ -29,7 +29,7 @@ import {Arrow, SketchPath} from './paper/sketch';
 import {FACES, POSES, defaultAvatar, defaultFaceFor, type AvatarConfig, type Face, type Pose} from './avatar/Avatar';
 
 const SceneSwitch: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}) => {
-  if (['bite', 'grow', 'pie', 'shrink', 'takeaway', 'recap'].includes(scene.type)) return <PaperSwitch scene={scene} brand={brand} />; // the money pictures and the takeaway cards are drawn the same in every look
+  if (['bite', 'grow', 'pie', 'shrink', 'takeaway', 'recap', 'hook'].includes(scene.type)) return <PaperSwitch scene={scene} brand={brand} />; // the money pictures and the takeaway cards are drawn the same in every look
   if (brand.paper && ['title', 'stat', 'text', 'list', 'compare', 'chart', 'quote', 'outro', 'still', 'image', 'clip', 'art'].includes(scene.type)) return <PaperSwitch scene={scene} brand={brand} />;
   switch (scene.type) {
     case 'title':
@@ -148,7 +148,7 @@ const boardTransition = (scene: Scene, prev: Scene | null, brand: Brand): Transi
   if (asked === 'wipe' || asked === 'slide') return brand.board && prev ? asked : 'cut';
   if (!brand.board || !brand.illustrated || !prev || asked || keepMode(scene)) return transitionFor(scene, brand.toon);
   if (scene.type === 'outro') return 'cut';
-  if (['takeaway', 'recap'].includes(scene.type) || prev.type === 'takeaway') return 'wipe'; // a card gets a clean board and leaves one; the recap starts clean
+  if (['takeaway', 'recap'].includes(scene.type) || ['takeaway', 'hook'].includes(prev.type)) return 'wipe'; // the hook leaves a clean board for the title // a card gets a clean board and leaves one; the recap starts clean
   const had = sceneArt(prev, brand);
   return had && isTraced(had) ? 'wipe' : 'slide';
 };
