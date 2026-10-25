@@ -295,8 +295,18 @@ the GIF and still scripts render it with the rest. From then on it works
 anywhere a drawing does: `[art name=kitchen-table]`, `art=` on a scene, the
 library search.
 
-The first six, generated as one set and traced this way: `bank-queue`,
-`crossroads`, `keys`, `kitchen-table`, `piggy-coin`, `sleep-grow`.
+Twenty so far, generated as one set and traced this way, with a recurring
+cast (Sam, short wavy hair and a t-shirt; Maya, long straight hair and a
+jumper): `bank-queue`, `broken-car`, `budget-jars`, `car-dealer`,
+`coffee-shop`, `couple-bills`, `crossroads`, `graduate`, `high-five`,
+`job-interview`, `keys`, `kitchen-table`, `payday`, `pension-letter`,
+`piggy-coin`, `rent-day`, `scam-call`, `shopping-bags`, `side-hustle`,
+`sleep-grow`. The prompt that gets this look: "simple clean black line art
+illustration, black outlines only on a pure white background, no colour,
+no fill, no shading, uniform medium line weight, cartoon vector style like
+a whiteboard explainer", then the cast and the situation. A word in the
+narration picks the drawing, so a sentence about the jars should not also
+say "payday" or the payday drawing wins.
 
 #### The illustrated style
 
