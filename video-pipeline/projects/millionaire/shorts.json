@@ -1,0 +1,26 @@
+{
+ "shorts": [
+  {
+   "name": "short-1",
+   "scenes": [
+    2,
+    3,
+    4
+   ],
+   "hook": "Start now, not when you're ready",
+   "seconds": 27,
+   "score": 56
+  },
+  {
+   "name": "short-2",
+   "scenes": [
+    5,
+    6,
+    7
+   ],
+   "hook": "£420 a month, every month",
+   "seconds": 33,
+   "score": 94
+  }
+ ]
+}
