@@ -1,0 +1,36 @@
+{
+ "shorts": [
+  {
+   "name": "short-1",
+   "scenes": [
+    3,
+    4,
+    5
+   ],
+   "hook": "So now I'm starting again",
+   "seconds": 32,
+   "score": 79
+  },
+  {
+   "name": "short-2",
+   "scenes": [
+    7,
+    8
+   ],
+   "hook": "I put it around two or three grand",
+   "seconds": 36,
+   "score": 79
+  },
+  {
+   "name": "short-3",
+   "scenes": [
+    26,
+    27,
+    28
+   ],
+   "hook": "Step two is building an investment portfolio",
+   "seconds": 30,
+   "score": 75
+  }
+ ]
+}
