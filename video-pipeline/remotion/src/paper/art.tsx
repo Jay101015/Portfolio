@@ -4,6 +4,7 @@ import type {Brand, Scene} from '../types';
 import {useLayout} from '../components/layout';
 import {pop, rnd} from '../components/motion';
 import {SketchEllipse, SketchLine, SketchPath} from './sketch';
+import {ILLUS} from './illus';
 import {Doodle, Write, writeFrames} from './write';
 import {DOODLES} from './doodles';
 
@@ -193,6 +194,7 @@ export type ArtDef = {
   layers: Layer[];
   loop?: number;
   about: string;
+  svg?: {w: number; h: number; width: number; paths: string[]}; // a traced illustration: pen strokes in draw order (scripts/illus-trace.py)
 };
 
 const rays = (cx: number, cy: number, r1: number, r2: number, n: number, at: number, color: Color = 'accent2'): Layer[] =>
@@ -1138,6 +1140,8 @@ export const ART: Record<string, ArtDef> = {
   },
 };
 
+Object.assign(ART, ILLUS); // the traced illustrations join the catalogue under their own names
+
 const PICK: [RegExp, string][] = Object.entries(ART).map(([name, def]) => [new RegExp('\\b(' + def.tags.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'i'), name]);
 
 /** The drawing for a scene: the one it names, else the one whose words come up most in the texts (a longer, more
@@ -1167,12 +1171,51 @@ const colorOf = (brand: Brand, c?: Color) => (c === 'accent' ? brand.accent : c 
 
 type ArtProps = {name: string; size: number; brand: Brand; start?: number; seed?: number; style?: React.CSSProperties};
 
+/** rough length of a path from its coordinates (control points included): enough to pace a pen */
+const pathLen = (d: string) => {
+  const nums = d.match(/-?\d*\.?\d+(?:e[-+]?\d+)?/gi)?.map(Number) ?? [];
+  let len = 0;
+  for (let i = 2; i + 1 < nums.length; i += 2) len += Math.hypot(nums[i] - nums[i - 2], nums[i + 1] - nums[i - 1]);
+  return len;
+};
+/** how long a traced drawing takes to draw: a marker covers about 900 units a second, between 1.2 and 4.5 seconds */
+export const tracedSeconds = (svg: {paths: string[]}) => Math.max(1.2, Math.min(4.5, svg.paths.reduce((n, d) => n + pathLen(d), 0) / 900));
+
+/** A traced illustration drawn stroke by stroke in its own order, each stroke published for the hand to follow. */
+const Traced: React.FC<{def: NonNullable<ArtDef['svg']>; size: number; brand: Brand; start: number; seed: number; style?: React.CSSProperties}> = ({def, size, brand, start, seed, style}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const lens = React.useMemo(() => def.paths.map(pathLen), [def]);
+  const total = lens.reduce((a, b) => a + b, 0) || 1;
+  const frames = Math.round(tracedSeconds(def) * fps);
+  const win: [number, number] = [start, start + frames];
+  const d = Math.max(0, Math.min(1, (frame - win[0]) / Math.max(1e-6, win[1] - win[0])));
+  const tilt = (rnd(seed) - 0.5) * 3;
+  const scale = size / Math.max(def.w, def.h);
+  let acc = 0;
+  return (
+    <div style={{position: 'relative', width: size, height: size, display: 'flex', alignItems: 'center', justifyContent: 'center', transform: `rotate(${tilt}deg)`, ...style}}>
+      <svg width={def.w * scale} height={def.h * scale} viewBox={`0 0 ${def.w} ${def.h}`} fill="none" stroke={brand.ink} strokeWidth={def.width} strokeLinecap="round" strokeLinejoin="round" style={{overflow: 'visible', display: 'block'}}>
+        {def.paths.map((p, i) => {
+          const from = acc / total;
+          acc += lens[i];
+          const to = acc / total;
+          const q = Math.max(0, Math.min(1, (d - from) / Math.max(1e-6, to - from)));
+          const dash = q < 1 ? {pathLength: 1, strokeDasharray: 1, strokeDashoffset: 1 - q} : {};
+          return <path key={i} d={p} {...dash} data-pen-win={`${win[0]},${win[1]},l`} data-pen-sub={`${from},${to}`} visibility={q <= 0 ? 'hidden' : undefined} />;
+        })}
+      </svg>
+    </div>
+  );
+};
+
 /** One drawing from the catalogue, `size` px square, its strokes going on from frame `start`, then moving. */
 export const Art: React.FC<ArtProps> = ({name, size, brand, start = 0, seed = 1, style}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const def = ART[name];
   if (!def) return null;
+  if (def.svg) return <Traced def={def.svg} size={size} brand={brand} start={start} seed={seed} style={style} />;
   const t = (frame - start) / fps;
   const px = size / 100;
   const drawnAll = Math.max(...def.layers.map((l) => l.draw[1]));
@@ -1298,6 +1341,7 @@ export const ArtStill: React.FC<{name: string; brand?: Brand}> = ({name, brand})
 export const artSeconds = (name: string) => {
   const def = ART[name];
   if (!def) return 3;
+  if (def.svg) return Math.ceil(tracedSeconds(def.svg) + 1.2);
   const drawn = Math.max(...def.layers.map((l) => l.draw[1]));
   return Math.ceil(drawn + (def.loop ?? 2.4) + 0.4);
 };

@@ -271,6 +271,23 @@ The board look comes in five skins, all the same writing, hand and drawings: `th
 `graph` (squared paper, teal and orange) and `cream` (a warm card, brown ink). The studio's ⋯ menu switches them
 and the preview follows.
 
+### Traced illustrations: people and situations
+
+Icons say "a piggy bank"; a story needs "a worried man at a kitchen table".
+Those come in as line drawings (an illustrator's, or generated in one marker
+style), traced to pen strokes so the hand draws them like everything else:
+
+    python3 scripts/illus-trace.py drawing.png ../library/illus/kitchen-table.svg
+
+finds the centreline of every stroke (not the outline, which a pen would go
+round twice), orders the strokes the way a hand would, and writes an SVG.
+Add the drawing to `library/illus/manifest.json` (name, about, tags,
+search), then `python3 scripts/illus-import.py` puts it in the catalogue
+under its name, `scripts/art-catalogue.py` updates the studio's list, and
+the GIF and still scripts render it with the rest. From then on it works
+anywhere a drawing does: `[art name=kitchen-table]`, `art=` on a scene, the
+library search.
+
 ### Searching it like a GIF keyboard
 
 In the studio, **GIFs & drawings** (in the ⋯ menu, the **+ GIF or drawing**
