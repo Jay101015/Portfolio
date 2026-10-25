@@ -216,7 +216,7 @@ class ArtLibraryTests(unittest.TestCase):
         for e in manifest:
             svg = open(os.path.join(lib, "illus", e["name"] + ".svg"), encoding="utf-8").read()
             assert svg.count("<path ") >= 20, e["name"]
-            assert cat[e["name"]]["kind"] == "illus"
+            assert cat[e["name"]]["kind"] in ("illus", "reaction")
             assert e["search"] and e["about"]
 
     def test_the_catalogue_is_large_and_searchable(self):

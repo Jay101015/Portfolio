@@ -30,16 +30,19 @@ Guide" artifact.
 | pension-letter | an older man reads a letter, puzzled | pensions, retirement |
 | high-five | Sam and Maya high-five by a rising chart | goals reached, recap |
 
-## What's missing
+## The second set (32, drawn from the guide's prompts)
 
-Batch A (first eight videos): staircase-coins, snowball-push, fee-slice, house-scales,
+Batch A, the first eight videos: staircase-coins, snowball-push, fee-slice, house-scales,
 contract-signing, rainy-day-umbrella, empty-fridge, subscriptions-phone, payslip, card-scissors.
 
-Batch B (life events): debt-ball-chain, investing-app, small-basket, brown-envelope, pay-rise-ask,
+Batch B, life events: debt-ball-chain, investing-app, small-basket, brown-envelope, pay-rise-ask,
 moving-boxes, wedding-bill, pram-bill, friends-split-bill, retired-bench.
 
-Batch C (reactions): sam/maya × worried, surprised, pleased, counting, thinking, facepalm
-(prompts in reaction-prompts.md).
+Batch C, reactions (kind "reaction" in the manifest; head and shoulders, for a point to land on a
+face): sam-worried, sam-surprised, sam-pleased, sam-counting, sam-thinking, sam-facepalm and the
+same six for Maya. `art=sam-worried` puts one on any scene; the words "worried", "oops", "thinking"
+and so on call them up in the illustrated style.
 
-The prompts, with the shared style line, are on the guide page; when the pictures arrive they go
-through illus-trace.py, the manifest, illus-import.py and art-catalogue.py like the first twenty.
+All came in as four contact sheets; `scratchpad/batch` holds the split and the trace. The sheets'
+panels are about 300 px wide, so these are a little rougher than the first twenty; a regenerate at
+full size per drawing would sharpen them if ever needed.

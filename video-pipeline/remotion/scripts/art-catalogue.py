@@ -47,7 +47,7 @@ def from_manifest() -> list[dict]:
     for e in json.load(open(mf, encoding="utf-8")):
         if e["name"].startswith("trial-") or not os.path.exists(os.path.join(PIPE, "library", "illus", e["name"] + ".svg")):
             continue
-        out.append({"name": e["name"], "about": e.get("about", ""), "tags": e.get("tags", []), "search": e.get("search", []), "kind": "illus"})
+        out.append({"name": e["name"], "about": e.get("about", ""), "tags": e.get("tags", []), "search": e.get("search", []), "kind": e.get("kind", "illus")})
     return out
 
 

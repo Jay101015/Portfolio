@@ -526,5 +526,739 @@
    "surprise bill",
    "disaster"
   ]
+ },
+ {
+  "name": "staircase-coins",
+  "about": "Sam climbing a staircase of coin stacks, each step taller",
+  "tags": [
+   "first 100k",
+   "milestone",
+   "steps",
+   "progress",
+   "climb",
+   "100k",
+   "hundred thousand"
+  ],
+  "search": [
+   "first 100k",
+   "100k",
+   "milestone",
+   "steps",
+   "progress",
+   "climb",
+   "staircase",
+   "net worth",
+   "wealth ladder"
+  ]
+ },
+ {
+  "name": "snowball-push",
+  "about": "Sam pushing a snowball bigger than himself up a slope",
+  "tags": [
+   "snowball effect",
+   "momentum",
+   "compounding",
+   "compound interest",
+   "keeps growing"
+  ],
+  "search": [
+   "snowball",
+   "momentum",
+   "compounding",
+   "compound interest",
+   "growth",
+   "effort",
+   "uphill",
+   "grind"
+  ]
+ },
+ {
+  "name": "fee-slice",
+  "about": "a man in a suit cutting a thin slice from Sam's cake",
+  "tags": [
+   "fee",
+   "fees",
+   "adviser",
+   "fund fee",
+   "expense ratio",
+   "commission",
+   "platform fee"
+  ],
+  "search": [
+   "fee",
+   "fees",
+   "adviser",
+   "fund",
+   "expense ratio",
+   "commission",
+   "platform",
+   "slice",
+   "cake",
+   "cost"
+  ]
+ },
+ {
+  "name": "house-scales",
+  "about": "Sam weighing a house against a rent contract on scales",
+  "tags": [
+   "rent vs buy",
+   "rent or buy",
+   "buy or rent",
+   "weigh up",
+   "trade-off",
+   "compare"
+  ],
+  "search": [
+   "rent vs buy",
+   "rent or buy",
+   "scales",
+   "weigh",
+   "trade-off",
+   "compare",
+   "house",
+   "contract",
+   "decision"
+  ]
+ },
+ {
+  "name": "contract-signing",
+  "about": "Sam about to sign a contract with small print, a salesman pointing",
+  "tags": [
+   "sign",
+   "signing",
+   "contract",
+   "small print",
+   "fine print",
+   "agreement",
+   "loan agreement",
+   "finance deal"
+  ],
+  "search": [
+   "sign",
+   "contract",
+   "small print",
+   "fine print",
+   "agreement",
+   "loan",
+   "finance",
+   "terms",
+   "commit"
+  ]
+ },
+ {
+  "name": "rainy-day-umbrella",
+  "about": "Sam dry under an umbrella while coins rain down",
+  "tags": [
+   "rainy day",
+   "emergency fund",
+   "safety net",
+   "buffer",
+   "cushion",
+   "peace of mind"
+  ],
+  "search": [
+   "rainy day",
+   "emergency fund",
+   "safety net",
+   "buffer",
+   "cushion",
+   "umbrella",
+   "prepared",
+   "peace of mind"
+  ]
+ },
+ {
+  "name": "empty-fridge",
+  "about": "Sam looking into an almost empty fridge",
+  "tags": [
+   "empty fridge",
+   "nothing left",
+   "end of the month",
+   "skint",
+   "run out",
+   "payday to payday"
+  ],
+  "search": [
+   "empty fridge",
+   "nothing left",
+   "end of the month",
+   "skint",
+   "broke",
+   "run out",
+   "payday to payday",
+   "hungry"
+  ]
+ },
+ {
+  "name": "subscriptions-phone",
+  "about": "Maya's phone with a stack of app icons and price tags",
+  "tags": [
+   "subscriptions",
+   "subscription",
+   "direct debits",
+   "monthly fees",
+   "streaming",
+   "apps",
+   "memberships"
+  ],
+  "search": [
+   "subscriptions",
+   "subscription",
+   "direct debits",
+   "streaming",
+   "apps",
+   "memberships",
+   "gym",
+   "monthly",
+   "leaks",
+   "cancel"
+  ]
+ },
+ {
+  "name": "payslip",
+  "about": "Sam reading a payslip through a magnifying glass",
+  "tags": [
+   "payslip",
+   "take-home",
+   "take home pay",
+   "tax code",
+   "deductions",
+   "national insurance",
+   "student loan repayment"
+  ],
+  "search": [
+   "payslip",
+   "take-home",
+   "tax",
+   "tax code",
+   "deductions",
+   "national insurance",
+   "student loan",
+   "gross",
+   "net pay",
+   "magnifying glass"
+  ]
+ },
+ {
+  "name": "card-scissors",
+  "about": "Maya cutting a credit card in half with scissors",
+  "tags": [
+   "cut up the card",
+   "credit card debt",
+   "cancel the card",
+   "no more credit",
+   "card cut"
+  ],
+  "search": [
+   "credit card",
+   "cut up",
+   "scissors",
+   "cancel",
+   "debt",
+   "no more credit",
+   "overdraft",
+   "stop spending"
+  ]
+ },
+ {
+  "name": "debt-ball-chain",
+  "about": "Sam dragging an iron ball chained to his ankle",
+  "tags": [
+   "debt",
+   "in debt",
+   "owe",
+   "owing",
+   "loans",
+   "ball and chain",
+   "weighed down"
+  ],
+  "search": [
+   "debt",
+   "owe",
+   "loans",
+   "ball and chain",
+   "weighed down",
+   "burden",
+   "borrowing",
+   "interest payments",
+   "stuck"
+  ]
+ },
+ {
+  "name": "investing-app",
+  "about": "Maya smiling at a phone with a rising chart",
+  "tags": [
+   "investing app",
+   "invest",
+   "index fund",
+   "etf",
+   "stocks and shares",
+   "isa",
+   "portfolio",
+   "app"
+  ],
+  "search": [
+   "investing",
+   "invest",
+   "index fund",
+   "etf",
+   "stocks",
+   "shares",
+   "isa",
+   "portfolio",
+   "app",
+   "chart up",
+   "returns"
+  ]
+ },
+ {
+  "name": "small-basket",
+  "about": "Sam at a checkout with a small basket and a long receipt",
+  "tags": [
+   "inflation",
+   "prices",
+   "cost of living",
+   "groceries",
+   "shopping bill",
+   "expensive",
+   "receipt"
+  ],
+  "search": [
+   "inflation",
+   "prices",
+   "cost of living",
+   "groceries",
+   "supermarket",
+   "shopping",
+   "expensive",
+   "receipt",
+   "basket"
+  ]
+ },
+ {
+  "name": "brown-envelope",
+  "about": "Maya opening a letter at the door, worried",
+  "tags": [
+   "letter",
+   "tax bill",
+   "hmrc",
+   "final notice",
+   "bill in the post",
+   "brown envelope",
+   "official letter"
+  ],
+  "search": [
+   "letter",
+   "tax",
+   "hmrc",
+   "final notice",
+   "bill",
+   "post",
+   "envelope",
+   "demand",
+   "council tax",
+   "fine"
+  ]
+ },
+ {
+  "name": "pay-rise-ask",
+  "about": "Sam in front of a boss who leans back with folded arms",
+  "tags": [
+   "pay rise",
+   "raise",
+   "ask for more",
+   "negotiate",
+   "salary negotiation",
+   "boss",
+   "promotion"
+  ],
+  "search": [
+   "pay rise",
+   "raise",
+   "negotiate",
+   "salary",
+   "boss",
+   "promotion",
+   "ask",
+   "manager",
+   "review"
+  ]
+ },
+ {
+  "name": "moving-boxes",
+  "about": "Sam and Maya carrying boxes through a doorway",
+  "tags": [
+   "moving",
+   "move out",
+   "moving in",
+   "first flat",
+   "new flat",
+   "renting",
+   "move house"
+  ],
+  "search": [
+   "moving",
+   "move out",
+   "first flat",
+   "new flat",
+   "boxes",
+   "renting",
+   "move house",
+   "leaving home",
+   "tenancy"
+  ]
+ },
+ {
+  "name": "wedding-bill",
+  "about": "Sam and Maya in wedding clothes reading a long bill",
+  "tags": [
+   "wedding",
+   "getting married",
+   "engaged",
+   "marriage",
+   "big day"
+  ],
+  "search": [
+   "wedding",
+   "married",
+   "engaged",
+   "marriage",
+   "big day",
+   "venue",
+   "ring",
+   "honeymoon",
+   "cost of a wedding"
+  ]
+ },
+ {
+  "name": "pram-bill",
+  "about": "Sam and Maya with a pram and a long receipt",
+  "tags": [
+   "baby",
+   "new baby",
+   "having a baby",
+   "kids",
+   "children",
+   "childcare",
+   "nursery"
+  ],
+  "search": [
+   "baby",
+   "kids",
+   "children",
+   "childcare",
+   "nursery",
+   "pram",
+   "parent",
+   "maternity",
+   "family"
+  ]
+ },
+ {
+  "name": "friends-split-bill",
+  "about": "four friends passing one bill around a restaurant table",
+  "tags": [
+   "split the bill",
+   "eating out",
+   "restaurant",
+   "friends",
+   "dinner",
+   "night out",
+   "round"
+  ],
+  "search": [
+   "split the bill",
+   "eating out",
+   "restaurant",
+   "friends",
+   "dinner",
+   "night out",
+   "drinks",
+   "round",
+   "social spending",
+   "fomo"
+  ]
+ },
+ {
+  "name": "retired-bench",
+  "about": "an older couple on a bench with ice creams",
+  "tags": [
+   "retired",
+   "retire early",
+   "retirement",
+   "later life",
+   "old age",
+   "pension pot",
+   "financial freedom"
+  ],
+  "search": [
+   "retired",
+   "retire",
+   "retirement",
+   "later life",
+   "old age",
+   "freedom",
+   "pension pot",
+   "the goal",
+   "relax",
+   "grandparents"
+  ]
+ },
+ {
+  "name": "sam-worried",
+  "about": "Sam, head and shoulders, worried, hand on his neck",
+  "tags": [
+   "worried",
+   "anxious",
+   "nervous",
+   "uneasy",
+   "stressed"
+  ],
+  "search": [
+   "worried",
+   "anxious",
+   "nervous",
+   "stress",
+   "uneasy",
+   "scared",
+   "sam"
+  ],
+  "kind": "reaction"
+ },
+ {
+  "name": "sam-surprised",
+  "about": "Sam, head and shoulders, surprised, hands up",
+  "tags": [
+   "surprised",
+   "shocked",
+   "what",
+   "can't believe",
+   "wow"
+  ],
+  "search": [
+   "surprised",
+   "shocked",
+   "what",
+   "wow",
+   "unbelievable",
+   "sam"
+  ],
+  "kind": "reaction"
+ },
+ {
+  "name": "sam-pleased",
+  "about": "Sam, head and shoulders, grinning with two thumbs up",
+  "tags": [
+   "pleased",
+   "happy",
+   "sorted",
+   "thumbs up",
+   "nailed it",
+   "yes"
+  ],
+  "search": [
+   "pleased",
+   "happy",
+   "thumbs up",
+   "sorted",
+   "nailed it",
+   "win",
+   "yes",
+   "sam"
+  ],
+  "kind": "reaction"
+ },
+ {
+  "name": "sam-counting",
+  "about": "Sam, head and shoulders, counting banknotes",
+  "tags": [
+   "counting",
+   "count the money",
+   "cash",
+   "notes",
+   "how much"
+  ],
+  "search": [
+   "counting",
+   "cash",
+   "notes",
+   "how much",
+   "tally",
+   "sam"
+  ],
+  "kind": "reaction"
+ },
+ {
+  "name": "sam-thinking",
+  "about": "Sam, head and shoulders, chin on fist, a question mark",
+  "tags": [
+   "thinking",
+   "wondering",
+   "hmm",
+   "which",
+   "should i",
+   "question"
+  ],
+  "search": [
+   "thinking",
+   "wondering",
+   "hmm",
+   "question",
+   "should i",
+   "decide",
+   "sam"
+  ],
+  "kind": "reaction"
+ },
+ {
+  "name": "sam-facepalm",
+  "about": "Sam, head and shoulders, palm over his face",
+  "tags": [
+   "facepalm",
+   "oops",
+   "regret",
+   "mistake",
+   "silly",
+   "oh no"
+  ],
+  "search": [
+   "facepalm",
+   "oops",
+   "regret",
+   "mistake",
+   "silly",
+   "oh no",
+   "ugh",
+   "sam"
+  ],
+  "kind": "reaction"
+ },
+ {
+  "name": "maya-worried",
+  "about": "Maya, head and shoulders, worried, hands clasped",
+  "tags": [
+   "worried",
+   "anxious",
+   "nervous",
+   "uneasy",
+   "stressed"
+  ],
+  "search": [
+   "worried",
+   "anxious",
+   "nervous",
+   "stress",
+   "uneasy",
+   "scared",
+   "maya"
+  ],
+  "kind": "reaction"
+ },
+ {
+  "name": "maya-surprised",
+  "about": "Maya, head and shoulders, surprised, hand on cheek",
+  "tags": [
+   "surprised",
+   "shocked",
+   "what",
+   "can't believe",
+   "wow"
+  ],
+  "search": [
+   "surprised",
+   "shocked",
+   "what",
+   "wow",
+   "unbelievable",
+   "maya"
+  ],
+  "kind": "reaction"
+ },
+ {
+  "name": "maya-pleased",
+  "about": "Maya, head and shoulders, grinning with a fist pump",
+  "tags": [
+   "pleased",
+   "happy",
+   "sorted",
+   "yes",
+   "nailed it"
+  ],
+  "search": [
+   "pleased",
+   "happy",
+   "fist pump",
+   "sorted",
+   "nailed it",
+   "win",
+   "yes",
+   "maya"
+  ],
+  "kind": "reaction"
+ },
+ {
+  "name": "maya-counting",
+  "about": "Maya, head and shoulders, dropping a coin into her palm",
+  "tags": [
+   "counting",
+   "count the money",
+   "coins",
+   "how much",
+   "pennies"
+  ],
+  "search": [
+   "counting",
+   "coins",
+   "how much",
+   "pennies",
+   "tally",
+   "maya"
+  ],
+  "kind": "reaction"
+ },
+ {
+  "name": "maya-thinking",
+  "about": "Maya, head and shoulders, finger on chin, a question mark",
+  "tags": [
+   "thinking",
+   "wondering",
+   "hmm",
+   "which",
+   "should i",
+   "question"
+  ],
+  "search": [
+   "thinking",
+   "wondering",
+   "hmm",
+   "question",
+   "should i",
+   "decide",
+   "maya"
+  ],
+  "kind": "reaction"
+ },
+ {
+  "name": "maya-facepalm",
+  "about": "Maya, head and shoulders, palm over her face",
+  "tags": [
+   "facepalm",
+   "oops",
+   "regret",
+   "mistake",
+   "silly",
+   "oh no"
+  ],
+  "search": [
+   "facepalm",
+   "oops",
+   "regret",
+   "mistake",
+   "silly",
+   "oh no",
+   "ugh",
+   "maya"
+  ],
+  "kind": "reaction"
  }
 ]
