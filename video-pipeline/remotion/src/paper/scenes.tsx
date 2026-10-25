@@ -210,7 +210,10 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
     if (cur.length) groups.push(cur);
     return groups;
   }, [scene.words, isVertical]);
-  const artName = scene.props.sticker || scene.props.art || scene.props.icon ? undefined : autoArt(brand, headline, scene.narration);
+  // a named drawing (`art=payday`) that is one of the traced illustrations is the scene's picture in the illustrated style;
+  // dragged into place (art_x) it is a placed drawing instead, and anything else is left to the ArtLayer
+  const named = scene.props.art && brand.illustrated && isTraced(String(scene.props.art)) && scene.props.art_x === undefined ? String(scene.props.art) : undefined;
+  const artName = scene.props.sticker || scene.props.icon ? undefined : named ?? (scene.props.art ? undefined : autoArt(brand, headline, scene.narration));
   const big = bigArt(brand, artName); // picture first: the words keep to a column (landscape) or the top (vertical), the picture has the rest
   const corner = <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, headline, scene.narration)} art={artName} frame={frame} fps={fps} start={brand.board ? 6 : 0} seed={scene.id} />;
   const head = headline ? (
@@ -283,7 +286,7 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
     </div>
   );
   return (
-    <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.2}}>
+    <AbsoluteFill style={{justifyContent: isVertical && big ? 'flex-start' : 'center', padding: pad, paddingLeft: pad * 1.2, paddingTop: isVertical && big ? 300 * u : pad}}>
       {head}
       <div style={{position: 'relative', width: boxW, height: boxH}}>
         {wrong ? (
@@ -337,7 +340,7 @@ export const PaperTakeaway: React.FC<P> = ({scene, brand}) => {
             <Write text={n} frame={frame} fps={fps} start={numAt} cps={6} color={brand.accent} />
           </div>
         </div>
-        <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 70 : 92) * u, lineHeight: 1.15, color: brand.ink, maxWidth: isVertical ? '100%' : width - pad * 2 - R - 60 * u, textAlign: isVertical ? 'center' : 'left'}}>
+        <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 70 : 92) * u, lineHeight: 1.15, color: brand.ink, width: isVertical ? '100%' : undefined, maxWidth: isVertical ? '100%' : width - pad * 2 - R - 60 * u, textAlign: isVertical ? 'center' : 'left'}}>
           <Write text={title} frame={frame} fps={fps} start={numDone} cps={20} tint={moneyTint(title, brand.accent, brand.accent2)} />
         </div>
       </div>
@@ -724,8 +727,8 @@ export const PaperOutro: React.FC<P> = ({scene, brand}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const {u, pad, isVertical} = useLayout();
-  const title: string = scene.props.title ?? 'Thanks for watching';
-  const cta: string = scene.props.cta ?? 'Subscribe for one money idea a week';
+  const title: string = scene.props.title ?? 'MONEY MOVES';
+  const cta: string = scene.props.cta ?? 'Subscribe for the next one';
   const titleDone = doneAt(brand, title, fps, 4, 3, 20);
   const btnAt = brand.board ? titleDone + 4 : 10;
   const s = pop(frame, fps, btnAt, 12);

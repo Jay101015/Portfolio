@@ -108,7 +108,7 @@ class ArtTests(unittest.TestCase):
     def test_a_drawing_on_a_scene_and_a_drawing_scene_parse(self):
         md = "# T\ntheme: whiteboard\n\n[text headline=\"x\" art=snowball art_at=br art_size=0.4]\nCompound interest.\n\n[art name=rocket headline=\"Lift off\" caption=\"the first 10k\"]\nThen it takes off.\n"
         sb = parse_script(md)
-        self.assertEqual([sc["type"] for sc in sb["scenes"]], ["text", "art"])
+        self.assertEqual([sc["type"] for sc in sb["scenes"]], ["text", "art", "outro"])
         self.assertEqual(sb["scenes"][0]["props"]["art"], "snowball")
         self.assertEqual(sb["scenes"][0]["props"]["art_at"], "br")
         self.assertEqual(sb["scenes"][1]["props"]["name"], "rocket")
@@ -146,6 +146,16 @@ class PlacementTests(unittest.TestCase):
 
 
 class ArtLibraryTests(unittest.TestCase):
+    def test_every_video_ends_on_the_subscribe_page(self):
+        sb = parse_script("# T\nslug: t\ntheme: whiteboard\n\n[text]\nOne line here.\n")
+        last = sb["scenes"][-1]
+        self.assertEqual(last["type"], "outro")
+        self.assertEqual(last["props"]["title"], "MONEY MOVES")
+        self.assertEqual(last["props"]["cta"], "Subscribe for the next one")
+        self.assertGreaterEqual(last["end"] - last["start"], 6)
+        sb2 = parse_script("# T\nslug: t\n\n[text]\nOne line here.\n\n[outro title=\"MONEY MOVES\" cta=\"Subscribe for the next one\"]\nBye.\n")
+        self.assertEqual(sum(1 for sc in sb2["scenes"] if sc["type"] == "outro"), 1)
+
     def test_hook_scene_parses_and_scores_first(self):
         from pipeline.shorts import score_slice
         sb = parse_script("# T\nslug: t\ntheme: whiteboard\n\n[hook board=\"£420 a month = £1,000,000\"]\nFour hundred and twenty pounds a month makes you a millionaire.\n\n[title]\nHere is how.\n")
@@ -166,10 +176,11 @@ class ArtLibraryTests(unittest.TestCase):
         md = "# T\nslug: t\ntheme: whiteboard\nhost: none\nbrand.style: illustrated\n\n[title]\nHi there.\n\n[text]\nOne two three.\n\n[text]\nFour five.\n"
         sb = parse_script(md)
         assert sb["pace"] == {"lead": 1.2, "hold": 0.6}
-        before = [(s["start"], s["end"], s["words"][0]["s"]) for s in sb["scenes"]]
+        spoken = [s for s in sb["scenes"] if s["words"]]  # the added outro says nothing
+        before = [(s["start"], s["end"], s["words"][0]["s"]) for s in spoken]
         silences = pace_scenes(sb, 1.2, 0.6)
-        assert silences[0] == (0.0, 1.2) and len(silences) == 3
-        for i, (s, (b0, b1, w0)) in enumerate(zip(sb["scenes"], before)):
+        assert silences[0] == (0.0, 1.2) and len(silences) == len(sb["scenes"])
+        for i, (s, (b0, b1, w0)) in enumerate(zip(spoken, before)):
             self.assertAlmostEqual(s["words"][0]["s"] - s["start"], w0 - b0 + 1.2, places=2)
             self.assertAlmostEqual(s["end"] - s["words"][-1]["e"], b1 - (s["words"][-1]["e"] - i * 1.8 - 1.2) + 0.6, places=2)
         for a, b in zip(sb["scenes"], sb["scenes"][1:]):
@@ -219,14 +230,14 @@ class ArtLibraryTests(unittest.TestCase):
     def test_a_recap_lists_the_takeaways_unless_given_its_own_lines(self):
         md = "# T\nslug: t\ntheme: whiteboard\nhost: none\n\n[takeaway title=\"Spend with intention\"]\nOne.\n\n[takeaway title=\"Build a budget\"]\nTwo.\n\n[recap]\nSo, spend with intention and build a budget.\n"
         sb = parse_script(md)
-        assert sb["scenes"][-1]["type"] == "recap" and sb["scenes"][-1]["props"]["items"] == ["Spend with intention", "Build a budget"]
+        assert sb["scenes"][-2]["type"] == "recap" and sb["scenes"][-2]["props"]["items"] == ["Spend with intention", "Build a budget"]
         own = parse_script(md.replace("[recap]\n", "[recap title=\"Remember\"]\n- Keep going\n- Save small\n"))
-        assert own["scenes"][-1]["props"]["items"] == ["Keep going", "Save small"] and own["scenes"][-1]["props"]["title"] == "Remember"
+        assert own["scenes"][-2]["props"]["items"] == ["Keep going", "Save small"] and own["scenes"][-2]["props"]["title"] == "Remember"
 
     def test_a_scene_can_pick_its_transition(self):
         """`transition=wipe|slide|cut` on any scene reaches the storyboard, like `keep=`."""
         sb = parse_script("# T\nslug: t\ntheme: whiteboard\nhost: none\n\n[title]\nHi.\n\n[text transition=slide]\nOne.\n\n[stat value=\"3\" transition=wipe]\nTwo.\n")
-        assert [s["props"].get("transition") for s in sb["scenes"]] == [None, "slide", "wipe"]
+        assert [s["props"].get("transition") for s in sb["scenes"]] == [None, "slide", "wipe", None]
 
     def test_the_traced_illustrations_are_in_the_catalogue(self):
         """Every drawing in library/illus/manifest.json has its SVG of pen strokes and sits in the catalogue as kind illus."""

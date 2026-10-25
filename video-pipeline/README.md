@@ -632,6 +632,19 @@ host on screen, the default on `toon`), `slug`, `kicker`, `captions: false`, any
 `brand.*` (`name`, `bg`, `panel`, `text`, `muted`, `accent`, `accent2`,
 `font`) and any `avatar.*` from the table above.
 
+### Standing rules for the pictures
+
+- The drawing on a scene shows the moment the words describe, and the
+  drawings across a video tell the story in order. Name it on the scene,
+  `art="payday"`, from the library (`docs/drawing-guide.md` lists them); the
+  drafter does this for every text scene. Without a name the renderer picks
+  by keyword, which is a fallback, not the plan.
+- Words and drawings never sit on top of each other. Landscape: the words
+  keep a column on the left, the picture has the right. Vertical: the words
+  sit at the top, the picture below them, the captions under that.
+- Every video ends on the same page: MONEY MOVES, the yellow "Subscribe for
+  the next one" button. A script that leaves the outro out gets it added.
+
 ### The hook: the first five seconds
 
 A `[hook]` scene goes before the title: one line, big, in the middle of a
