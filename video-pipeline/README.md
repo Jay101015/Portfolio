@@ -346,6 +346,23 @@ right, and the words keep to a column on the left as one written line, the
 `board=` line if the scene has one, else the phrase that carries the
 narration. Scenes with no matching drawing keep the usual page of phrases.
 
+#### Shorts
+
+A long video has two or three slices in it that would travel on their own.
+The studio's **Shorts** sheet (⋯ menu) finds them: every run of one to five
+scenes between 15 and 60 seconds is scored for what the money channels'
+Shorts have in common (a number in the first line, a takeaway card, a person
+in the picture, a curiosity word, a question, 20 to 45 seconds; the title
+card and the outro count against), the best non-overlapping three are
+listed with their reasons and a hook line each, and you tick the ones to
+make and edit the hooks. They are cut vertical with captions on and the hook
+pinned at the top of the frame, and your recording is cut to match. They
+come back to the Videos list as Short 1, 2, 3 beside the two cuts.
+
+On the command line, `python -m pipeline.build projects/x --shorts 3` plans
+and renders them (`projects/x/shorts.json`, the studio's picks, says which
+if it exists; the plan used is written to `shorts-plan.json`).
+
 #### Pace
 
 `pace: calm` (the illustrated style's default) gives every scene air: it

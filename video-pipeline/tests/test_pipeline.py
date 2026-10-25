@@ -184,6 +184,24 @@ class ArtLibraryTests(unittest.TestCase):
         cards = [s["props"] for s in sb["scenes"] if s["type"] == "takeaway"]
         assert [(c["n"], c["of"], c["title"]) for c in cards] == [("1", "2", "Fees compound too"), ("5", "2", "Time beats timing")]
 
+    def test_shorts_are_planned_and_cut_from_the_storyboard(self):
+        """The planner picks non-overlapping 15-60s slices, scored, each with a hook; the cutter re-times them from zero."""
+        from pipeline.shorts import plan_shorts, cut_short, caption_line
+        md = "# T\nslug: t\ntheme: whiteboard\nhost: none\n\n[title]\nSam lost four thousand pounds in one year without noticing. Here is how and here is what he did about it after.\n\n[takeaway title=\"Rent day is not a surprise\"]\nTakeaway one. Rent day is not a surprise, but Sam treated it like one every single month of the year.\n\n[text]\nThe landlord was at the door and the wallet was empty, because payday money had already gone on everything else that month.\n\n[text]\nThe car dealer offered Sam a brand new car on finance and Sam very nearly signed, before he stopped to scratch his head and walked away.\n\n[outro title=\"X\" cta=\"Y\"]\nThat is it, pick one and fix it this week.\n"
+        sb = parse_script(md)
+        plan = plan_shorts(sb, 2)
+        assert 1 <= len(plan) <= 2
+        for c in plan:
+            assert 15 <= c["seconds"] <= 60 and c["hook"] and c["score"] > 0 and c["why"]
+        ids = [set(c["scenes"]) for c in plan]
+        assert all(not (a & b) for a in ids for b in ids if a is not b)
+        assert any(c["hook"] == "Rent day is not a surprise" for c in plan)
+        cut, spans = cut_short(sb, [2, 3], None, "short-1")
+        assert [sc["id"] for sc in cut["scenes"]] == [2, 3] and cut["scenes"][0]["start"] == 0.4 and cut["captions"] is True and cut["hook"]
+        assert cut["scenes"][1]["start"] == cut["scenes"][0]["end"] and cut["scenes"][0]["words"][0]["s"] > 0.4
+        assert spans == [(sb["scenes"][1]["start"], sb["scenes"][1]["end"]), (sb["scenes"][2]["start"], sb["scenes"][2]["end"])]
+        assert caption_line("The car dealer offered Sam a brand new car on finance, and he nearly signed.") == "The car dealer offered Sam a brand new"
+
     def test_a_scene_can_pick_its_transition(self):
         """`transition=wipe|slide|cut` on any scene reaches the storyboard, like `keep=`."""
         sb = parse_script("# T\nslug: t\ntheme: whiteboard\nhost: none\n\n[title]\nHi.\n\n[text transition=slide]\nOne.\n\n[stat value=\"3\" transition=wipe]\nTwo.\n")

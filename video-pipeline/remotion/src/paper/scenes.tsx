@@ -86,7 +86,7 @@ const CornerDoodle: React.FC<{brand: Brand; name?: string; art?: string; frame: 
   if (bigArt(brand, art)) {
     const size = (isVertical ? 760 : 760) * u; // picture first: 70% of the board's height
     return (
-      <div style={{position: 'absolute', right: pad * 0.5, width: size, height: size, ...(isVertical ? {bottom: pad * 1.0, left: '50%', transform: 'translateX(-50%)'} : {top: '50%', transform: 'translateY(-50%)'})}}>
+      <div style={{position: 'absolute', right: pad * 0.5, width: size, height: size, ...(isVertical ? {bottom: pad * 1.0 + 170 * u, left: '50%', transform: 'translateX(-50%)'} : {top: '50%', transform: 'translateY(-50%)'})}}>
         <Art name={art as string} size={size} brand={brand} start={start} seed={seed} />
       </div>
     );
@@ -211,7 +211,7 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
     return groups;
   }, [scene.words, isVertical]);
   const artName = scene.props.sticker || scene.props.art || scene.props.icon ? undefined : autoArt(brand, headline, scene.narration);
-  const big = bigArt(brand, artName) && !isVertical; // the words keep to the left half, the picture has the right
+  const big = bigArt(brand, artName); // picture first: the words keep to a column (landscape) or the top (vertical), the picture has the rest
   const corner = <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, headline, scene.narration)} art={artName} frame={frame} fps={fps} start={brand.board ? 6 : 0} seed={scene.id} />;
   const head = headline ? (
     <div style={{fontFamily: hand(brand), fontSize: 44 * u, color: brand.accent2, marginBottom: 24 * u, transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8)}}>
@@ -269,8 +269,8 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   let pageIdx = 0;
   for (let j = 1; j < pages.length; j++) if (frame >= pages[j][0].at - lead) pageIdx = j;
   const eraseWin: [number, number] | null = pageIdx > 0 ? [pages[pageIdx][0].at - lead, pages[pageIdx][0].at - Math.round(fps * 0.1)] : null;
-  const boxW = big ? width * 0.42 - pad * 0.6 : width - pad * 2.4;
-  const boxH = (isVertical ? 0.5 : 0.6) * height;
+  const boxW = big && !isVertical ? width * 0.42 - pad * 0.6 : width - pad * 2.4;
+  const boxH = (isVertical ? (big ? 0.22 : 0.5) : 0.6) * height;
   const lineStyle: React.CSSProperties = {fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 66 : big ? 80 : 84) * u, lineHeight: 1.18, color: brand.ink, marginBottom: 14 * u, maxWidth: '100%'};
   const renderPage = (pg: typeof lines, offset: number) => (
     <div style={{position: 'absolute', inset: 0}}>

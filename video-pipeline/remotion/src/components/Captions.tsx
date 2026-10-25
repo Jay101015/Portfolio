@@ -26,7 +26,7 @@ const chunkWords = (words: Word[], maxWords: number): Chunk[] => {
   return chunks;
 };
 
-export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string}> = ({scenes, brand, host}) => {
+export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string; always?: boolean}> = ({scenes, brand, host, always}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const {u, isVertical, pad, width} = useLayout();
@@ -35,7 +35,7 @@ export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string}> 
   const chunk = chunks.find((c) => t >= c.s - 0.05 && t <= c.e + 0.35);
   if (!chunk) return null;
   const current = scenes.find((s) => t >= s.start && t < s.end);
-  if (current?.type === 'text') return null;
+  if (current?.type === 'text' && !always) return null; // the board already has the words; a Short captions everything
   // keep the caption out from under the host: shift it to the side the character is not on
   const hostPos = current ? hostPosFor(current, brand.toon, host) : 'none';
   const shift = isVertical || hostPos === 'none' || hostPos === 'full' ? 0 : hostPos.endsWith('left') ? 1 : -1;

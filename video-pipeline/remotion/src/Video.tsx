@@ -113,6 +113,22 @@ const transitionFor = (scene: Scene, toon: boolean): Transition => {
   return ['clip', 'still', 'image', 'poster', 'score', 'compare', 'chart', 'quote', 'stat'].includes(scene.type) ? 'whip' : 'cut';
 };
 
+/** A Short's hook: the one line pinned at the top of the frame, big, on a marker highlight, there from the first
+ * frame so the viewer who scrolls in knows what this is before anyone speaks. */
+const HookBanner: React.FC<{text: string; brand: Brand}> = ({text, brand}) => {
+  const {width, height} = useVideoConfig();
+  const u = width / 1080;
+  const vertical = height > width;
+  const size = (vertical ? 64 : 48) * u;
+  return (
+    <div style={{position: 'absolute', left: 0, right: 0, top: vertical ? height * 0.085 : height * 0.04, display: 'flex', justifyContent: 'center', padding: `0 ${40 * u}px`, pointerEvents: 'none'}}>
+      <div style={{fontFamily: brand.display, fontWeight: 800, fontSize: size, lineHeight: 1.15, color: brand.ink, textAlign: 'center', background: brand.marker ?? '#fff176', padding: `${10 * u}px ${22 * u}px`, borderRadius: 8 * u, boxShadow: `0 ${4 * u}px ${12 * u}px rgba(0,0,0,0.12)`, transform: 'rotate(-1deg)', maxWidth: '92%', boxDecorationBreak: 'clone'}}>
+        {text}
+      </div>
+    </div>
+  );
+};
+
 /** The board's own transitions. `wipe`: the last board clears (its writing and drawing fade off in the last half
  * second) and the new scene starts on a clean board. `slide`: the board slides along, the last drawing leaving on the
  * left as the new one comes in from the right, like a camera moving down a long whiteboard. In the illustrated style
@@ -335,8 +351,9 @@ export const Video: React.FC<Storyboard> = (sb) => {
           </Sequence>
         );
       })}
+      {sb.hook ? <HookBanner text={sb.hook} brand={brand} /> : null}
       <Chrome brand={brand} durationSec={sb.durationSec} />
-      {sb.captions ? <Captions scenes={sb.scenes} brand={brand} host={sb.host} /> : null}
+      {sb.captions ? <Captions scenes={sb.scenes} brand={brand} host={sb.host} always={!!sb.short} /> : null}
       {brand.board ? <PenHand brand={brand} /> : null}
     </AbsoluteFill>
   );

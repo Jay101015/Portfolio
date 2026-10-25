@@ -53,15 +53,19 @@ version from your previous read or write of that job.
         waits for the render to replace the release's videos (up to 9 minutes a run; it prints "still rendering: run
         this again" until then: run it again, up to eight times in all), then fetches both cuts and writes them in
         pieces with a `manifest.json`.
-      - Upload every piece listed in the manifest (`video.landscape.pieces` and `video.vertical.pieces`, in order)
+      - Upload every piece listed in the manifest (`video.landscape.pieces`, `video.vertical.pieces` and any Shorts,
+        `video.short1.pieces`, `video.short2.pieces`..., in order)
         with the Artifact tool: `asset: true`, the artifact URL above, `file_paths` = the pieces. Note each piece's
         asset id.
       - Update the job with `{"status": "rendered", "video": {"landscape": {"name", "bytes", "assets": [ids in
-        order]}, "vertical": {...}}}` (name and bytes from the manifest).
+        order]}, "vertical": {...}, "short1": {...}, ...}}` (name and bytes from the manifest; one entry per key in
+        the manifest's `video`).
       - Then, for every OTHER job of the same video that has a `video` field, delete its pieces from the store
         (Artifact action `delete`, `path` = each asset id) and update that job with `{"video": {"__delete__": true}}`,
         so the store holds one video per project.
       If it is still rendering after the eighth run, update the job with `{"status": "timeout"}`.
+   A ship whose script is the same as the last rendered one is a duplicate and is marked `cancelled`, unless its
+   files include a `shorts.json`: that is a request to cut Shorts from the video already made, and it goes through.
    6. If a step fails, update that job with `{"status": "failed", "error": "<one line: which step, and the error>"}`
       and go on to the next job.
 

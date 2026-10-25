@@ -20,6 +20,7 @@ on:
   push:
     paths:
       - "video-pipeline/projects/**/script.md"
+      - "video-pipeline/projects/**/shorts.json"
 
 concurrency:
   group: render-${{ github.ref }}

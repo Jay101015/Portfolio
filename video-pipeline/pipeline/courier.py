@@ -23,6 +23,7 @@ import base64
 import glob
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -187,6 +188,7 @@ def video(job: dict, commit: str, out_dir: str, limit: float, every: float = 30.
     slug = os.path.basename(os.path.dirname((job.get("wait") or {}).get("file") or next(f["path"] for f in job["files"] if f["path"].endswith("script.md"))))
     since = _commit_time(commit)
     end = time.time() + limit
+    seen: set[str] = set()
     while True:
         try:
             assets = release_assets(slug)
@@ -194,15 +196,18 @@ def video(job: dict, commit: str, out_dir: str, limit: float, every: float = 30.
             print(f"release lookup failed ({e}); trying again")
             assets = {}
         fresh = {n: a for n, a in assets.items() if _iso_to_ts(a["at"]) > since}
-        if len(fresh) >= 2 or (fresh and time.time() >= end):
+        # the release's assets arrive one after another (both cuts, then any Shorts): done when a poll finds nothing new
+        if fresh and (fresh.keys() == seen or time.time() >= end):
             break
+        seen = set(fresh.keys())
         if time.time() >= end:
             return None
         time.sleep(every)
     os.makedirs(out_dir, exist_ok=True)
     manifest = {"status": "rendered", "video": {}}
     for name, a in sorted(fresh.items()):
-        kind = "vertical" if "vertical" in name else "landscape"
+        m = re.search(r"-(short-\d+)\.mp4$", name)
+        kind = m.group(1).replace("-", "") if m else "vertical" if "vertical" in name else "landscape"  # short1, short2...
         local = os.path.join(out_dir, name)
         req = urllib.request.Request(a["url"], headers={"User-Agent": "money-moves-courier"})
         with urllib.request.urlopen(req, timeout=120) as r, open(local, "wb") as f:

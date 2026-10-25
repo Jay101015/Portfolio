@@ -31,6 +31,7 @@ from .enhance import enhance, level_from_header
 from .preview import write_preview
 from .auto_script import script_from_words
 from .script_parser import pace_scenes, parse_script
+from .shorts import cut_short, plan_shorts
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -466,6 +467,58 @@ def render(props_path: str, out_path: str, composition: str, concurrency: str | 
     print(f"joined {len(parts)} chunks -> {out_path}", flush=True)
 
 
+def keep_spans(src: str, dst: str, spans: list[tuple[float, float]], lead: float, tail: float) -> None:
+    """Write `dst`: silence of `lead`, then the `spans` of `src` (start, end) back to back, then `tail` of silence."""
+    parts = [f"anullsrc=r=48000:cl=mono,atrim=0:{lead:.3f}[l]"]
+    labels = ["[l]"]
+    for i, (a, b) in enumerate(spans):
+        parts.append(f"[0:a]atrim=start={a:.3f}:end={b:.3f},asetpts=PTS-STARTPTS[s{i}]")
+        labels.append(f"[s{i}]")
+    parts.append(f"anullsrc=r=48000:cl=mono,atrim=0:{tail:.3f}[t]")
+    labels.append("[t]")
+    graph = ";".join(parts) + ";" + "".join(labels) + f"concat=n={len(labels)}:v=0:a=1[out]"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-filter_complex", graph, "-map", "[out]", "-ac", "1", "-ar", "48000", "-codec:a", "libmp3lame", "-q:a", "2", dst], check=True)
+
+
+def render_shorts(project: str, sb: dict, audio: str | None, concurrency: str | None, chunk: int, plan_path: str | None, want: int) -> list[str]:
+    """Cut and render the Shorts: the slices in `shorts.json` (the studio's picks, each {scenes, hook, name}), else the
+    planner's best `want`. Writes the plan back as shorts-plan.json and renders <slug>-<name>.mp4, vertical, captioned."""
+    slug = sb["slug"]
+    public_dir = os.path.join(REMOTION, "public", "projects", slug)
+    plan = None
+    if plan_path and os.path.exists(plan_path):
+        with open(plan_path, encoding="utf-8") as f:
+            plan = json.load(f)
+        if isinstance(plan, dict):
+            plan = plan.get("shorts") or []
+    if not plan:
+        plan = plan_shorts(sb, want)
+    with open(os.path.join(project, "shorts-plan.json"), "w", encoding="utf-8") as f:
+        json.dump(plan, f, indent=1)
+    made = []
+    for k, short in enumerate(plan, 1):
+        name = short.get("name") or f"short-{k}"
+        ids = [int(x) for x in short.get("scenes", [])]
+        if not ids:
+            continue
+        cut, spans = cut_short(sb, ids, short.get("hook"), name)
+        if audio:
+            os.makedirs(public_dir, exist_ok=True)
+            keep_spans(audio, os.path.join(public_dir, f"{name}.mp3"), spans, 0.4, 0.8)
+            cut["audio"] = f"projects/{slug}/{name}.mp3"
+        else:
+            cut["audio"] = None
+        props = os.path.join(project, ".cache", f"{name}.json")
+        os.makedirs(os.path.dirname(props), exist_ok=True)
+        with open(props, "w", encoding="utf-8") as f:
+            json.dump(cut, f)
+        out = os.path.join(project, f"{slug}-{name}.mp4")
+        print(f"short {name}: scenes {ids}, {cut['durationSec']:.0f}s, hook: {cut['hook']}")
+        render(props, out, "Vertical", concurrency, chunk=chunk)
+        made.append(out)
+    return made
+
+
 def insert_silences(src: str, dst: str, silences: list[tuple[float, float]]) -> None:
     """Write `dst`: `src` with silence of each (at, length) inserted at `at` (times in the source's own clock)."""
     cuts = sorted(silences)
@@ -497,6 +550,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--concurrency", default=None)
     ap.add_argument("--retranscribe", action="store_true", help="ignore the cached transcript for this voiceover")
     ap.add_argument("--chunk", type=int, default=450, help="frames per render chunk (0 = single pass)")
+    ap.add_argument("--shorts", type=int, default=0, help="also cut and render this many Shorts (the project's shorts.json, if present, says which; 0 = only if shorts.json exists)")
     args = ap.parse_args(argv)
 
     project = os.path.abspath(args.project)
@@ -605,6 +659,9 @@ def main(argv: list[str] | None = None) -> int:
         render(sb_path, os.path.join(project, f"{slug}.mp4"), "Main", args.concurrency, chunk=args.chunk)
     if args.vertical or args.only_vertical:
         render(sb_path, os.path.join(project, f"{slug}-vertical.mp4"), "Vertical", args.concurrency, chunk=args.chunk)
+    plan_path = os.path.join(project, "shorts.json")
+    if args.shorts or os.path.exists(plan_path):
+        render_shorts(project, sb, audio, args.concurrency, args.chunk, plan_path, args.shorts or 3)
     print("done")
     return 0
 
