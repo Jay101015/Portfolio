@@ -178,6 +178,12 @@ class ArtLibraryTests(unittest.TestCase):
             assert notes and os.path.exists(os.path.join(d, "voiceover.m4a"))
             assert os.path.exists(os.path.join(d, "my-video.mp4"))
 
+    def test_takeaway_cards_number_themselves(self):
+        """`[takeaway title=...]` cards are 1 of N, 2 of N in order unless the tag sets n= or of=."""
+        sb = parse_script("# T\nslug: t\ntheme: whiteboard\nhost: none\n\n[title]\nHi.\n\n[takeaway title=\"Fees compound too\"]\nOne.\n\n[text]\nMore.\n\n[takeaway title=\"Time beats timing\" n=\"5\"]\nTwo.\n")
+        cards = [s["props"] for s in sb["scenes"] if s["type"] == "takeaway"]
+        assert [(c["n"], c["of"], c["title"]) for c in cards] == [("1", "2", "Fees compound too"), ("5", "2", "Time beats timing")]
+
     def test_a_scene_can_pick_its_transition(self):
         """`transition=wipe|slide|cut` on any scene reaches the storyboard, like `keep=`."""
         sb = parse_script("# T\nslug: t\ntheme: whiteboard\nhost: none\n\n[title]\nHi.\n\n[text transition=slide]\nOne.\n\n[stat value=\"3\" transition=wipe]\nTwo.\n")

@@ -73,3 +73,12 @@ export const keyWords = (group: Word[], max = 5): Word[] => {
     return {w: text || w.w, s: w.s, e: w.e};
   });
 };
+
+/** One caption-sized line for a scene: the first clause of the first sentence (up to a comma, "and", "but",
+ * "because"), at most eight words, no trailing punctuation. A line a person would write on a board, not a word pick. */
+export const captionLine = (text: string, max = 8): string => {
+  const first = text.split(/(?<=[.!?])\s+/)[0] ?? '';
+  const clause = first.split(/,|;|:|\s+(?:and|but|because|so|which|while)\s+/i)[0] ?? first;
+  const words = clause.trim().split(/\s+/).filter(Boolean).slice(0, max);
+  return words.join(' ').replace(/[.,;:!?]+$/, '');
+};

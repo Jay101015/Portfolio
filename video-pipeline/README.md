@@ -329,6 +329,23 @@ like a camera moving along a long whiteboard. `transition=wipe` (clear),
 is no eraser anywhere: a full page of phrases and a `wrong=` idea fade off
 the same way.
 
+#### Takeaway cards
+
+`[takeaway title="Fees compound too"]` is a numbered section card: a small
+"Takeaway 2 of 5" above, the number drawn in a ring, the title written
+large beside it. Cards count themselves in order; `n=` and `of=` override.
+They are the re-hook the money channels put every minute or so, and in the
+illustrated style the board clears before and after one. The studio's
+**+ takeaway card** chip adds one.
+
+#### Picture first
+
+In the illustrated style a text scene whose words call up a traced drawing
+is picture first: the drawing fills 70 percent of the board's height on the
+right, and the words keep to a column on the left as one written line, the
+`board=` line if the scene has one, else the phrase that carries the
+narration. Scenes with no matching drawing keep the usual page of phrases.
+
 #### Pace
 
 `pace: calm` (the illustrated style's default) gives every scene air: it

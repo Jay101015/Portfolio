@@ -9,7 +9,7 @@ import {Doodle, Write, WriteSpoken, pickDoodle, writeFrames} from './write';
 import {Art, PaperArt, isTraced, pickArt, pickArtAmong} from './art';
 import {PaperBite, PaperGrow, PaperPie, PaperShrink} from './money';
 import {Erase} from './erase';
-import {keyWords} from './phrase';
+import {keyWords, keyPhrase} from './phrase';
 import {Media} from './media';
 import {Loop} from 'remotion';
 
@@ -84,9 +84,9 @@ const CornerDoodle: React.FC<{brand: Brand; name?: string; art?: string; frame: 
   if (!brand.board || (!name && !art)) return null;
   void frame;
   if (bigArt(brand, art)) {
-    const size = (isVertical ? 560 : 600) * u;
+    const size = (isVertical ? 760 : 760) * u; // picture first: 70% of the board's height
     return (
-      <div style={{position: 'absolute', right: pad * 0.6, width: size, height: size, ...(isVertical ? {bottom: pad * 1.2} : {top: '50%', transform: 'translateY(-50%)'})}}>
+      <div style={{position: 'absolute', right: pad * 0.5, width: size, height: size, ...(isVertical ? {bottom: pad * 1.0, left: '50%', transform: 'translateX(-50%)'} : {top: '50%', transform: 'translateY(-50%)'})}}>
         <Art name={art as string} size={size} brand={brand} start={start} seed={seed} />
       </div>
     );
@@ -249,8 +249,12 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   // page at a time; when the page is full it clears and the next page starts. `board="a | b"` sets the lines
   // yourself; `wrong="..."` writes a wrong idea first and clears it before the point is made.
   const MAX = isVertical || brand.illustrated ? 3 : 4; // the illustrated style keeps the board sparse: the picture is the point
-  const explicit: string[] | null = scene.props.board ? String(scene.props.board).split('|').map((x) => x.trim()).filter(Boolean) : null;
-  const lines = sentences.map((g, i) => ({words: keyWords(g, isVertical || brand.illustrated ? 4 : 5), text: explicit ? explicit[i] ?? '' : '', at: Math.round((g[0].s - scene.start) * fps)}));
+  // beside a big picture the board gets one written line: `board=` if given, else the phrase that carries the scene
+  const oneLine = big ? [scene.props.board ? String(scene.props.board).split('|')[0].trim() : keyPhrase(scene.narration, 6)] : null;
+  const explicit: string[] | null = oneLine ?? (scene.props.board ? String(scene.props.board).split('|').map((x) => x.trim()).filter(Boolean) : null);
+  const lines = oneLine
+    ? [{words: keyWords(sentences[0] ?? [], 4), text: oneLine[0], at: Math.round(((sentences[0]?.[0]?.s ?? scene.start) - scene.start) * fps)}]
+    : sentences.map((g, i) => ({words: keyWords(g, isVertical || brand.illustrated ? 4 : 5), text: explicit ? explicit[i] ?? '' : '', at: Math.round((g[0].s - scene.start) * fps)}));
   const pages: (typeof lines)[] = [];
   for (let i = 0; i < lines.length; i += MAX) pages.push(lines.slice(i, i + MAX));
   const wrong: string | undefined = scene.props.wrong;
@@ -265,9 +269,9 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   let pageIdx = 0;
   for (let j = 1; j < pages.length; j++) if (frame >= pages[j][0].at - lead) pageIdx = j;
   const eraseWin: [number, number] | null = pageIdx > 0 ? [pages[pageIdx][0].at - lead, pages[pageIdx][0].at - Math.round(fps * 0.1)] : null;
-  const boxW = big ? width * 0.5 - pad * 1.2 : width - pad * 2.4;
+  const boxW = big ? width * 0.42 - pad * 0.6 : width - pad * 2.4;
   const boxH = (isVertical ? 0.5 : 0.6) * height;
-  const lineStyle: React.CSSProperties = {fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 66 : big ? 68 : 84) * u, lineHeight: 1.22, color: brand.ink, marginBottom: 14 * u, maxWidth: '100%'};
+  const lineStyle: React.CSSProperties = {fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 66 : big ? 80 : 84) * u, lineHeight: 1.18, color: brand.ink, marginBottom: 14 * u, maxWidth: '100%'};
   const renderPage = (pg: typeof lines, offset: number) => (
     <div style={{position: 'absolute', inset: 0}}>
       {pg.map((ln, i) => (
@@ -296,6 +300,47 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
         {pages[pageIdx] ? renderPage(pages[pageIdx], pageIdx * MAX) : null}
       </div>
       {corner}
+    </AbsoluteFill>
+  );
+};
+
+// ------------------------------------------------------------------ takeaway card
+/** A numbered section card: "Takeaway 2 of 5" in small hand above, the big number drawn in a ring, the title written
+ * large beside it. The re-hook the money channels use every minute or so. */
+export const PaperTakeaway: React.FC<P> = ({scene, brand}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const {u, pad, isVertical, width, height} = useLayout();
+  const n = String(scene.props.n ?? '1');
+  const of = String(scene.props.of ?? '');
+  const title: string = scene.props.title ?? scene.narration;
+  const kicker = of ? `Takeaway ${n} of ${of}` : `Takeaway ${n}`;
+  const kickDone = writeFrames(kicker, fps, 34) + 4;
+  const ring = Math.round(fps * 0.6);
+  const ringWin: [number, number] = [kickDone, kickDone + ring];
+  const numAt = ringWin[1] + 2;
+  const numDone = numAt + writeFrames(n, fps, 6) + 4;
+  const R = (isVertical ? 300 : 340) * u;
+  const hand = brand.hand ?? 'cursive';
+  return (
+    <AbsoluteFill style={{padding: pad, justifyContent: 'center'}}>
+      <div style={{fontFamily: hand, fontSize: (isVertical ? 52 : 58) * u, color: brand.accent2, transform: 'rotate(-1.5deg)', transformOrigin: 'left', marginBottom: 18 * u}}>
+        <Write text={kicker} frame={frame} fps={fps} start={2} cps={34} color={brand.accent2} />
+      </div>
+      <div style={{display: 'flex', flexDirection: isVertical ? 'column' : 'row', alignItems: 'center', gap: (isVertical ? 30 : 60) * u}}>
+        <div style={{position: 'relative', width: R, height: R, flex: '0 0 auto'}}>
+          <svg width={R} height={R} viewBox={`0 0 ${R} ${R}`} style={{position: 'absolute', inset: 0, overflow: 'visible'}}>
+            <SketchEllipse cx={R / 2} cy={R / 2} w={R * 0.92} h={R * 0.92} win={ringWin} options={{stroke: brand.ink, strokeWidth: 7 * u, roughness: 1.4, seed: scene.id * 3 + 1}} />
+          </svg>
+          <div style={{position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: R * 0.56, color: brand.accent, lineHeight: 1}}>
+            <Write text={n} frame={frame} fps={fps} start={numAt} cps={6} color={brand.accent} />
+          </div>
+        </div>
+        <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 70 : 92) * u, lineHeight: 1.15, color: brand.ink, maxWidth: isVertical ? '100%' : width - pad * 2 - R - 60 * u, textAlign: isVertical ? 'center' : 'left'}}>
+          <Write text={title} frame={frame} fps={fps} start={numDone} cps={20} />
+        </div>
+      </div>
+      {void height}
     </AbsoluteFill>
   );
 };
@@ -764,6 +809,8 @@ export const PaperSwitch: React.FC<P> = ({scene, brand}) => {
       return <PaperOutro scene={scene} brand={brand} />;
     case 'art':
       return <PaperArt scene={scene} brand={brand} />;
+    case 'takeaway':
+      return <PaperTakeaway scene={scene} brand={brand} />;
     case 'bite':
       return <PaperBite scene={scene} brand={brand} />;
     case 'grow':
