@@ -513,6 +513,15 @@ steer it:
 
 `brand.text: full` in the header brings back whole sentences everywhere.
 
+### Building on the board
+
+`keep=yes` on any scene keeps the board before it, small in the top left,
+and draws this scene beside it, so an argument builds instead of swapping
+pages: the fee, then the bite it takes, then the share that is. `keep=arrow`
+draws an arrow from the old to the new; `keep=strike` crosses the old one
+out (a wrong figure, then the right one). In Edit the switch under the
+words cycles Fresh board, Keep the last board, arrow, crossed out.
+
 ### The money pictures
 
 Four scene types draw the pictures money ideas are always drawn with, with

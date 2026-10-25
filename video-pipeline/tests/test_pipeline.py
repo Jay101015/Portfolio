@@ -127,6 +127,8 @@ class MoneyPictureTests(unittest.TestCase):
         self.assertEqual(sb["scenes"][2]["props"]["per"], "month")
         self.assertEqual(sb["scenes"][2]["props"]["rate"], "7%")
         self.assertEqual(sb["scenes"][4]["props"]["to"], "£74")
+        kept = parse_script('# T\n\n[stat value="1%"]\nA.\n\n[text keep=strike]\nB.\n')
+        self.assertEqual(kept["scenes"][1]["props"]["keep"], "strike")
 
 
 class PlacementTests(unittest.TestCase):

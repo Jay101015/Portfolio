@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Audio, Freeze, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {Brand, Scene, Storyboard} from './types';
 import {presets} from './theme';
 import './fonts';
@@ -25,6 +25,7 @@ import {PaperSwitch, Sticker} from './paper/scenes';
 import {SketchFilterDefs} from './paper/media';
 import {PenHand} from './paper/write';
 import {ArtLayer} from './paper/art';
+import {Arrow, SketchPath} from './paper/sketch';
 import {FACES, POSES, defaultAvatar, defaultFaceFor, type AvatarConfig, type Face, type Pose} from './avatar/Avatar';
 
 const SceneSwitch: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}) => {
@@ -102,6 +103,7 @@ export const resolveAvatar = (scene: Scene, t: number): Resolved => {
 /** Which scenes get a whip-pan in (the "look at this" scenes); the rest hard cut. */
 const transitionFor = (scene: Scene, toon: boolean): Transition => {
   const asked = scene.props.transition;
+  if (keepMode(scene)) return 'cut'; // building on the last board: nothing wipes
   if (asked === 'cut' || asked === 'whip' || asked === 'fade' || asked === 'push') return asked;
   if (!toon) return scene.start === 0 ? 'fade' : 'push';
   if (scene.start === 0) return 'cut';
@@ -179,8 +181,51 @@ const HostLayer: React.FC<{sb: Storyboard; scene: Scene; avatar: AvatarConfig; t
   );
 };
 
+/** `keep=yes|arrow|strike` on a scene: the board before it stays, small, top left, and this scene is drawn beside it */
+const keepMode = (scene: Scene): '' | 'yes' | 'arrow' | 'strike' => {
+  const k = String(scene.props.keep ?? '').toLowerCase();
+  if (k === 'arrow' || k === 'strike') return k;
+  return ['yes', 'true', '1', 'on', 'build'].includes(k) ? 'yes' : '';
+};
+const KEPT = {x: 0.03, y: 0.05, scale: 0.45}; // where the last board sits
+const NEW = {x: 0.44, y: 0.3, scale: 0.58}; // where this scene draws
+
+/** The last board, finished, kept small in the corner while the next thing is drawn beside it; struck through or
+ * pointed at when asked. Outside the pen's scene wrapper, so the hand does not retrace it. */
+const KeptBoard: React.FC<{prev: Scene; brand: Brand; mode: 'yes' | 'arrow' | 'strike'}> = ({prev, brand, mode}) => {
+  const {fps, width, height} = useVideoConfig();
+  const u = width / 1920;
+  const last = Math.max(0, Math.round((prev.end - prev.start) * fps) - 1);
+  const bx = KEPT.x * width;
+  const by = KEPT.y * height;
+  const bw = KEPT.scale * width;
+  const bh = KEPT.scale * height;
+  return (
+    <AbsoluteFill style={{pointerEvents: 'none'}}>
+      <AbsoluteFill style={{left: bx, top: by, width, height, transform: `scale(${KEPT.scale})`, transformOrigin: '0 0'}}>
+        <Freeze frame={last}>
+          <SceneSwitch scene={prev} brand={brand} />
+          <Sticker scene={prev} brand={brand} />
+          <ArtLayer scene={prev} brand={brand} />
+        </Freeze>
+      </AbsoluteFill>
+      {mode === 'strike' ? (
+        <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{position: 'absolute', inset: 0, overflow: 'visible'}}>
+          <SketchPath d={`M${bx + bw * 0.08},${by + bh * 0.3} L${bx + bw * 0.92},${by + bh * 0.72}`} win={[6, 6 + Math.round(fps * 0.5)]} options={{stroke: brand.accent2, strokeWidth: 14 * u, seed: 5 + prev.id, roughness: 1.6}} />
+          <SketchPath d={`M${bx + bw * 0.1},${by + bh * 0.7} L${bx + bw * 0.9},${by + bh * 0.32}`} win={[6 + Math.round(fps * 0.5), 6 + fps]} options={{stroke: brand.accent2, strokeWidth: 14 * u, seed: 9 + prev.id, roughness: 1.6}} />
+        </svg>
+      ) : null}
+      {mode === 'arrow' ? (
+        <div style={{position: 'absolute', left: bx + bw * 0.98, top: by + bh * 0.9}}>
+          <Arrow length={0.1 * width} stroke={brand.accent2} win={[6, 6 + Math.round(fps * 0.6)]} angle={22} seed={3 + prev.id} thickness={7 * u} />
+        </div>
+      ) : null}
+    </AbsoluteFill>
+  );
+};
+
 export const Video: React.FC<Storyboard> = (sb) => {
-  const {fps} = useVideoConfig();
+  const {fps, width, height} = useVideoConfig();
   const flags = (sb.brand ?? {}) as Record<string, unknown>;
   const brand: Brand = {
     ...(presets[sb.theme ?? 'toon'] ?? presets.toon),
@@ -195,14 +240,17 @@ export const Video: React.FC<Storyboard> = (sb) => {
       <Background brand={brand} />
       <SketchFilterDefs />
       {sb.audio ? <Audio src={staticFile(sb.audio)} /> : null}
-      {sb.scenes.map((scene) => {
+      {sb.scenes.map((scene, idx) => {
         const from = Math.round(scene.start * fps);
         const dur = Math.max(1, Math.round((scene.end - scene.start) * fps));
+        const prev = idx > 0 ? sb.scenes[idx - 1] : null;
+        const keep = prev ? keepMode(scene) : '';
         return (
           <Sequence key={scene.id} from={from} durationInFrames={dur} name={`${scene.id} ${scene.type}`}>
             <SceneFade durationInFrames={dur} toon={brand.toon} transition={transitionFor(scene, brand.toon)} dir={scene.id % 2 ? 1 : -1}>
               <Camera scene={scene} toon={brand.toon}>
-                <AbsoluteFill data-pen-scene={scene.id} data-pen-from={from}>
+                {keep && prev ? <KeptBoard prev={prev} brand={brand} mode={keep} /> : null}
+                <AbsoluteFill data-pen-scene={scene.id} data-pen-from={from} style={keep ? {left: NEW.x * width, top: NEW.y * height, transform: `scale(${NEW.scale})`, transformOrigin: '0 0'} : undefined}>
                   <SceneSwitch scene={scene} brand={brand} />
                   <Sticker scene={scene} brand={brand} />
                   <ArtLayer scene={scene} brand={brand} />
