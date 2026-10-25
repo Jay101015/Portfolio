@@ -9,7 +9,7 @@ import {Doodle, Write, WriteSpoken, pickDoodle, writeFrames} from './write';
 import {Art, PaperArt, isTraced, pickArt, pickArtAmong} from './art';
 import {PaperBite, PaperGrow, PaperPie, PaperShrink} from './money';
 import {Erase} from './erase';
-import {keyWords, keyPhrase} from './phrase';
+import {captionLine, keyWords} from './phrase';
 import {Media} from './media';
 import {Loop} from 'remotion';
 
@@ -250,7 +250,7 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   // yourself; `wrong="..."` writes a wrong idea first and clears it before the point is made.
   const MAX = isVertical || brand.illustrated ? 3 : 4; // the illustrated style keeps the board sparse: the picture is the point
   // beside a big picture the board gets one written line: `board=` if given, else the phrase that carries the scene
-  const oneLine = big ? [scene.props.board ? String(scene.props.board).split('|')[0].trim() : keyPhrase(scene.narration, 6)] : null;
+  const oneLine = big ? [scene.props.board ? String(scene.props.board).split('|')[0].trim() : captionLine(scene.narration)] : null;
   const explicit: string[] | null = oneLine ?? (scene.props.board ? String(scene.props.board).split('|').map((x) => x.trim()).filter(Boolean) : null);
   const lines = oneLine
     ? [{words: keyWords(sentences[0] ?? [], 4), text: oneLine[0], at: Math.round(((sentences[0]?.[0]?.s ?? scene.start) - scene.start) * fps)}]
