@@ -354,7 +354,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
       {sb.hook ? <HookBanner text={sb.hook} brand={brand} /> : null}
       <Chrome brand={brand} durationSec={sb.durationSec} />
       {sb.captions ? <Captions scenes={sb.scenes} brand={brand} host={sb.host} always={!!sb.short} /> : null}
-      {brand.board ? <PenHand brand={brand} /> : null}
+      {brand.board && sb.hand ? <PenHand brand={brand} /> : null}
     </AbsoluteFill>
   );
 };

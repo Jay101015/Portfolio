@@ -39,12 +39,16 @@ export const Write: React.FC<WriteProps> = ({text, frame, fps, start = 0, cps = 
   const per = fps / cps; // frames per character
   let k = 0;
   const words = String(text).split(/\s+/).filter(Boolean);
+  const seed = Array.from(String(text)).reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 100003, 7);
   return (
     <span style={style}>
       {words.map((w, wi) => (
         <span key={wi} style={{display: 'inline-block', marginRight: wordGap, whiteSpace: 'nowrap'}}>
           {Array.from(w).map((ch, ci) => {
-            const at = start + k * per;
+            // a marker is not a metronome: each letter lands a little early or late (zero-mean, so the line still
+            // finishes when writeFrames says), and the first letter of a word lingers as the pen lifts between words
+            const wob = (rnd(seed + k) - 0.5) * 0.6 + (ci === 0 && wi > 0 ? 0.25 : 0);
+            const at = start + (k + wob) * per;
             k += 1;
             const p = Math.max(0, Math.min(1, (frame - at) / per));
             return (

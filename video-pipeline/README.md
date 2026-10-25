@@ -632,6 +632,15 @@ host on screen, the default on `toon`), `slug`, `kicker`, `captions: false`, any
 `brand.*` (`name`, `bg`, `panel`, `text`, `muted`, `accent`, `accent2`,
 `font`) and any `avatar.*` from the table above.
 
+### No hand: the board draws itself
+
+The marker hand that used to follow the writing is off. Words still write
+themselves letter by letter and drawings still draw stroke by stroke, with a
+little unevenness in the pace so it reads as a hand at work, but nothing sits
+on top of the pictures and nothing has to travel across the board between
+lines. `hand: on` in the header brings the hand back; the Look sheet has the
+same switch.
+
 ### The board writes the point, not the sentence
 
 On the whiteboard a `[text]` scene no longer writes every word you say. The

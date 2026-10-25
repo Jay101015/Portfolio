@@ -474,6 +474,8 @@ def parse_script(md: str) -> dict[str, Any]:
         "durationSec": duration,
         "audio": None,
         "captions": header.get("captions", "true").lower() not in ("false", "no", "off", "0"),
+        # the marker hand that used to follow the writing is off unless the header asks for it with `hand: on`
+        "hand": header.get("hand", "off").lower() in ("on", "yes", "true", "1"),
         "theme": header.get("theme", "toon"),
         # the painted host belongs to the hand-drawn look; the motion-graphics themes carry the video without one
         "host": header.get("host", "painted" if header.get("theme", "toon") == "toon" else "none"),

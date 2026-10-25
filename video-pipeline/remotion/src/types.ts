@@ -70,6 +70,7 @@ export type Storyboard = {
   durationSec: number;
   audio?: string | null;
   captions: boolean;
+  hand?: boolean; // show the marker hand following the writing (`hand: on`); off by default, the strokes draw themselves
   theme?: string;
   brand: Partial<Brand>;
   avatar?: Partial<AvatarConfig>;

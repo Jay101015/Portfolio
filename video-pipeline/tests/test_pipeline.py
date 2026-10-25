@@ -146,6 +146,11 @@ class PlacementTests(unittest.TestCase):
 
 
 class ArtLibraryTests(unittest.TestCase):
+    def test_hand_is_off_unless_the_header_asks(self):
+        base = "# T\nslug: t\ntheme: whiteboard\n\n[text]\nOne line here.\n"
+        self.assertFalse(parse_script(base)["hand"])
+        self.assertTrue(parse_script(base.replace("theme: whiteboard\n", "theme: whiteboard\nhand: on\n"))["hand"])
+
     def test_calm_pace_gives_every_scene_a_lead_and_a_hold(self):
         """The illustrated style defaults to `pace: calm`: each scene starts 1.2s before its first word and keeps 0.6s
         after its last; scenes stay back to back and the words move with them. `pace: tight` changes nothing."""
