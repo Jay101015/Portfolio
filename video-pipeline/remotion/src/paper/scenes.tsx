@@ -248,9 +248,9 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   // The board: the voice says the sentence, the marker writes the few words that carry it. Phrases build up a
   // page at a time; when the page is full the hand rubs it out and starts again. `board="a | b"` sets the lines
   // yourself; `wrong="..."` writes a wrong idea first and rubs it out before the point is made.
-  const MAX = isVertical ? 3 : 4;
+  const MAX = isVertical || brand.illustrated ? 3 : 4; // the illustrated style keeps the board sparse: the picture is the point
   const explicit: string[] | null = scene.props.board ? String(scene.props.board).split('|').map((x) => x.trim()).filter(Boolean) : null;
-  const lines = sentences.map((g, i) => ({words: keyWords(g, isVertical ? 4 : 5), text: explicit ? explicit[i] ?? '' : '', at: Math.round((g[0].s - scene.start) * fps)}));
+  const lines = sentences.map((g, i) => ({words: keyWords(g, isVertical || brand.illustrated ? 4 : 5), text: explicit ? explicit[i] ?? '' : '', at: Math.round((g[0].s - scene.start) * fps)}));
   const pages: (typeof lines)[] = [];
   for (let i = 0; i < lines.length; i += MAX) pages.push(lines.slice(i, i + MAX));
   const wrong: string | undefined = scene.props.wrong;

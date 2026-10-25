@@ -146,6 +146,38 @@ class PlacementTests(unittest.TestCase):
 
 
 class ArtLibraryTests(unittest.TestCase):
+    def test_calm_pace_gives_every_scene_a_lead_and_a_hold(self):
+        """The illustrated style defaults to `pace: calm`: each scene starts 1.2s before its first word and keeps 0.6s
+        after its last; scenes stay back to back and the words move with them. `pace: tight` changes nothing."""
+        from pipeline.script_parser import pace_scenes
+        md = "# T\nslug: t\ntheme: whiteboard\nhost: none\nbrand.style: illustrated\n\n[title]\nHi there.\n\n[text]\nOne two three.\n\n[text]\nFour five.\n"
+        sb = parse_script(md)
+        assert sb["pace"] == {"lead": 1.2, "hold": 0.6}
+        before = [(s["start"], s["end"], s["words"][0]["s"]) for s in sb["scenes"]]
+        silences = pace_scenes(sb, 1.2, 0.6)
+        assert silences[0] == (0.0, 1.2) and len(silences) == 3
+        for i, (s, (b0, b1, w0)) in enumerate(zip(sb["scenes"], before)):
+            self.assertAlmostEqual(s["words"][0]["s"] - s["start"], w0 - b0 + 1.2, places=2)
+            self.assertAlmostEqual(s["end"] - s["words"][-1]["e"], b1 - (s["words"][-1]["e"] - i * 1.8 - 1.2) + 0.6, places=2)
+        for a, b in zip(sb["scenes"], sb["scenes"][1:]):
+            assert a["end"] == b["start"]
+        tight = parse_script(md.replace("brand.style: illustrated", "brand.style: illustrated\npace: tight"))
+        assert tight["pace"] == {"lead": 0.0, "hold": 0.0} and pace_scenes(tight, 0.0, 0.0) == []
+
+    def test_the_builds_own_render_is_never_adopted_as_a_recording(self):
+        """<slug>.mp4 in the project folder is the last render, not a voiceover somebody uploaded."""
+        import tempfile
+        from pipeline.build import adopt_recording
+        with tempfile.TemporaryDirectory() as d:
+            open(os.path.join(d, "script.md"), "w").write("# My video\nslug: my-video\n\n[title]\nHi.\n")
+            open(os.path.join(d, "my-video.mp4"), "wb").write(b"x" * 10)
+            open(os.path.join(d, "my-video-vertical.mp4"), "wb").write(b"x" * 10)
+            assert adopt_recording(d) == []
+            open(os.path.join(d, "New Recording 3.m4a"), "wb").write(b"x" * 10)
+            notes = adopt_recording(d)
+            assert notes and os.path.exists(os.path.join(d, "voiceover.m4a"))
+            assert os.path.exists(os.path.join(d, "my-video.mp4"))
+
     def test_a_scene_can_pick_its_transition(self):
         """`transition=wipe|slide|cut` on any scene reaches the storyboard, like `keep=`."""
         sb = parse_script("# T\nslug: t\ntheme: whiteboard\nhost: none\n\n[title]\nHi.\n\n[text transition=slide]\nOne.\n\n[stat value=\"3\" transition=wipe]\nTwo.\n")

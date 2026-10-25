@@ -67,7 +67,7 @@ export const Erase: React.FC<{win: [number, number]; brand: Brand; width: number
             <path d={d} fill="none" stroke="none" data-pen-win={`${win[0]},${win[1]},l`} data-pen-sub="0,1" data-pen-prio="1" />
           </svg>
           {/* the felt pad, a little ahead of the hand's nib so the hand reads as pushing it */}
-          <div style={{position: 'absolute', left: x0 + p.x - padW * 0.55, top: p.y - padH * 0.5, width: padW, height: padH, borderRadius: 10 * u, background: '#3a3a3c', boxShadow: `0 ${4 * u}px ${10 * u}px rgba(0,0,0,0.25)`, transform: `rotate(${p.row % 2 === 0 ? -4 : 4}deg)`}}>
+          <div style={{position: 'absolute', left: x0 + p.x - padW * 0.55, top: p.y - padH * 0.5, width: padW, height: padH, borderRadius: 10 * u, background: '#3a3a3c', boxShadow: `${3 * u}px ${8 * u}px ${14 * u}px rgba(0,0,0,0.3)`, transform: `rotate(${p.row % 2 === 0 ? -4 : 4}deg)`}}>
             <div style={{position: 'absolute', left: 8 * u, right: 8 * u, bottom: 6 * u, height: 14 * u, borderRadius: 6 * u, background: brand.paper ? '#d9d4c7' : '#cfd3d8', opacity: 0.9}} />
           </div>
         </>

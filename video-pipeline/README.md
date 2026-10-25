@@ -327,6 +327,19 @@ a camera moving along a long whiteboard. `transition=wipe`, `transition=slide`
 or `transition=cut` on any board scene picks one by hand (the studio's More
 details has the field); `keep=` scenes never wipe.
 
+While the pad sweeps, the pen hand leaves the board and comes back for the
+next words: nobody rubs a board out with a marker in their fist.
+
+#### Pace
+
+`pace: calm` (the illustrated style's default) gives every scene air: it
+starts 1.2 seconds before its first word, so the picture is down before the
+words begin, and keeps 0.6 seconds after its last, so the rub-out has a beat
+of its own. With a voiceover the same silences go into the voice, so the
+words and the speaker still move together; without one the estimate just
+stretches. `pace: tight` runs the scenes back to back (the default for the
+icon style); `pace.lead: 0.8` and `pace.hold: 0.4` set the numbers.
+
 ### Searching it like a GIF keyboard
 
 In the studio, **GIFs & drawings** (in the ⋯ menu, the **+ GIF or drawing**

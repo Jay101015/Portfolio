@@ -260,8 +260,12 @@ export const PenHand: React.FC<{brand: Brand}> = () => {
       let active: Seg | null = null;
       let prev: Seg | null = null;
       let next: Seg | null = null;
+      // a rub-out (`data-pen-prio="1"`): the pen hand has no business on the board while the pad sweeps, so it leaves
+      // for the edge and comes back for the next writing; the pad moves on its own
+      if (segs.some((s) => s.prio > 0 && s.a <= t && t < s.b)) return REST;
       for (const s of segs) {
-        if (s.a <= t && t < s.b && (!active || s.prio >= active.prio)) active = s; // the latest-starting stroke in progress wins; a rub-out over any writing
+        if (s.prio > 0) continue;
+        if (s.a <= t && t < s.b) active = s; // the latest-starting stroke in progress wins
         if (s.b <= t && (!prev || s.b >= prev.b)) prev = s;
         if (s.a > t && (!next || s.a < next.a)) next = s;
       }

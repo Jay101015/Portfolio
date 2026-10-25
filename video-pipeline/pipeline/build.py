@@ -30,7 +30,7 @@ from . import align as al
 from .enhance import enhance, level_from_header
 from .preview import write_preview
 from .auto_script import script_from_words
-from .script_parser import parse_script
+from .script_parser import pace_scenes, parse_script
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -233,10 +233,26 @@ def unpack_uploads(project: str) -> list[str]:
     return notes
 
 
+def rendered_names(project: str) -> set[str]:
+    """The files the build itself writes into the project folder (<slug>.mp4 and <slug>-vertical.mp4), which must never
+    be mistaken for a recording on the next build."""
+    names: set[str] = set()
+    script = os.path.join(project, "script.md")
+    if os.path.exists(script):
+        with open(script, encoding="utf-8") as f:
+            md = f.read()
+        header = _header_lines(md)
+        title = next((l[2:].strip() for l in md.splitlines() if l.startswith("# ")), "")
+        slug = header.get("slug") or re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-") or "video"
+        names |= {f"{slug}.mp4", f"{slug}-vertical.mp4"}
+    return names
+
+
 def adopt_recording(project: str) -> list[str]:
     """A recording uploaded on GitHub keeps its own name ("New Recording 3.m4a"): any audio file in the project folder
-    that is not voiceover.* (or the studio's voice-preview.mp3) is a new recording. It becomes voiceover.<ext> and
-    replaces the old one; with several, the largest wins."""
+    that is not voiceover.* (or the studio's voice-preview.mp3, or the build's own renders) is a new recording. It
+    becomes voiceover.<ext> and replaces the old one; with several, the largest wins."""
+    renders = rendered_names(project)
     strays = [
         os.path.join(project, n)
         for n in sorted(os.listdir(project))
@@ -244,6 +260,7 @@ def adopt_recording(project: str) -> list[str]:
         and n.rsplit(".", 1)[-1].lower() in AUDIO_EXT
         and not n.startswith("voiceover.")
         and n != "voice-preview.mp3"
+        and n not in renders
     ]
     if not strays:
         return []
@@ -449,6 +466,25 @@ def render(props_path: str, out_path: str, composition: str, concurrency: str | 
     print(f"joined {len(parts)} chunks -> {out_path}", flush=True)
 
 
+def insert_silences(src: str, dst: str, silences: list[tuple[float, float]]) -> None:
+    """Write `dst`: `src` with silence of each (at, length) inserted at `at` (times in the source's own clock)."""
+    cuts = sorted(silences)
+    parts: list[str] = []
+    labels: list[str] = []
+    pos = 0.0
+    for i, (at, length) in enumerate(cuts):
+        if at > pos + 1e-3:
+            parts.append(f"[0:a]atrim=start={pos:.3f}:end={at:.3f},asetpts=PTS-STARTPTS[s{i}]")
+            labels.append(f"[s{i}]")
+        parts.append(f"anullsrc=r=48000:cl=mono,atrim=0:{length:.3f}[g{i}]")
+        labels.append(f"[g{i}]")
+        pos = max(pos, at)
+    parts.append(f"[0:a]atrim=start={pos:.3f},asetpts=PTS-STARTPTS[tail]")
+    labels.append("[tail]")
+    graph = ";".join(parts) + ";" + "".join(labels) + f"concat=n={len(labels)}:v=0:a=1[out]"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-filter_complex", graph, "-map", "[out]", "-ac", "1", "-ar", "48000", dst], check=True)
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("project", help="project folder containing script.md")
@@ -518,6 +554,16 @@ def main(argv: list[str] | None = None) -> int:
         else:
             print("WARNING: voiceover present but not transcribed (--backend none, no cache): timings are estimates")
             sb["durationSec"] = round(total + 0.5, 3)
+        lead, hold = (sb.get("pace") or {}).get("lead", 0.0), (sb.get("pace") or {}).get("hold", 0.0)
+        silences = pace_scenes(sb, lead, hold)
+        if silences:
+            # the voice moves with the words: the same silences go into the voiceover
+            paced = os.path.join(project, ".cache", "voice-paced.wav")
+            os.makedirs(os.path.dirname(paced), exist_ok=True)
+            insert_silences(audio, paced, silences)
+            audio = paced
+            wav = al.to_wav16k(audio, os.path.join(project, ".cache", "voice-paced-16k.wav"))
+            print(f"pace: {lead:.1f}s before each scene's first word, {hold:.1f}s after its last ({len(silences)} silences in the voice)")
         ext = os.path.splitext(audio)[1].lower()
         if ext in (".wav", ".mp3"):
             shutil.copyfile(audio, os.path.join(public_dir, f"voiceover{ext}"))
@@ -530,6 +576,9 @@ def main(argv: list[str] | None = None) -> int:
         sb["visemes"] = al.visemes_from_words(sb["scenes"], sb["fps"], sb["durationSec"])
     else:
         print("no voiceover.* found: using estimated timing, silent render")
+        lead, hold = (sb.get("pace") or {}).get("lead", 0.0), (sb.get("pace") or {}).get("hold", 0.0)
+        if pace_scenes(sb, lead, hold):
+            print(f"pace: {lead:.1f}s before each scene's first word, {hold:.1f}s after its last")
         sb["mouth"] = al.mouth_from_words(sb["scenes"], sb["fps"], sb["durationSec"])
         sb["visemes"] = al.visemes_from_words(sb["scenes"], sb["fps"], sb["durationSec"])
 

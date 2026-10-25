@@ -293,6 +293,47 @@ def estimate_timings(scenes: list[dict[str, Any]], lead_in: float = 0.4) -> floa
     return round(t + 1.0, 3)
 
 
+def pace_for(header: dict[str, str]) -> tuple[float, float]:
+    """How much air each scene gets: (lead, hold) in seconds. `pace: calm` (the illustrated style's default) gives the
+    picture time to land before the first words and a beat after the last before the board is rubbed out; `pace: tight`
+    runs the scenes back to back. `pace.lead` and `pace.hold` set the numbers by hand."""
+    style = str(header.get("brand.style", "icons")).lower()
+    pace = str(header.get("pace", "calm" if style == "illustrated" else "tight")).lower()
+    lead, hold = (1.2, 0.6) if pace == "calm" else (0.0, 0.0)
+    if "pace.lead" in header:
+        lead = max(0.0, float(header["pace.lead"]))
+    if "pace.hold" in header:
+        hold = max(0.0, float(header["pace.hold"]))
+    return lead, hold
+
+
+def pace_scenes(sb: dict[str, Any], lead: float, hold: float) -> list[tuple[float, float]]:
+    """Open the scenes up: every scene starts `lead` seconds before its first word and keeps `hold` seconds after its
+    last, so a drawing can land before the words and the rub-out has a beat of its own. Scenes stay back to back; the
+    words (and cues) of scene i move later by i * (lead + hold) + lead. Returns the (at, length) silences to put into
+    the voiceover, in the original audio's time, so the voice moves with the words."""
+    scenes = sb["scenes"]
+    gap = lead + hold
+    if not scenes or gap <= 0:
+        return []
+    silences: list[tuple[float, float]] = [(0.0, lead)]
+    old_bounds = [sc["end"] for sc in scenes]
+    for i, sc in enumerate(scenes):
+        shift = i * gap + lead
+        for w in sc.get("words", []) or []:
+            w["s"] = round(w["s"] + shift, 3)
+            w["e"] = round(w["e"] + shift, 3)
+        for c in sc.get("cues", []) or []:
+            if "t" in c:
+                c["t"] = round(c["t"] + shift, 3)
+        sc["start"] = round(sc["start"] + (i * gap), 3)  # the lead sits inside the scene, before its first word
+        sc["end"] = round(sc["end"] + (i + 1) * gap, 3)  # the hold after the last word, then the next scene's lead
+    if len(scenes) > 1:
+        silences += [(b, gap) for b in old_bounds[:-1]]
+    sb["durationSec"] = round(scenes[-1]["end"] + 0.6, 3)
+    return silences
+
+
 def _auto_blocks(paragraphs: list[str]) -> list[Block]:
     """Untagged script: make reasonable scenes from plain paragraphs."""
     blocks: list[Block] = []
@@ -408,4 +449,5 @@ def parse_script(md: str) -> dict[str, Any]:
         "mouth": [],
         "scenes": scenes,
         "timing": "estimated",
+        "pace": dict(zip(("lead", "hold"), pace_for(header))),
     }

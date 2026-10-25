@@ -1184,7 +1184,10 @@ const pathLen = (d: string) => {
   return len;
 };
 /** how long a traced drawing takes to draw: a marker covers about 900 units a second, between 1.2 and 4.5 seconds */
-export const tracedSeconds = (svg: {paths: string[]}) => Math.max(1.2, Math.min(4.5, svg.paths.reduce((n, d) => n + pathLen(d), 0) / 900));
+export const tracedSeconds = (svg: {paths: string[]}, quick = false) => {
+  const len = svg.paths.reduce((n, d) => n + pathLen(d), 0);
+  return quick ? Math.max(1.0, Math.min(1.8, len / 1800)) : Math.max(1.2, Math.min(4.5, len / 900)); // quick: the illustrated style, where the picture should be down before the words start
+};
 
 /** A traced illustration drawn stroke by stroke in its own order, each stroke published for the hand to follow. */
 const Traced: React.FC<{def: NonNullable<ArtDef['svg']>; size: number; brand: Brand; start: number; seed: number; style?: React.CSSProperties}> = ({def, size, brand, start, seed, style}) => {
@@ -1192,7 +1195,7 @@ const Traced: React.FC<{def: NonNullable<ArtDef['svg']>; size: number; brand: Br
   const {fps} = useVideoConfig();
   const lens = React.useMemo(() => def.paths.map(pathLen), [def]);
   const total = lens.reduce((a, b) => a + b, 0) || 1;
-  const frames = Math.round(tracedSeconds(def) * fps);
+  const frames = Math.round(tracedSeconds(def, !!brand.illustrated) * fps);
   const win: [number, number] = [start, start + frames];
   const d = Math.max(0, Math.min(1, (frame - win[0]) / Math.max(1e-6, win[1] - win[0])));
   const tilt = (rnd(seed) - 0.5) * 3;
