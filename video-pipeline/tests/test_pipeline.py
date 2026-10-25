@@ -146,6 +146,11 @@ class PlacementTests(unittest.TestCase):
 
 
 class ArtLibraryTests(unittest.TestCase):
+    def test_a_scene_can_pick_its_transition(self):
+        """`transition=wipe|slide|cut` on any scene reaches the storyboard, like `keep=`."""
+        sb = parse_script("# T\nslug: t\ntheme: whiteboard\nhost: none\n\n[title]\nHi.\n\n[text transition=slide]\nOne.\n\n[stat value=\"3\" transition=wipe]\nTwo.\n")
+        assert [s["props"].get("transition") for s in sb["scenes"]] == [None, "slide", "wipe"]
+
     def test_the_traced_illustrations_are_in_the_catalogue(self):
         """Every drawing in library/illus/manifest.json has its SVG of pen strokes and sits in the catalogue as kind illus."""
         lib = os.path.join(os.path.dirname(__file__), "..", "library")

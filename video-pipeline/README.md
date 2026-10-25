@@ -308,6 +308,15 @@ nothing stay plain. Icons (the default) is the usual style: little symbols
 in the corner, only when asked for. The studio's library has a **People &
 scenes** chip for the traced ones.
 
+The board has two transitions of its own, and the illustrated style uses
+them by default. After a scene with a person on it the hand **rubs the board
+out** (the felt pad, three passes, the last second of the scene) and the next
+scene starts on a clean board. After plain words the board **slides**: the
+last drawing leaves to the left as the new one comes in from the right, like
+a camera moving along a long whiteboard. `transition=wipe`, `transition=slide`
+or `transition=cut` on any board scene picks one by hand (the studio's More
+details has the field); `keep=` scenes never wipe.
+
 ### Searching it like a GIF keyboard
 
 In the studio, **GIFs & drawings** (in the ⋯ menu, the **+ GIF or drawing**

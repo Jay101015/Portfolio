@@ -1,7 +1,7 @@
 import React from 'react';
 import {AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 
-export type Transition = 'cut' | 'whip' | 'fade' | 'push';
+export type Transition = 'cut' | 'whip' | 'fade' | 'push' | 'wipe' | 'slide'; // wipe and slide are the board's own, done in Video.tsx: the scene itself just shows
 
 const easeOutBack = (p: number) => {
   const c1 = 1.70158;
@@ -39,6 +39,7 @@ export const SceneFade: React.FC<{durationInFrames: number; toon?: boolean; tran
     }
     return <AbsoluteFill>{children}</AbsoluteFill>;
   }
+  if (mode === 'wipe' || mode === 'slide') return <AbsoluteFill>{children}</AbsoluteFill>;
   if (mode === 'cut') {
     const s = interpolate(frame, [0, 2, 5], [1.04, 0.985, 1], {extrapolateRight: 'clamp'});
     return <AbsoluteFill style={{transform: `scale(${s})`, transformOrigin: '50% 60%'}}>{children}</AbsoluteFill>;

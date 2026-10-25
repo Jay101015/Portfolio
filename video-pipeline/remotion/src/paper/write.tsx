@@ -157,7 +157,7 @@ export const MarkerHand: React.FC<{size: number}> = ({size}) => {
 };
 
 type Pt = {x: number; y: number};
-type Seg = {a: number; b: number; at: (t: number) => Pt; h: number; char: boolean};
+type Seg = {a: number; b: number; at: (t: number) => Pt; h: number; char: boolean; prio: number};
 
 const easeOutInv = (p: number) => 1 - Math.cbrt(1 - p); // inverse of 1-(1-u)^3
 const easeInOut = (u: number) => (u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2);
@@ -206,6 +206,7 @@ export const PenHand: React.FC<{brand: Brand}> = () => {
       segs.push({
         a,
         b,
+        prio: Number(el.dataset.penPrio || 0),
         char: true,
         get h() {
           return rect().height / scale;
@@ -228,6 +229,7 @@ export const PenHand: React.FC<{brand: Brand}> = () => {
       segs.push({
         a: tOf(f0),
         b: tOf(f1),
+        prio: Number(el.getAttribute('data-pen-prio') || 0),
         char: false,
         h: 0,
         at: (t) => {
@@ -259,7 +261,7 @@ export const PenHand: React.FC<{brand: Brand}> = () => {
       let prev: Seg | null = null;
       let next: Seg | null = null;
       for (const s of segs) {
-        if (s.a <= t && t < s.b) active = s; // the latest-starting stroke in progress wins
+        if (s.a <= t && t < s.b && (!active || s.prio >= active.prio)) active = s; // the latest-starting stroke in progress wins; a rub-out over any writing
         if (s.b <= t && (!prev || s.b >= prev.b)) prev = s;
         if (s.a > t && (!next || s.a < next.a)) next = s;
       }

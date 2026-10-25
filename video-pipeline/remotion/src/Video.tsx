@@ -64,6 +64,8 @@ const SceneSwitch: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}) => 
 };
 
 import {hostPosFor} from './hostPos';
+import {Erase} from './paper/erase';
+import {isTraced, pickArtAmong} from './paper/art';
 
 const isPose = (s: unknown): s is Pose => typeof s === 'string' && (POSES as string[]).includes(s);
 const isFace = (s: unknown): s is Face => typeof s === 'string' && (FACES as string[]).includes(s);
@@ -105,10 +107,60 @@ const transitionFor = (scene: Scene, toon: boolean): Transition => {
   const asked = scene.props.transition;
   if (keepMode(scene)) return 'cut'; // building on the last board: nothing wipes
   if (asked === 'cut' || asked === 'whip' || asked === 'fade' || asked === 'push') return asked;
+  if (asked === 'wipe' || asked === 'slide') return toon ? 'cut' : asked;
   if (!toon) return scene.start === 0 ? 'fade' : 'push';
   if (scene.start === 0) return 'cut';
   return ['clip', 'still', 'image', 'poster', 'score', 'compare', 'chart', 'quote', 'stat'].includes(scene.type) ? 'whip' : 'cut';
 };
+
+/** The board's own transitions. `wipe`: before this scene the hand rubs the last board out (its last second) and the
+ * new scene starts on a clean board. `slide`: the board slides along, the last drawing leaving on the left as the new
+ * one comes in from the right, like a camera moving down a long whiteboard. In the illustrated style they are the
+ * default: a rub-out after a scene with a person on it, a slide after plain words; `transition=` on a scene picks. */
+const WIPE_FRAMES = (fps: number) => Math.round(fps * 1.0);
+const SLIDE_FRAMES = (fps: number) => Math.round(fps * 0.55);
+const sceneArt = (scene: Scene, brand: Brand): string | undefined => {
+  const p = scene.props;
+  if (scene.type === 'art') return p.name;
+  if (p.sticker || p.icon || p.art === 'off') return undefined;
+  if (p.art) return p.art;
+  return brand.illustrated ? pickArtAmong(isTraced, p.title, p.headline, p.subtitle, p.label, p.sub, scene.narration) : undefined;
+};
+const boardTransition = (scene: Scene, prev: Scene | null, brand: Brand): Transition => {
+  const asked = scene.props.transition;
+  if (asked === 'wipe' || asked === 'slide') return brand.board && prev ? asked : 'cut';
+  if (!brand.board || !brand.illustrated || !prev || asked || keepMode(scene)) return transitionFor(scene, brand.toon);
+  if (scene.type === 'outro') return 'cut';
+  const had = sceneArt(prev, brand);
+  return had && isTraced(had) ? 'wipe' : 'slide';
+};
+
+/** The last board, finished, sliding off to the left as the new one comes in (outside the pen's scene wrapper). */
+const SlideOut: React.FC<{prev: Scene; brand: Brand}> = ({prev, brand}) => {
+  const frame = useCurrentFrame();
+  const {fps, width} = useVideoConfig();
+  const n = SLIDE_FRAMES(fps);
+  if (frame >= n) return null;
+  const p = easeInOut(frame / n);
+  const last = Math.max(0, Math.round((prev.end - prev.start) * fps) - 1);
+  return (
+    <AbsoluteFill style={{transform: `translateX(${-p * width}px)`, pointerEvents: 'none'}}>
+      <Freeze frame={last}>
+        <SceneSwitch scene={prev} brand={brand} />
+        <Sticker scene={prev} brand={brand} />
+        <ArtLayer scene={prev} brand={brand} />
+      </Freeze>
+    </AbsoluteFill>
+  );
+};
+const SlideIn: React.FC<{children: React.ReactNode}> = ({children}) => {
+  const frame = useCurrentFrame();
+  const {fps, width} = useVideoConfig();
+  const n = SLIDE_FRAMES(fps);
+  const p = frame >= n ? 1 : easeInOut(frame / n);
+  return <AbsoluteFill style={{transform: `translateX(${(1 - p) * width}px)`}}>{children}</AbsoluteFill>;
+};
+const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
 
 /** Camera moves on the big reactions: a punch-in on shock, a shake on anger, a bounce on a laugh. */
 const Camera: React.FC<{scene: Scene; toon: boolean; children: React.ReactNode}> = ({scene, toon, children}) => {
@@ -245,17 +297,36 @@ export const Video: React.FC<Storyboard> = (sb) => {
         const from = Math.round(scene.start * fps);
         const dur = Math.max(1, Math.round((scene.end - scene.start) * fps));
         const prev = idx > 0 ? sb.scenes[idx - 1] : null;
+        const next = idx + 1 < sb.scenes.length ? sb.scenes[idx + 1] : null;
         const keep = prev ? keepMode(scene) : '';
+        const tr = boardTransition(scene, prev, brand);
+        const wipeOut = next ? boardTransition(next, scene, brand) === 'wipe' : false; // the hand rubs this board out at the end
+        const wipeFrames = Math.min(WIPE_FRAMES(fps), Math.floor(dur / 2));
+        let board = (
+          <AbsoluteFill data-pen-scene={scene.id} data-pen-from={from} style={keep ? {left: NEW.x * width, top: NEW.y * height, transform: `scale(${NEW.scale})`, transformOrigin: '0 0'} : undefined}>
+            {wipeOut ? (
+              <Erase win={[dur - wipeFrames, dur]} brand={brand} width={width} height={height}>
+                <SceneSwitch scene={scene} brand={brand} />
+                <Sticker scene={scene} brand={brand} />
+                <ArtLayer scene={scene} brand={brand} />
+              </Erase>
+            ) : (
+              <>
+                <SceneSwitch scene={scene} brand={brand} />
+                <Sticker scene={scene} brand={brand} />
+                <ArtLayer scene={scene} brand={brand} />
+              </>
+            )}
+          </AbsoluteFill>
+        );
+        if (tr === 'slide' && prev) board = <SlideIn>{board}</SlideIn>;
         return (
           <Sequence key={scene.id} from={from} durationInFrames={dur} name={`${scene.id} ${scene.type}`}>
-            <SceneFade durationInFrames={dur} toon={brand.toon} transition={transitionFor(scene, brand.toon)} dir={scene.id % 2 ? 1 : -1}>
+            <SceneFade durationInFrames={dur} toon={brand.toon} transition={tr} dir={scene.id % 2 ? 1 : -1}>
               <Camera scene={scene} toon={brand.toon}>
                 {keep && prev ? <KeptBoard prev={prev} brand={brand} mode={keep} /> : null}
-                <AbsoluteFill data-pen-scene={scene.id} data-pen-from={from} style={keep ? {left: NEW.x * width, top: NEW.y * height, transform: `scale(${NEW.scale})`, transformOrigin: '0 0'} : undefined}>
-                  <SceneSwitch scene={scene} brand={brand} />
-                  <Sticker scene={scene} brand={brand} />
-                  <ArtLayer scene={scene} brand={brand} />
-                </AbsoluteFill>
+                {tr === 'slide' && prev ? <SlideOut prev={prev} brand={brand} /> : null}
+                {board}
                 {sb.host === 'none' ? null : <HostLayer sb={sb} scene={scene} avatar={avatar} toon={brand.toon} />}
               </Camera>
             </SceneFade>
