@@ -185,7 +185,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
     ...(presets[sb.theme ?? 'toon'] ?? presets.toon),
     ...(sb.brand ?? {}),
     autoArt: String(flags.doodles ?? 'off').toLowerCase() === 'on',
-    corner: !['off', 'no', 'false', 'none', '0'].includes(String(flags.corner ?? 'on').toLowerCase()),
+    corner: ['on', 'yes', 'true', '1'].includes(String(flags.corner ?? 'off').toLowerCase()), // the channel name in the corner only when asked for
   };
   const avatar: AvatarConfig = {...defaultAvatar, ...(sb.avatar ?? {})};
   return (

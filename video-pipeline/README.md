@@ -343,8 +343,8 @@ GIPHY app or site: ⋯ → Save) and add it from there.
 **Look & style** (the "Corner & drawings…" chip under the preview, or the
 ⋯ menu) has the looks and three switches, kept in the script header:
 
-- `brand.corner: off` hides the handwritten channel name in the top right;
-  `brand.name:` changes it.
+- `brand.corner: on` shows the handwritten channel name in the top right (off
+  unless asked for); `brand.name:` sets what it says.
 - `brand.doodles: on` gives every scene a small drawing picked from its
   words. It is off by default: a scene gets a drawing or GIF only when you
   put one on it.
