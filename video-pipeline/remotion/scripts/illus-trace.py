@@ -6,7 +6,11 @@ would go round every line twice. This one finds the centreline instead: threshol
 into polylines, smooth and simplify them, and write them as SVG paths with round caps and a stroke width equal to
 the drawing's own line width. The result is what a hand drew, stroke by stroke, in a sensible order.
 
-    python3 scripts/illus-trace.py in.png out.svg [--size 1000] [--min 12] [--eps 1.2]
+    python3 scripts/illus-trace.py in.png out.svg [--size 1000] [--min 12] [--eps 1.2] [--mode auto|ink|outline]
+
+A flat-colour illustration (black outlines round coloured fills, as image models like to draw) is handled by the
+`outline` mode: thin black lines stay, a black fill (hair, a suit) becomes its rim, and a coloured area that meets
+the white page without a line gets an edge there. `auto` picks it whenever the picture has colour or solid black.
 
 Prints a one-line summary (strokes, total length) and writes the SVG with a `data-strokes` attribute.
 """
@@ -19,6 +23,7 @@ import sys
 
 import numpy as np
 from PIL import Image, ImageFilter, ImageOps
+from scipy import ndimage as ndi
 
 try:
     from skimage.morphology import skeletonize
@@ -26,19 +31,56 @@ except ImportError:  # a slow fallback would be a Zhang-Suen pass; keep the depe
     skeletonize = None
 
 
-def load_ink(path: str, size: int) -> np.ndarray:
+def load_ink(path: str, size: int, mode: str = "auto", dark: int = 80, speck: int = 12) -> np.ndarray:
     """A boolean image of the ink, `size` px on its long side, background removed."""
     im = Image.open(path).convert("RGBA")
     # a transparent background (our stills) becomes white
     bg = Image.new("RGBA", im.size, (255, 255, 255, 255))
-    im = Image.alpha_composite(bg, im).convert("L")
-    im = ImageOps.autocontrast(im, cutoff=1)
+    im = Image.alpha_composite(bg, im).convert("RGB")
     scale = size / max(im.size)
     if scale < 1:
         im = im.resize((max(1, round(im.size[0] * scale)), max(1, round(im.size[1] * scale))), Image.LANCZOS)
     im = im.filter(ImageFilter.GaussianBlur(0.6))
-    a = np.asarray(im, dtype=np.float32)
-    ink = a < 150
+    if speck > 12:  # a textured fill: smooth it before looking for lines
+        im = im.filter(ImageFilter.MedianFilter(5))
+    rgb = np.asarray(im, dtype=np.float32)
+    lum = rgb.mean(axis=2)
+    sat = rgb.max(axis=2) - rgb.min(axis=2)
+    if mode == "auto":
+        coloured = (sat > 40).mean() > 0.01
+        solid = (lum < 60).mean() > 0 and (lum < 150).mean() > 1.6 * (lum < 60).mean()
+        mode = "outline" if coloured or solid else "ink"
+    if mode == "ink":
+        a = np.asarray(ImageOps.autocontrast(im.convert("L"), cutoff=1), dtype=np.float32)
+        return a < 150
+    return outline_ink(lum, sat, dark, speck)
+
+
+def outline_ink(lum: np.ndarray, sat: np.ndarray, thresh: int = 80, speck: int = 12) -> np.ndarray:
+    """Outline-only ink for a flat-colour drawing: thin dark lines, the rims of dark fills, the edges of colour on white."""
+    dark = lum < thresh
+    # the drawing's line width: twice the typical distance from a skeleton pixel to the nearest non-ink pixel
+    dist = ndi.distance_transform_edt(dark)
+    sk = skeletonize(dark) if skeletonize is not None else dark
+    half = float(np.median(dist[sk])) if sk.any() else 2.0
+    r = max(2, int(math.ceil(2.5 * half)))
+    rim = dark & ~ndi.binary_erosion(dark, iterations=r)
+    nonwhite = (lum < 225) | (sat > 30)
+    nonwhite = ndi.binary_opening(nonwhite, iterations=2)
+    edge = nonwhite & ~ndi.binary_erosion(nonwhite, iterations=max(1, int(round(half))))
+    edge &= ~ndi.binary_dilation(dark, iterations=r)
+    ink = rim | edge
+    # nothing along the picture's own border: a fill that runs off the page should not become a frame
+    m = r + 2
+    ink[:m, :] = ink[-m:, :] = False
+    ink[:, :m] = ink[:, -m:] = False
+    # drop specks
+    lab, n = ndi.label(ink)
+    if n:
+        sizes = ndi.sum(ink, lab, range(1, n + 1))
+        keep = np.zeros(n + 1, bool)
+        keep[1:] = sizes >= speck
+        ink = keep[lab]
     return ink
 
 
@@ -171,11 +213,14 @@ def main() -> int:
     ap.add_argument("--size", type=int, default=1000, help="work at this many px on the long side")
     ap.add_argument("--min", type=float, default=5, help="drop strokes shorter than this (px); a dot is a short stroke, so keep this small")
     ap.add_argument("--eps", type=float, default=1.2, help="simplification tolerance (px)")
+    ap.add_argument("--dark", type=int, default=80, help="outline mode: a pixel darker than this is line ink (raise it for brown or olive lines)")
+    ap.add_argument("--speck", type=int, default=12, help="outline mode: drop ink blobs smaller than this many px (raise it for a textured fill)")
+    ap.add_argument("--mode", choices=["auto", "ink", "outline"], default="auto", help="ink: a black-line drawing; outline: a flat-colour illustration; auto picks")
     args = ap.parse_args()
     if skeletonize is None:
         print("scikit-image is needed: pip install scikit-image", file=sys.stderr)
         return 2
-    ink = load_ink(args.src, args.size)
+    ink = load_ink(args.src, args.size, args.mode, args.dark, args.speck)
     skel = skeletonize(ink)
     width = stroke_width(ink, skel)
     lines = walk(skel)

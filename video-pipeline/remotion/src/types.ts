@@ -23,6 +23,7 @@ export type Brand = {
   autoArt?: boolean; // little drawings picked from the words in the corner of scenes (`brand.doodles: on`; off by default)
   corner?: boolean; // the channel name in the page corner (`brand.corner: off` hides it)
   fullText?: boolean; // text scenes write every word said (`brand.text: full`); off: the few words that carry it
+  illustrated?: boolean; // the illustrated style (`brand.style: illustrated`): traced people-and-scene drawings, large, on every scene whose words call one up
 };
 
 export type Cue = {t: number; pose?: string; face?: string}; // mid-scene change, absolute seconds

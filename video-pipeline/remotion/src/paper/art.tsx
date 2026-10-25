@@ -1145,13 +1145,15 @@ Object.assign(ART, ILLUS); // the traced illustrations join the catalogue under 
 const PICK: [RegExp, string][] = Object.entries(ART).map(([name, def]) => [new RegExp('\\b(' + def.tags.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'i'), name]);
 
 /** The drawing for a scene: the one it names, else the one whose words come up most in the texts (a longer, more
- * specific phrase counts for more than a short word, so "piggy bank" beats "save"). */
-export const pickArt = (explicit: string | undefined, ...texts: (string | undefined)[]): string | undefined => {
-  if (explicit) return ART[explicit] ? explicit : undefined;
+ * specific phrase counts for more than a short word, so "piggy bank" beats "save"). `among` narrows the choice. */
+export const pickArt = (explicit: string | undefined, ...texts: (string | undefined)[]): string | undefined => (explicit ? (ART[explicit] ? explicit : undefined) : pickArtAmong(() => true, ...texts));
+
+export const pickArtAmong = (among: (name: string) => boolean, ...texts: (string | undefined)[]): string | undefined => {
   const hay = texts.filter(Boolean).join(' ');
   let best: string | undefined;
   let bestScore = 0;
   for (const [re, name] of PICK) {
+    if (!among(name)) continue;
     const hits = hay.match(new RegExp(re.source, 'gi')) ?? [];
     const score = hits.reduce((n, h) => n + 2 + h.length, 0);
     if (score > bestScore) {
@@ -1161,6 +1163,9 @@ export const pickArt = (explicit: string | undefined, ...texts: (string | undefi
   }
   return best;
 };
+
+/** a traced illustration (people and situations) rather than a drawn icon */
+export const isTraced = (name: string) => !!ART[name]?.svg;
 
 /** Every drawing's name, with what it shows and the words that call it up (for the studio's library). */
 export const artCatalogue = () => Object.entries(ART).map(([name, def]) => ({name, about: def.about, tags: def.tags, search: def.search ?? []}));

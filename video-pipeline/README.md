@@ -281,12 +281,32 @@ style), traced to pen strokes so the hand draws them like everything else:
 
 finds the centreline of every stroke (not the outline, which a pen would go
 round twice), orders the strokes the way a hand would, and writes an SVG.
+A flat-colour illustration (black outlines round coloured fills, the way
+image models like to draw) works too: `--mode auto` (the default) notices
+the colour and keeps only the outlines, turning a black fill such as hair
+or a suit into its rim and giving a coloured area that meets the white page
+an edge. Brown or olive outlines need `--dark 70` or so (anything darker
+than this counts as line) and a textured fill `--speck 60` (drop ink blobs
+smaller than this).
 Add the drawing to `library/illus/manifest.json` (name, about, tags,
 search), then `python3 scripts/illus-import.py` puts it in the catalogue
 under its name, `scripts/art-catalogue.py` updates the studio's list, and
 the GIF and still scripts render it with the rest. From then on it works
 anywhere a drawing does: `[art name=kitchen-table]`, `art=` on a scene, the
 library search.
+
+The first six, generated as one set and traced this way: `bank-queue`,
+`crossroads`, `keys`, `kitchen-table`, `piggy-coin`, `sleep-grow`.
+
+#### The illustrated style
+
+`brand.style: illustrated` in the header (the studio's Look sheet,
+**Drawing style: People & scenes**) is a second video style. Every scene
+whose words call up one of the traced drawings gets it large, on the right
+half of the board, the words keeping to the left; scenes that call up
+nothing stay plain. Icons (the default) is the usual style: little symbols
+in the corner, only when asked for. The studio's library has a **People &
+scenes** chip for the traced ones.
 
 ### Searching it like a GIF keyboard
 

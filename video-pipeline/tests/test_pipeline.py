@@ -1,4 +1,5 @@
 """Run with:  . .venv/bin/activate && python -m unittest discover -s tests -v"""
+import json
 import os
 import unittest
 
@@ -145,6 +146,18 @@ class PlacementTests(unittest.TestCase):
 
 
 class ArtLibraryTests(unittest.TestCase):
+    def test_the_traced_illustrations_are_in_the_catalogue(self):
+        """Every drawing in library/illus/manifest.json has its SVG of pen strokes and sits in the catalogue as kind illus."""
+        lib = os.path.join(os.path.dirname(__file__), "..", "library")
+        manifest = json.load(open(os.path.join(lib, "illus", "manifest.json"), encoding="utf-8"))
+        cat = {d["name"]: d for d in json.load(open(os.path.join(lib, "art", "catalogue.json"), encoding="utf-8"))}
+        assert len(manifest) >= 6
+        for e in manifest:
+            svg = open(os.path.join(lib, "illus", e["name"] + ".svg"), encoding="utf-8").read()
+            assert svg.count("<path ") >= 20, e["name"]
+            assert cat[e["name"]]["kind"] == "illus"
+            assert e["search"] and e["about"]
+
     def test_the_catalogue_is_large_and_searchable(self):
         import json
 

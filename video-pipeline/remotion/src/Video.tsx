@@ -233,6 +233,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
     autoArt: String(flags.doodles ?? 'off').toLowerCase() === 'on',
     corner: ['on', 'yes', 'true', '1'].includes(String(flags.corner ?? 'off').toLowerCase()), // the channel name in the corner only when asked for
     fullText: String(flags.text ?? 'key').toLowerCase() === 'full',
+    illustrated: String(flags.style ?? 'icons').toLowerCase() === 'illustrated',
   };
   const avatar: AvatarConfig = {...defaultAvatar, ...(sb.avatar ?? {})};
   return (

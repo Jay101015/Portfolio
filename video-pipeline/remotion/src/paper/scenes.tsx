@@ -6,7 +6,7 @@ import {compactNum, findPhraseTime, formatNum, parseValue, useLayout} from '../c
 import {fadeIn, pop, rnd} from '../components/motion';
 import {Arrow, Marker, SketchEllipse, SketchLine, SketchPath, SketchRect, Underline, roughGen} from './sketch';
 import {Doodle, Write, WriteSpoken, pickDoodle, writeFrames} from './write';
-import {Art, PaperArt, pickArt} from './art';
+import {Art, PaperArt, isTraced, pickArt, pickArtAmong} from './art';
 import {PaperBite, PaperGrow, PaperPie, PaperShrink} from './money';
 import {Erase} from './erase';
 import {keyWords} from './phrase';
@@ -72,14 +72,26 @@ const Source: React.FC<{brand: Brand; source?: string; delay?: number}> = ({bran
 /** The corner drawing a scene gets by itself: an `icon=` always; otherwise one picked from the words only when the
  * header says `brand.doodles: on` (off by default: a drawing on every scene gets tiring). */
 const autoDoodle = (brand: Brand, icon: string | undefined, ...texts: (string | undefined)[]) => (icon || brand.autoArt ? pickDoodle(icon, ...texts) : undefined);
-const autoArt = (brand: Brand, ...texts: (string | undefined)[]) => (brand.autoArt ? pickArt(undefined, ...texts) : undefined);
+/** the drawing a scene's words call up: in the illustrated style one of the traced people-and-scene drawings, else (when
+ * `brand.doodles: on`) any drawing in the library */
+const autoArt = (brand: Brand, ...texts: (string | undefined)[]) => (brand.illustrated ? pickArtAmong(isTraced, ...texts) : brand.autoArt ? pickArt(undefined, ...texts) : undefined);
+/** a traced illustration on a scene in the illustrated style is the picture, not a corner note: it gets the right half */
+const bigArt = (brand: Brand, art: string | undefined) => !!(brand.illustrated && art && isTraced(art));
 
 /** A doodle in the top-right corner of the board, drawn after the headline is written. */
 const CornerDoodle: React.FC<{brand: Brand; name?: string; art?: string; frame: number; fps: number; start: number; seed?: number; color?: string}> = ({brand, name, art, frame, fps, start, seed = 1, color}) => {
   const {u, pad, isVertical} = useLayout();
   if (!brand.board || (!name && !art)) return null;
-  const size = (isVertical ? 200 : 260) * u * (art ? 1.3 : 1);
   void frame;
+  if (bigArt(brand, art)) {
+    const size = (isVertical ? 560 : 600) * u;
+    return (
+      <div style={{position: 'absolute', right: pad * 0.6, width: size, height: size, ...(isVertical ? {bottom: pad * 1.2} : {top: '50%', transform: 'translateY(-50%)'})}}>
+        <Art name={art as string} size={size} brand={brand} start={start} seed={seed} />
+      </div>
+    );
+  }
+  const size = (isVertical ? 200 : 260) * u * (art ? 1.3 : 1);
   return (
     <div style={{position: 'absolute', top: isVertical ? pad * 1.3 : pad * 0.9, right: pad * 0.9, width: size, height: size}}>
       {art ? <Art name={art} size={size} brand={brand} start={start} seed={seed} /> : <Doodle name={name as string} size={size} win={[start, start + fps * 0.9]} stroke={color ?? brand.ink} width={1.5} seed={seed} />}
@@ -198,7 +210,9 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
     if (cur.length) groups.push(cur);
     return groups;
   }, [scene.words, isVertical]);
-  const corner = <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, headline, scene.narration)} art={scene.props.sticker || scene.props.art || scene.props.icon ? undefined : autoArt(brand, headline, scene.narration)} frame={frame} fps={fps} start={brand.board ? 6 : 0} seed={scene.id} />;
+  const artName = scene.props.sticker || scene.props.art || scene.props.icon ? undefined : autoArt(brand, headline, scene.narration);
+  const big = bigArt(brand, artName) && !isVertical; // the words keep to the left half, the picture has the right
+  const corner = <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, headline, scene.narration)} art={artName} frame={frame} fps={fps} start={brand.board ? 6 : 0} seed={scene.id} />;
   const head = headline ? (
     <div style={{fontFamily: hand(brand), fontSize: 44 * u, color: brand.accent2, marginBottom: 24 * u, transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8)}}>
       {brand.board ? <Write text={headline} frame={frame} fps={fps} start={0} cps={34} color={brand.accent2} /> : headline}
@@ -251,9 +265,9 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   let pageIdx = 0;
   for (let j = 1; j < pages.length; j++) if (frame >= pages[j][0].at - lead) pageIdx = j;
   const eraseWin: [number, number] | null = pageIdx > 0 ? [pages[pageIdx][0].at - lead, pages[pageIdx][0].at - Math.round(fps * 0.1)] : null;
-  const boxW = width - pad * 2.4;
+  const boxW = big ? width * 0.5 - pad * 1.2 : width - pad * 2.4;
   const boxH = (isVertical ? 0.5 : 0.6) * height;
-  const lineStyle: React.CSSProperties = {fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 66 : 84) * u, lineHeight: 1.22, color: brand.ink, marginBottom: 14 * u, maxWidth: '100%'};
+  const lineStyle: React.CSSProperties = {fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 66 : big ? 68 : 84) * u, lineHeight: 1.22, color: brand.ink, marginBottom: 14 * u, maxWidth: '100%'};
   const renderPage = (pg: typeof lines, offset: number) => (
     <div style={{position: 'absolute', inset: 0}}>
       {pg.map((ln, i) => (
