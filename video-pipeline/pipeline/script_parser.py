@@ -380,6 +380,9 @@ def _auto_blocks(paragraphs: list[str]) -> list[Block]:
     return blocks
 
 
+LONG_HEADER_KEYS = {"topic", "title", "subtitle", "kicker", "description", "plan"}
+
+
 def parse_script(md: str) -> dict[str, Any]:
     title = "Untitled"
     header: dict[str, str] = {}
@@ -401,7 +404,8 @@ def parse_script(md: str) -> dict[str, Any]:
             continue
         if not seen_tag:
             m = re.match(r"^([\w.]+):\s*(.+)$", line)
-            if m and len(line.split()) <= 12:
+            # a known header key is a header line however long its value (a topic often runs past twelve words)
+            if m and (len(line.split()) <= 12 or m.group(1).lower() in LONG_HEADER_KEYS):
                 header[m.group(1).lower()] = m.group(2).strip()
             else:
                 pre_tag_lines.append(line)
