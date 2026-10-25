@@ -248,7 +248,10 @@ The studio is tuned for throughput. One video is four taps and one recording:
    script in the channel's shape: the number in the first line, three takeaway cards
    each with a picture scene behind it, one money picture, a recap, the outro. 90 to
    150 seconds. Without Claude you get the same shape as a scaffold to fill in.
-2. **Record**: Read mode, record over the script on the phone, upload. The voice
+2. **Record**: Read mode, record over the script on the phone, upload. Recorded in
+   parts? The Read sheet's **Join them** block merges two or more takes into one
+   recording in the page (order them, a breath between, the silence at each end
+   trimmed) and that becomes the recording to send. The voice
    is cleaned, transcribed and matched to the scenes; the pace opens each scene
    up so the picture lands before the words.
 3. **Ship**: one tap. It comes back as the landscape cut, the vertical cut and the
