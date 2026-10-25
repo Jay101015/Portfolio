@@ -260,8 +260,7 @@ export const PenHand: React.FC<{brand: Brand}> = () => {
       let active: Seg | null = null;
       let prev: Seg | null = null;
       let next: Seg | null = null;
-      // a rub-out (`data-pen-prio="1"`): the pen hand has no business on the board while the pad sweeps, so it leaves
-      // for the edge and comes back for the next writing; the pad moves on its own
+      // a stroke marked `data-pen-prio="1"` is a gap for the hand: it leaves for the edge and comes back for the next writing
       if (segs.some((s) => s.prio > 0 && s.a <= t && t < s.b)) return REST;
       for (const s of segs) {
         if (s.prio > 0) continue;

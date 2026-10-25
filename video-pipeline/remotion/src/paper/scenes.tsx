@@ -246,8 +246,8 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
     );
   }
   // The board: the voice says the sentence, the marker writes the few words that carry it. Phrases build up a
-  // page at a time; when the page is full the hand rubs it out and starts again. `board="a | b"` sets the lines
-  // yourself; `wrong="..."` writes a wrong idea first and rubs it out before the point is made.
+  // page at a time; when the page is full it clears and the next page starts. `board="a | b"` sets the lines
+  // yourself; `wrong="..."` writes a wrong idea first and clears it before the point is made.
   const MAX = isVertical || brand.illustrated ? 3 : 4; // the illustrated style keeps the board sparse: the picture is the point
   const explicit: string[] | null = scene.props.board ? String(scene.props.board).split('|').map((x) => x.trim()).filter(Boolean) : null;
   const lines = sentences.map((g, i) => ({words: keyWords(g, isVertical || brand.illustrated ? 4 : 5), text: explicit ? explicit[i] ?? '' : '', at: Math.round((g[0].s - scene.start) * fps)}));
@@ -258,10 +258,10 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   const firstAt = lines.length ? lines[0].at : fps;
   const wrongErase: [number, number] = [wrongDone + Math.round(fps * 0.6), 0];
   wrongErase[1] = wrongErase[0] + Math.round(fps * 0.6);
-  // with a wrong idea on the board first, the real phrases wait until it is rubbed out (the voice runs on; the writing catches up)
+  // with a wrong idea on the board first, the real phrases wait until it has cleared (the voice runs on; the writing catches up)
   const shift = wrong ? Math.max(0, wrongErase[1] + 4 - firstAt) : 0;
   if (shift) for (const ln of lines) { ln.at += shift; ln.words = ln.words.map((w) => ({w: w.w, s: w.s + shift / fps, e: w.e + shift / fps})); }
-  const lead = Math.round(fps * 0.8); // the rub-out starts this long before the first word of the next page
+  const lead = Math.round(fps * 0.8); // the page starts clearing this long before the first word of the next page
   let pageIdx = 0;
   for (let j = 1; j < pages.length; j++) if (frame >= pages[j][0].at - lead) pageIdx = j;
   const eraseWin: [number, number] | null = pageIdx > 0 ? [pages[pageIdx][0].at - lead, pages[pageIdx][0].at - Math.round(fps * 0.1)] : null;

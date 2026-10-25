@@ -319,23 +319,22 @@ in the corner, only when asked for. The studio's library has a **People &
 scenes** chip for the traced ones.
 
 The board has two transitions of its own, and the illustrated style uses
-them by default. After a scene with a person on it the hand **rubs the board
-out** (the felt pad, three passes, the last second of the scene) and the next
-scene starts on a clean board. After plain words the board **slides**: the
-last drawing leaves to the left as the new one comes in from the right, like
-a camera moving along a long whiteboard. `transition=wipe`, `transition=slide`
-or `transition=cut` on any board scene picks one by hand (the studio's More
-details has the field); `keep=` scenes never wipe.
-
-While the pad sweeps, the pen hand leaves the board and comes back for the
-next words: nobody rubs a board out with a marker in their fist.
+them by default. After a scene with a person on it the board **clears**: the
+writing and the drawing fade off in the scene's last half second and the
+next scene starts on a clean board. After plain words the board **slides**:
+the last drawing leaves to the left as the new one comes in from the right,
+like a camera moving along a long whiteboard. `transition=wipe` (clear),
+`transition=slide` or `transition=cut` on any board scene picks one by hand
+(the studio's More details has the field); `keep=` scenes never clear. There
+is no eraser anywhere: a full page of phrases and a `wrong=` idea fade off
+the same way.
 
 #### Pace
 
 `pace: calm` (the illustrated style's default) gives every scene air: it
 starts 1.2 seconds before its first word, so the picture is down before the
-words begin, and keeps 0.6 seconds after its last, so the rub-out has a beat
-of its own. With a voiceover the same silences go into the voice, so the
+words begin, and keeps 0.6 seconds after its last, so the board has a beat
+before it clears. With a voiceover the same silences go into the voice, so the
 words and the speaker still move together; without one the estimate just
 stretches. `pace: tight` runs the scenes back to back (the default for the
 icon style); `pace.lead: 0.8` and `pace.hold: 0.4` set the numbers.
@@ -573,11 +572,11 @@ On the whiteboard a `[text]` scene no longer writes every word you say. The
 voice says the sentence; the marker writes the three to five words that carry
 it (a figure and the words around it, else the first content words), and the
 phrases build up on the board one under the other. When the board is full
-the hand rubs it out with a felt pad and starts a fresh page. Two attributes
+the page fades off and a fresh one starts. Two attributes
 steer it:
 
 - `board="1% fee | a third gone"`: write exactly these lines, `|` between them.
-- `wrong="Buy the dip"`: write the wrong idea first, in red, and rub it out
+- `wrong="Buy the dip"`: write the wrong idea first, in red, and clear it
   before the point is made.
 
 `brand.text: full` in the header brings back whole sentences everywhere.
@@ -602,7 +601,7 @@ the order a person would, and the number is the point of the scene.
 | `[bite value="£10,000" lose="£2,800" label="A 1% fee over 30 years" sub="" source=""]` | a bar for the whole, a red hatched bite out of its end, the lost amount beside it; `pct=28` instead of `lose=` |
 | `[grow from="£100" per=month years=30 rate=7% label="" source=""]` | bars rising year by year, the last one shaded, the end value written above; `to=` instead of `rate=` |
 | `[pie value="33%" label="" sub="" source=""]` | a circle with a red hatched slice and the percentage on it |
-| `[shrink value="£100" to="£74" years=10 label="" source=""]` | a banknote drawn, then its right part rubbed out and what is left written in red; `rate=3%` instead of `to=` |
+| `[shrink value="£100" to="£74" years=10 label="" source=""]` | a banknote drawn, then its right part fades off and what is left is written in red; `rate=3%` instead of `to=` |
 
 Give these six to nine seconds of narration each; the drawing paces itself to
 the scene.

@@ -113,11 +113,12 @@ const transitionFor = (scene: Scene, toon: boolean): Transition => {
   return ['clip', 'still', 'image', 'poster', 'score', 'compare', 'chart', 'quote', 'stat'].includes(scene.type) ? 'whip' : 'cut';
 };
 
-/** The board's own transitions. `wipe`: before this scene the hand rubs the last board out (its last second) and the
- * new scene starts on a clean board. `slide`: the board slides along, the last drawing leaving on the left as the new
- * one comes in from the right, like a camera moving down a long whiteboard. In the illustrated style they are the
- * default: a rub-out after a scene with a person on it, a slide after plain words; `transition=` on a scene picks. */
-const WIPE_FRAMES = (fps: number) => Math.round(fps * 1.0);
+/** The board's own transitions. `wipe`: the last board clears (its writing and drawing fade off in the last half
+ * second) and the new scene starts on a clean board. `slide`: the board slides along, the last drawing leaving on the
+ * left as the new one comes in from the right, like a camera moving down a long whiteboard. In the illustrated style
+ * they are the default: the board clears after a scene with a person on it, slides after plain words; `transition=`
+ * on a scene picks. */
+const WIPE_FRAMES = (fps: number) => Math.round(fps * 0.5);
 const SLIDE_FRAMES = (fps: number) => Math.round(fps * 0.55);
 const sceneArt = (scene: Scene, brand: Brand): string | undefined => {
   const p = scene.props;
@@ -300,7 +301,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
         const next = idx + 1 < sb.scenes.length ? sb.scenes[idx + 1] : null;
         const keep = prev ? keepMode(scene) : '';
         const tr = boardTransition(scene, prev, brand);
-        const wipeOut = next ? boardTransition(next, scene, brand) === 'wipe' : false; // the hand rubs this board out at the end
+        const wipeOut = next ? boardTransition(next, scene, brand) === 'wipe' : false; // this board clears at the end
         const wipeFrames = Math.min(WIPE_FRAMES(fps), Math.floor(dur / 2));
         let board = (
           <AbsoluteFill data-pen-scene={scene.id} data-pen-from={from} style={keep ? {left: NEW.x * width, top: NEW.y * height, transform: `scale(${NEW.scale})`, transformOrigin: '0 0'} : undefined}>
