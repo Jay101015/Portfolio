@@ -647,6 +647,12 @@ steer it:
 
 `brand.text: full` in the header brings back whole sentences everywhere.
 
+Standing style rule: not every spoken word goes on the video. The board
+carries the point in a few words, captions stay off (`captions: off` is the
+default in the illustrated style and the recommended header everywhere),
+and the only place the whole sentence is shown is a Short, where sound is
+often off.
+
 ### Building on the board
 
 `keep=yes` on any scene keeps the board before it, small in the top left,
