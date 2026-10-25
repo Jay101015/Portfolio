@@ -114,6 +114,21 @@ class ArtTests(unittest.TestCase):
         self.assertEqual(sb["scenes"][1]["props"]["caption"], "the first 10k")
 
 
+class MoneyPictureTests(unittest.TestCase):
+    def test_money_pictures_and_board_words_parse(self):
+        md = ('# T\n\n[text headline="The fee" board="1% fee | a third gone" wrong="Fees are small"]\nA one percent fee sounds like nothing.\n\n'
+              '[bite value="£10,000" lose="£2,800" label="A 1% fee" source="illustrative"]\nSay it.\n\n'
+              '[grow from="£100" per=month years=30 rate=7%]\nSay it.\n\n[pie value="33%" label="to fees"]\nSay it.\n\n[shrink value="£100" to="£74" years=10]\nSay it.\n')
+        sb = parse_script(md)
+        self.assertEqual([sc["type"] for sc in sb["scenes"]], ["text", "bite", "grow", "pie", "shrink"])
+        self.assertEqual(sb["scenes"][0]["props"]["board"], "1% fee | a third gone")
+        self.assertEqual(sb["scenes"][0]["props"]["wrong"], "Fees are small")
+        self.assertEqual(sb["scenes"][1]["props"]["lose"], "£2,800")
+        self.assertEqual(sb["scenes"][2]["props"]["per"], "month")
+        self.assertEqual(sb["scenes"][2]["props"]["rate"], "7%")
+        self.assertEqual(sb["scenes"][4]["props"]["to"], "£74")
+
+
 class PlacementTests(unittest.TestCase):
     def test_free_placement_and_outro_cards_pass_through(self):
         md = ('# T\ntheme: whiteboard\nbrand.corner: off\nbrand.doodles: on\n\n[text sticker="a.gif" sticker_x=0.72 sticker_y=0.3 sticker_size=0.4 art=rocket art_x=0.2 art_y=0.8]\nHi.\n\n[outro cards=on]\nBye.\n')

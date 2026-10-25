@@ -22,6 +22,7 @@ export type Brand = {
   surface?: 'board' | 'chalk' | 'lined' | 'grid' | 'cream'; // what the board look is drawn on (default a whiteboard)
   autoArt?: boolean; // little drawings picked from the words in the corner of scenes (`brand.doodles: on`; off by default)
   corner?: boolean; // the channel name in the page corner (`brand.corner: off` hides it)
+  fullText?: boolean; // text scenes write every word said (`brand.text: full`); off: the few words that carry it
 };
 
 export type Cue = {t: number; pose?: string; face?: string}; // mid-scene change, absolute seconds
@@ -41,7 +42,11 @@ export type SceneType =
   | 'score'
   | 'avatar'
   | 'outro'
-  | 'art';
+  | 'art'
+  | 'bite'
+  | 'grow'
+  | 'pie'
+  | 'shrink';
 
 export type Scene = {
   id: number;

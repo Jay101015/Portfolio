@@ -498,6 +498,37 @@ host on screen, the default on `toon`), `slug`, `kicker`, `captions: false`, any
 `brand.*` (`name`, `bg`, `panel`, `text`, `muted`, `accent`, `accent2`,
 `font`) and any `avatar.*` from the table above.
 
+### The board writes the point, not the sentence
+
+On the whiteboard a `[text]` scene no longer writes every word you say. The
+voice says the sentence; the marker writes the three to five words that carry
+it (a figure and the words around it, else the first content words), and the
+phrases build up on the board one under the other. When the board is full
+the hand rubs it out with a felt pad and starts a fresh page. Two attributes
+steer it:
+
+- `board="1% fee | a third gone"`: write exactly these lines, `|` between them.
+- `wrong="Buy the dip"`: write the wrong idea first, in red, and rub it out
+  before the point is made.
+
+`brand.text: full` in the header brings back whole sentences everywhere.
+
+### The money pictures
+
+Four scene types draw the pictures money ideas are always drawn with, with
+the figure written where it belongs on the picture. The hand draws each in
+the order a person would, and the number is the point of the scene.
+
+| Tag | What it draws |
+| --- | --- |
+| `[bite value="£10,000" lose="£2,800" label="A 1% fee over 30 years" sub="" source=""]` | a bar for the whole, a red hatched bite out of its end, the lost amount beside it; `pct=28` instead of `lose=` |
+| `[grow from="£100" per=month years=30 rate=7% label="" source=""]` | bars rising year by year, the last one shaded, the end value written above; `to=` instead of `rate=` |
+| `[pie value="33%" label="" sub="" source=""]` | a circle with a red hatched slice and the percentage on it |
+| `[shrink value="£100" to="£74" years=10 label="" source=""]` | a banknote drawn, then its right part rubbed out and what is left written in red; `rate=3%` instead of `to=` |
+
+Give these six to nine seconds of narration each; the drawing paces itself to
+the scene.
+
 ## Footage and sources policy
 
 Built in on purpose:

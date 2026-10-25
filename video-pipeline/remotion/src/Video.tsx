@@ -28,6 +28,7 @@ import {ArtLayer} from './paper/art';
 import {FACES, POSES, defaultAvatar, defaultFaceFor, type AvatarConfig, type Face, type Pose} from './avatar/Avatar';
 
 const SceneSwitch: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}) => {
+  if (['bite', 'grow', 'pie', 'shrink'].includes(scene.type)) return <PaperSwitch scene={scene} brand={brand} />; // the money pictures are drawn the same in every look
   if (brand.paper && ['title', 'stat', 'text', 'list', 'compare', 'chart', 'quote', 'outro', 'still', 'image', 'clip', 'art'].includes(scene.type)) return <PaperSwitch scene={scene} brand={brand} />;
   switch (scene.type) {
     case 'title':
@@ -186,6 +187,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
     ...(sb.brand ?? {}),
     autoArt: String(flags.doodles ?? 'off').toLowerCase() === 'on',
     corner: ['on', 'yes', 'true', '1'].includes(String(flags.corner ?? 'off').toLowerCase()), // the channel name in the corner only when asked for
+    fullText: String(flags.text ?? 'key').toLowerCase() === 'full',
   };
   const avatar: AvatarConfig = {...defaultAvatar, ...(sb.avatar ?? {})};
   return (

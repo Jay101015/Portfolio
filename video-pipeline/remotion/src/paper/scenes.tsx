@@ -7,6 +7,9 @@ import {fadeIn, pop, rnd} from '../components/motion';
 import {Arrow, Marker, SketchEllipse, SketchLine, SketchPath, SketchRect, Underline, roughGen} from './sketch';
 import {Doodle, Write, WriteSpoken, pickDoodle, writeFrames} from './write';
 import {Art, PaperArt, pickArt} from './art';
+import {PaperBite, PaperGrow, PaperPie, PaperShrink} from './money';
+import {Erase} from './erase';
+import {keyWords} from './phrase';
 import {Media} from './media';
 import {Loop} from 'remotion';
 
@@ -178,7 +181,7 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
 export const PaperText: React.FC<P> = ({scene, brand}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const {u, pad, isVertical} = useLayout();
+  const {u, pad, isVertical, width, height} = useLayout();
   const t = scene.start + frame / fps;
   const headline: string | undefined = scene.props.headline;
   const sentences = useMemo(() => {
@@ -195,33 +198,90 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
     if (cur.length) groups.push(cur);
     return groups;
   }, [scene.words, isVertical]);
-  const idx = Math.max(0, sentences.findIndex((g) => t <= g[g.length - 1].e + 0.3));
-  const group = sentences[idx === -1 ? sentences.length - 1 : idx] ?? [];
+  const corner = <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, headline, scene.narration)} art={scene.props.sticker || scene.props.art || scene.props.icon ? undefined : autoArt(brand, headline, scene.narration)} frame={frame} fps={fps} start={brand.board ? 6 : 0} seed={scene.id} />;
+  const head = headline ? (
+    <div style={{fontFamily: hand(brand), fontSize: 44 * u, color: brand.accent2, marginBottom: 24 * u, transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8)}}>
+      {brand.board ? <Write text={headline} frame={frame} fps={fps} start={0} cps={34} color={brand.accent2} /> : headline}
+    </div>
+  ) : null;
+  if (!brand.board || brand.fullText) {
+    // every word, as it is said: the paper look's kinetic type, and the board when the header asks for `brand.text: full`
+    const idx = Math.max(0, sentences.findIndex((g) => t <= g[g.length - 1].e + 0.3));
+    const group = sentences[idx === -1 ? sentences.length - 1 : idx] ?? [];
+    return (
+      <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.2}}>
+        {head}
+        <div key={idx} style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 64 : 88) * u, lineHeight: 1.2, letterSpacing: brand.board ? 0 : -1 * u, color: brand.ink, maxWidth: isVertical ? '100%' : '86%'}}>
+          {brand.board ? (
+            <WriteSpoken words={group} t={t} fps={fps} sceneStart={scene.start} />
+          ) : (
+            group.map((w, i) => {
+              const since = t - w.s;
+              const lit = since >= -0.03;
+              const swipe = Math.max(0, Math.min(1, (since + 0.03) / 0.18));
+              return (
+                <span key={i} style={{display: 'inline-block', marginRight: '0.28em', opacity: lit ? 1 : 0.28}}>
+                  <Marker progress={swipe} color={marker(brand)}>{w.w}</Marker>
+                </span>
+              );
+            })
+          )}
+        </div>
+        {corner}
+      </AbsoluteFill>
+    );
+  }
+  // The board: the voice says the sentence, the marker writes the few words that carry it. Phrases build up a
+  // page at a time; when the page is full the hand rubs it out and starts again. `board="a | b"` sets the lines
+  // yourself; `wrong="..."` writes a wrong idea first and rubs it out before the point is made.
+  const MAX = isVertical ? 3 : 4;
+  const explicit: string[] | null = scene.props.board ? String(scene.props.board).split('|').map((x) => x.trim()).filter(Boolean) : null;
+  const lines = sentences.map((g, i) => ({words: keyWords(g, isVertical ? 4 : 5), text: explicit ? explicit[i] ?? '' : '', at: Math.round((g[0].s - scene.start) * fps)}));
+  const pages: (typeof lines)[] = [];
+  for (let i = 0; i < lines.length; i += MAX) pages.push(lines.slice(i, i + MAX));
+  const wrong: string | undefined = scene.props.wrong;
+  const wrongDone = wrong ? 4 + writeFrames(wrong, fps, 30) : 0;
+  const firstAt = lines.length ? lines[0].at : fps;
+  const wrongErase: [number, number] = [wrongDone + Math.round(fps * 0.6), 0];
+  wrongErase[1] = wrongErase[0] + Math.round(fps * 0.6);
+  // with a wrong idea on the board first, the real phrases wait until it is rubbed out (the voice runs on; the writing catches up)
+  const shift = wrong ? Math.max(0, wrongErase[1] + 4 - firstAt) : 0;
+  if (shift) for (const ln of lines) { ln.at += shift; ln.words = ln.words.map((w) => ({w: w.w, s: w.s + shift / fps, e: w.e + shift / fps})); }
+  const lead = Math.round(fps * 0.8); // the rub-out starts this long before the first word of the next page
+  let pageIdx = 0;
+  for (let j = 1; j < pages.length; j++) if (frame >= pages[j][0].at - lead) pageIdx = j;
+  const eraseWin: [number, number] | null = pageIdx > 0 ? [pages[pageIdx][0].at - lead, pages[pageIdx][0].at - Math.round(fps * 0.1)] : null;
+  const boxW = width - pad * 2.4;
+  const boxH = (isVertical ? 0.5 : 0.6) * height;
+  const lineStyle: React.CSSProperties = {fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 66 : 84) * u, lineHeight: 1.22, color: brand.ink, marginBottom: 14 * u, maxWidth: '100%'};
+  const renderPage = (pg: typeof lines, offset: number) => (
+    <div style={{position: 'absolute', inset: 0}}>
+      {pg.map((ln, i) => (
+        <div key={offset + i} style={lineStyle}>
+          {explicit ? <Write text={ln.text} frame={frame} fps={fps} start={ln.at} cps={22} /> : <WriteSpoken words={ln.words} t={t} fps={fps} sceneStart={scene.start} />}
+        </div>
+      ))}
+    </div>
+  );
   return (
     <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.2}}>
-      {headline ? (
-        <div style={{fontFamily: hand(brand), fontSize: 44 * u, color: brand.accent2, marginBottom: 24 * u, transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8)}}>
-          {brand.board ? <Write text={headline} frame={frame} fps={fps} start={0} cps={34} color={brand.accent2} /> : headline}
-        </div>
-      ) : null}
-      <div key={idx} style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 64 : 88) * u, lineHeight: 1.2, letterSpacing: brand.board ? 0 : -1 * u, color: brand.ink, maxWidth: isVertical ? '100%' : '86%'}}>
-        {brand.board ? (
-          // the marker keeps pace with the voice: each word is written as it is said
-          <WriteSpoken words={group} t={t} fps={fps} sceneStart={scene.start} />
-        ) : (
-          group.map((w, i) => {
-            const since = t - w.s;
-            const lit = since >= -0.03;
-            const swipe = Math.max(0, Math.min(1, (since + 0.03) / 0.18));
-            return (
-              <span key={i} style={{display: 'inline-block', marginRight: '0.28em', opacity: lit ? 1 : 0.28}}>
-                <Marker progress={swipe} color={marker(brand)}>{w.w}</Marker>
-              </span>
-            );
-          })
-        )}
+      {head}
+      <div style={{position: 'relative', width: boxW, height: boxH}}>
+        {wrong ? (
+          <Erase win={wrongErase} brand={brand} width={boxW} height={boxH * 0.45} style={{position: 'absolute', left: 0, top: 0}}>
+            <div style={{...lineStyle, color: brand.accent2}}>
+              <Write text={wrong} frame={frame} fps={fps} start={4} cps={30} color={brand.accent2} />
+            </div>
+          </Erase>
+        ) : null}
+        {eraseWin ? (
+          <Erase win={eraseWin} brand={brand} width={boxW} height={boxH} style={{position: 'absolute', left: 0, top: 0}}>
+            {renderPage(pages[pageIdx - 1], (pageIdx - 1) * MAX)}
+          </Erase>
+        ) : null}
+        {pages[pageIdx] ? renderPage(pages[pageIdx], pageIdx * MAX) : null}
       </div>
-      <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, headline, scene.narration)} art={scene.props.sticker || scene.props.art || scene.props.icon ? undefined : autoArt(brand, headline, scene.narration, scene.narration)} frame={frame} fps={fps} start={headline ? writeFrames(headline, fps, 34) + 4 : 4} seed={scene.id + 3} color={brand.blue} />
+      {corner}
     </AbsoluteFill>
   );
 };
@@ -690,6 +750,14 @@ export const PaperSwitch: React.FC<P> = ({scene, brand}) => {
       return <PaperOutro scene={scene} brand={brand} />;
     case 'art':
       return <PaperArt scene={scene} brand={brand} />;
+    case 'bite':
+      return <PaperBite scene={scene} brand={brand} />;
+    case 'grow':
+      return <PaperGrow scene={scene} brand={brand} />;
+    case 'pie':
+      return <PaperPie scene={scene} brand={brand} />;
+    case 'shrink':
+      return <PaperShrink scene={scene} brand={brand} />;
     case 'still':
     case 'image':
     case 'clip':

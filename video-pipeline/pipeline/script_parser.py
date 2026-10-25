@@ -31,7 +31,7 @@ from typing import Any
 
 WORDS_PER_SEC = 2.6  # typical YouTube narration pace; replaced by real timings after alignment
 SCENE_GAP_SEC = 0.35
-SCENE_TYPES = {"title", "text", "stat", "list", "chart", "compare", "quote", "image", "still", "clip", "poster", "score", "avatar", "outro", "art"}
+SCENE_TYPES = {"title", "text", "stat", "list", "chart", "compare", "quote", "image", "still", "clip", "poster", "score", "avatar", "outro", "art", "bite", "grow", "pie", "shrink"}
 
 TAG_RE = re.compile(r"^\[(\w+)([^\]]*)\]\s*$")
 ATTR_RE = re.compile(r'(\w+)=(?:"([^"]*)"|(\S+))')
@@ -106,8 +106,10 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
             if k in a:
                 p[k] = a[k]
     elif b.type == "text":
-        if "headline" in a:
-            p["headline"] = a["headline"]
+        # board= sets the words written (lines split on |); wrong= is written first and rubbed out
+        for k in ("headline", "board", "wrong"):
+            if k in a:
+                p[k] = a[k]
     elif b.type == "stat":
         for k in ("value", "label", "sub", "source", "from", "trend"):
             if k in a:
@@ -192,6 +194,11 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
         for k in ("name", "headline", "title", "caption", "sub"):
             if k in a:
                 p[k] = a[k]
+    elif b.type in ("bite", "grow", "pie", "shrink"):
+        # the money pictures: a bar with a bite out of it, bars growing year by year, a pie slice, a note that shrinks;
+        # every attribute is the picture's own (value, lose, pct, from, to, years, rate, per, label, sub, source)
+        for k, v in a.items():
+            p[k] = v
     if "dur" in a:
         p["dur"] = float(a["dur"])
     # The character can be placed and posed on any scene; a doodle (icon=) can be drawn on any scene on the board.
