@@ -240,6 +240,26 @@ fit against the real transcript, so what the preview shows is what the video
 does. Words that nobody said are shown, not spoken: record again if they
 should be.
 
+## The weekly loop: two or three videos a week
+
+The studio is tuned for throughput. One video is four taps and one recording:
+
+1. **Draft**: type the title and the one number, tap Draft it. Claude writes the whole
+   script in the channel's shape: the number in the first line, three takeaway cards
+   each with a picture scene behind it, one money picture, a recap, the outro. 90 to
+   150 seconds. Without Claude you get the same shape as a scaffold to fill in.
+2. **Record**: Read mode, record over the script on the phone, upload. The voice
+   is cleaned, transcribed and matched to the scenes; the pace opens each scene
+   up so the picture lands before the words.
+3. **Ship**: one tap. It comes back as the landscape cut, the vertical cut and the
+   two best Shorts (scored, with hooks), all on the Videos list, with a push
+   notification when they are ready. The Look sheet's "Shorts with every ship"
+   switch turns the Shorts off; the Shorts sheet still lets you pick by hand.
+4. **Post**: save to the camera roll from the card. Thumbnail from the ⋯ menu.
+
+Everything else (drawings, transitions, pace, captions on Shorts) is a default
+you never have to touch.
+
 ## Drawings: the art library
 
 `remotion/src/paper/art.tsx` is a catalogue of little animated drawings in the marker look, one per situation a
