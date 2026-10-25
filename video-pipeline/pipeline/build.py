@@ -246,6 +246,7 @@ def rendered_names(project: str) -> set[str]:
         title = next((l[2:].strip() for l in md.splitlines() if l.startswith("# ")), "")
         slug = header.get("slug") or re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-") or "video"
         names |= {f"{slug}.mp4", f"{slug}-vertical.mp4"}
+        names |= {n for n in os.listdir(project) if re.match(rf"^{re.escape(slug)}-short-\d+\.mp4$", n)}
     return names
 
 

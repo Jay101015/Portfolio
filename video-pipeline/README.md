@@ -338,6 +338,15 @@ They are the re-hook the money channels put every minute or so, and in the
 illustrated style the board clears before and after one. The studio's
 **+ takeaway card** chip adds one.
 
+#### Recap
+
+`[recap]` before the outro writes the video's takeaways again as a checklist:
+a box drawn, the line written, a green tick, one by one as the voice reaches
+each (spaced out when it does not say them). With no lines of its own it
+lists the takeaway cards in order; `- ` lines under the tag set your own;
+`title=` replaces the "Takeaways" heading. The studio's **+ recap** chip adds
+one, and its preview fills the lines from the cards the same way.
+
 #### Picture first
 
 In the illustrated style a text scene whose words call up a traced drawing

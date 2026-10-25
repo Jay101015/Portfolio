@@ -45,6 +45,7 @@ export type SceneType =
   | 'outro'
   | 'art'
   | 'takeaway'
+  | 'recap'
   | 'bite'
   | 'grow'
   | 'pie'

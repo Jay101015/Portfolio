@@ -345,6 +345,51 @@ export const PaperTakeaway: React.FC<P> = ({scene, brand}) => {
   );
 };
 
+// ------------------------------------------------------------------ recap
+/** The takeaways again, as a checklist: a box drawn, the line written, a green tick, one by one as the voice reaches
+ * each (or spaced out when it does not say them). What every money channel puts before the sign-off. */
+export const PaperRecap: React.FC<P> = ({scene, brand}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const {u, pad, isVertical} = useLayout();
+  const items: string[] = scene.props.items ?? [];
+  const title: string = scene.props.title ?? 'Takeaways';
+  const sceneLen = scene.end - scene.start;
+  const titleDone = writeFrames(title, fps, 22) + 4;
+  const delays = items.map((item, i) => {
+    const spoken = findPhraseTime(scene.words, item);
+    const delaySec = spoken !== null ? Math.max(0, spoken - scene.start) : titleDone / fps + 0.4 + (i * Math.max(0, sceneLen - titleDone / fps - 2.0)) / Math.max(1, items.length);
+    return Math.max(titleDone + 4, Math.round(delaySec * fps));
+  });
+  for (let i = 1; i < delays.length; i++) delays[i] = Math.max(delays[i], delays[i - 1] + writeFrames(items[i - 1], fps, 30) + Math.round(fps * 0.6));
+  const box = 72 * u;
+  return (
+    <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.2}}>
+      <div style={{marginBottom: 30 * u, display: 'inline-block'}}>
+        <div style={{fontFamily: hand(brand), fontSize: (isVertical ? 54 : 62) * u, color: brand.accent2, transform: 'rotate(-1.5deg)', transformOrigin: 'left'}}>
+          <Write text={title} frame={frame} fps={fps} start={2} cps={22} color={brand.accent2} />
+        </div>
+      </div>
+      {items.map((item, i) => {
+        const at = delays[i];
+        const written = at + 8 + writeFrames(item, fps, 30);
+        const tickWin: [number, number] = [written + 4, written + 4 + Math.round(fps * 0.35)];
+        return (
+          <div key={i} style={{display: 'flex', alignItems: 'center', gap: 28 * u, marginBottom: 24 * u}}>
+            <svg width={box} height={box} viewBox="0 0 72 72" style={{flexShrink: 0, overflow: 'visible', visibility: frame < at ? 'hidden' : undefined}}>
+              <SketchRect x={8} y={8} w={56} h={56} win={[at, at + 8]} options={{stroke: brand.ink, strokeWidth: 3.5, seed: 40 + i, roughness: 1.2}} />
+              <SketchPath d="M18,38 L31,51 L56,22" win={tickWin} easeOut options={{stroke: brand.accent, strokeWidth: 7, seed: 50 + i, roughness: 0.8}} />
+            </svg>
+            <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 44 : 54) * u, lineHeight: 1.2, color: brand.ink}}>
+              <Write text={item} frame={frame} fps={fps} start={at + 8} cps={30} />
+            </div>
+          </div>
+        );
+      })}
+    </AbsoluteFill>
+  );
+};
+
 // ------------------------------------------------------------------ list
 export const PaperList: React.FC<P> = ({scene, brand}) => {
   const frame = useCurrentFrame();
@@ -811,6 +856,8 @@ export const PaperSwitch: React.FC<P> = ({scene, brand}) => {
       return <PaperArt scene={scene} brand={brand} />;
     case 'takeaway':
       return <PaperTakeaway scene={scene} brand={brand} />;
+    case 'recap':
+      return <PaperRecap scene={scene} brand={brand} />;
     case 'bite':
       return <PaperBite scene={scene} brand={brand} />;
     case 'grow':

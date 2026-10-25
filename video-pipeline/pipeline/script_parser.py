@@ -31,7 +31,7 @@ from typing import Any
 
 WORDS_PER_SEC = 2.6  # typical YouTube narration pace; replaced by real timings after alignment
 SCENE_GAP_SEC = 0.35
-SCENE_TYPES = {"title", "text", "stat", "list", "chart", "compare", "quote", "image", "still", "clip", "poster", "score", "avatar", "outro", "art", "bite", "grow", "pie", "shrink", "takeaway"}
+SCENE_TYPES = {"title", "text", "stat", "list", "chart", "compare", "quote", "image", "still", "clip", "poster", "score", "avatar", "outro", "art", "bite", "grow", "pie", "shrink", "takeaway", "recap"}
 
 TAG_RE = re.compile(r"^\[(\w+)([^\]]*)\]\s*$")
 ATTR_RE = re.compile(r'(\w+)=(?:"([^"]*)"|(\S+))')
@@ -194,6 +194,11 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
         for k in ("name", "headline", "title", "caption", "sub"):
             if k in a:
                 p[k] = a[k]
+    elif b.type == "recap":
+        # the takeaways again, as a checklist ticked one by one; `- ` lines set them, else fill_recaps copies the cards
+        p["items"] = b.items
+        if "title" in a:
+            p["title"] = a["title"]
     elif b.type == "takeaway":
         # a numbered section card: the big number drawn, the title written; n and of are filled in by number_takeaways
         for k in ("n", "of", "title"):
@@ -266,6 +271,15 @@ def _spread_words(text: str, start: float, end: float) -> list[dict[str, Any]]:
         return []
     step = (end - start) / len(ws)
     return [{"w": w, "s": round(start + i * step, 3), "e": round(start + (i + 1) * step - 0.04, 3)} for i, w in enumerate(ws)]
+
+
+def fill_recaps(scenes: list[dict[str, Any]]) -> None:
+    """A recap with no lines of its own lists the video's takeaway cards, in order."""
+    titles = [str(sc["props"].get("title", "")).strip() for sc in scenes if sc["type"] == "takeaway"]
+    titles = [t for t in titles if t]
+    for sc in scenes:
+        if sc["type"] == "recap" and not sc["props"].get("items"):
+            sc["props"]["items"] = list(titles)
 
 
 def number_takeaways(scenes: list[dict[str, Any]]) -> None:
@@ -446,6 +460,7 @@ def parse_script(md: str) -> dict[str, Any]:
             avatar[camel] = v
 
     number_takeaways(scenes)
+    fill_recaps(scenes)
     duration = estimate_timings(scenes)
     slug = header.get("slug") or re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-") or "video"
     return {

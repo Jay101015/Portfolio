@@ -172,6 +172,7 @@ class ArtLibraryTests(unittest.TestCase):
             open(os.path.join(d, "script.md"), "w").write("# My video\nslug: my-video\n\n[title]\nHi.\n")
             open(os.path.join(d, "my-video.mp4"), "wb").write(b"x" * 10)
             open(os.path.join(d, "my-video-vertical.mp4"), "wb").write(b"x" * 10)
+            open(os.path.join(d, "my-video-short-2.mp4"), "wb").write(b"x" * 10)
             assert adopt_recording(d) == []
             open(os.path.join(d, "New Recording 3.m4a"), "wb").write(b"x" * 10)
             notes = adopt_recording(d)
@@ -201,6 +202,13 @@ class ArtLibraryTests(unittest.TestCase):
         assert cut["scenes"][1]["start"] == cut["scenes"][0]["end"] and cut["scenes"][0]["words"][0]["s"] > 0.4
         assert spans == [(sb["scenes"][1]["start"], sb["scenes"][1]["end"]), (sb["scenes"][2]["start"], sb["scenes"][2]["end"])]
         assert caption_line("The car dealer offered Sam a brand new car on finance, and he nearly signed.") == "The car dealer offered Sam a brand new"
+
+    def test_a_recap_lists_the_takeaways_unless_given_its_own_lines(self):
+        md = "# T\nslug: t\ntheme: whiteboard\nhost: none\n\n[takeaway title=\"Spend with intention\"]\nOne.\n\n[takeaway title=\"Build a budget\"]\nTwo.\n\n[recap]\nSo, spend with intention and build a budget.\n"
+        sb = parse_script(md)
+        assert sb["scenes"][-1]["type"] == "recap" and sb["scenes"][-1]["props"]["items"] == ["Spend with intention", "Build a budget"]
+        own = parse_script(md.replace("[recap]\n", "[recap title=\"Remember\"]\n- Keep going\n- Save small\n"))
+        assert own["scenes"][-1]["props"]["items"] == ["Keep going", "Save small"] and own["scenes"][-1]["props"]["title"] == "Remember"
 
     def test_a_scene_can_pick_its_transition(self):
         """`transition=wipe|slide|cut` on any scene reaches the storyboard, like `keep=`."""
