@@ -172,6 +172,17 @@ class ArtLibraryTests(unittest.TestCase):
         self.assertTrue(all(len(s) <= 22 for s in sents))
         self.assertNotIn("card", firsts)  # never cut inside "credit card"
 
+    def test_polish_check_keeps_the_words_and_reports_the_shape(self):
+        from pipeline.polish_check import check
+        before = "# T\nslug: t\ntheme: whiteboard\n\n[title]\nPayday hits. Most people do one of two things with it.\n\n[text]\nThey leave it sitting there.\n"
+        after = "# T\nslug: t\ntheme: whiteboard\n\n[hook board=\"Where does it go?\" art=\"payday\"]\nPayday hits.\n\n[title]\nMost people do one of two things with it.\n\n[text board=\"Left in the account\" art=\"kitchen-table\"]\nThey leave it sitting there.\n"
+        r = check(before, after)
+        self.assertTrue(r["ok"], r.get("why"))
+        self.assertIn("no takeaway cards", r["warnings"])
+        self.assertFalse(check(before, after.replace("sitting there", "sat there"))["ok"])
+        bad = check(before, after.replace("art=\"payday\"", "art=\"unicorn\""))
+        self.assertTrue(any("does not exist" in w for w in bad["warnings"]))
+
     def test_hook_scene_parses_and_scores_first(self):
         from pipeline.shorts import score_slice
         sb = parse_script("# T\nslug: t\ntheme: whiteboard\n\n[hook board=\"£420 a month = £1,000,000\"]\nFour hundred and twenty pounds a month makes you a millionaire.\n\n[title]\nHere is how.\n")

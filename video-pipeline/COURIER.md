@@ -25,8 +25,16 @@ version from your previous read or write of that job.
       `pushed <commit>`. Then update the job with `{"status": "pushed", "commit": "<commit>"}`.
    4. If the job's `wait` is not null: `cd video-pipeline && python3 -m pipeline.courier wait <the job JSON file>
       /tmp/courier/result-<job id>.json` waits for the transcription (a GitHub Action) for up to 9 minutes; if it
-      prints "still waiting", run it once more. When it writes the result file, update the job with `file_path` set
-      to it. If it is still waiting after the second run, update the job with `{"status": "timeout"}`.
+      prints "still waiting", run it once more. If it is still waiting after the second run, update the job with
+      `{"status": "timeout"}`. When it writes the result file and the result says `transcribed`, give the draft the
+      editor's pass BEFORE the studio sees it (this is the one file you edit): keep the original,
+      `cp video-pipeline/projects/<slug>/draft.md /tmp/courier/before-<job id>.md`, read `video-pipeline/EDITOR.md`
+      and rewrite `draft.md` as it says (tags only: a hook with a drawing, a headline and a drawing on every text
+      scene, takeaway cards, a recap; every spoken word stays). Check it: `cd video-pipeline && python3 -m
+      pipeline.polish_check /tmp/courier/before-<job id>.md projects/<slug>/draft.md`. If it prints REFUSED, fix the
+      draft and check again, at most three times; if it still refuses, put the original back. Commit `Editor's pass:
+      <title>`, push, then run the `wait` command once more so the result file carries the polished draft. Then
+      update the job with `file_path` set to the result file.
    5. If the job's `wait` has `render: true` (a Ship: the push starts a render of about half an hour), first set up
       the "it's done" notification, then bring the video back so the studio can save it to the phone:
       - Right after the push, create a one-shot scheduled task with `create_trigger`: `create_new_session_on_fire`
@@ -69,5 +77,5 @@ version from your previous read or write of that job.
    6. If a step fails, update that job with `{"status": "failed", "error": "<one line: which step, and the error>"}`
       and go on to the next job.
 
-Do not edit or create any other files, do not open pull requests, and do not post anywhere. Reply with one line per
+Apart from the editor's pass on a project's draft.md, do not edit or create any other files; do not open pull requests, and do not post anywhere. Reply with one line per
 job: its id and its final status.
