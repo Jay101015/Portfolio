@@ -519,6 +519,65 @@ def keep_spans(src: str, dst: str, spans: list[tuple[float, float]], lead: float
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-filter_complex", graph, "-map", "[out]", "-ac", "1", "-ar", "48000", "-codec:a", "libmp3lame", "-q:a", "2", dst], check=True)
 
 
+def trim_lead(src: str, dst: str, keep: float = 0.3) -> str:
+    """Cut the room tone before the first word down to `keep` seconds: a phone recording starts a second or two before
+    the speaker does, and the video should open on the voice."""
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-af", f"silenceremove=start_periods=1:start_threshold=-38dB:start_silence={keep}", "-ac", "1", "-ar", "48000", dst], check=True)
+    return dst
+
+
+def music_for(project: str, header: dict[str, str]) -> str | None:
+    """`music: <file or https url>` in the header: a track under the voice. A file is looked for in the project, then in
+    library/music/; a URL is downloaded once into .cache/. Nothing set, or not found: no music."""
+    want = (header.get("music") or "").strip()
+    if not want or want.lower() in ("off", "none", "no"):
+        return None
+    if want.startswith("http://") or want.startswith("https://"):
+        ext = os.path.splitext(want.split("?")[0])[1] or ".mp3"
+        dst = os.path.join(project, ".cache", "music" + ext)
+        if not os.path.exists(dst):
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            try:
+                _download(want, dst)
+            except Exception as e:  # noqa: BLE001
+                print(f"WARNING: music {want}: {e}", file=sys.stderr)
+                return None
+        return dst
+    for folder in (project, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "library", "music")):
+        p = os.path.join(folder, want)
+        if os.path.exists(p):
+            return p
+    print(f"WARNING: music {want} not found in the project or library/music/", file=sys.stderr)
+    return None
+
+
+def mix_music(voice: str, music: str, dst: str, gain_db: float = -20.0) -> str:
+    """The voice with a music bed under it: the track loops to the voice's length, fades in and out, sits `gain_db`
+    under full level and ducks a little further whenever the voice speaks, so the words always win."""
+    dur = al.audio_duration(voice)
+    graph = (
+        f"[1:a]atrim=0:{dur + 0.5:.3f},asetpts=PTS-STARTPTS,volume={gain_db:.1f}dB,afade=t=in:d=1.5,afade=t=out:st={max(0.0, dur - 3.0):.3f}:d=3[bed];"
+        "[bed][0:a]sidechaincompress=threshold=0.02:ratio=6:attack=40:release=700:makeup=1[duck];"
+        "[0:a][duck]amix=inputs=2:duration=first:normalize=0[out]"
+    )
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", voice, "-stream_loop", "-1", "-i", music, "-filter_complex", graph, "-map", "[out]", "-ac", "1", "-ar", "48000", "-codec:a", "libmp3lame", "-q:a", "2", dst], check=True)
+    return dst
+
+
+def long_scenes(sb: dict, limit: float = 20.0) -> list[str]:
+    """Scenes that sit on one board too long for a viewer: anything over `limit` seconds (twice that for a list or a
+    recap, which build up as they go). The editor splits them at a sentence or puts a [broll] scene between."""
+    out = []
+    for sc in sb["scenes"]:
+        if sc["type"] in ("outro", "broll", "clip"):
+            continue
+        run = float(sc["end"]) - float(sc["start"])
+        cap = limit * 2 if sc["type"] in ("list", "recap") else limit
+        if run > cap:
+            out.append(f"LONG SCENE: {sc['id']} ({sc['type']}) runs {run:.0f}s on one board: split it at a sentence, or put a [broll] scene between")
+    return out
+
+
 def render_shorts(project: str, sb: dict, audio: str | None, concurrency: str | None, chunk: int, plan_path: str | None, want: int) -> list[str]:
     """Cut and render the Shorts: the slices in `shorts.json` (the studio's picks, each {scenes, hook, name}), else the
     planner's best `want`. Writes the plan back as shorts-plan.json and renders <slug>-<name>.mp4, vertical, captioned."""
@@ -544,6 +603,9 @@ def render_shorts(project: str, sb: dict, audio: str | None, concurrency: str | 
         if audio:
             os.makedirs(public_dir, exist_ok=True)
             keep_spans(audio, os.path.join(public_dir, f"{name}.mp3"), spans, 0.4, 0.8)
+            if sb.get("music"):
+                mix_music(os.path.join(public_dir, f"{name}.mp3"), sb["music"], os.path.join(public_dir, f"{name}-mix.mp3"), float(sb.get("musicDb", -20.0)))
+                os.replace(os.path.join(public_dir, f"{name}-mix.mp3"), os.path.join(public_dir, f"{name}.mp3"))
             cut["audio"] = f"projects/{slug}/{name}.mp3"
         else:
             cut["audio"] = None
@@ -612,7 +674,11 @@ def main(argv: list[str] | None = None) -> int:
         level = level_from_header(_header_lines(md).get("voice"))
         audio = enhance(audio, os.path.join(project, ".cache", "voice-clean.mp3"), level)
         print(f"voice: {'as recorded' if level in ('off', 'raw') else 'enhanced (' + level + ')'}")
+        before = al.audio_duration(audio)
+        audio = trim_lead(audio, os.path.join(project, ".cache", "voice-trim.wav"))
         total = al.audio_duration(audio)
+        if before - total > 0.2:
+            print(f"trimmed {before - total:.1f}s of room tone before the first word")
         wav = al.to_wav16k(audio, os.path.join(project, ".cache", "asr16k.wav"))
         hint = " ".join(sc["narration"] for sc in sb["scenes"]) if sb else ""
         words = transcript_for(project, audio, wav, total, args, hint)
@@ -644,6 +710,8 @@ def main(argv: list[str] | None = None) -> int:
             sb = al.align(sb, words, total)
             align_report = al.report(sb)
             print(align_report)
+            for line in long_scenes(sb):
+                print(line)
         else:
             print("WARNING: voiceover present but not transcribed (--backend none, no cache): timings are estimates")
             sb["durationSec"] = round(total + 0.5, 3)
@@ -657,8 +725,17 @@ def main(argv: list[str] | None = None) -> int:
             audio = paced
             wav = al.to_wav16k(audio, os.path.join(project, ".cache", "voice-paced-16k.wav"))
             print(f"pace: {lead:.1f}s before each scene's first word, {hold:.1f}s after its last ({len(silences)} silences in the voice)")
+        header = _header_lines(md)
+        music = music_for(project, header)
+        sb["music"] = music
+        sb["musicDb"] = float(header.get("music.volume", -20.0))
         ext = os.path.splitext(audio)[1].lower()
-        if ext in (".wav", ".mp3"):
+        if music:
+            # the voice with the music bed under it, as one track
+            ext = ".mp3"
+            mix_music(audio, music, os.path.join(public_dir, "voiceover.mp3"), sb["musicDb"])
+            print(f"music: {os.path.basename(music)} at {sb['musicDb']:.0f} dB, ducked under the voice")
+        elif ext in (".wav", ".mp3"):
             shutil.copyfile(audio, os.path.join(public_dir, f"voiceover{ext}"))
         else:
             # a browser or phone recording (webm, m4a, mp4...): the renderer's browser cannot play every codec, so it gets an mp3

@@ -449,9 +449,10 @@ def parse_script(md: str) -> dict[str, Any]:
     if not seen_tag:
         paragraphs = [p for p in re.split(r"\n\s*\n", "\n".join(pre_tag_lines)) if p.strip()]
         blocks = _auto_blocks(paragraphs)
-    # every video ends on the same subscribe page: when a script forgets the outro it is added, six seconds, nothing said
+    # every video ends on the same subscribe page: when a script forgets the outro it is added, twelve seconds, nothing
+    # said: long enough for YouTube's end-screen elements, which need the last 5 to 20 seconds
     if blocks and header.get("theme") == "whiteboard" and not any(b.type == "outro" for b in blocks):
-        blocks.append(Block(type="outro", attrs={"title": "MONEY MOVES", "cta": "Subscribe for the next one", "dur": "6"}))
+        blocks.append(Block(type="outro", attrs={"title": "MONEY MOVES", "cta": "Subscribe for the next one", "dur": "12"}))
 
     scenes = []
     for i, b in enumerate(blocks, 1):
