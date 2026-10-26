@@ -4,7 +4,7 @@ Topic: investing £200 a month in the UK (free-use b-roll and illustrations only
 
 | scene | query | result | licence | attribution |
 |---|---|---|---|---|
-| 3 | british pound notes | downloaded 03-british-pound-notes.mp4 | Pixabay Content License | Video 295411 by DEZYNE_3D via Pixabay |
+| 3 | | already in media/: 03-british-pound-notes.mp4 | | |
 
 ## What counts as free use here
 
