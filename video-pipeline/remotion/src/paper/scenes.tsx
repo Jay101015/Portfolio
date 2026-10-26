@@ -376,7 +376,7 @@ const ClipCard: React.FC<{src: string; props: Record<string, any>; frame: number
         </div>
       </div>
       <div style={{position: 'absolute', left: '50%', top: -20 * u, width: 50 * u, height: 50 * u, borderRadius: '50%', background: `radial-gradient(circle at 35% 30%, #ff8a80, ${brand.accent2} 70%)`, boxShadow: `0 ${4 * u}px ${8 * u}px rgba(0,0,0,0.3)`, transform: 'translateX(-50%)'}} />
-      {props.clip_credit ? <div style={{position: 'absolute', right: 8 * u, bottom: -40 * u, fontFamily: hand(brand), fontSize: 24 * u, color: brand.muted}}>{String(props.clip_credit)}</div> : null}
+      {props.clip_credit && brand.creditsOnScreen ? <div style={{position: 'absolute', right: 8 * u, bottom: -40 * u, fontFamily: hand(brand), fontSize: 24 * u, color: brand.muted}}>{String(props.clip_credit)}</div> : null}
     </div>
   );
 };
@@ -861,7 +861,7 @@ export const PaperStill: React.FC<P> = ({scene, brand}) => {
             {brand.board ? <Write text={caption} frame={frame} fps={fps} start={12} cps={30} /> : caption}
           </div>
         ) : null}
-        {scene.props.credit ? <div style={{position: 'absolute', right: 10 * u, bottom: -46 * u, fontFamily: hand(brand), fontSize: 26 * u, color: brand.muted, opacity: fadeIn(frame, 14, 10)}}>{scene.props.credit}</div> : null}
+        {scene.props.credit && brand.creditsOnScreen ? <div style={{position: 'absolute', right: 10 * u, bottom: -46 * u, fontFamily: hand(brand), fontSize: 26 * u, color: brand.muted, opacity: fadeIn(frame, 14, 10)}}>{scene.props.credit}</div> : null}
       </div>
     </AbsoluteFill>
   );
@@ -869,7 +869,7 @@ export const PaperStill: React.FC<P> = ({scene, brand}) => {
 
 // ------------------------------------------------------------------ b-roll: the footage fills the frame
 /** Stock footage as its own scene, How Money Works style: the clip covers the whole frame with a slow push-in, a short
- * caption on a white label in the corner, the credit small beside it. With no footage yet the frame says what was
+ * caption on a white label in the corner (the credit beside it only with `credits: screen`). With no footage yet the frame says what was
  * asked for, so the cut still reads in a preview render. */
 export const PaperBroll: React.FC<P> = ({scene, brand}) => {
   const frame = useCurrentFrame();
@@ -878,7 +878,7 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
   const total = Math.max(1, Math.round((scene.end - scene.start) * fps));
   const src: string | undefined = scene.props.src;
   const caption: string | undefined = scene.props.caption;
-  const credit: string | undefined = scene.props.credit;
+  const credit: string | undefined = brand.creditsOnScreen ? scene.props.credit : undefined; // credits go to credits.txt unless asked for on screen
   const s = pop(frame, fps, Math.round(fps * 0.35), 12);
   const labelSize = (isVertical ? 60 : 54) * u;
   const bottom = isVertical ? height * 0.2 : pad * 0.9;

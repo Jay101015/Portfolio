@@ -424,7 +424,22 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
         with open(script_path, "w", encoding="utf-8") as f:
             f.write(new_md)
     write_report(project, report)
+    write_credits(project, parse_script(new_md))
     return report
+
+
+def write_credits(project: str, sb: dict[str, Any]) -> None:
+    """credits.txt: every piece of footage in the video, one line each, ready to paste into the YouTube description.
+    Credits are not drawn on the picture (a line in the corner reads as a watermark); Pixabay and Pexels ask for none,
+    and a Creative Commons credit in the description is attribution in a reasonable manner."""
+    lines: list[str] = []
+    for sc in sb["scenes"]:
+        for k in ("credit", "clip_credit"):
+            c = str(sc["props"].get(k) or "").strip()
+            if c and c not in lines:
+                lines.append(c)
+    with open(os.path.join(project, "credits.txt"), "w", encoding="utf-8") as f:
+        f.write("Footage and images\n" + "".join(f"{c}\n" for c in lines) if lines else "No borrowed footage or images in this video.\n")
 
 
 def rewrite_tag(md: str, scene_id: int, sb: dict[str, Any], updates: dict[str, str], to_type: str | None = None, drop: tuple[str, ...] = ()) -> str:
@@ -479,7 +494,7 @@ def write_report(project: str, report: dict[str, Any]) -> None:
         out += ["", "## What each library answered for the b-roll", ""]
         for e in broll:
             out.append(f"- scene {e['id']} ({e['query']}): " + "; ".join(e["answers"]))
-    out += ["", "## What counts as free use here", "", "Public domain and CC0 (no conditions), CC BY and CC BY-SA (attribution shown on screen, which the credit= tag does), and the Pexels licence. CC BY-NC and CC BY-ND are skipped: a monetised channel is commercial use. Trailers, studio clips, screenshots of paid apps and news footage are never free use; using them is a fair-use judgement and a Content ID question, covered in docs/monetisation-plan.md."]
+    out += ["", "## What counts as free use here", "", "Public domain and CC0 (no conditions), CC BY and CC BY-SA (attribution in credits.txt, for the video description), and the Pexels licence. CC BY-NC and CC BY-ND are skipped: a monetised channel is commercial use. Trailers, studio clips, screenshots of paid apps and news footage are never free use; using them is a fair-use judgement and a Content ID question, covered in docs/monetisation-plan.md."]
     with open(os.path.join(project, "footage-report.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(out) + "\n")
 

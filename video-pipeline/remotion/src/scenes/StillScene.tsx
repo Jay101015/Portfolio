@@ -48,7 +48,7 @@ export const StillScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand
             {caption ? (
               <div style={{position: 'absolute', left: 32 * u, bottom: 32 * u, background: brand.accent, color: brand.bg, fontFamily: brand.display, fontWeight: 700, fontSize: 40 * u, padding: `${10 * u}px ${26 * u}px`, borderRadius: 14 * u}}>{caption}</div>
             ) : null}
-            {scene.props.credit ? <div style={{position: 'absolute', right: 24 * u, bottom: 20 * u, fontSize: 22 * u, color: '#fff', opacity: 0.8, textShadow: '0 1px 6px rgba(0,0,0,0.8)'}}>{scene.props.credit}</div> : null}
+            {scene.props.credit && brand.creditsOnScreen ? <div style={{position: 'absolute', right: 24 * u, bottom: 20 * u, fontSize: 22 * u, color: '#fff', opacity: 0.8, textShadow: '0 1px 6px rgba(0,0,0,0.8)'}}>{scene.props.credit}</div> : null}
           </div>
         </Reveal>
       </AbsoluteFill>

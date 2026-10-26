@@ -38,3 +38,25 @@ def test_broll_asks_the_stock_libraries_first(tmp_path, monkeypatch):
     assert '[broll search="crowd busy street" caption="What ignoring it looks like" src="02-crowd-busy-street.mp4" credit="Video 7 by someone via Pixabay"]' in md
     assert os.path.exists(proj / "media" / "02-crowd-busy-street.mp4")
     assert [s for s in r["scenes"] if s["id"] == 2][0]["status"] == "downloaded"
+
+
+def test_credits_file_lists_every_credit_once(tmp_path):
+    from pipeline.find_footage import write_credits
+    from pipeline.script_parser import parse_script
+
+    md = (
+        "title: T\n\n"
+        '[broll search="x" caption="A" src="a.mp4" credit="Video 1 by a via Pixabay"]\nOne.\n\n'
+        '[text board="B" clip="y" clip_src="b.mp4" clip_credit="Photo 2 by b, CC BY, via Wikimedia Commons"]\nTwo.\n\n'
+        '[broll search="z" caption="C" src="c.mp4" credit="Video 1 by a via Pixabay"]\nThree.\n'
+    )
+    write_credits(str(tmp_path), parse_script(md))
+    text = (tmp_path / "credits.txt").read_text(encoding="utf-8")
+    assert text.splitlines() == ["Footage and images", "Video 1 by a via Pixabay", "Photo 2 by b, CC BY, via Wikimedia Commons"]
+
+
+def test_credits_stay_off_the_picture_unless_asked():
+    from pipeline.script_parser import parse_script
+
+    assert "credits" not in parse_script("title: T\n\n[text board=\"B\"]\nOne.\n")["brand"]
+    assert parse_script("title: T\ncredits: screen\n\n[text board=\"B\"]\nOne.\n")["brand"]["credits"] == "screen"

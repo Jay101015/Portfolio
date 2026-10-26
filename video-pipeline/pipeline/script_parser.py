@@ -475,6 +475,8 @@ def parse_script(md: str) -> dict[str, Any]:
     for k, v in header.items():
         if k.startswith("brand."):
             brand[k[6:]] = v
+        elif k == "credits":  # `credits: screen` draws footage credits on the picture; by default they go to credits.txt
+            brand["credits"] = v
         elif k.startswith("avatar."):
             key = k[7:]
             camel = re.sub(r"_([a-z])", lambda m: m.group(1).upper(), key)

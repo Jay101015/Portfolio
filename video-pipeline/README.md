@@ -797,7 +797,9 @@ the scene.
 
 Built in on purpose:
 
-- Every `clip`, `still` and `image` carries a `credit=` tag rendered on screen.
+- Every `clip`, `still`, `image` and `broll` carries a `credit=` tag. It is not drawn on the picture (a line in
+  the corner reads as a watermark): every render writes `credits.txt`, one line per piece of footage, to paste
+  into the video description. `credits: screen` in the header draws them on the picture as well.
 - Every `stat` and `chart` carries a `source=` line rendered under the figure.
   Fill it in: a finance channel is quotable only when its numbers are.
 - Clip audio is muted unless you set `vol=`; your narration is always the bed.
@@ -839,7 +841,7 @@ topic) and asks, in order: the Internet Archive (the film itself when the header
 `rights: public-domain`, otherwise public-domain and CC items), Wikimedia
 Commons (CC0, public domain, CC BY, CC BY-SA), and Pexels stock b-roll (set
 `PEXELS_API_KEY`; free at pexels.com/api). The first usable hit lands in
-`media/`, the scene gets `src=` and an on-screen `credit=`, and
+`media/`, the scene gets `src=` and a `credit=` (listed in `credits.txt` for the description), and
 `footage-report.md` lists every scene with its licence and what was not
 found. CC BY-NC and CC BY-ND are skipped on purpose: a monetised channel is
 commercial use.

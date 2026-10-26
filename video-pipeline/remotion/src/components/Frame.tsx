@@ -16,7 +16,7 @@ export const Frame: React.FC<{brand: Brand; width: number; height: number; tilt?
           {label}
         </div>
       ) : null}
-      {credit ? <div style={{marginTop: 26 * u, fontFamily: brand.font, fontSize: 26 * u, color: brand.muted}}>{credit}</div> : null}
+      {credit && brand.creditsOnScreen ? <div style={{marginTop: 26 * u, fontFamily: brand.font, fontSize: 26 * u, color: brand.muted}}>{credit}</div> : null}
     </div>
   );
 };

@@ -306,6 +306,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
     corner: ['on', 'yes', 'true', '1'].includes(String(flags.corner ?? 'off').toLowerCase()), // the channel name in the corner only when asked for
     fullText: String(flags.text ?? 'key').toLowerCase() === 'full',
     illustrated: String(flags.style ?? 'icons').toLowerCase() === 'illustrated',
+    creditsOnScreen: String(flags.credits ?? 'description').toLowerCase() === 'screen', // a credit in the corner reads as a watermark: off unless asked
   };
   const avatar: AvatarConfig = {...defaultAvatar, ...(sb.avatar ?? {})};
   return (
