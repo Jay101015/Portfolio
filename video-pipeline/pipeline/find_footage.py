@@ -215,7 +215,7 @@ def search_pixabay(query: str, want: str, get: Callable = _get_json) -> list[Hit
     if not key:
         return []
     if want == "video":
-        url = "https://pixabay.com/api/videos/?" + urllib.parse.urlencode({"key": key, "q": query, "per_page": 5, "safesearch": "true"})
+        url = "https://pixabay.com/api/videos/?" + urllib.parse.urlencode({"key": key, "q": query, "per_page": 5, "safesearch": "true", "video_type": "film"})  # real footage, no cartoons or 3D renders
         data = get(url)
         hits = []
         for v in data.get("hits", []):
