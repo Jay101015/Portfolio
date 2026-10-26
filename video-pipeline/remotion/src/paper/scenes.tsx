@@ -356,17 +356,26 @@ export const PaperHook: React.FC<P> = ({scene, brand}) => {
   const {fps} = useVideoConfig();
   const {u, pad, isVertical, width} = useLayout();
   const line: string = scene.props.board ? String(scene.props.board).split('|')[0].trim() : captionLine(scene.narration, 9);
+  // a drawing beside the hook (`art=payday`): the picture has the right (or, vertical, the band under the words)
+  const art = scene.props.art && isTraced(String(scene.props.art)) ? String(scene.props.art) : undefined;
   const at = Math.max(2, Math.round(((scene.words?.[0]?.s ?? scene.start) - scene.start) * fps) - 2);
   const done = at + writeFrames(line, fps, 20) + 4;
-  const w = Math.min(width - pad * 2, Math.max(360 * u, line.length * 44 * u));
+  const colW = art && !isVertical ? width * 0.46 - pad : width - pad * 2;
+  const w = Math.min(colW, Math.max(360 * u, line.length * (art ? 36 : 44) * u));
+  const size = (isVertical ? 700 : 760) * u;
   return (
-    <AbsoluteFill style={{padding: pad, justifyContent: 'center', alignItems: 'center'}}>
-      <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 92 : 118) * u, lineHeight: 1.1, color: brand.ink, textAlign: 'center', maxWidth: '92%'}}>
+    <AbsoluteFill style={{padding: pad, justifyContent: art && isVertical ? 'flex-start' : 'center', alignItems: art && !isVertical ? 'flex-start' : 'center', paddingTop: art && isVertical ? 300 * u : pad}}>
+      <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 92 : art ? 100 : 118) * u, lineHeight: 1.1, color: brand.ink, textAlign: art && !isVertical ? 'left' : 'center', maxWidth: art && !isVertical ? colW : '92%'}}>
         <Write text={line} frame={frame} fps={fps} start={at} cps={20} tint={moneyTint(line, brand.accent, brand.accent2)} />
       </div>
       <svg width={w} height={30 * u} viewBox={`0 0 ${w} ${30 * u}`} style={{overflow: 'visible', marginTop: 10 * u}}>
         <SketchPath d={`M${w * 0.04},${16 * u} Q${w * 0.5},${6 * u} ${w * 0.96},${18 * u}`} win={[done, done + Math.round(fps * 0.5)]} easeOut options={{stroke: brand.accent, strokeWidth: 9 * u, seed: scene.id * 5 + 2, roughness: 1.5}} />
       </svg>
+      {art ? (
+        <div style={{position: 'absolute', width: size, height: size, ...(isVertical ? {bottom: pad + 170 * u, left: '50%', transform: 'translateX(-50%)'} : {right: pad * 0.5, top: '50%', transform: 'translateY(-50%)'})}}>
+          <Art name={art} size={size} brand={brand} start={2} seed={scene.id} />
+        </div>
+      ) : null}
     </AbsoluteFill>
   );
 };

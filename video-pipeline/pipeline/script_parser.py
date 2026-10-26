@@ -200,9 +200,10 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
         if "title" in a:
             p["title"] = a["title"]
     elif b.type == "hook":
-        # the first five seconds: one line big on a clean board before the title; board= sets the words
-        if "board" in a:
-            p["board"] = a["board"]
+        # the first five seconds: one line big on a clean board before the title; board= sets the words, art= a drawing beside it
+        for k in ("board", "art"):
+            if k in a:
+                p[k] = a[k]
     elif b.type == "takeaway":
         # a numbered section card: the big number drawn, the title written; n and of are filled in by number_takeaways
         for k in ("n", "of", "title"):

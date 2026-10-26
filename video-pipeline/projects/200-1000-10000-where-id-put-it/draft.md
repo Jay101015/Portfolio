@@ -10,7 +10,7 @@ captions: off
 voice: strong
 source: voiceover
 
-[hook board="£200, £1,000 or £10,000?"]
+[hook board="£200, £1,000 or £10,000: where does it go?" art="payday"]
 Payday hits. The rent's gone out. The bills are paid. Tell me. There's some money left over.
 
 [title kicker="Payday. Rent paid. Bills paid." subtitle="£200, £1,000 or £10,000: the same ladder"]
