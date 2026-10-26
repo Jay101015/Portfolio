@@ -212,8 +212,9 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   // a named drawing (`art=payday`) that is one of the traced illustrations is the scene's picture in the illustrated style;
   // dragged into place (art_x) it is a placed drawing instead, and anything else is left to the ArtLayer
   const named = scene.props.art && brand.illustrated && isTraced(String(scene.props.art)) && scene.props.art_x === undefined ? String(scene.props.art) : undefined;
-  const artName = scene.props.sticker || scene.props.icon ? undefined : named ?? (scene.props.art ? undefined : autoArt(brand, headline, scene.narration));
-  const big = bigArt(brand, artName); // picture first: the words keep to a column (landscape) or the top (vertical), the picture has the rest
+  const clipSrc: string | undefined = scene.props.clip_src; // stock b-roll in the picture column (clip="...", fetched by the footage finder)
+  const artName = clipSrc || scene.props.sticker || scene.props.icon ? undefined : named ?? (scene.props.art ? undefined : autoArt(brand, headline, scene.narration));
+  const big = bigArt(brand, artName) || !!clipSrc; // picture first: the words keep to a column (landscape) or the top (vertical), the picture has the rest
   const corner = <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, headline, scene.narration)} art={artName} frame={frame} fps={fps} start={brand.board ? 6 : 0} seed={scene.id} />;
   const head = headline ? (
     <div style={{fontFamily: hand(brand), fontSize: 44 * u, color: brand.accent2, marginBottom: 24 * u, transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8)}}>
@@ -302,6 +303,7 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
         ) : null}
         {pages[pageIdx] ? renderPage(pages[pageIdx], pageIdx * MAX) : null}
       </div>
+      {clipSrc ? <ClipCard src={clipSrc} props={scene.props} frame={frame} fps={fps} total={Math.max(1, Math.round((scene.end - scene.start) * fps))} brand={brand} /> : null}
       {corner}
     </AbsoluteFill>
   );
@@ -345,6 +347,29 @@ export const PaperTakeaway: React.FC<P> = ({scene, brand}) => {
       </div>
       {void height}
     </AbsoluteFill>
+  );
+};
+
+// ------------------------------------------------------------------ b-roll in the picture column
+/** A stock clip where the drawing would go: a white-framed card held by a magnet, the right half in landscape, the
+ * band under the words in vertical, looping if it is shorter than the scene, its credit under the frame. */
+const ClipCard: React.FC<{src: string; props: Record<string, any>; frame: number; fps: number; total: number; brand: Brand}> = ({src, props, frame, fps, total, brand}) => {  // eslint-disable-line @typescript-eslint/no-explicit-any
+  const {u, pad, isVertical, width} = useLayout();
+  const w = isVertical ? width - pad * 2 : width * 0.5 - pad;
+  const h = (w * 9) / 16;
+  const s = pop(frame, fps, 4, 14);
+  const dur = Number(props.clip_dur ?? 0);
+  const inner = <Media src={src} props={{zoom: 'in'}} durationFrames={total} width={w - 30 * u} height={h - 30 * u} />;
+  return (
+    <div style={{position: 'absolute', width: w, height: h, ...(isVertical ? {top: '40%', left: '50%', transform: `translateX(-50%) rotate(-1deg)`} : {right: pad * 0.7, top: '50%', transform: `translateY(-50%) rotate(-1.5deg)`}), opacity: Math.min(1, s * 1.4)}}>
+      <div style={{width: '100%', height: '100%', background: '#fff', padding: 15 * u, boxShadow: `0 ${12 * u}px ${36 * u}px rgba(40,30,10,0.22)`}}>
+        <div style={{position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: '#f1f1ee'}}>
+          {dur > 0 && dur * fps < total ? <Loop durationInFrames={Math.max(1, Math.round(dur * fps))}>{inner}</Loop> : inner}
+        </div>
+      </div>
+      <div style={{position: 'absolute', left: '50%', top: -20 * u, width: 50 * u, height: 50 * u, borderRadius: '50%', background: `radial-gradient(circle at 35% 30%, #ff8a80, ${brand.accent2} 70%)`, boxShadow: `0 ${4 * u}px ${8 * u}px rgba(0,0,0,0.3)`, transform: 'translateX(-50%)'}} />
+      {props.clip_credit ? <div style={{position: 'absolute', right: 8 * u, bottom: -40 * u, fontFamily: hand(brand), fontSize: 24 * u, color: brand.muted}}>{String(props.clip_credit)}</div> : null}
+    </div>
   );
 };
 

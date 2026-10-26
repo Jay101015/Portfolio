@@ -23,13 +23,18 @@ is not, the scene is cut in the wrong place.
 ## The shape
 
 1. `[hook board="..." art="..."]` as the first scene, holding the first sentence or two. The hook is the attention
-   grabber: a question the viewer wants answered, or a bold claim with the number in it, 4 to 8 words on the board,
-   the figure in it, and beside it the drawing of the moment (payday, rent-day, broken-car, a reaction). Never a
-   greeting, never the title, never a vague line.
+   grabber, How Money Works style: a counter-intuitive claim or a question with the number in it, stated flat, 4
+   to 8 words on the board, the figure in it, and beside it the drawing of the moment (payday, rent-day,
+   broken-car, a reaction). Never a greeting, never the channel name, never "in this video", never a vague line.
 2. `[title kicker="<3 or 4 words>" subtitle="<the promise, with the number>"]` holding the rest of the opening.
 3. Every `[text]` scene gets `board="<a proper headline, 3 to 8 words, that a viewer would repeat: the point of
-   that paragraph, not a fragment of it>"` and `art="<a drawing name from the list below that shows the moment the
-   paragraph describes>"`. The drawings must tell the story in order with the words (payday, then rent-day, then
+   that paragraph, not a fragment of it>"` and either `art="<a drawing name from the list below that shows the
+   moment the paragraph describes>"` or `clip="<3 to 5 words of stock b-roll to search for>"` (a busy high
+   street, a car dealership, a payslip on a desk, a bank branch, a supermarket till). The drawing for the cast's
+   moments (Sam, Maya, a feeling), the clip for the world (places, money, work, shops), roughly one clip in every
+   three scenes, so the video moves like a documentary: the model is How Money Works (see
+   docs/style-how-money-works.md). The render fetches the clip from Pexels, Wikimedia Commons or the Internet
+   Archive (`pipeline/find_footage.py`) and shows its credit. The drawings must tell the story in order with the words (payday, then rent-day, then
    piggy-coin...), a reaction drawing (sam-*, maya-*) for a feeling, and the board line must not say what the drawing
    already shows. The same drawing may come back when the same moment does.
 4. `[stat value="<the figure>" label="<what it is, handwritten>" sub="<short note>"]` only where the narration states

@@ -234,9 +234,41 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
     report: dict[str, Any] = {"film": header.get("film"), "topic": topic, "public_domain_film": pd_film, "scenes": []}
     new_md = md
     for sc in sb["scenes"]:
+        p = sc["props"]
+        # b-roll in the picture column of any scene: clip="busy high street" asks for a stock clip beside the words
+        if sc["type"] not in ("clip", "still", "image") and p.get("clip"):
+            have = p.get("clip_src")
+            if have and os.path.exists(os.path.join(media, str(have))):
+                report["scenes"].append({"id": sc["id"], "status": "present", "src": have})
+                continue
+            q = str(p["clip"])
+            entry = {"id": sc["id"], "type": "b-roll", "query": q, "status": "not found", "candidates": []}
+            chosen = None
+            for name in providers:
+                try:
+                    hits = PROVIDERS[name](q, "video", get)
+                except Exception as e:  # noqa: BLE001
+                    entry["candidates"].append({"provider": name, "error": str(e)})
+                    continue
+                for h in hits:
+                    entry["candidates"].append({"provider": h.provider, "title": h.title, "license": h.license_name, "page": h.page, "kind": h.kind})
+                usable = [h for h in hits if h.license in allowed and h.kind == "video"]
+                if usable:
+                    chosen = usable[0]
+                    break
+            if chosen:
+                fname = f"{sc['id']:02d}-broll-{slugify(q)}.{chosen.ext}"
+                entry.update({"status": "dry-run" if dry_run else "downloaded", "src": fname, "credit": attribution(chosen), "license": chosen.license_name, "page": chosen.page})
+                if not dry_run:
+                    try:
+                        download(chosen.url, os.path.join(media, fname), {"Authorization": os.environ.get("PEXELS_API_KEY", "")} if chosen.provider == "pexels" else None)
+                        new_md = rewrite_tag(new_md, sc["id"], sb, {"clip_src": fname, "clip_credit": attribution(chosen)})
+                    except Exception as e:  # noqa: BLE001
+                        entry["status"] = f"download failed: {e}"
+            report["scenes"].append(entry)
+            continue
         if sc["type"] not in ("clip", "still", "image"):
             continue
-        p = sc["props"]
         src = p.get("src")
         if src and os.path.exists(os.path.join(media, src)):
             report["scenes"].append({"id": sc["id"], "status": "present", "src": src})

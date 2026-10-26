@@ -643,6 +643,16 @@ spoken word is checked against the original, word by word, before the pass
 is accepted; a pass that changes a word is refused. The pass runs by itself
 when a transcription is loaded and the script has no headlines yet.
 
+### Stock b-roll in the picture column
+
+A text scene can show a stock clip instead of a drawing: `clip="busy high street"`
+names what to search for, the render's footage finder fetches a free-use clip
+(Pexels with `PEXELS_API_KEY`, else Wikimedia Commons or the Internet Archive),
+and it plays in a white-framed card where the drawing would be, with its
+credit. The editor's pass uses a drawing for the cast's moments and a clip for
+the world, about one in three scenes. The model is How Money Works:
+`docs/style-how-money-works.md`.
+
 ### Standing rules for the pictures
 
 - The drawing on a scene shows the moment the words describe, and the

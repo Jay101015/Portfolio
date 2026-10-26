@@ -407,12 +407,23 @@ def resolve_media(sb: dict, project: str, slug: str) -> list[str]:
             sticker = p.get("sticker")
             if sticker and not str(sticker).startswith("projects/") and os.path.exists(os.path.join(src_dir, sticker)):
                 p["sticker"] = f"projects/{slug}/{folder}/{sticker}"
+            clip = p.get("clip_src")
+            if clip and not str(clip).startswith("projects/") and os.path.exists(os.path.join(src_dir, clip)):
+                try:
+                    p["clip_dur"] = round(al.audio_duration(os.path.join(src_dir, clip)), 3)
+                except Exception:  # noqa: BLE001
+                    pass
+                p["clip_src"] = f"projects/{slug}/{folder}/{clip}"
     for sc in sb["scenes"]:
         p = sc["props"]
         sticker = p.get("sticker")
         if sticker and not str(sticker).startswith("projects/"):
             notes.append(f"WARNING: scene {sc['id']} sticker '{sticker}' not found in {project}/media; leaving it off")
             p.pop("sticker", None)
+        clip = p.get("clip_src")
+        if clip and not str(clip).startswith("projects/"):
+            notes.append(f"WARNING: scene {sc['id']} clip_src '{clip}' not found in {project}/media; the drawing or the words stand alone")
+            p.pop("clip_src", None)
         src = p.get("src")
         if src and not src.startswith("projects/"):
             # A missing file must not fail the render: the scene draws its placeholder

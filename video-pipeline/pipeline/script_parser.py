@@ -223,7 +223,7 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
     # a sticker (GIF or picture) on any scene, with its own edits as sticker_<edit>; a drawing from the art library
     # on any scene as art=<name> with art_at, art_size, art_start (art=off keeps the corner clear)
     for k, v in a.items():
-        if k == "sticker" or k.startswith("sticker_") or k == "art" or k.startswith("art_"):
+        if k == "sticker" or k.startswith("sticker_") or k == "art" or k.startswith("art_") or k == "clip" or k.startswith("clip_"):  # clip="busy high street": stock b-roll in the picture column
             p[k] = v
     return p
 

@@ -183,6 +183,20 @@ class ArtLibraryTests(unittest.TestCase):
         bad = check(before, after.replace("art=\"payday\"", "art=\"unicorn\""))
         self.assertTrue(any("does not exist" in w for w in bad["warnings"]))
 
+    def test_a_text_scene_can_ask_for_stock_b_roll(self):
+        import os, tempfile
+        from pipeline import find_footage
+        sb = parse_script("# T\nslug: t\ntheme: whiteboard\n\n[text board=\"Rent day\" clip=\"landlord at the door\"]\nThe landlord was at the door.\n")
+        self.assertEqual(sb["scenes"][0]["props"]["clip"], "landlord at the door")
+        with tempfile.TemporaryDirectory() as d:
+            open(os.path.join(d, "script.md"), "w").write("# T\nslug: t\ntheme: whiteboard\ntopic: rent\n\n[text board=\"Rent day\" clip=\"landlord at the door\"]\nThe landlord was at the door.\n")
+            os.environ["PEXELS_API_KEY"] = "test"
+            fake = lambda url, headers=None: {"videos": [{"id": 7, "url": "https://www.pexels.com/video/7/", "user": {"name": "A Filmer"}, "video_files": [{"file_type": "video/mp4", "width": 1920, "link": "https://example.test/7.mp4"}]}]}
+            report = find_footage.find(d, ["pexels"], dry_run=True, get=fake)
+            entry = report["scenes"][0]
+            self.assertEqual((entry["type"], entry["query"], entry["status"]), ("b-roll", "landlord at the door", "dry-run"))
+            self.assertTrue(entry["src"].startswith("01-broll-"))
+
     def test_hook_scene_parses_and_scores_first(self):
         from pipeline.shorts import score_slice
         sb = parse_script("# T\nslug: t\ntheme: whiteboard\n\n[hook board=\"£420 a month = £1,000,000\"]\nFour hundred and twenty pounds a month makes you a millionaire.\n\n[title]\nHere is how.\n")
