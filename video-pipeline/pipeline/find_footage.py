@@ -218,16 +218,44 @@ def search_pixabay(query: str, want: str, get: Callable = _get_json) -> list[Hit
         url = "https://pixabay.com/api/videos/?" + urllib.parse.urlencode({"key": key, "q": query, "per_page": 5, "safesearch": "true", "video_type": "film"})  # real footage, no cartoons or 3D renders
         data = get(url)
         hits = []
-        for v in data.get("hits", []):
+        for v in relevant(data.get("hits", []), query):
             files = v.get("videos", {}) or {}
             f = files.get("medium") or files.get("large") or files.get("small")
             if not f or not f.get("url"):
                 continue
-            hits.append(Hit("pixabay", f"Video {v['id']}", f["url"], "video", "pixabay", "Pixabay Content License", str(v.get("user", "")), str(v.get("pageURL", "")), "mp4"))
-        return hits
+            hit = Hit("pixabay", f"Video {v['id']}", f["url"], "video", "pixabay", "Pixabay Content License", str(v.get("user", "")), str(v.get("pageURL", "")), "mp4")
+            hits.append((int(f.get("height") or 0) > int(f.get("width") or 0), hit))
+        # a phone-shot vertical clip loses two thirds of its picture in a 16:9 frame: landscape first, order kept otherwise
+        return [h for _, h in sorted(hits, key=lambda x: x[0])]
     url = "https://pixabay.com/api/?" + urllib.parse.urlencode({"key": key, "q": query, "per_page": 5, "image_type": "photo", "safesearch": "true"})
     data = get(url)
-    return [Hit("pixabay", f"Photo {p['id']}", p.get("largeImageURL") or p.get("webformatURL", ""), "image", "pixabay", "Pixabay Content License", str(p.get("user", "")), str(p.get("pageURL", "")), "jpg") for p in data.get("hits", []) if p.get("largeImageURL") or p.get("webformatURL")]
+    return [Hit("pixabay", f"Photo {p['id']}", p.get("largeImageURL") or p.get("webformatURL", ""), "image", "pixabay", "Pixabay Content License", str(p.get("user", "")), str(p.get("pageURL", "")), "jpg") for p in relevant(data.get("hits", []), query) if p.get("largeImageURL") or p.get("webformatURL")]
+
+
+def _stem(w: str) -> str:
+    w = w.lower().strip(".,;:!?\"'()")
+    for end in ("ing", "es", "s"):
+        if len(w) > len(end) + 2 and w.endswith(end):
+            return w[: -len(end)]
+    return w
+
+
+def relevant(hits: list[dict[str, Any]], query: str) -> list[dict[str, Any]]:
+    """Pixabay matches loosely, so its top hit can be an owl for 'paying bills online laptop'. Keep only hits whose
+    tags share a word with the query, most shared words first; a hit without tags keeps its place at the back."""
+    words = {_stem(w) for w in query.split() if len(w) > 2 and w.lower() not in STOP}
+    scored = []
+    for i, h in enumerate(hits):
+        tags = str(h.get("tags", "") or "")
+        if not tags:
+            scored.append((0, i, h))
+            continue
+        have = {_stem(w) for t in tags.split(",") for w in t.split()}
+        n = len(words & have)
+        if n:
+            scored.append((n, i, h))
+    scored.sort(key=lambda x: (-x[0], x[1]))
+    return [h for _, _, h in scored]
 
 
 PROVIDERS = {"archive": search_archive, "commons": search_commons, "pexels": search_pexels, "pixabay": search_pixabay}
@@ -287,6 +315,8 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
 
     report: dict[str, Any] = {"film": header.get("film"), "topic": topic, "public_domain_film": pd_film, "scenes": []}
     new_md = md
+    # the same clip twice in one video looks cheap: skip any hit whose credit is already on another scene
+    used = {str(sc["props"][k]) for sc in sb["scenes"] for k in ("credit", "clip_credit") if sc["props"].get(k)}
     for sc in sb["scenes"]:
         p = sc["props"]
         # b-roll in the picture column of any scene: clip="busy high street" asks for a stock clip beside the words
@@ -318,7 +348,7 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
                     continue
                 for h in hits:
                     entry["candidates"].append({"provider": h.provider, "title": h.title, "license": h.license_name, "page": h.page, "kind": h.kind})
-                ok = [h for h in hits if h.license in allowed and h.kind == "video"]
+                ok = [h for h in hits if h.license in allowed and h.kind == "video" and attribution(h) not in used]
                 answers.append(f"{name}: {len(ok)} clip(s)")
                 if ok:
                     usable = ok
@@ -338,6 +368,7 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
                     answers.append(f"{h.provider} {h.title}: {str(e)[:50]}")
                     continue
                 entry.update({"status": "downloaded", "src": full, "credit": attribution(h), "license": h.license_name, "page": h.page})
+                used.add(attribution(h))
                 new_md = rewrite_tag(new_md, sc["id"], sb, {"clip_src": full, "clip_credit": attribution(h)})
                 break
             report["scenes"].append(entry)
@@ -366,7 +397,7 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
                 continue
             for h in hits:
                 entry["candidates"].append({"provider": h.provider, "title": h.title, "license": h.license_name, "page": h.page, "kind": h.kind})
-            usable = [h for h in hits if h.license in allowed and (h.kind == want or want == "image")]
+            usable = [h for h in hits if h.license in allowed and (h.kind == want or want == "image") and attribution(h) not in used]
             if sc["type"] == "broll":
                 usable = [h for h in usable if h.kind == "video"]  # the whole frame is the footage: a still will not do
             if usable:
@@ -375,6 +406,7 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
         if not chosen:
             report["scenes"].append(entry)
             continue
+        used.add(attribution(chosen))
         fname = f"{sc['id']:02d}-{slugify(q)}.{chosen.ext}"
         entry.update({"status": "dry-run" if dry_run else "downloaded", "src": fname, "credit": attribution(chosen), "license": chosen.license_name, "page": chosen.page})
         if not dry_run:
