@@ -1260,5 +1260,322 @@
    "maya"
   ],
   "kind": "reaction"
+ },
+ {
+  "name": "stock-chart-laptop",
+  "about": "a young man at a laptop, a chart on the screen climbing up and to the right, his hand on the mouse",
+  "tags": [
+   "investing",
+   "chart",
+   "index fund",
+   "stocks",
+   "market",
+   "portfolio",
+   "laptop",
+   "returns"
+  ],
+  "search": [
+   "chart",
+   "stock",
+   "stocks",
+   "shares",
+   "market",
+   "index",
+   "fund",
+   "portfolio",
+   "laptop",
+   "screen",
+   "trading",
+   "returns",
+   "growth",
+   "invest",
+   "investing",
+   "etf"
+  ],
+  "prompt": "a young man at a laptop, a line chart on the screen going up and to the right"
+ },
+ {
+  "name": "estate-agent",
+  "about": "an estate agent with a clipboard and keys outside a terraced house, a To Let board beside her",
+  "tags": [
+   "rent",
+   "renting",
+   "landlord",
+   "estate agent",
+   "letting",
+   "flat",
+   "tenant",
+   "deposit"
+  ],
+  "search": [
+   "rent",
+   "renting",
+   "landlord",
+   "estate agent",
+   "letting",
+   "to let",
+   "flat",
+   "tenant",
+   "tenancy",
+   "deposit",
+   "house",
+   "viewing",
+   "lease"
+  ],
+  "prompt": "an estate agent with a clipboard and keys outside a terraced house, a To Let board"
+ },
+ {
+  "name": "tax-return",
+  "about": "a brown envelope opened on a table, a tax return form and a calculator, a hand with a pen over the form",
+  "tags": [
+   "tax",
+   "hmrc",
+   "tax return",
+   "self assessment",
+   "tax code",
+   "allowance",
+   "income tax"
+  ],
+  "search": [
+   "tax",
+   "taxes",
+   "hmrc",
+   "tax return",
+   "self assessment",
+   "self-assessment",
+   "form",
+   "allowance",
+   "income tax",
+   "tax code",
+   "rebate",
+   "deadline",
+   "calculator"
+  ],
+  "prompt": "a brown envelope opened on a kitchen table, a tax form and a calculator, a hand holding a pen"
+ },
+ {
+  "name": "pub-round",
+  "about": "three friends at a pub bar with drinks, one tapping a bank card on the reader",
+  "tags": [
+   "pub",
+   "drinks",
+   "night out",
+   "round",
+   "spending",
+   "going out",
+   "friends",
+   "bar"
+  ],
+  "search": [
+   "pub",
+   "bar",
+   "drinks",
+   "drink",
+   "pint",
+   "night out",
+   "round",
+   "going out",
+   "friends",
+   "social",
+   "spending",
+   "weekend",
+   "tap",
+   "card"
+  ],
+  "prompt": "three friends at a pub bar with drinks, one tapping a bank card on a card reader"
+ },
+ {
+  "name": "online-shopping",
+  "about": "a young woman on a sofa shopping on her phone, a stack of delivery parcels beside her",
+  "tags": [
+   "shopping",
+   "online shopping",
+   "parcels",
+   "impulse",
+   "amazon",
+   "spending",
+   "deliveries",
+   "subscriptions"
+  ],
+  "search": [
+   "shopping",
+   "online",
+   "parcel",
+   "parcels",
+   "delivery",
+   "deliveries",
+   "impulse",
+   "buy",
+   "buying",
+   "bought",
+   "order",
+   "orders",
+   "sofa",
+   "phone",
+   "spending",
+   "amazon",
+   "checkout"
+  ],
+  "prompt": "a young woman on a sofa shopping on her phone, a stack of delivery parcels beside her"
+ },
+ {
+  "name": "commute-platform",
+  "about": "a young man on a crowded train platform with headphones and a takeaway coffee, a train arriving",
+  "tags": [
+   "commute",
+   "commuting",
+   "train",
+   "work",
+   "travel",
+   "coffee",
+   "daily",
+   "season ticket"
+  ],
+  "search": [
+   "commute",
+   "commuting",
+   "train",
+   "tube",
+   "platform",
+   "station",
+   "travel",
+   "fares",
+   "season ticket",
+   "coffee",
+   "work",
+   "morning",
+   "rush hour",
+   "journey"
+  ],
+  "prompt": "a young man on a crowded train platform with headphones in and a takeaway coffee"
+ },
+ {
+  "name": "family-dinner",
+  "about": "two parents and a small child eating at a kitchen table, a toy on the floor",
+  "tags": [
+   "family",
+   "children",
+   "kids",
+   "childcare",
+   "parents",
+   "household",
+   "dinner",
+   "nursery"
+  ],
+  "search": [
+   "family",
+   "child",
+   "children",
+   "kids",
+   "kid",
+   "childcare",
+   "nursery",
+   "parents",
+   "parent",
+   "household",
+   "dinner",
+   "baby",
+   "school",
+   "mum",
+   "dad"
+  ],
+  "prompt": "two parents and a small child eating at a kitchen table, a toy on the floor"
+ },
+ {
+  "name": "hospital-desk",
+  "about": "a young woman at a hospital reception desk talking to the receptionist, a waiting area behind",
+  "tags": [
+   "hospital",
+   "doctor",
+   "health",
+   "illness",
+   "emergency",
+   "insurance",
+   "nhs",
+   "sick"
+  ],
+  "search": [
+   "hospital",
+   "doctor",
+   "gp",
+   "health",
+   "ill",
+   "illness",
+   "sick",
+   "emergency",
+   "insurance",
+   "nhs",
+   "medical",
+   "dentist",
+   "appointment",
+   "injury",
+   "accident"
+  ],
+  "prompt": "a young woman at a hospital reception desk, a waiting area behind"
+ },
+ {
+  "name": "airport-departures",
+  "about": "a young man at an airport with a suitcase and a passport, the departures board behind him",
+  "tags": [
+   "holiday",
+   "travel",
+   "airport",
+   "flight",
+   "trip",
+   "abroad",
+   "spending",
+   "treat"
+  ],
+  "search": [
+   "holiday",
+   "holidays",
+   "travel",
+   "airport",
+   "flight",
+   "flights",
+   "trip",
+   "abroad",
+   "vacation",
+   "passport",
+   "suitcase",
+   "plane",
+   "departures",
+   "summer",
+   "treat"
+  ],
+  "prompt": "a young man at an airport with a suitcase and a passport, a departures board behind him"
+ },
+ {
+  "name": "garden-retirement",
+  "about": "a man in his sixties watering plants in a garden, a dog beside him, relaxed",
+  "tags": [
+   "retirement",
+   "retire",
+   "pension",
+   "later life",
+   "older",
+   "future you",
+   "relax",
+   "garden"
+  ],
+  "search": [
+   "retire",
+   "retired",
+   "retirement",
+   "pension",
+   "sixties",
+   "older",
+   "old age",
+   "later life",
+   "future",
+   "garden",
+   "gardening",
+   "dog",
+   "relax",
+   "relaxed",
+   "free time",
+   "work optional"
+  ],
+  "prompt": "a man in his sixties watering plants in a garden, a dog beside him"
  }
 ]
