@@ -140,7 +140,12 @@ jobs:
             git add -u "projects/$PROJECT" 2>/dev/null || true
           fi
           # the script (built from the voice when there was none), the transcript and the timings, for the studio
-          git add "projects/$PROJECT/script.md" "projects/$PROJECT/footage-report.md" "projects/$PROJECT/facts-report.md" "projects/$PROJECT/timing.json" "projects/$PROJECT/transcript.json" "projects/$PROJECT/voice-preview.mp3" 2>/dev/null || true
+          # one at a time: a single missing file (no timing.json on a silent render) made git add refuse the lot,
+          # and the script lost the footage and figures the run had written into it
+          for f in script.md footage-report.md facts-report.md timing.json transcript.json voice-preview.mp3; do
+            [ -f "projects/$PROJECT/$f" ] && git add "projects/$PROJECT/$f"
+          done
+          git add -u "projects/$PROJECT/media" 2>/dev/null || true
           git commit -m "Render run: footage, transcript and timings for $PROJECT" || echo "nothing new to commit"
           for i in 1 2 3; do git pull -q --rebase --autostash && git push && break || sleep 5; done
 

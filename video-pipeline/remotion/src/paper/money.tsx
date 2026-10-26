@@ -107,7 +107,8 @@ export const PaperGrow: React.FC<P> = ({scene, brand}) => {
   const rateGiven = pct(scene.props.rate);
   const rate = rateGiven !== null ? rateGiven / 100 : to && to.num > 0 && from.num > 0 ? Math.pow(to.num / from.num, 1 / years) - 1 : 0.07;
   const monthly = String(scene.props.per ?? '').toLowerCase().startsWith('month');
-  const valueAt = (y: number) => (monthly ? from.num * 12 * (rate > 0 ? (Math.pow(1 + rate, y) - 1) / rate : y) : from.num * Math.pow(1 + rate, y));
+  // monthly: paid in and compounded each month at a twelfth of the yearly rate, the way UK savings calculators work it out (£200 a month, 7%, 30 years: £243,994)
+  const valueAt = (y: number) => (monthly ? (rate > 0 ? from.num * (Math.pow(1 + rate / 12, y * 12) - 1) / (rate / 12) : from.num * 12 * y) : from.num * Math.pow(1 + rate, y));
   const nBars = Math.min(years + 1, isVertical ? 6 : 8);
   const yrs = Array.from({length: nBars}, (_, i) => Math.round((i * years) / Math.max(1, nBars - 1)));
   const vals = yrs.map(valueAt);
