@@ -632,6 +632,17 @@ host on screen, the default on `toon`), `slug`, `kicker`, `captions: false`, any
 `brand.*` (`name`, `bg`, `panel`, `text`, `muted`, `accent`, `accent2`,
 `font`) and any `avatar.*` from the table above.
 
+### The editor's pass: headlines and drawings from a recording
+
+A draft built from your voice has the words but not the board. In the
+studio, Video tab, "✦ Headlines & drawings" sends the script to Claude for
+the editor's pass: a hook, a proper headline on every scene (the point, not
+a fragment), a story drawing named on every text scene, stat cards only
+where a real figure is said, takeaway cards at the big beats, a recap. Every
+spoken word is checked against the original, word by word, before the pass
+is accepted; a pass that changes a word is refused. The pass runs by itself
+when a transcription is loaded and the script has no headlines yet.
+
 ### Standing rules for the pictures
 
 - The drawing on a scene shows the moment the words describe, and the
