@@ -2,7 +2,7 @@
 
 The traced library, labelled by topic, so a script on a topic picks the right picture (the tags in
 `library/illus/manifest.json` are what the picker actually matches; this is the human map). The
-phone page with thumbnails and the prompts for the missing drawings is the "Money Moves Drawing
+phone page with thumbnails and the prompts for the missing drawings is the "Everyday Investor Drawing
 Guide" artifact.
 
 ## What we have (20)

@@ -22,14 +22,14 @@ channel, not a document from them, so watch three recent videos before trusting 
 
 ## What we copy, and how the pipeline does it
 
-| How Money Works | Money Moves |
+| How Money Works | The Everyday Investor |
 | --- | --- |
 | A claim with a number opens the video | `[hook board="..." art="..."]`: the figure in colour, a drawing beside it |
 | Bold headlines over footage | `board="..."` on every scene: a proper headline, the money word in colour |
 | Stock b-roll cut every few seconds | `clip="busy high street"` on a text scene: a stock clip in the picture column, fetched free-use by the render; the drawings carry the cast's moments; the pace rules give every scene its own picture |
 | Figures on screen, large | `[stat value="£2,400" label="..."]` only where a real figure is said |
 | Sections with a turn | `[takeaway]` cards at the big beats; a "the catch" headline on the turn |
-| A recap and a one-line ask | `[recap]` with the three lines; the MONEY MOVES subscribe page |
+| A recap and a one-line ask | `[recap]` with the three lines; the The Everyday Investor subscribe page |
 
 ## What we do not copy
 

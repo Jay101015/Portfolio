@@ -452,7 +452,7 @@ def parse_script(md: str) -> dict[str, Any]:
     # every video ends on the same subscribe page: when a script forgets the outro it is added, twelve seconds, nothing
     # said: long enough for YouTube's end-screen elements, which need the last 5 to 20 seconds
     if blocks and header.get("theme") == "whiteboard" and not any(b.type == "outro" for b in blocks):
-        blocks.append(Block(type="outro", attrs={"title": "MONEY MOVES", "cta": "Subscribe for the next one", "dur": "12"}))
+        blocks.append(Block(type="outro", attrs={"title": "The Everyday Investor", "cta": "Subscribe for the next one", "dur": "12"}))
 
     scenes = []
     for i, b in enumerate(blocks, 1):

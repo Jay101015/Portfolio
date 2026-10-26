@@ -54,7 +54,7 @@ version from your previous read or write of that job.
         the newest "Render video" run for that commit from
         `curl -s "https://api.github.com/repos/Jay101015/Portfolio/actions/runs?branch=claude/video-pipeline&per_page=5"`):
 
-        > You are the render watcher for the MONEY MOVES studio. Unattended: do only these steps, never ask
+        > You are the render watcher for the Everyday Investor studio. Unattended: do only these steps, never ask
         > questions. The video "<title>" (commit <commit>) is rendering on GitHub Actions in the public repository
         > Jay101015/Portfolio. 1. Run: curl -s -H "Accept: application/vnd.github+json"
         > "https://api.github.com/repos/Jay101015/Portfolio/actions/runs/<run id>" and read "status" and

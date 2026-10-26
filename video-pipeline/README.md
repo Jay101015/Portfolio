@@ -571,7 +571,7 @@ narration is what the cut is aligned to.
 slug: fee-drag
 topic: Investment fees
 theme: toon
-brand.name: MONEY MOVES
+brand.name: The Everyday Investor
 
 [avatar headline="The 1% that eats a third of your retirement" pose=wave]
 Host on screen with a headline beside them. {point} A cue in braces changes
@@ -718,7 +718,7 @@ figures with a publisher and date, the host's own numbers excepted.
 - Words and drawings never sit on top of each other. Landscape: the words
   keep a column on the left, the picture has the right. Vertical: the words
   sit at the top, the picture below them, the captions under that.
-- Every video ends on the same page: MONEY MOVES, the yellow "Subscribe for
+- Every video ends on the same page: The Everyday Investor, the yellow "Subscribe for
   the next one" button. A script that leaves the outro out gets it added.
 
 ### The hook: the first five seconds

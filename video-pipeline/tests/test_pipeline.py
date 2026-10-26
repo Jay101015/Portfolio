@@ -150,10 +150,10 @@ class ArtLibraryTests(unittest.TestCase):
         sb = parse_script("# T\nslug: t\ntheme: whiteboard\n\n[text]\nOne line here.\n")
         last = sb["scenes"][-1]
         self.assertEqual(last["type"], "outro")
-        self.assertEqual(last["props"]["title"], "MONEY MOVES")
+        self.assertEqual(last["props"]["title"], "The Everyday Investor")
         self.assertEqual(last["props"]["cta"], "Subscribe for the next one")
         self.assertGreaterEqual(last["end"] - last["start"], 6)
-        sb2 = parse_script("# T\nslug: t\n\n[text]\nOne line here.\n\n[outro title=\"MONEY MOVES\" cta=\"Subscribe for the next one\"]\nBye.\n")
+        sb2 = parse_script("# T\nslug: t\n\n[text]\nOne line here.\n\n[outro title=\"The Everyday Investor\" cta=\"Subscribe for the next one\"]\nBye.\n")
         self.assertEqual(sum(1 for sc in sb2["scenes"] if sc["type"] == "outro"), 1)
 
     def test_a_long_unpunctuated_run_is_cut_at_a_thought_not_by_length(self):

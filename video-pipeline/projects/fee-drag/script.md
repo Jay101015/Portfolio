@@ -3,7 +3,7 @@ slug: fee-drag
 topic: Investment fees
 theme: whiteboard
 host: none
-brand.name: MONEY MOVES
+brand.name: The Everyday Investor
 
 [title kicker="One number" subtitle="Why the smallest number on your statement is the most expensive"]
 Welcome back. Today, one number. One percent. It is the fee on a typical managed fund, or a typical adviser, and it sounds like nothing. By the end of this video you will see why it is the most expensive small number in your life.

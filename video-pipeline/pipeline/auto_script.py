@@ -248,7 +248,7 @@ def _write(header: dict[str, str], title: str, scenes: list[tuple[str, str]]) ->
     header = dict(header)
     header.setdefault("theme", "whiteboard")
     header.setdefault("host", "none")
-    header.setdefault("brand.name", "MONEY MOVES")
+    header.setdefault("brand.name", "The Everyday Investor")
     header["source"] = "voiceover"
     lines = [f"# {title}"] + [f"{k}: {v}" for k, v in header.items()] + [""]
     for tag, prose in scenes:

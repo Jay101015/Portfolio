@@ -3,7 +3,7 @@ import type {Brand} from './types';
 export const presets: Record<string, Brand> = {
   // Hand-drawn storytime look: paper background, ink text, marker colours, hard cuts.
   toon: {
-    name: 'MONEY MOVES',
+    name: 'The Everyday Investor',
     bg: '#f7f0e3',
     panel: '#ffffff',
     text: '#1a1714',
@@ -30,7 +30,7 @@ export const presets: Record<string, Brand> = {
   },
   // Motion-graphics look for money explainers: deep navy, green and gold, big type, no host.
   finance: {
-    name: 'MONEY MOVES',
+    name: 'The Everyday Investor',
     bg: '#0b1020',
     panel: '#141b33',
     text: '#f4f6fb',
@@ -47,7 +47,7 @@ export const presets: Record<string, Brand> = {
 presets.paper = {
   // The notebook look: a page someone wrote on. Warm paper, ink, a serif for the big words, handwriting for the notes,
   // charts sketched by hand, a highlighter for the word being said. No glow, no gradients, no pills.
-  name: 'MONEY MOVES',
+  name: 'The Everyday Investor',
   bg: '#f4efe6',
   panel: '#fffdf8',
   text: '#1b1a17',
@@ -67,7 +67,7 @@ presets.whiteboard = {
   // The whiteboard look: the same page layouts as paper, but a clean white board, marker handwriting for everything,
   // every line written on left to right at a marker's pace, doodles drawn stroke by stroke, and a hand holding the
   // marker that follows whatever is being written. Three markers: black, green, red (and a blue for charts).
-  name: 'MONEY MOVES',
+  name: 'The Everyday Investor',
   bg: '#fbfbf9',
   panel: '#ffffff',
   text: '#1d1d1f',

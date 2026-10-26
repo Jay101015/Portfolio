@@ -3,7 +3,7 @@ slug: millionaire
 topic: Becoming a millionaire on a normal salary
 theme: whiteboard
 host: none
-brand.name: MONEY MOVES
+brand.name: The Everyday Investor
 brand.style: illustrated
 captions: off
 
@@ -37,5 +37,5 @@ After year twenty, your money earns more in a year than you put in. It grows whi
 [recap]
 So. Start now. Four hundred and twenty a month, every month. Leave it alone.
 
-[outro title="MONEY MOVES" cta="Subscribe for the next one"]
+[outro title="The Everyday Investor" cta="Subscribe for the next one"]
 That is how a normal salary becomes a million pounds. Not fast. Just certain.

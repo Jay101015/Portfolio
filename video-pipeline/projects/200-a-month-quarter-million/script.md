@@ -3,7 +3,7 @@ slug: 200-a-month-quarter-million
 topic: investing £200 a month in the UK
 theme: whiteboard
 host: none
-brand.name: MONEY MOVES
+brand.name: The Everyday Investor
 brand.style: illustrated
 captions: off
 

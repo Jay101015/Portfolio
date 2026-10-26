@@ -770,7 +770,7 @@ export const PaperOutro: React.FC<P> = ({scene, brand}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const {u, pad, isVertical} = useLayout();
-  const title: string = scene.props.title ?? 'MONEY MOVES';
+  const title: string = scene.props.title ?? 'The Everyday Investor';
   const cta: string = scene.props.cta ?? 'Subscribe for the next one';
   const titleDone = doneAt(brand, title, fps, 4, 3, 20);
   const btnAt = brand.board ? titleDone + 4 : 10;

@@ -3,7 +3,7 @@ slug: hmw-demo
 topic: How a 1% pension fee takes a third of your pot
 theme: whiteboard
 host: none
-brand.name: MONEY MOVES
+brand.name: The Everyday Investor
 brand.style: illustrated
 captions: off
 

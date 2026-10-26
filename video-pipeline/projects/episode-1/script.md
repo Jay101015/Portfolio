@@ -3,7 +3,7 @@ slug: episode-1
 topic: What to do with your first £10,000
 theme: whiteboard
 host: none
-brand.name: MONEY MOVES
+brand.name: The Everyday Investor
 source: voiceover
 
 [title title=" I Turned £3K Into £11K… Then Lost Most of It | Road to £100K" kicker="Episode 1" art=snowball art_at=tr art_size=0.37]

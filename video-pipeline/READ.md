@@ -1,4 +1,4 @@
-# MONEY MOVES: what we have built, and the tools behind it
+# The Everyday Investor: what we have built, and the tools behind it
 
 A phone-first studio and a render pipeline that turn a recording, or a few typed lines, into a whiteboard
 explainer video in the style of How Money Works, two or three times a week, with no editing by hand.
@@ -87,7 +87,7 @@ Remotion, React. The whiteboard look: marker handwriting that draws itself (no h
 brings it back), per-letter wobble, sketch lines and underlines, the money words green and losses red, a board
 that slides or wipes between scenes, the illustrated style with the traced drawings big beside one line, full-frame
 footage scenes with a hard cut, the news clipping, the takeaway cards, the recap, the money pictures, and the same
-MONEY MOVES subscribe page at the end of every video. Landscape 1920x1080 and vertical 1080x1920 from the same
+The Everyday Investor subscribe page at the end of every video. Landscape 1920x1080 and vertical 1080x1920 from the same
 script; Shorts get a pinned hook banner.
 
 ## 6. The services we have access to
@@ -117,7 +117,7 @@ key only in the scratchpad.
 - Not every spoken word goes on the board: a headline a viewer would repeat, 3 to 8 words.
 - No marker hand. The board draws itself.
 - Drawings never overlap the words, and they tell the story in order with the words.
-- Every video ends on the same MONEY MOVES subscribe page. No "education, not advice" line on the title.
+- Every video ends on the same The Everyday Investor subscribe page. No "education, not advice" line on the title.
 - The hook grabs: a claim or a question with the number in it, with a drawing, never a greeting.
 - Scenes are cut at ideas, never by length; the editor's pass re-cuts before anything else.
 - Money words in colour: green for the figure, red for a fee, a loss, a debt.

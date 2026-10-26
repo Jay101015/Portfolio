@@ -105,7 +105,7 @@ def place(job: dict, fetched: str) -> str:
     if _git("diff", "--cached", "--quiet", check=False).returncode == 0:
         print("nothing changed")
         return _git("rev-parse", "HEAD").stdout.strip()
-    _git("-c", "user.name=MONEY MOVES studio", "-c", "user.email=studio@users.noreply.github.com", "commit", "-q", "-m", job.get("message") or "Studio")
+    _git("-c", "user.name=Everyday Investor studio", "-c", "user.email=studio@users.noreply.github.com", "commit", "-q", "-m", job.get("message") or "Studio")
     for attempt in range(4):
         _git("pull", "-q", "--rebase", "origin", branch, check=False)
         if _git("push", "-q", "origin", f"HEAD:{branch}", check=False).returncode == 0:
