@@ -3,7 +3,7 @@
 A voice memo from a phone in a bedroom has room hum, hiss, some boom when the phone is close and not much presence;
 its level wanders. This runs it through the chain a podcast editor would: a high-pass to drop the rumble, noise
 removal, a de-esser, a little EQ (less mud at 250 Hz, more presence at 3 kHz), a compressor to even the level out,
-and loudness normalisation to the -16 LUFS YouTube expects. Three strengths:
+and loudness normalisation to the -14 LUFS YouTube plays at. Three strengths:
 
     light    high-pass, gentle noise removal, EQ, light compression, loudness
     normal   the same with proper noise removal and compression (the default)
@@ -60,7 +60,7 @@ def chain(level: str, measured: dict[str, float] | None = None) -> str:
         parts.append("acompressor=threshold=-20dB:ratio=2:attack=12:release=150:makeup=2")
     else:
         parts.append("acompressor=threshold=-20dB:ratio=3:attack=8:release=120:makeup=3")
-    ln = "loudnorm=I=-16:TP=-2:LRA=11"
+    ln = "loudnorm=I=-14:TP=-1.5:LRA=11"
     if measured:
         ln += f":measured_I={measured['lufs']}:measured_TP={measured['peak_dbtp']}:measured_LRA={measured['range_lu']}:measured_thresh={measured['thresh']}:linear=true"
     parts.append(ln)
@@ -86,7 +86,7 @@ def enhance(src: str, dst: str, level: str = "normal") -> str:
 def measure(path: str, before: str | None = None) -> dict[str, float]:
     """Integrated loudness, true peak, loudness range and gate threshold, from ffmpeg's loudnorm analysis; with
     `before`, of the sound after that filter chain."""
-    af = (before + "," if before else "") + "loudnorm=I=-16:TP=-2:LRA=11:print_format=json"
+    af = (before + "," if before else "") + "loudnorm=I=-14:TP=-1.5:LRA=11:print_format=json"
     p = subprocess.run(["ffmpeg", "-v", "info", "-i", path, "-vn", "-ac", "1", "-af", af, "-f", "null", "-"], capture_output=True, text=True)
     m = re.search(r"\{[^{}]*\"input_i\"[^{}]*\}", p.stderr, re.S)
     if not m:

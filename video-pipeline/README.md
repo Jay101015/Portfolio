@@ -95,7 +95,7 @@ Locally the same step is:
 A phone in a bedroom is not a studio microphone, so every recording is cleaned
 up before it is used: the rumble and hum below 80 Hz go, the hiss is reduced,
 harsh "s" sounds are softened, a little mud is taken out and presence put in,
-the level is evened out and brought to the loudness YouTube expects (-16 LUFS).
+the level is evened out and brought to the loudness YouTube plays at (-14 LUFS), loud enough on a phone speaker.
 The original file is never touched; the cleaned copy is what the transcription
 listens to and what the video plays, and `voice-preview.mp3` after a
 transcription is the cleaned version, so you can hear it in the studio.
