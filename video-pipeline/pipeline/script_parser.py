@@ -337,7 +337,9 @@ def pace_for(header: dict[str, str]) -> tuple[float, float]:
     picture time to land before the first words and a beat after the last before the board is rubbed out; `pace: tight`
     runs the scenes back to back. `pace.lead` and `pace.hold` set the numbers by hand."""
     style = str(header.get("brand.style", "icons")).lower()
-    pace = str(header.get("pace", "calm" if style == "illustrated" else "tight")).lower()
+    # a real recording runs on without pauses and its scenes are cut mid-sentence: silence at every cut chops the voice
+    recorded = str(header.get("source", "")).lower() == "voiceover"
+    pace = str(header.get("pace", "calm" if style == "illustrated" and not recorded else "tight")).lower()
     lead, hold = (1.2, 0.6) if pace == "calm" else (0.0, 0.0)
     if "pace.lead" in header:
         lead = max(0.0, float(header["pace.lead"]))

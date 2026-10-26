@@ -403,7 +403,9 @@ words begin, and keeps 0.6 seconds after its last, so the board has a beat
 before it clears. With a voiceover the same silences go into the voice, so the
 words and the speaker still move together; without one the estimate just
 stretches. `pace: tight` runs the scenes back to back (the default for the
-icon style); `pace.lead: 0.8` and `pace.hold: 0.4` set the numbers.
+icon style, and for any video built on your own recording, `source: voiceover`:
+a recording runs on and its scenes are cut mid-sentence, so a silence at every
+cut chops the voice); `pace.lead: 0.8` and `pace.hold: 0.4` set the numbers.
 
 ### Searching it like a GIF keyboard
 
