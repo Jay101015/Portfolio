@@ -156,6 +156,22 @@ class ArtLibraryTests(unittest.TestCase):
         sb2 = parse_script("# T\nslug: t\n\n[text]\nOne line here.\n\n[outro title=\"MONEY MOVES\" cta=\"Subscribe for the next one\"]\nBye.\n")
         self.assertEqual(sum(1 for sc in sb2["scenes"] if sc["type"] == "outro"), 1)
 
+    def test_a_long_unpunctuated_run_is_cut_at_a_thought_not_by_length(self):
+        from pipeline.auto_script import sentences
+        text = "if you have got a credit card an overdraft or a buy now pay later charging you twenty percent paying it off is a guaranteed return no investment beats that step two start an emergency fund money you do not touch unless something goes wrong"
+        ws = []
+        t = 0.0
+        for w in text.split():
+            ws.append({"w": w, "s": round(t, 2), "e": round(t + 0.25, 2)})
+            t += 0.3
+            if w == "that":  # a breath before "step two"
+                t += 0.6
+        sents = sentences(ws)
+        firsts = [s[0]["w"] for s in sents]
+        self.assertIn("step", firsts)  # the new thought starts a sentence
+        self.assertTrue(all(len(s) <= 22 for s in sents))
+        self.assertNotIn("card", firsts)  # never cut inside "credit card"
+
     def test_hook_scene_parses_and_scores_first(self):
         from pipeline.shorts import score_slice
         sb = parse_script("# T\nslug: t\ntheme: whiteboard\n\n[hook board=\"£420 a month = £1,000,000\"]\nFour hundred and twenty pounds a month makes you a millionaire.\n\n[title]\nHere is how.\n")

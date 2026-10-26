@@ -3,23 +3,24 @@
   {
    "name": "short-1",
    "scenes": [
-    10,
-    11
+    12,
+    13
    ],
-   "hook": "£200: clear expensive debt first",
-   "seconds": 36,
+   "hook": "£200: where most people start",
+   "seconds": 20,
    "score": 86
   },
   {
    "name": "short-2",
    "scenes": [
-    24,
-    25,
-    26
+    26,
+    27,
+    28,
+    29
    ],
    "hook": "£10,000: it's losing value sitting there",
-   "seconds": 31,
-   "score": 84
+   "seconds": 43,
+   "score": 94
   }
  ]
 }

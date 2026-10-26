@@ -33,22 +33,48 @@ MAX_WORDS = 46  # a scene stops growing at the first sentence end past this
 PAUSE = 1.1  # a silence this long (seconds) ends a scene
 
 
+MARKER_RE = re.compile(r"^(so|now|okay|ok|but|because|step|first|second|third|fourth|fifth|next|then|here's|let's|also|remember|if)$", re.I)
+SOFT_RE = re.compile(r"^(and|or|when|once|before|after|which|that)$", re.I)
+
+
 def sentences(words: list[Word]) -> list[list[Word]]:
     """Split on sentence punctuation. A transcript without punctuation (some offline models) is split at its pauses
-    instead: at the longest gaps, so a "sentence" is a breath group of about a dozen words."""
+    instead: at the longest gaps, so a "sentence" is a breath group of about a dozen words. A long run is never cut
+    by length alone: it is cut at the best break inside it (a pause, a sentence end, or a word like "so", "step",
+    "if" that opens a new thought), so a scene never starts mid-phrase."""
     punctuated = sum(1 for w in words if re.search(r"[.!?,;:…]$", w["w"])) >= max(3, len(words) // 60)
     gaps = sorted((words[i + 1]["s"] - words[i]["e"]) for i in range(len(words) - 1))
     # without punctuation, break at roughly one gap in twelve: the longest ones
     breath = gaps[int(len(gaps) * (1 - 1 / 12))] if gaps and not punctuated else 0.9
+    cap = 40 if punctuated else 22
     out: list[list[Word]] = []
     cur: list[Word] = []
+    cands: list[tuple[float, int]] = []  # (how good a break, words before it) inside the current run
     for i, w in enumerate(words):
         cur.append(w)
         nxt = words[i + 1] if i + 1 < len(words) else None
         gap = (nxt["s"] - w["e"]) if nxt else 0.0
-        if (punctuated and re.search(r"[.!?…]$", w["w"])) or (gap >= breath and len(cur) >= 4) or gap >= 0.9 or len(cur) >= (40 if punctuated else 22):
+        ends = bool(re.search(r"[.!?…]$", w["w"]))
+        head = nxt["w"].strip(",.;:!?").lower() if nxt else ""
+        marker = bool(nxt and MARKER_RE.match(head))
+        soft = bool(nxt and SOFT_RE.match(head))
+        score = gap + (0.8 if ends else 0.0) + (0.6 if marker else 0.25 if soft else 0.0)
+        if len(cur) >= 5 and score >= 0.45:
+            cands.append((score, len(cur)))
+        hard = (punctuated and ends) or gap >= 0.9 or (gap >= breath and len(cur) >= 4) or (marker and gap >= 0.5 and len(cur) >= 8)
+        if hard:
             out.append(cur)
-            cur = []
+            cur, cands = [], []
+        elif len(cur) >= cap:
+            best = max(cands, default=None)
+            if best and best[1] >= 5:
+                k = best[1]
+                out.append(cur[:k])
+                cur = cur[k:]
+                cands = [(sc, n - k) for sc, n in cands if n - k >= 5]
+            else:
+                out.append(cur)
+                cur, cands = [], []
     if cur:
         out.append(cur)
     return out
