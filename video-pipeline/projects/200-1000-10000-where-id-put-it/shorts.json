@@ -1,0 +1,25 @@
+{
+ "shorts": [
+  {
+   "name": "short-1",
+   "scenes": [
+    10,
+    11
+   ],
+   "hook": "£200: clear expensive debt first",
+   "seconds": 36,
+   "score": 86
+  },
+  {
+   "name": "short-2",
+   "scenes": [
+    24,
+    25,
+    26
+   ],
+   "hook": "£10,000: it's losing value sitting there",
+   "seconds": 31,
+   "score": 84
+  }
+ ]
+}
