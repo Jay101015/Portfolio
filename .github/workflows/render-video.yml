@@ -127,15 +127,6 @@ jobs:
           git commit -m "Render run: footage, transcript and timings for $PROJECT" || echo "nothing new to commit"
           for i in 1 2 3; do git pull -q --rebase && git push && break || sleep 5; done
 
-      - name: Publish the videos as a release (downloadable without logging in to Actions)
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PROJECT: ${{ steps.pick.outputs.project }}
-        run: |
-          tag="demo-$PROJECT"
-          gh release view "$tag" >/dev/null 2>&1 || gh release create "$tag" --title "Demo: $PROJECT" --notes "Rendered by the Render video workflow. See footage-report.md for every piece of footage and its licence." --target "${{ github.sha }}"
-          gh release upload "$tag" projects/$PROJECT/*.mp4 projects/$PROJECT/footage-report.md projects/$PROJECT/storyboard.html --clobber
-
       - name: Upload the videos and storyboard
         uses: actions/upload-artifact@v4
         with:
@@ -148,3 +139,14 @@ jobs:
             video-pipeline/projects/${{ steps.pick.outputs.project }}/footage-report.md
             video-pipeline/projects/${{ steps.pick.outputs.project }}/.cache/transcript-*.json
             video-pipeline/projects/${{ steps.pick.outputs.project }}/script.md
+      - name: Publish the videos as a release (downloadable without logging in to Actions)
+        # a release can be refused on a manually dispatched run (403); the artifact above already holds the videos
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROJECT: ${{ steps.pick.outputs.project }}
+        run: |
+          tag="demo-$PROJECT"
+          gh release view "$tag" >/dev/null 2>&1 || gh release create "$tag" --title "Demo: $PROJECT" --notes "Rendered by the Render video workflow. See footage-report.md for every piece of footage and its licence." --target "${{ github.sha }}"
+          gh release upload "$tag" projects/$PROJECT/*.mp4 projects/$PROJECT/footage-report.md projects/$PROJECT/storyboard.html --clobber
+
