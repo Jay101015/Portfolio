@@ -88,6 +88,7 @@ jobs:
           key: whisper-base-en
 
       - name: Find free-use footage for scenes that have none
+        timeout-minutes: 10
         env:
           PROJECT: ${{ steps.pick.outputs.project }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}

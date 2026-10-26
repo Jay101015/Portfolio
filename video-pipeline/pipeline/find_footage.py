@@ -56,16 +56,34 @@ class Hit:
 
 # ----------------------------------------------------------------------------- http (swappable for tests)
 
+MAX_DOWNLOAD = 120 * 1024 * 1024  # a clip bigger than this is not b-roll; skip it rather than spend the run on it
+DOWNLOAD_WALL = 240.0  # seconds a single download may take in all (the socket timeout only covers a stall)
+
+
 def _get_json(url: str, headers: dict[str, str] | None = None) -> Any:
     req = urllib.request.Request(url, headers={"User-Agent": UA, **(headers or {})})
-    with urllib.request.urlopen(req, timeout=60) as r:
+    with urllib.request.urlopen(req, timeout=30) as r:
         return json.loads(r.read().decode("utf-8"))
 
 
 def _download(url: str, dst: str, headers: dict[str, str] | None = None) -> None:
+    import time
+
     req = urllib.request.Request(url, headers={"User-Agent": UA, **(headers or {})})
-    with urllib.request.urlopen(req, timeout=300) as r, open(dst, "wb") as out:
-        shutil.copyfileobj(r, out)
+    started = time.time()
+    with urllib.request.urlopen(req, timeout=60) as r, open(dst, "wb") as out:
+        length = int(r.headers.get("Content-Length") or 0)
+        if length > MAX_DOWNLOAD:
+            raise RuntimeError(f"file too big ({length // 1_000_000} MB)")
+        got = 0
+        for chunk in iter(lambda: r.read(1 << 20), b""):
+            out.write(chunk)
+            got += len(chunk)
+            if got > MAX_DOWNLOAD:
+                raise RuntimeError(f"file too big (over {MAX_DOWNLOAD // 1_000_000} MB)")
+            if time.time() - started > DOWNLOAD_WALL:
+                raise RuntimeError(f"download too slow (over {int(DOWNLOAD_WALL)}s)")
+    print(f"  fetched {os.path.basename(dst)} ({os.path.getsize(dst) // 1_000_000} MB)", flush=True)
 
 
 # ----------------------------------------------------------------------------- licence normalisation
@@ -272,6 +290,7 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
             # b-roll wants everyday stock footage: the stock libraries first, the archives (old films) last
             broll_order = [n for n in ("pixabay", "pexels", "commons", "archive") if n in providers]
             for name in broll_order:
+                print(f"scene {sc['id']}: asking {name} for b-roll '{q}'", flush=True)
                 try:
                     hits = PROVIDERS[name](q, "video", get)
                 except Exception as e:  # noqa: BLE001
@@ -305,6 +324,7 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
         entry: dict[str, Any] = {"id": sc["id"], "type": sc["type"], "query": q, "status": "not found", "candidates": []}
         chosen: Hit | None = None
         for name in providers:
+            print(f"scene {sc['id']}: asking {name} for '{q}'", flush=True)
             try:
                 if name == "archive" and pd_film and film:
                     hits = search_archive(film, want, get, film=True)
