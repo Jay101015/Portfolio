@@ -499,7 +499,10 @@ def render(props_path: str, out_path: str, composition: str, concurrency: str | 
     with open(listing, "w", encoding="utf-8") as f:
         for p in parts:
             f.write(f"file '{p}'\n")
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", listing, "-c", "copy", out_path], check=True)
+    # the index (moov) goes at the front and the voice is one channel: a phone streaming the file from a chat or
+    # the studio plays the sound straight away instead of waiting for the whole file (with the index at the end it
+    # played picture and no sound), and the voice is mono anyway
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", listing, "-c:v", "copy", "-c:a", "aac", "-ac", "1", "-b:a", "160k", "-movflags", "+faststart", out_path], check=True)
     print(f"joined {len(parts)} chunks -> {out_path}", flush=True)
 
 
