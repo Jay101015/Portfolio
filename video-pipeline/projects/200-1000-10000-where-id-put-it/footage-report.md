@@ -4,7 +4,7 @@ Topic: what to do with leftover money after payday in the UK (free-use b-roll an
 
 | scene | query | result | licence | attribution |
 |---|---|---|---|---|
-| 14 | | already in media/: 09-phone-banking-app-transfer-savings.mp4 | | |
+| 14 | hands mobile banking transfer money | downloaded 14-hands-mobile-banking-transfer-money.mp4 | Pixabay Content License | Video 20857 by RoyBuri via Pixabay |
 | 16 | | already in media/: 11-person-using-investing-app-on-phone.mp4 | | |
 | 19 | | already in media/: 19-mechanic-repairing-car-engine.mp4 | | |
 | 20 | | already in media/: 15-house-keys-handed-over-new-home.mp4 | | |
