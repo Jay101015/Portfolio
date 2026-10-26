@@ -129,8 +129,7 @@ export const PaperTitle: React.FC<P> = ({scene, brand}) => {
           {brand.board ? <Write text={subtitle} frame={frame} fps={fps} start={subStart} cps={34} color={brand.muted} /> : subtitle}
         </div>
       ) : null}
-      <div style={{fontFamily: hand(brand), fontSize: 28 * u, color: brand.muted, marginTop: 60 * u, opacity: fadeIn(frame, brand.board ? subStart + fps : 30, 10)}}>for education, not advice</div>
-      <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, title, subtitle)} art={scene.props.sticker || scene.props.art || scene.props.icon ? undefined : autoArt(brand, title, subtitle, scene.narration)} frame={frame} fps={fps} start={titleDone + fps * 0.7} seed={1} color={brand.blue} />
+      <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, title, subtitle)} art={scene.props.sticker || scene.props.art || scene.props.icon || brand.illustrated ? undefined : autoArt(brand, title, subtitle, scene.narration)} frame={frame} fps={fps} start={titleDone + fps * 0.7} seed={1} color={brand.blue} />
     </AbsoluteFill>
   );
 };
@@ -184,7 +183,7 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
       <div style={{marginTop: 30 * u}}>
         <Source brand={brand} source={scene.props.source} delay={brand.board ? noteStart + (sub ? writeFrames(sub, fps, 30) + 12 : 4) : 24} />
       </div>
-      <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, label, sub, scene.narration)} art={scene.props.sticker || scene.props.art || scene.props.icon ? undefined : autoArt(brand, label, sub, scene.narration, scene.narration)} frame={frame} fps={fps} start={brand.board ? Math.max(numDone + 6, 10) : 0} seed={scene.id} color={brand.blue} />
+      <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, label, sub, scene.narration)} art={scene.props.sticker || scene.props.art || scene.props.icon || brand.illustrated ? undefined : autoArt(brand, label, sub, scene.narration, scene.narration)} frame={frame} fps={fps} start={brand.board ? Math.max(numDone + 6, 10) : 0} seed={scene.id} color={brand.blue} />
     </AbsoluteFill>
   );
 };
@@ -465,7 +464,7 @@ export const PaperList: React.FC<P> = ({scene, brand}) => {
           </div>
         );
       })}
-      <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, title, items.join(' '))} art={scene.props.sticker || scene.props.art || scene.props.icon ? undefined : autoArt(brand, title, items.join(' '), scene.narration)} frame={frame} fps={fps} start={titleDone + 6} seed={scene.id + 5} color={brand.blue} />
+      <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, title, items.join(' '))} art={scene.props.sticker || scene.props.art || scene.props.icon || brand.illustrated ? undefined : autoArt(brand, title, items.join(' '), scene.narration)} frame={frame} fps={fps} start={titleDone + 6} seed={scene.id + 5} color={brand.blue} />
     </AbsoluteFill>
   );
 };
