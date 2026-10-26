@@ -9,8 +9,23 @@ captions: off
 voice: strong
 source: voiceover
 
-[hook board="£200, £1,000 or £10,000 left?" art="payday"]
-Payday hits. The rent's gone out. The bills are paid. Tell me. There's some money left over. Maybe it's 200. Maybe it's a grand. Maybe you've built up 10 ,000 and
+[broll search="salary paid notification phone" caption="Payday hits"]
+Payday hits.
+
+[broll search="paying bills online laptop" caption="Rent. Bills. Paid."]
+The rent's gone out. The bills are paid.
+
+[hook board="There's money left over. Now what?" art="payday"]
+Tell me. There's some money left over.
+
+[stat value="£200" transition="cut"]
+Maybe it's 200.
+
+[stat value="£1,000" transition="cut"]
+Maybe it's a grand.
+
+[stat value="£10,000" transition="cut"]
+Maybe you've built up 10 ,000 and
 
 [text board="Sitting idle, or spent" art="shopping-bags"]
 Most people do one of two things with it. They leave it sitting in their current account and what do nothing or they wonder where it went
