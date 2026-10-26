@@ -73,7 +73,7 @@ jobs:
           cache: pip
           cache-dependency-path: video-pipeline/requirements.txt
 
-      - name: System packages (apt with short timeouts and retries: it has hung for a quarter of an hour at a time)
+      - name: "System packages (apt with short timeouts and retries; it has hung for a quarter of an hour at a time)"
         timeout-minutes: 8
         run: |
           command -v ffmpeg >/dev/null && exit 0
