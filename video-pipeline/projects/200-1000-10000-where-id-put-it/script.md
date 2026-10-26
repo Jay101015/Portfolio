@@ -54,7 +54,7 @@ Let's start with 200 and honestly This is where most people are so if this is yo
 [bite value="£1,000" lose="£200" label="£1,000 on a card at 20%, one year" sub="gone in interest"]
 If you've got expensive debt put the lot towards it seriously every pound you pay off is a pound that stops costing you about 20 % or more a year
 
-[broll search="hands mobile banking transfer money" caption="Pay yourself first" src="14-hands-mobile-banking-transfer-money.mp4" credit="Video 20857 by RoyBuri via Pixabay"]
+[broll search="british pound notes" caption="Pay yourself first"]
 If you're debt free congratulations start with an emergency fund in an Easy access account so you can set up a stunning order there every month after every day off the payday and move the money there Before you can even spend it. That's the trick. Pay yourself first
 
 [stat value="£2,400" label="£200 a month for a year"]
