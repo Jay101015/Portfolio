@@ -1276,7 +1276,7 @@ export const ArtLayer: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand})
   const name = pickArt(scene.props.art, undefined);
   if (!name || !brand.board) return null;
   // on a text scene in the illustrated style a named traced drawing is the scene's big picture (PaperText draws it), unless it was dragged somewhere
-  if (brand.illustrated && scene.type === 'text' && isTraced(name) && scene.props.art_x === undefined) return null;
+  if (brand.illustrated && (scene.type === 'text' || scene.type === 'hook') && isTraced(name) && scene.props.art_x === undefined) return null;
   const at = String(scene.props.art_at ?? (isVertical ? 'br' : 'tr'));
   const size = height * Math.max(0.12, Math.min(0.8, Number(scene.props.art_size ?? (isVertical ? 0.22 : 0.3))));
   const start = Math.round(Number(scene.props.art_start ?? 0.8) * fps);
