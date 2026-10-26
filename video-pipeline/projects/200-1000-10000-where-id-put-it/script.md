@@ -12,7 +12,7 @@ source: voiceover
 [broll search="salary paid notification phone" caption="Payday hits" src="01-salary-paid-notification-phone.mp4" credit="Video 202987 by Natures_Embrace via Pixabay"]
 Payday hits.
 
-[broll search="bills laptop home finances" caption="Rent. Bills. Paid."]
+[broll search="bills laptop home finances" caption="Rent. Bills. Paid." src="02-bills-laptop-home-finances.mp4" credit="Video 86866 by atiqurrahman0047 via Pixabay"]
 The rent's gone out. The bills are paid.
 
 [hook board="There's money left over. Now what?" art="payday"]
@@ -110,7 +110,7 @@ So that's the theory Let me show you what I actually do because I don't want to 
 [pie value="67%" label="£1,000 of every £1,500 into savings" sub="£500 into an S&P 500 fund"]
 every payday Two things happen automatically before I can even think about spending it A thousand pound goes straight into my savings That's built me the emergency fund and now it's going towards me buying my first home And if 500 pounds go straight into my s &k 500 index fund I'm not timing the market. I'm not checking the news It just goes straight in there every single month
 
-[broll search="calendar planner date circled" caption="Automatic, the day after payday"]
+[broll search="calendar planner date circled" caption="Automatic, the day after payday" src="33-calendar-planner-date-circled.mp4" credit="Video 3019 by josemdelaa via Pixabay"]
 and the key word there is that it's going to be just an automatic process I set up a standing order for the day after payday So the money goes straight in there before I even had the chance to talk myself out of it That habit has done more for me for my final for more for me and my finances than any other stock I've ever picked
 
 [text board="The system beats the amount" art="sleep-grow"]
