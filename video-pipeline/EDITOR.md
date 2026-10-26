@@ -36,7 +36,10 @@ is not, the scene is cut in the wrong place.
    footage to search for>" caption="<the point, 2 to 6 words>"]` holding the sentence or two about the world
    (places, money, work, shops, crowds: a busy high street, a car dealership, a payslip on a desk, a bank branch,
    a supermarket till). The footage fills the whole frame with the caption on a white label and the credit, the
-   way How Money Works cuts to footage (see docs/style-how-money-works.md). Roughly one broll scene in every
+   way How Money Works cuts to footage (see docs/style-how-money-works.md). The search words name what is in
+   the picture of the idea (things and actions: a supermarket trolley, hands counting notes, keys handed over),
+   never a place or a mood for its own sake ("london rain" finds the London Eye); the clip must show what the
+   sentence is about, and the render's footage-check.png is looked at before the video goes out. Roughly one broll scene in every
    four, between board scenes, so the video moves like a documentary; the render fetches it from Pixabay, Pexels,
    Wikimedia Commons or the Internet Archive (`pipeline/find_footage.py`). (`clip=` on a text scene still gives
    the small framed card beside the words; use it only when the words must stay on screen.)

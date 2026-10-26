@@ -147,7 +147,7 @@ jobs:
           # the script (built from the voice when there was none), the transcript and the timings, for the studio
           # one at a time: a single missing file (no timing.json on a silent render) made git add refuse the lot,
           # and the script lost the footage and figures the run had written into it
-          for f in script.md footage-report.md facts-report.md credits.txt timing.json transcript.json voice-preview.mp3; do
+          for f in script.md footage-report.md facts-report.md credits.txt footage-check.png timing.json transcript.json voice-preview.mp3; do
             [ -f "projects/$PROJECT/$f" ] && git add "projects/$PROJECT/$f"
           done
           git add -u "projects/$PROJECT/media" 2>/dev/null || true
@@ -166,6 +166,7 @@ jobs:
             video-pipeline/projects/${{ steps.pick.outputs.project }}/footage-report.md
             video-pipeline/projects/${{ steps.pick.outputs.project }}/facts-report.md
             video-pipeline/projects/${{ steps.pick.outputs.project }}/credits.txt
+            video-pipeline/projects/${{ steps.pick.outputs.project }}/footage-check.png
             video-pipeline/projects/${{ steps.pick.outputs.project }}/.cache/transcript-*.json
             video-pipeline/projects/${{ steps.pick.outputs.project }}/script.md
       - name: Publish the videos as a release (downloadable without logging in to Actions)
@@ -180,4 +181,5 @@ jobs:
           gh release upload "$tag" projects/$PROJECT/*.mp4 projects/$PROJECT/footage-report.md projects/$PROJECT/storyboard.html --clobber
           [ -f "projects/$PROJECT/facts-report.md" ] && gh release upload "$tag" "projects/$PROJECT/facts-report.md" --clobber || true
           [ -f "projects/$PROJECT/credits.txt" ] && gh release upload "$tag" "projects/$PROJECT/credits.txt" --clobber || true
+          [ -f "projects/$PROJECT/footage-check.png" ] && gh release upload "$tag" "projects/$PROJECT/footage-check.png" --clobber || true
 

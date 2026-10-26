@@ -5,6 +5,13 @@ page https://claude.ai/artifact/VB5NA2S3VMxxKTUHRWtvgn) stores what it sends in 
 you then say **send** in the courier Claude Code session, which follows the steps below. The studio watches the job
 and loads the result by itself.
 
+## Before a video goes out
+
+Open the render's `footage-check.png` (kept with the project and on the release page): one frame from every piece of
+footage beside the words it plays under. Any clip that does not show the idea of its sentence is searched again
+(change the `search=` words to name the thing in the picture, drop its `src=`/`credit=`, delete the file from
+`media/`) before the video is sent. The same for the opening: the first five seconds are checked frame by frame.
+
 ## Steps (for Claude in the courier session, when the user says "send")
 
 Use the ArtifactData tool (load it with ToolSearch `select:ArtifactData` if it is not loaded). Jobs are documents in

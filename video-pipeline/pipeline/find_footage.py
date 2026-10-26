@@ -28,6 +28,7 @@ import json
 import os
 import re
 import shutil
+import subprocess
 import sys
 import urllib.parse
 import urllib.error
@@ -425,7 +426,49 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
             f.write(new_md)
     write_report(project, report)
     write_credits(project, parse_script(new_md))
+    write_check_sheet(project, parse_script(new_md))
     return report
+
+
+def write_check_sheet(project: str, sb: dict[str, Any], out_name: str = "footage-check.png") -> str | None:
+    """footage-check.png: one frame from every piece of footage next to the words it plays under, so a clip that does
+    not show the idea (a London Eye for "top up your emergency fund") is caught by eye before the video goes out.
+    The courier looks at it before sending; a wrong clip is searched again first."""
+    media = os.path.join(project, "media")
+    tiles: list[tuple[int, str, str, str]] = []  # (scene id, file, caption, words)
+    for sc in sb["scenes"]:
+        p = sc["props"]
+        src = p.get("src") if sc["type"] in ("broll", "clip", "still", "image") else p.get("clip_src")
+        if not src or not os.path.exists(os.path.join(media, str(src))):
+            continue
+        cap = str(p.get("caption") or p.get("board") or p.get("clip") or p.get("search") or "")
+        tiles.append((sc["id"], os.path.join(media, str(src)), cap, " ".join(sc["narration"].split())[:90]))
+    if not tiles:
+        return None
+    tmp = os.path.join(project, ".cache", "footage-check")
+    shutil.rmtree(tmp, ignore_errors=True)
+    os.makedirs(tmp, exist_ok=True)
+    font = next((f for f in ("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", "/usr/share/fonts/dejavu/DejaVuSans.ttf") if os.path.exists(f)), None)
+    fontopt = f"fontfile={font}:" if font else ""
+    for i, (sid, path, cap, words) in enumerate(tiles):
+        with open(os.path.join(tmp, f"t{i}.txt"), "w", encoding="utf-8") as f:
+            f.write(f"scene {sid}: {cap}")
+        with open(os.path.join(tmp, f"w{i}.txt"), "w", encoding="utf-8") as f:
+            f.write(words)
+        vf = (
+            "scale=480:270:force_original_aspect_ratio=decrease,pad=480:330:(ow-iw)/2:0:white,"
+            f"drawtext={fontopt}textfile={os.path.join(tmp, f't{i}.txt')}:fontsize=18:fontcolor=black:x=6:y=276,"
+            f"drawtext={fontopt}textfile={os.path.join(tmp, f'w{i}.txt')}:fontsize=13:fontcolor=0x555555:x=6:y=302"
+        )
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", "1.5", "-i", path, "-frames:v", "1", "-vf", vf, os.path.join(tmp, f"f{i:02d}.png")], check=False)
+    made = sorted(fn for fn in os.listdir(tmp) if fn.startswith("f") and fn.endswith(".png"))
+    if not made:
+        return None
+    cols = 3
+    rows = (len(made) + cols - 1) // cols
+    out = os.path.join(project, out_name)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-framerate", "1", "-i", os.path.join(tmp, "f%02d.png"), "-vf", f"tile={cols}x{rows}:padding=6:color=white", "-frames:v", "1", out], check=False)
+    return out if os.path.exists(out) else None
 
 
 def write_credits(project: str, sb: dict[str, Any]) -> None:

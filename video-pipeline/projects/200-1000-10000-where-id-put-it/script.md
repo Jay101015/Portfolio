@@ -93,7 +93,7 @@ Okay 10 ,000 if you've got this in your current account.
 [stat fact="uk.cpi" sub="your cash buys a little less every month" value="3.5%" source="ONS, September 2026" label="UK inflation (CPI)"]
 I need you to hear this It's losing value to inflation every single month So let's put it to work
 
-[broll search="london rain people umbrellas" caption="Top up to 3 to 6 months" src="27-london-rain-people-umbrellas.mp4" credit="Video 202368 by Whitechappel79 via Pixabay"]
+[broll search="supermarket shopping trolley groceries" caption="Top up to 3 to 6 months"]
 first top up your emergency fund To three to six months of the central cost if your essential costs are 1500 a month That's between four and a half And nine thousand keep it somewhere easy to access that pays decent interest
 
 [text board="Grab your full pension match" art="pension-letter"]

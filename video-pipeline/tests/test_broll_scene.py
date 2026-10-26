@@ -60,3 +60,17 @@ def test_credits_stay_off_the_picture_unless_asked():
 
     assert "credits" not in parse_script("title: T\n\n[text board=\"B\"]\nOne.\n")["brand"]
     assert parse_script("title: T\ncredits: screen\n\n[text board=\"B\"]\nOne.\n")["brand"]["credits"] == "screen"
+
+
+def test_check_sheet_puts_each_clip_beside_its_words(tmp_path):
+    import os
+    import subprocess
+
+    from pipeline.find_footage import write_check_sheet
+    from pipeline.script_parser import parse_script
+
+    (tmp_path / "media").mkdir()
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "testsrc=size=320x180:rate=10", "-t", "3", str(tmp_path / "media" / "a.mp4")], check=True)
+    md = 'title: T\n\n[broll search="x" caption="Top up" src="a.mp4" credit="c"]\nTop up your fund to three months of costs.\n\n[text board="B"]\nNo footage here.\n'
+    out = write_check_sheet(str(tmp_path), parse_script(md))
+    assert out and os.path.getsize(out) > 1000
