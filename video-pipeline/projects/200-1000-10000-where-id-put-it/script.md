@@ -6,7 +6,7 @@ host: none
 brand.name: MONEY MOVES
 brand.style: illustrated
 captions: off
-voice: strong
+voice: natural
 source: voiceover
 
 [text board="Payday hits." art="payslip" transition="cut"]

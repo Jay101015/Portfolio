@@ -8,6 +8,8 @@ and loudness normalisation to the -14 LUFS YouTube plays at. Three strengths:
     light    high-pass, gentle noise removal, EQ, light compression, loudness
     normal   the same with proper noise removal and compression (the default)
     strong   RNNoise (a neural noise suppressor) in front of all of that, for noisy rooms and bad mics
+    natural  nothing but the volume: brought to the loudness target and kept under a limiter, for a recording
+             that is already clean or was edited by hand (noise removal on clean audio makes it watery)
 
 The original recording is never touched: the result is a new file. `voice: raw` in a script header turns it off.
 
@@ -23,7 +25,7 @@ import subprocess
 import sys
 
 MODEL = os.path.join(os.path.dirname(__file__), "models", "bd.rnnn")  # RNNoise speech model (BSD-3, GregorR/rnnoise-models)
-LEVELS = ("off", "raw", "light", "normal", "strong")
+LEVELS = ("off", "raw", "natural", "light", "normal", "strong")
 
 
 def level_from_header(value: str | None) -> str:
@@ -31,7 +33,7 @@ def level_from_header(value: str | None) -> str:
     v = (value or "").strip().lower()
     if not v or v in ("enhance", "on", "yes", "clean"):
         return "normal"
-    for lv in ("strong", "light", "normal"):
+    for lv in ("natural", "strong", "light", "normal"):
         if lv in v:
             return lv
     if v in ("raw", "off", "no", "none"):
@@ -42,6 +44,11 @@ def level_from_header(value: str | None) -> str:
 def chain(level: str, measured: dict[str, float] | None = None) -> str:
     """The ffmpeg filter graph for a level. With `measured` (from a first pass), the loudness step is a plain gain
     change to the target instead of a moving one, so nothing pumps."""
+    if level == "natural":
+        ln = "loudnorm=I=-14:TP=-1.5:LRA=11"
+        if measured:
+            ln += f":measured_I={measured['lufs']}:measured_TP={measured['peak_dbtp']}:measured_LRA={measured['range_lu']}:measured_thresh={measured['thresh']}:linear=true"
+        return "anull," + ln + ",alimiter=limit=0.85:attack=4:release=60:level=false"
     parts = ["highpass=f=80:poles=2"]
     if level == "strong" and os.path.exists(MODEL):
         parts.append(f"arnndn=m={MODEL}:mix=0.85")
