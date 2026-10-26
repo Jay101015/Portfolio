@@ -73,8 +73,18 @@ jobs:
           cache: pip
           cache-dependency-path: video-pipeline/requirements.txt
 
-      - name: System packages
-        run: command -v ffmpeg >/dev/null || (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg)
+      - name: System packages (apt with short timeouts and retries: it has hung for a quarter of an hour at a time)
+        timeout-minutes: 8
+        run: |
+          command -v ffmpeg >/dev/null && exit 0
+          opts="-o Acquire::Retries=3 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20"
+          for i in 1 2 3; do
+            timeout 150 sudo apt-get update -q $opts && break || echo "apt-get update attempt $i failed"
+          done
+          for i in 1 2 3; do
+            timeout 240 sudo apt-get install -y -q --no-install-recommends $opts ffmpeg && break || echo "apt-get install attempt $i failed"
+          done
+          command -v ffmpeg
 
       - name: Install
         run: |
