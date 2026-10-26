@@ -289,28 +289,46 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
             chosen = None
             # b-roll wants everyday stock footage: the stock libraries first, the archives (old films) last
             broll_order = [n for n in ("pixabay", "pexels", "commons", "archive") if n in providers]
+            answers: list[str] = []  # what each library said, for the report
+            usable: list[Hit] = []
             for name in broll_order:
                 print(f"scene {sc['id']}: asking {name} for b-roll '{q}'", flush=True)
+                if name == "pexels" and not os.environ.get("PEXELS_API_KEY"):
+                    answers.append("pexels: no key")
+                    continue
+                if name == "pixabay" and not os.environ.get("PIXABAY_API_KEY"):
+                    answers.append("pixabay: no key")
+                    continue
                 try:
                     hits = PROVIDERS[name](q, "video", get)
                 except Exception as e:  # noqa: BLE001
                     entry["candidates"].append({"provider": name, "error": str(e)})
+                    answers.append(f"{name}: error {str(e)[:60]}")
                     continue
                 for h in hits:
                     entry["candidates"].append({"provider": h.provider, "title": h.title, "license": h.license_name, "page": h.page, "kind": h.kind})
-                usable = [h for h in hits if h.license in allowed and h.kind == "video"]
-                if usable:
-                    chosen = usable[0]
+                ok = [h for h in hits if h.license in allowed and h.kind == "video"]
+                answers.append(f"{name}: {len(ok)} clip(s)")
+                if ok:
+                    usable = ok
                     break
-            if chosen:
-                fname = f"{sc['id']:02d}-broll-{slugify(q)}.{chosen.ext}"
-                entry.update({"status": "dry-run" if dry_run else "downloaded", "src": fname, "credit": attribution(chosen), "license": chosen.license_name, "page": chosen.page})
-                if not dry_run:
-                    try:
-                        download(chosen.url, os.path.join(media, fname), {"Authorization": os.environ.get("PEXELS_API_KEY", "")} if chosen.provider == "pexels" else None)
-                        new_md = rewrite_tag(new_md, sc["id"], sb, {"clip_src": fname, "clip_credit": attribution(chosen)})
-                    except Exception as e:  # noqa: BLE001
-                        entry["status"] = f"download failed: {e}"
+            entry["answers"] = answers
+            # the first hit that downloads: a refused file (too big, too slow) falls through to the next
+            fname = f"{sc['id']:02d}-broll-{slugify(q)}"
+            for h in usable[:3]:
+                full = f"{fname}.{h.ext}"
+                if dry_run:
+                    entry.update({"status": "dry-run", "src": full, "credit": attribution(h), "license": h.license_name, "page": h.page})
+                    break
+                try:
+                    download(h.url, os.path.join(media, full), {"Authorization": os.environ.get("PEXELS_API_KEY", "")} if h.provider == "pexels" else None)
+                except Exception as e:  # noqa: BLE001
+                    entry["status"] = f"download failed: {e}"
+                    answers.append(f"{h.provider} {h.title}: {str(e)[:50]}")
+                    continue
+                entry.update({"status": "downloaded", "src": full, "credit": attribution(h), "license": h.license_name, "page": h.page})
+                new_md = rewrite_tag(new_md, sc["id"], sb, {"clip_src": full, "clip_credit": attribution(h)})
+                break
             report["scenes"].append(entry)
             continue
         if sc["type"] not in ("clip", "still", "image"):
@@ -409,6 +427,11 @@ def write_report(project: str, report: dict[str, Any]) -> None:
         for s in missing:
             cands = ", ".join(f"{c.get('provider')}: {c.get('title', c.get('error', ''))} ({c.get('license', '')})" for c in s["candidates"][:4]) or "no candidates"
             out.append(f"- scene {s['id']} ({s.get('query')}): {cands}")
+    broll = [e for e in report["scenes"] if e.get("answers")]
+    if broll:
+        out += ["", "## What each library answered for the b-roll", ""]
+        for e in broll:
+            out.append(f"- scene {e['id']} ({e['query']}): " + "; ".join(e["answers"]))
     out += ["", "## What counts as free use here", "", "Public domain and CC0 (no conditions), CC BY and CC BY-SA (attribution shown on screen, which the credit= tag does), and the Pexels licence. CC BY-NC and CC BY-ND are skipped: a monetised channel is commercial use. Trailers, studio clips, screenshots of paid apps and news footage are never free use; using them is a fair-use judgement and a Content ID question, covered in docs/monetisation-plan.md."]
     with open(os.path.join(project, "footage-report.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(out) + "\n")

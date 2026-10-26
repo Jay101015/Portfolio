@@ -126,7 +126,7 @@ jobs:
           # the script (built from the voice when there was none), the transcript and the timings, for the studio
           git add "projects/$PROJECT/script.md" "projects/$PROJECT/footage-report.md" "projects/$PROJECT/timing.json" "projects/$PROJECT/transcript.json" "projects/$PROJECT/voice-preview.mp3" 2>/dev/null || true
           git commit -m "Render run: footage, transcript and timings for $PROJECT" || echo "nothing new to commit"
-          for i in 1 2 3; do git pull -q --rebase && git push && break || sleep 5; done
+          for i in 1 2 3; do git pull -q --rebase --autostash && git push && break || sleep 5; done
 
       - name: Upload the videos and storyboard
         uses: actions/upload-artifact@v4
