@@ -1174,7 +1174,7 @@ export const artCatalogue = () => Object.entries(ART).map(([name, def]) => ({nam
 
 const colorOf = (brand: Brand, c?: Color) => (c === 'accent' ? brand.accent : c === 'accent2' ? brand.accent2 : c === 'blue' ? brand.blue ?? brand.accent : c === 'muted' ? brand.muted : brand.ink);
 
-type ArtProps = {name: string; size: number; brand: Brand; start?: number; seed?: number; style?: React.CSSProperties};
+type ArtProps = {name: string; size: number; brand: Brand; start?: number; seed?: number; style?: React.CSSProperties; by?: number}; // by: the frame a short scene needs the drawing finished by
 
 /** rough length of a path from its coordinates (control points included): enough to pace a pen */
 const pathLen = (d: string) => {
@@ -1190,12 +1190,13 @@ export const tracedSeconds = (svg: {paths: string[]}, quick = false) => {
 };
 
 /** A traced illustration drawn stroke by stroke in its own order, each stroke published for the hand to follow. */
-const Traced: React.FC<{def: NonNullable<ArtDef['svg']>; size: number; brand: Brand; start: number; seed: number; style?: React.CSSProperties}> = ({def, size, brand, start, seed, style}) => {
+const Traced: React.FC<{def: NonNullable<ArtDef['svg']>; size: number; brand: Brand; start: number; seed: number; style?: React.CSSProperties; by?: number}> = ({def, size, brand, start, seed, style, by}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const lens = React.useMemo(() => def.paths.map(pathLen), [def]);
   const total = lens.reduce((a, b) => a + b, 0) || 1;
-  const frames = Math.round(tracedSeconds(def, !!brand.illustrated) * fps);
+  // a short scene wants the picture down before its cut: the strokes go on faster (never quicker than a third of a second)
+  const frames = Math.max(Math.round(fps * 0.3), Math.min(Math.round(tracedSeconds(def, !!brand.illustrated) * fps), by !== undefined ? by - start : Infinity));
   const win: [number, number] = [start, start + frames];
   const d = Math.max(0, Math.min(1, (frame - win[0]) / Math.max(1e-6, win[1] - win[0])));
   const tilt = (rnd(seed) - 0.5) * 3;
@@ -1218,12 +1219,12 @@ const Traced: React.FC<{def: NonNullable<ArtDef['svg']>; size: number; brand: Br
 };
 
 /** One drawing from the catalogue, `size` px square, its strokes going on from frame `start`, then moving. */
-export const Art: React.FC<ArtProps> = ({name, size, brand, start = 0, seed = 1, style}) => {
+export const Art: React.FC<ArtProps> = ({name, size, brand, start = 0, seed = 1, style, by}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const def = ART[name];
   if (!def) return null;
-  if (def.svg) return <Traced def={def.svg} size={size} brand={brand} start={start} seed={seed} style={style} />;
+  if (def.svg) return <Traced def={def.svg} size={size} brand={brand} start={start} seed={seed} style={style} by={by} />;
   const t = (frame - start) / fps;
   const px = size / 100;
   const drawnAll = Math.max(...def.layers.map((l) => l.draw[1]));

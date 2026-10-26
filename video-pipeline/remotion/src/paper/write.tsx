@@ -21,6 +21,16 @@ export const CPS = 26;
 /** how many frames a run of text takes to write at `cps` */
 export const writeFrames = (text: string, fps: number, cps = CPS) => Math.ceil((String(text).replace(/\s+/g, '').length / cps) * fps);
 
+/** A short scene cannot wait for a marker: its first line starts no later than `share` of the way through the scene
+ * (a two-second cut writes from the top, whatever the voice is doing), and `fitCps` runs the pen fast enough that the
+ * line is down by `by` of the scene. A scene with time to spare keeps the usual pace. `total` is the scene in frames. */
+export const fitStart = (start: number, total: number, share = 0.2) => Math.min(start, Math.round(total * share));
+export const fitCps = (text: string, fps: number, start: number, cps: number, total: number, by = 0.6) => {
+  const need = writeFrames(text, fps, cps);
+  const room = Math.max(Math.round(fps * 0.15), Math.round(total * by) - start);
+  return need > room ? cps * (need / room) : cps;
+};
+
 const clip = (p: number): React.CSSProperties => ({display: 'inline-block', clipPath: p >= 1 ? undefined : `inset(-0.2em ${(1 - p) * 100}% -0.25em 0)`, visibility: p <= 0 ? 'hidden' : undefined});
 
 type WriteProps = {

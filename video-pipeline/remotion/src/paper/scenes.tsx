@@ -5,7 +5,7 @@ import type {Brand, Scene, Word} from '../types';
 import {compactNum, findPhraseTime, formatNum, parseValue, useLayout} from '../components/layout';
 import {fadeIn, pop, rnd} from '../components/motion';
 import {Arrow, Marker, SketchEllipse, SketchLine, SketchPath, SketchRect, Underline, roughGen} from './sketch';
-import {Doodle, Write, WriteSpoken, pickDoodle, writeFrames} from './write';
+import {Doodle, Write, WriteSpoken, fitCps, fitStart, pickDoodle, writeFrames} from './write';
 import {Art, PaperArt, isTraced, pickArt, pickArtAmong} from './art';
 import {PaperBite, PaperGrow, PaperPie, PaperShrink} from './money';
 import {Erase} from './erase';
@@ -79,7 +79,7 @@ const autoArt = (brand: Brand, ...texts: (string | undefined)[]) => (brand.illus
 const bigArt = (brand: Brand, art: string | undefined) => !!(brand.illustrated && art && isTraced(art));
 
 /** A doodle in the top-right corner of the board, drawn after the headline is written. */
-const CornerDoodle: React.FC<{brand: Brand; name?: string; art?: string; frame: number; fps: number; start: number; seed?: number; color?: string}> = ({brand, name, art, frame, fps, start, seed = 1, color}) => {
+const CornerDoodle: React.FC<{brand: Brand; name?: string; art?: string; frame: number; fps: number; start: number; seed?: number; color?: string; by?: number}> = ({brand, name, art, frame, fps, start, seed = 1, color, by}) => {
   const {u, pad, isVertical} = useLayout();
   if (!brand.board || (!name && !art)) return null;
   void frame;
@@ -87,14 +87,14 @@ const CornerDoodle: React.FC<{brand: Brand; name?: string; art?: string; frame: 
     const size = (isVertical ? 760 : 760) * u; // picture first: 70% of the board's height
     return (
       <div style={{position: 'absolute', right: pad * 0.5, width: size, height: size, ...(isVertical ? {bottom: pad * 1.0 + 170 * u, left: '50%', transform: 'translateX(-50%)'} : {top: '50%', transform: 'translateY(-50%)'})}}>
-        <Art name={art as string} size={size} brand={brand} start={start} seed={seed} />
+        <Art name={art as string} size={size} brand={brand} start={start} seed={seed} by={by} />
       </div>
     );
   }
   const size = (isVertical ? 200 : 260) * u * (art ? 1.3 : 1);
   return (
     <div style={{position: 'absolute', top: isVertical ? pad * 1.3 : pad * 0.9, right: pad * 0.9, width: size, height: size}}>
-      {art ? <Art name={art} size={size} brand={brand} start={start} seed={seed} /> : <Doodle name={name as string} size={size} win={[start, start + fps * 0.9]} stroke={color ?? brand.ink} width={1.5} seed={seed} />}
+      {art ? <Art name={art} size={size} brand={brand} start={start} seed={seed} by={by} /> : <Doodle name={name as string} size={size} win={[start, start + fps * 0.9]} stroke={color ?? brand.ink} width={1.5} seed={seed} />}
     </div>
   );
 };
@@ -145,7 +145,9 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
   const countSec = Number(scene.props.countSeconds ?? 1.4);
   const label: string | undefined = scene.props.label;
   const sub: string | undefined = scene.props.sub;
-  const labelDone = label ? doneAt(brand, label, fps, 0, 2, 34) : 0;
+  const total = Math.max(1, Math.round((scene.end - scene.start) * fps)); // a one-second stat writes its number fast
+  const labelCps = label ? fitCps(label, fps, 0, 34, total, 0.3) : 34;
+  const labelDone = label ? doneAt(brand, label, fps, 0, 2, labelCps) : 0;
   const numStart = brand.board ? labelDone + 2 : 6;
   // on the board the number is written, not counted: a marker cannot count up
   const p = brand.board ? 1 : ease(frame, numStart, numStart + fps * countSec);
@@ -153,7 +155,8 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
   const s = pop(frame, fps, 3, 13);
   const digits = display.length;
   const size = (isVertical ? 190 : 300) * u * (digits > 9 ? 0.7 : digits > 7 ? 0.85 : 1);
-  const numDone = brand.board ? doneAt(brand, display, fps, numStart, 3, 9) : 8 + fps * countSec * 0.6;
+  const numCps = fitCps(display, fps, numStart, 9, total, 0.65);
+  const numDone = brand.board ? doneAt(brand, display, fps, numStart, 3, numCps) : 8 + fps * countSec * 0.6;
   const ul = ease(frame, numDone, numDone + fps * 0.5);
   const noteStart = brand.board ? numDone + Math.round(fps * 0.3) : 20;
   const note = brand.board ? lin(frame, noteStart, noteStart + 8) : fadeIn(frame, 20, 10);
@@ -161,13 +164,13 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
     <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.2}}>
       {label ? (
         <div style={{fontFamily: hand(brand), fontSize: 50 * u, color: brand.accent2, transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8), marginBottom: 4 * u}}>
-          {brand.board ? <Write text={label} frame={frame} fps={fps} start={0} cps={34} color={brand.accent2} /> : label}
+          {brand.board ? <Write text={label} frame={frame} fps={fps} start={0} cps={labelCps} color={brand.accent2} /> : label}
         </div>
       ) : null}
       <div style={{display: 'flex', alignItems: 'flex-end', gap: 50 * u, flexWrap: isVertical ? 'wrap' : 'nowrap'}}>
         <div>
           <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: size, lineHeight: 1, letterSpacing: brand.board ? 0 : -5 * u, color: brand.ink, fontVariantNumeric: 'tabular-nums', transform: brand.board ? undefined : `scale(${0.85 + 0.15 * s})`, transformOrigin: 'left bottom', opacity: brand.board ? 1 : Math.min(1, s * 1.5)}}>
-            {brand.board ? <Write text={display} frame={frame} fps={fps} start={numStart} cps={9} wordGap="0.2em" /> : display}
+            {brand.board ? <Write text={display} frame={frame} fps={fps} start={numStart} cps={numCps} wordGap="0.2em" /> : display}
           </div>
           <Underline width={Math.min(size * 2.4, width * 0.5)} stroke={brand.accent} thickness={8 * u} win={[numDone, numDone + fps * 0.5]} easeOut seed={7} style={{marginTop: 8 * u}} />
         </div>
@@ -215,7 +218,8 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   const clipSrc: string | undefined = scene.props.clip_src; // stock b-roll in the picture column (clip="...", fetched by the footage finder)
   const artName = clipSrc || scene.props.sticker || scene.props.icon ? undefined : named ?? (scene.props.art ? undefined : autoArt(brand, headline, scene.narration));
   const big = bigArt(brand, artName) || !!clipSrc; // picture first: the words keep to a column (landscape) or the top (vertical), the picture has the rest
-  const corner = <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, headline, scene.narration)} art={artName} frame={frame} fps={fps} start={brand.board ? 6 : 0} seed={scene.id} />;
+  const total = Math.max(1, Math.round((scene.end - scene.start) * fps)); // a quick cut writes and draws faster than a long scene
+  const corner = <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, headline, scene.narration)} art={artName} frame={frame} fps={fps} start={brand.board ? 6 : 0} seed={scene.id} by={Math.round(total * 0.7)} />;
   const head = headline ? (
     <div style={{fontFamily: hand(brand), fontSize: 44 * u, color: brand.accent2, marginBottom: 24 * u, transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8)}}>
       {brand.board ? <Write text={headline} frame={frame} fps={fps} start={0} cps={34} color={brand.accent2} /> : headline}
@@ -278,11 +282,14 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   const tint = (line: string) => moneyTint(line, brand.accent, brand.accent2); // the figure in green, or red when the line is about a cost
   const renderPage = (pg: typeof lines, offset: number) => (
     <div style={{position: 'absolute', inset: 0}}>
-      {pg.map((ln, i) => (
-        <div key={offset + i} style={lineStyle}>
-          {explicit ? <Write text={ln.text} frame={frame} fps={fps} start={ln.at} cps={22} tint={tint(ln.text)} /> : <WriteSpoken words={ln.words} t={t} fps={fps} sceneStart={scene.start} tint={tint(ln.words.map((w) => w.w).join(' '))} />}
-        </div>
-      ))}
+      {pg.map((ln, i) => {
+        const at = offset + i === 0 ? fitStart(ln.at, total) : ln.at; // the first line of a quick cut does not wait for the voice
+        return (
+          <div key={offset + i} style={lineStyle}>
+            {explicit ? <Write text={ln.text} frame={frame} fps={fps} start={at} cps={fitCps(ln.text, fps, at, 22, total)} tint={tint(ln.text)} /> : <WriteSpoken words={ln.words} t={t} fps={fps} sceneStart={scene.start} tint={tint(ln.words.map((w) => w.w).join(' '))} />}
+          </div>
+        );
+      })}
     </div>
   );
   return (
@@ -319,6 +326,7 @@ export const PaperTakeaway: React.FC<P> = ({scene, brand}) => {
   const n = String(scene.props.n ?? '1');
   const of = String(scene.props.of ?? '');
   const title: string = scene.props.title ?? scene.narration;
+  const total = Math.max(1, Math.round((scene.end - scene.start) * fps));
   const kicker = of ? `Takeaway ${n} of ${of}` : `Takeaway ${n}`;
   const kickDone = writeFrames(kicker, fps, 34) + 4;
   const ring = Math.round(fps * 0.6);
@@ -342,7 +350,7 @@ export const PaperTakeaway: React.FC<P> = ({scene, brand}) => {
           </div>
         </div>
         <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 70 : 92) * u, lineHeight: 1.15, color: brand.ink, width: isVertical ? '100%' : undefined, maxWidth: isVertical ? '100%' : width - pad * 2 - R - 60 * u, textAlign: isVertical ? 'center' : 'left'}}>
-          <Write text={title} frame={frame} fps={fps} start={numDone} cps={20} tint={moneyTint(title, brand.accent, brand.accent2)} />
+          <Write text={title} frame={frame} fps={fps} start={numDone} cps={fitCps(title, fps, numDone, 20, total, 0.75)} tint={moneyTint(title, brand.accent, brand.accent2)} />
         </div>
       </div>
       {void height}
@@ -383,22 +391,24 @@ export const PaperHook: React.FC<P> = ({scene, brand}) => {
   const line: string = scene.props.board ? String(scene.props.board).split('|')[0].trim() : captionLine(scene.narration, 9);
   // a drawing beside the hook (`art=payday`): the picture has the right (or, vertical, the band under the words)
   const art = scene.props.art && isTraced(String(scene.props.art)) ? String(scene.props.art) : undefined;
-  const at = Math.max(2, Math.round(((scene.words?.[0]?.s ?? scene.start) - scene.start) * fps) - 2);
-  const done = at + writeFrames(line, fps, 20) + 4;
+  const total = Math.max(1, Math.round((scene.end - scene.start) * fps));
+  const at = fitStart(Math.max(2, Math.round(((scene.words?.[0]?.s ?? scene.start) - scene.start) * fps) - 2), total);
+  const cps = fitCps(line, fps, at, 20, total);
+  const done = at + writeFrames(line, fps, cps) + 4;
   const colW = art && !isVertical ? width * 0.46 - pad : width - pad * 2;
   const w = Math.min(colW, Math.max(360 * u, line.length * (art ? 36 : 44) * u));
   const size = (isVertical ? 700 : 760) * u;
   return (
     <AbsoluteFill style={{padding: pad, justifyContent: art && isVertical ? 'flex-start' : 'center', alignItems: art && !isVertical ? 'flex-start' : 'center', paddingTop: art && isVertical ? 300 * u : pad}}>
       <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 92 : art ? 100 : 118) * u, lineHeight: 1.1, color: brand.ink, textAlign: art && !isVertical ? 'left' : 'center', maxWidth: art && !isVertical ? colW : '92%'}}>
-        <Write text={line} frame={frame} fps={fps} start={at} cps={20} tint={moneyTint(line, brand.accent, brand.accent2)} />
+        <Write text={line} frame={frame} fps={fps} start={at} cps={cps} tint={moneyTint(line, brand.accent, brand.accent2)} />
       </div>
       <svg width={w} height={30 * u} viewBox={`0 0 ${w} ${30 * u}`} style={{overflow: 'visible', marginTop: 10 * u}}>
         <SketchPath d={`M${w * 0.04},${16 * u} Q${w * 0.5},${6 * u} ${w * 0.96},${18 * u}`} win={[done, done + Math.round(fps * 0.5)]} easeOut options={{stroke: brand.accent, strokeWidth: 9 * u, seed: scene.id * 5 + 2, roughness: 1.5}} />
       </svg>
       {art ? (
         <div style={{position: 'absolute', width: size, height: size, ...(isVertical ? {bottom: pad + 170 * u, left: '50%', transform: 'translateX(-50%)'} : {right: pad * 0.5, top: '50%', transform: 'translateY(-50%)'})}}>
-          <Art name={art} size={size} brand={brand} start={2} seed={scene.id} />
+          <Art name={art} size={size} brand={brand} start={2} seed={scene.id} by={Math.round(total * 0.7)} />
         </div>
       ) : null}
     </AbsoluteFill>
