@@ -647,7 +647,7 @@ when a transcription is loaded and the script has no headlines yet.
 
 A text scene can show a stock clip instead of a drawing: `clip="busy high street"`
 names what to search for, the render's footage finder fetches a free-use clip
-(Pexels with `PEXELS_API_KEY`, else Wikimedia Commons or the Internet Archive),
+(Pexels with `PEXELS_API_KEY`, Pixabay with `PIXABAY_API_KEY`, else Wikimedia Commons or the Internet Archive),
 and it plays in a white-framed card where the drawing would be, with its
 credit. The editor's pass uses a drawing for the cast's moments and a clip for
 the world, about one in three scenes. The model is How Money Works:

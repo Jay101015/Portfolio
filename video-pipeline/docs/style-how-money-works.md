@@ -43,5 +43,12 @@ channel, not a document from them, so watch three recent videos before trusting 
 `pipeline/find_footage.py` runs before every render. For a scene with `clip="..."` it searches the Internet
 Archive, Wikimedia Commons and Pexels in that order, takes the first clip whose licence allows commercial use,
 downloads it into `media/`, writes `clip_src=` and `clip_credit=` into the script and lists it all in
-`footage-report.md`. Pexels needs a free key: `PEXELS_API_KEY` as a repository secret (pexels.com/api). Without
-it, only Commons and the Archive answer, and they have far less everyday b-roll.
+`footage-report.md`. Pexels and Pixabay each need a free key, as repository secrets: `PEXELS_API_KEY`
+(pexels.com/api) and `PIXABAY_API_KEY` (pixabay.com/api/docs). Either one is enough; both widen the choice. Without
+them only Commons and the Archive answer, and they have far less everyday b-roll.
+
+Other free-use libraries worth knowing, used by hand (download the clip, add it to the scene from the camera roll
+or drop it into `media/` and name it with `clip_src=`): Mixkit (Envato's free library, its own licence, commercial
+use allowed), Coverr (free, no attribution), Videvo's free section (check each clip: some are CC BY and need the
+credit), Mazwai (CC BY). None of these offers a public search API, so the finder cannot fetch from them by itself.
+Never use clips from news, trailers, or anything "free for personal use only".

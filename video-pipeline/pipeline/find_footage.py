@@ -9,6 +9,7 @@ finder builds a query (search=, else the caption, else the topic or film title) 
                         or any public-domain / CC item matching the query
   2. Wikimedia Commons  CC0, public-domain, CC BY and CC BY-SA video and images
   3. Pexels             stock b-roll under the Pexels licence (needs PEXELS_API_KEY)
+  4. Pixabay            stock b-roll under the Pixabay Content License (needs PIXABAY_API_KEY)
 
 The first usable hit is downloaded into media/, the scene's src= and credit= are
 written back into script.md (the fallback= still is kept), and
@@ -18,7 +19,7 @@ sources whose terms do not allow reuse: trailers and studio clips are never
 "free use" and are left for you to decide on.
 
 Set `licenses:` in the script header to narrow what counts as usable
-(default: pd, cc0, cc-by, cc-by-sa, pexels).
+(default: pd, cc0, cc-by, cc-by-sa, pexels, pixabay).
 """
 from __future__ import annotations
 
@@ -36,7 +37,7 @@ from typing import Any, Callable
 from .script_parser import parse_script
 
 UA = "reel-takes-pipeline/1.0 (+https://github.com/)"
-DEFAULT_LICENSES = {"pd", "cc0", "cc-by", "cc-by-sa", "pexels"}
+DEFAULT_LICENSES = {"pd", "cc0", "cc-by", "cc-by-sa", "pexels", "pixabay"}
 STOP = set("the a an and or of in on at to for with from by is it its this that these those as be was were are has have had not no but so into over under about after before while than then there here very just only also".split())
 
 
@@ -46,7 +47,7 @@ class Hit:
     title: str
     url: str  # download url
     kind: str  # "video" | "image"
-    license: str  # normalised key: pd, cc0, cc-by, cc-by-sa, pexels
+    license: str  # normalised key: pd, cc0, cc-by, cc-by-sa, pexels, pixabay
     license_name: str
     author: str
     page: str  # where it came from, for the report
@@ -90,6 +91,8 @@ def normalise_license(text: str) -> str | None:
 def attribution(h: Hit) -> str:
     if h.provider == "pexels":
         return f"{h.title} by {h.author} via Pexels"
+    if h.provider == "pixabay":
+        return f"{h.title} by {h.author} via Pixabay"
     lic = h.license_name or h.license.upper()
     who = f" by {h.author}" if h.author else ""
     return f"{h.title}{who}, {lic}, via {'Wikimedia Commons' if h.provider == 'commons' else 'Internet Archive'}"
@@ -176,7 +179,29 @@ def search_pexels(query: str, want: str, get: Callable = _get_json) -> list[Hit]
     return [Hit("pexels", f"Photo {p['id']}", p["src"]["large2x"], "image", "pexels", "Pexels licence", p.get("photographer", ""), p.get("url", ""), "jpg") for p in data.get("photos", [])]
 
 
-PROVIDERS = {"archive": search_archive, "commons": search_commons, "pexels": search_pexels}
+def search_pixabay(query: str, want: str, get: Callable = _get_json) -> list[Hit]:
+    """Pixabay: free stock video and photos under the Pixabay Content License (commercial use, no attribution
+    required; we credit anyway). Needs PIXABAY_API_KEY, free at pixabay.com/api/docs."""
+    key = os.environ.get("PIXABAY_API_KEY")
+    if not key:
+        return []
+    if want == "video":
+        url = "https://pixabay.com/api/videos/?" + urllib.parse.urlencode({"key": key, "q": query, "per_page": 5, "safesearch": "true"})
+        data = get(url)
+        hits = []
+        for v in data.get("hits", []):
+            files = v.get("videos", {}) or {}
+            f = files.get("medium") or files.get("large") or files.get("small")
+            if not f or not f.get("url"):
+                continue
+            hits.append(Hit("pixabay", f"Video {v['id']}", f["url"], "video", "pixabay", "Pixabay Content License", str(v.get("user", "")), str(v.get("pageURL", "")), "mp4"))
+        return hits
+    url = "https://pixabay.com/api/?" + urllib.parse.urlencode({"key": key, "q": query, "per_page": 5, "image_type": "photo", "safesearch": "true"})
+    data = get(url)
+    return [Hit("pixabay", f"Photo {p['id']}", p.get("largeImageURL") or p.get("webformatURL", ""), "image", "pixabay", "Pixabay Content License", str(p.get("user", "")), str(p.get("pageURL", "")), "jpg") for p in data.get("hits", []) if p.get("largeImageURL") or p.get("webformatURL")]
+
+
+PROVIDERS = {"archive": search_archive, "commons": search_commons, "pexels": search_pexels, "pixabay": search_pixabay}
 
 
 # ----------------------------------------------------------------------------- queries
@@ -370,7 +395,7 @@ def write_report(project: str, report: dict[str, Any]) -> None:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("project")
-    ap.add_argument("--providers", default="archive,commons,pexels")
+    ap.add_argument("--providers", default="archive,commons,pexels,pixabay")
     ap.add_argument("--dry-run", action="store_true", help="search and report, download nothing, leave the script alone")
     args = ap.parse_args(argv)
     report = find(os.path.abspath(args.project), [p.strip() for p in args.providers.split(",") if p.strip()], args.dry_run)

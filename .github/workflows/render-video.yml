@@ -91,6 +91,7 @@ jobs:
         env:
           PROJECT: ${{ steps.pick.outputs.project }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
         run: python -m pipeline.find_footage "projects/$PROJECT" || echo "footage finder failed; rendering with fallbacks"
 
       - name: Render

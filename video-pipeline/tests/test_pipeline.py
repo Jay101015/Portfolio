@@ -197,6 +197,15 @@ class ArtLibraryTests(unittest.TestCase):
             self.assertEqual((entry["type"], entry["query"], entry["status"]), ("b-roll", "landlord at the door", "dry-run"))
             self.assertTrue(entry["src"].startswith("01-broll-"))
 
+    def test_pixabay_is_a_b_roll_source(self):
+        import os
+        from pipeline.find_footage import search_pixabay, attribution
+        os.environ["PIXABAY_API_KEY"] = "test"
+        fake = lambda url, headers=None: {"hits": [{"id": 9, "pageURL": "https://pixabay.com/videos/9/", "user": "Someone", "videos": {"medium": {"url": "https://example.test/9.mp4"}}}]}
+        hits = search_pixabay("busy high street", "video", fake)
+        self.assertEqual((hits[0].kind, hits[0].license, hits[0].ext), ("video", "pixabay", "mp4"))
+        self.assertEqual(attribution(hits[0]), "Video 9 by Someone via Pixabay")
+
     def test_hook_scene_parses_and_scores_first(self):
         from pipeline.shorts import score_slice
         sb = parse_script("# T\nslug: t\ntheme: whiteboard\n\n[hook board=\"£420 a month = £1,000,000\"]\nFour hundred and twenty pounds a month makes you a millionaire.\n\n[title]\nHere is how.\n")
