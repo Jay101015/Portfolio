@@ -9,10 +9,10 @@ captions: off
 voice: strong
 source: voiceover
 
-[broll search="salary paid notification phone" caption="Payday hits"]
+[broll search="salary paid notification phone" caption="Payday hits" src="01-salary-paid-notification-phone.mp4" credit="Video 202987 by Natures_Embrace via Pixabay"]
 Payday hits.
 
-[broll search="paying bills online laptop" caption="Rent. Bills. Paid."]
+[broll search="paying bills online laptop" caption="Rent. Bills. Paid." src="02-paying-bills-online-laptop.mp4" credit="Video 18244 by Lirofilm via Pixabay"]
 The rent's gone out. The bills are paid.
 
 [hook board="There's money left over. Now what?" art="payday"]
@@ -68,7 +68,7 @@ The point at this level is in the amount. It's about building the habit now.
 [takeaway title="£1,000 left over" n="2" of="3"]
 Let's say you've got a grand First same rule if there's an expensive debt that goes first
 
-[broll search="mechanic repairing car engine" caption="Life happens"]
+[broll search="mechanic repairing car engine" caption="Life happens" src="19-mechanic-repairing-car-engine.mp4" credit="Video 177415 by blackmarketmusic via Pixabay"]
 If not a thousand pounds is a great milestone because it's enough to cover most small costs and most small emergencies car repair broken phone so My first move would be to make sure you've got at least a thousand pounds in your emergency fund
 
 [broll search="house keys handed over new home" caption="Buying your first home?" src="15-house-keys-handed-over-new-home.mp4" credit="Video 14476 by wastedgeneration via Pixabay"]
@@ -92,7 +92,7 @@ Okay 10 ,000 if you've got this in your current account.
 [stat fact="uk.cpi" sub="your cash buys a little less every month" value="3.5%" source="ONS, September 2026" label="UK inflation (CPI)"]
 I need you to hear this It's losing value to inflation every single month So let's put it to work
 
-[broll search="london rain people umbrellas" caption="Top up to 3 to 6 months"]
+[broll search="london rain people umbrellas" caption="Top up to 3 to 6 months" src="27-london-rain-people-umbrellas.mp4" credit="Video 202368 by Whitechappel79 via Pixabay"]
 first top up your emergency fund To three to six months of the central cost if your essential costs are 1500 a month That's between four and a half And nine thousand keep it somewhere easy to access that pays decent interest
 
 [text board="Grab your full pension match" art="pension-letter"]

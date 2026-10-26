@@ -6,7 +6,7 @@ Filled on 2026-10-26. Every figure on the board carries its publisher and the mo
 
 | scene | asked for | value | source | series |
 |---|---|---|---|---|
-| 21 | uk.cpi | 3.5% | ONS, September 2026 | CPI ANNUAL RATE 00: ALL ITEMS 2015=100 |
+| 26 | uk.cpi | 3.5% | ONS, September 2026 | CPI ANNUAL RATE 00: ALL ITEMS 2015=100 |
 
 ## Headlines
 
@@ -16,7 +16,7 @@ No `[news]` scene with a search=.
 
 These sentences state a figure or a UK/US claim and the scene has no source on the board. Give the scene a `[stat fact=...]`, a `source=` with publisher and date, or a `[news]` scene; or leave it as the host's own experience.
 
-- scene 18: Not buying a home then a stocks and shares ice is going to be your best friend any growth and dividends inside of it are tax -free forever Put your thousand int
+- scene 23: Not buying a home then a stocks and shares ice is going to be your best friend any growth and dividends inside of it are tax -free forever Put your thousand int
 
 ## The catalogue
 
