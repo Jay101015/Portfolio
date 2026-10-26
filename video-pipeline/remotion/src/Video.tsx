@@ -117,12 +117,15 @@ const transitionFor = (scene: Scene, toon: boolean): Transition => {
 /** A Short's hook: the one line pinned at the top of the frame, big, on a marker highlight, there from the first
  * frame so the viewer who scrolls in knows what this is before anyone speaks. */
 const HookBanner: React.FC<{text: string; brand: Brand}> = ({text, brand}) => {
-  const {width, height} = useVideoConfig();
+  const frame = useCurrentFrame();
+  const {width, height, fps} = useVideoConfig();
   const u = width / 1080;
   const vertical = height > width;
-  const size = (vertical ? 64 : 48) * u;
+  // big for the first three seconds (the scroll-in moment), then a smaller line so it never sits on a headline
+  const p = Math.max(0, Math.min(1, (frame - fps * 3) / (fps * 0.4)));
+  const size = (vertical ? 60 : 48) * u * (1 - 0.3 * p);
   return (
-    <div style={{position: 'absolute', left: 0, right: 0, top: vertical ? height * 0.085 : height * 0.04, display: 'flex', justifyContent: 'center', padding: `0 ${40 * u}px`, pointerEvents: 'none'}}>
+    <div style={{position: 'absolute', left: 0, right: 0, top: vertical ? height * (0.085 - 0.03 * p) : height * 0.04, display: 'flex', justifyContent: 'center', padding: `0 ${40 * u}px`, pointerEvents: 'none'}}>
       <div style={{fontFamily: brand.display, fontWeight: 800, fontSize: size, lineHeight: 1.15, color: brand.ink, textAlign: 'center', background: brand.marker ?? '#fff176', padding: `${10 * u}px ${22 * u}px`, borderRadius: 8 * u, boxShadow: `0 ${4 * u}px ${12 * u}px rgba(0,0,0,0.12)`, transform: 'rotate(-1deg)', maxWidth: '92%', boxDecorationBreak: 'clone'}}>
         {text}
       </div>

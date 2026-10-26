@@ -3,21 +3,37 @@
   {
    "name": "short-1",
    "scenes": [
-    12,
-    13,
-    14
+    10
    ],
-   "hook": "£200 left over? Do this first"
+   "hook": "Do it in this order"
   },
   {
    "name": "short-2",
    "scenes": [
-    25,
-    26,
-    27,
-    28
+    12,
+    13,
+    14,
+    15
    ],
-   "hook": "£10,000 in your current account is losing value"
+   "hook": "\u00a3200 left over? Start here"
+  },
+  {
+   "name": "short-3",
+   "scenes": [
+    20,
+    21,
+    22
+   ],
+   "hook": "Free \u00a3250 from the government"
+  },
+  {
+   "name": "short-4",
+   "scenes": [
+    31,
+    32,
+    33
+   ],
+   "hook": "What I do every payday"
   }
  ]
 }

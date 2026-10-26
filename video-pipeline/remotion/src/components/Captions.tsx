@@ -29,9 +29,9 @@ const chunkWords = (words: Word[], maxWords: number): Chunk[] => {
 export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string; always?: boolean}> = ({scenes, brand, host, always}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const {u, isVertical, pad, width} = useLayout();
+  const {u, isVertical, pad, width, height} = useLayout();
   const t = frame / fps;
-  const chunks = useMemo(() => chunkWords(scenes.flatMap((s) => s.words ?? []), isVertical ? 4 : 6), [scenes, isVertical]);
+  const chunks = useMemo(() => chunkWords(scenes.flatMap((s) => s.words ?? []), isVertical ? 3 : 6), [scenes, isVertical]); // a Short: three big words at a time
   const chunk = chunks.find((c) => t >= c.s - 0.05 && t <= c.e + 0.35);
   if (!chunk) return null;
   const current = scenes.find((s) => t >= s.start && t < s.end);
@@ -45,8 +45,8 @@ export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string; a
     // hand-lettered, no pill: ink text with a paper halo so it sits on footage too
     const halo = `0 0 ${6 * u}px ${brand.bg}, 0 0 ${6 * u}px ${brand.bg}, ${3 * u}px ${3 * u}px 0 ${brand.bg}, -${3 * u}px -${3 * u}px 0 ${brand.bg}, ${3 * u}px -${3 * u}px 0 ${brand.bg}, -${3 * u}px ${3 * u}px 0 ${brand.bg}`;
     return (
-      <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: (isVertical ? 120 : 48) * u, ...sideStyle}}>
-        <div style={{maxWidth: shift === 0 ? `calc(100% - ${pad * 2}px)` : width * 0.52, fontFamily: brand.display, fontSize: (isVertical ? 60 : 50) * u, lineHeight: 1.15, textAlign: 'center', transform: `rotate(${chunk.tilt * 0.4}deg)`, textShadow: halo, color: brand.ink}}>
+      <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: isVertical ? height * 0.3 : 48 * u, ...sideStyle}}>
+        <div style={{maxWidth: shift === 0 ? `calc(100% - ${pad * 2}px)` : width * 0.52, fontFamily: brand.display, fontSize: (isVertical ? 80 : 50) * u, lineHeight: 1.15, textAlign: 'center', transform: `rotate(${chunk.tilt * 0.4}deg)`, textShadow: halo, color: brand.ink}}>
           {chunk.words.map((w, i) => {
             const active = t >= w.s - 0.02 && t < w.e + 0.08;
             return (
@@ -62,8 +62,8 @@ export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string; a
   if (brand.paper) {
     // ink on the page, the word being said swiped with a highlighter
     return (
-      <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: (isVertical ? 120 : 52) * u, ...sideStyle}}>
-        <div style={{maxWidth: `calc(100% - ${pad * 2}px)`, fontFamily: brand.font, fontSize: (isVertical ? 46 : 40) * u, fontWeight: 700, lineHeight: 1.3, textAlign: 'center', color: brand.ink}}>
+      <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: isVertical ? height * 0.3 : 52 * u, ...sideStyle}}>
+        <div style={{maxWidth: `calc(100% - ${pad * 2}px)`, fontFamily: isVertical ? brand.display : brand.font, fontSize: (isVertical ? 78 : 40) * u, fontWeight: isVertical ? 800 : 700, lineHeight: 1.2, textAlign: 'center', color: brand.ink}}>
           {chunk.words.map((w, i) => {
             const since = t - w.s;
             const swipe = Math.max(0, Math.min(1, (since + 0.02) / 0.16));
@@ -79,7 +79,7 @@ export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string; a
     );
   }
   return (
-    <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: (isVertical ? 120 : 56) * u, ...sideStyle}}>
+    <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: isVertical ? height * 0.3 : 56 * u, ...sideStyle}}>
       <div style={{maxWidth: shift === 0 ? `calc(100% - ${pad * 2}px)` : width * 0.52, padding: `${14 * u}px ${30 * u}px`, borderRadius: 18 * u, background: 'rgba(5,8,20,0.74)', border: `1px solid ${brand.text}14`, fontSize: (isVertical ? 46 : 40) * u, fontWeight: 700, lineHeight: 1.25, textAlign: 'center', textShadow: '0 2px 8px rgba(0,0,0,0.6)'}}>
         {chunk.words.map((w, i) => {
           const active = t >= w.s - 0.02 && t < w.e + 0.08;

@@ -646,6 +646,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--model", default="base.en", help="faster-whisper size (tiny.en/base.en/small.en/...) or sherpa model dir")
     ap.add_argument("--vertical", action="store_true", help="also render a 9:16 version")
     ap.add_argument("--only-vertical", action="store_true")
+    ap.add_argument("--only-shorts", action="store_true", help="skip the main (and vertical) render: just cut and render the Shorts")
     ap.add_argument("--no-render", action="store_true", help="stop after storyboard.json / storyboard.html")
     ap.add_argument("--no-captions", action="store_true")
     ap.add_argument("--concurrency", default=None)
@@ -773,9 +774,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.no_render:
         return 0
 
-    if not args.only_vertical:
+    if not args.only_vertical and not args.only_shorts:
         render(sb_path, os.path.join(project, f"{slug}.mp4"), "Main", args.concurrency, chunk=args.chunk)
-    if args.vertical or args.only_vertical:
+    if (args.vertical or args.only_vertical) and not args.only_shorts:
         render(sb_path, os.path.join(project, f"{slug}-vertical.mp4"), "Vertical", args.concurrency, chunk=args.chunk)
     plan_path = os.path.join(project, "shorts.json")
     if args.shorts or os.path.exists(plan_path):

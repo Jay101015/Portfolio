@@ -16,6 +16,10 @@ on:
         description: "Also render the 9:16 version"
         type: boolean
         default: true
+      shorts_only:
+        description: "Only cut and render the Shorts (shorts.json), not the main video"
+        type: boolean
+        default: false
   # a recording on its own is transcribed by transcribe.yml (minutes); the video is rendered when the script ships
   push:
     paths:
@@ -117,6 +121,7 @@ jobs:
         run: |
           flags=""
           if [ "${{ github.event.inputs.vertical }}" != "false" ]; then flags="--vertical"; fi
+          if [ "${{ github.event.inputs.shorts_only }}" = "true" ]; then flags="--only-shorts"; fi
           python -m pipeline.build "projects/$PROJECT" --model base.en --concurrency 2 $flags
 
       - name: Keep what the run found (script with credits, report, small media) on the branch
