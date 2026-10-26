@@ -192,7 +192,7 @@ class ArtLibraryTests(unittest.TestCase):
             open(os.path.join(d, "script.md"), "w").write("# T\nslug: t\ntheme: whiteboard\ntopic: rent\n\n[text board=\"Rent day\" clip=\"landlord at the door\"]\nThe landlord was at the door.\n")
             os.environ["PEXELS_API_KEY"] = "test"
             fake = lambda url, headers=None: {"videos": [{"id": 7, "url": "https://www.pexels.com/video/7/", "user": {"name": "A Filmer"}, "video_files": [{"file_type": "video/mp4", "width": 1920, "link": "https://example.test/7.mp4"}]}]}
-            report = find_footage.find(d, ["pexels"], dry_run=True, get=fake)
+            report = find_footage.find(d, ["archive", "pexels"], dry_run=True, get=lambda url, headers=None: fake(url, headers) if "pexels" in url else {"response": {"docs": [{"identifier": "oldfilm", "title": "Old Film", "licenseurl": "http://creativecommons.org/publicdomain/mark/1.0/"}]}})
             entry = report["scenes"][0]
             self.assertEqual((entry["type"], entry["query"], entry["status"]), ("b-roll", "landlord at the door", "dry-run"))
             self.assertTrue(entry["src"].startswith("01-broll-"))

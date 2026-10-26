@@ -269,7 +269,9 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
             q = str(p["clip"])
             entry = {"id": sc["id"], "type": "b-roll", "query": q, "status": "not found", "candidates": []}
             chosen = None
-            for name in providers:
+            # b-roll wants everyday stock footage: the stock libraries first, the archives (old films) last
+            broll_order = [n for n in ("pixabay", "pexels", "commons", "archive") if n in providers]
+            for name in broll_order:
                 try:
                     hits = PROVIDERS[name](q, "video", get)
                 except Exception as e:  # noqa: BLE001

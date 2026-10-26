@@ -13,7 +13,7 @@ One percent. That is what your pension provider takes every year. It costs you a
 [title kicker="The fee you never see" subtitle="1% a year, 40 years, a third of your pot"]
 Here is how a number that small does that much damage, and the three things that stop it.
 
-[text board="It never shows up as a bill" clip="dark doorway at night"]
+[text board="It never shows up as a bill" clip="person opening front door at night"]
 Nobody sends you a bill. It comes out of the growth, quietly, before you ever see the number.
 
 [stat value="£100,000" label="what 1% a year takes over 40 years" sub="on £420 a month, growing at 7%"]
@@ -40,7 +40,7 @@ Three hundred thousand pounds becomes two hundred. That is the bite.
 [takeaway title="Move it, once" n="3" of="3"]
 Takeaway three. Move it, once. A global index fund charges a tenth of a percent.
 
-[text board="What ignoring it looks like" clip="people running from a house"]
+[text board="What ignoring it looks like" clip="crowd rushing busy street"]
 And no, ignoring it is not a plan. The fee does not get bored and leave.
 
 [text board="0.1% instead of 1%: £90,000 back" art="sam-pleased"]
