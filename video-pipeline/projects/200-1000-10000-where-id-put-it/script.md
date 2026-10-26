@@ -38,13 +38,13 @@ Let's start with 200 and honestly This is where most people are so if this is yo
 [bite value="£1,000" lose="£200" label="£1,000 on a card at 20%, one year" sub="gone in interest"]
 If you've got expensive debt put the lot towards it seriously every pound you pay off is a pound that stops costing you about 20 % or more a year
 
-[broll search="phone banking app transfer savings" caption="Pay yourself first"]
+[broll search="phone banking app transfer savings" caption="Pay yourself first" src="09-phone-banking-app-transfer-savings.mp4" credit="Video 49049 by Mohamed_hassan via Pixabay"]
 If you're debt free congratulations start with an emergency fund in an Easy access account so you can set up a stunning order there every month after every day off the payday and move the money there Before you can even spend it. That's the trick. Pay yourself first
 
 [stat value="£2,400" label="£200 a month for a year"]
 And here's why 200 amas 200 pounds a month is about 2 ,400 a year that alone could be a basic emergency fund for a lot of people
 
-[broll search="person using investing app on phone" caption="Start with a few pounds"]
+[broll search="person using investing app on phone" caption="Start with a few pounds" src="11-person-using-investing-app-on-phone.mp4" credit="Video 38084 by mephala1980 via Pixabay"]
 Once you've got a small buffer even just a few hundred you can start investing small Most UK investing ups allow you to buy fractions of a fund so you can start with as little as a few hundred pounds you know or You know 50 quid a month into a global index fund and this is genuinely a good start
 
 [text board="The habit beats the amount" art="sam-pleased"]
@@ -53,10 +53,10 @@ The point at this level is in the amount. It's about building the habit now.
 [takeaway title="£1,000 left over" n="2" of="3"]
 Let's say you've got a grand First same rule if there's an expensive debt that goes first
 
-[broll search="car repair garage mechanic" caption="Life happens"]
+[broll search="car repair garage mechanic" caption="Life happens" src="14-car-repair-garage-mechanic.mp4" credit="Video 11576 by VariousPhotography via Pixabay"]
 If not a thousand pounds is a great milestone because it's enough to cover most small costs and most small emergencies car repair broken phone so My first move would be to make sure you've got at least a thousand pounds in your emergency fund
 
-[broll search="house keys handed over new home" caption="Buying your first home?"]
+[broll search="house keys handed over new home" caption="Buying your first home?" src="15-house-keys-handed-over-new-home.mp4" credit="Video 14476 by wastedgeneration via Pixabay"]
 if you've already got that covered Here's where it gets interesting if you're aged 18 to 39 and you're saving for your first home Then look into a lifetime ISO
 
 [stat value="+25%" label="Lifetime ISA bonus" sub="Up to £4,000 a year paid in" source="HMRC"]
@@ -74,16 +74,16 @@ and personally This is what i'm doing. This is exactly what i'm doing on my road
 [takeaway title="£10,000 left over" n="3" of="3"]
 Okay 10 ,000 if you've got this in your current account.
 
-[stat fact="uk.cpi" sub="your cash buys a little less every month"]
+[stat fact="uk.cpi" sub="your cash buys a little less every month" value="3.5%" source="ONS, September 2026" label="UK inflation (CPI)"]
 I need you to hear this It's losing value to inflation every single month So let's put it to work
 
-[broll search="rainy day umbrella city street" caption="Top up to 3 to 6 months"]
+[broll search="rainy day umbrella city street" caption="Top up to 3 to 6 months" src="22-rainy-day-umbrella-city-street.mp4" credit="Video 267783 by SYG_Anime via Pixabay"]
 first top up your emergency fund To three to six months of the central cost if your essential costs are 1500 a month That's between four and a half And nine thousand keep it somewhere easy to access that pays decent interest
 
 [text board="Grab your full pension match" art="pension-letter"]
 now Second Check your pension. Are you getting a full employer match? If not Increasing your contribution is often the best return available because you get a tax relief and your employer's money on top
 
-[broll search="stock market chart long term growth screen" caption="Invest the rest"]
+[broll search="stock market chart long term growth screen" caption="Invest the rest" src="24-stock-market-chart-long-term-growth-scre.mp4" credit="Video 349089 by MuhammadAhmad10 via Pixabay"]
 third Invest for the long term as stocks initially as I saw a low cost index fund and time
 
 [text board="Never all in one bet" art="sam-facepalm"]
@@ -95,7 +95,7 @@ So that's the theory Let me show you what I actually do because I don't want to 
 [pie value="67%" label="£1,000 of every £1,500 into savings" sub="£500 into an S&P 500 fund"]
 every payday Two things happen automatically before I can even think about spending it A thousand pound goes straight into my savings That's built me the emergency fund and now it's going towards me buying my first home And if 500 pounds go straight into my s &k 500 index fund I'm not timing the market. I'm not checking the news It just goes straight in there every single month
 
-[broll search="calendar automatic payment phone notification" caption="Automatic, the day after payday"]
+[broll search="calendar automatic payment phone notification" caption="Automatic, the day after payday" src="28-calendar-automatic-payment-phone-notific.mp4" credit="Video 202987 by Natures_Embrace via Pixabay"]
 and the key word there is that it's going to be just an automatic process I set up a standing order for the day after payday So the money goes straight in there before I even had the chance to talk myself out of it That habit has done more for me for my final for more for me and my finances than any other stock I've ever picked
 
 [text board="The system beats the amount" art="sleep-grow"]
