@@ -30,7 +30,11 @@ version from your previous read or write of that job.
       editor's pass BEFORE the studio sees it (this is the one file you edit): keep the original,
       `cp video-pipeline/projects/<slug>/draft.md /tmp/courier/before-<job id>.md`, read `video-pipeline/EDITOR.md`
       and rewrite `draft.md` as it says (tags only: a hook with a drawing, a headline and a drawing on every text
-      scene, takeaway cards, a recap; every spoken word stays). Check it: `cd video-pipeline && python3 -m
+      scene, stock footage as its own `[broll]` scene about one in four, takeaway cards, a recap; every spoken word
+      stays). Real figures: every sentence that states or leans on a UK or US figure gets `[stat fact="..."]` from
+      the catalogue (`python3 -m pipeline.find_facts --list`), or a figure you look up with WebSearch written as
+      `value=` and `source="<publisher>, <month year>"`; a sentence about what may happen (a rule or rate changing)
+      gets a `[news search="..."]` scene. Check it: `cd video-pipeline && python3 -m
       pipeline.polish_check /tmp/courier/before-<job id>.md projects/<slug>/draft.md`. If it prints REFUSED, fix the
       draft and check again, at most three times; if it still refuses, put the original back. Commit `Editor's pass:
       <title>`, push, then run the `wait` command once more so the result file carries the polished draft. Then

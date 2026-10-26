@@ -95,6 +95,12 @@ jobs:
           PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
         run: python -m pipeline.find_footage "projects/$PROJECT" || echo "footage finder failed; rendering with fallbacks"
 
+      - name: Fill in real figures and headlines (fact= on stat scenes, [news] scenes)
+        timeout-minutes: 5
+        env:
+          PROJECT: ${{ steps.pick.outputs.project }}
+        run: python -m pipeline.find_facts "projects/$PROJECT" || echo "facts step failed; the board keeps what the script says"
+
       - name: Render
         env:
           PROJECT: ${{ steps.pick.outputs.project }}
@@ -124,7 +130,7 @@ jobs:
             git add -u "projects/$PROJECT" 2>/dev/null || true
           fi
           # the script (built from the voice when there was none), the transcript and the timings, for the studio
-          git add "projects/$PROJECT/script.md" "projects/$PROJECT/footage-report.md" "projects/$PROJECT/timing.json" "projects/$PROJECT/transcript.json" "projects/$PROJECT/voice-preview.mp3" 2>/dev/null || true
+          git add "projects/$PROJECT/script.md" "projects/$PROJECT/footage-report.md" "projects/$PROJECT/facts-report.md" "projects/$PROJECT/timing.json" "projects/$PROJECT/transcript.json" "projects/$PROJECT/voice-preview.mp3" 2>/dev/null || true
           git commit -m "Render run: footage, transcript and timings for $PROJECT" || echo "nothing new to commit"
           for i in 1 2 3; do git pull -q --rebase --autostash && git push && break || sleep 5; done
 
@@ -138,6 +144,7 @@ jobs:
             video-pipeline/projects/${{ steps.pick.outputs.project }}/storyboard.html
             video-pipeline/projects/${{ steps.pick.outputs.project }}/storyboard.json
             video-pipeline/projects/${{ steps.pick.outputs.project }}/footage-report.md
+            video-pipeline/projects/${{ steps.pick.outputs.project }}/facts-report.md
             video-pipeline/projects/${{ steps.pick.outputs.project }}/.cache/transcript-*.json
             video-pipeline/projects/${{ steps.pick.outputs.project }}/script.md
       - name: Publish the videos as a release (downloadable without logging in to Actions)
@@ -150,4 +157,5 @@ jobs:
           tag="demo-$PROJECT"
           gh release view "$tag" >/dev/null 2>&1 || gh release create "$tag" --title "Demo: $PROJECT" --notes "Rendered by the Render video workflow. See footage-report.md for every piece of footage and its licence." --target "${{ github.sha }}"
           gh release upload "$tag" projects/$PROJECT/*.mp4 projects/$PROJECT/footage-report.md projects/$PROJECT/storyboard.html --clobber
+          [ -f "projects/$PROJECT/facts-report.md" ] && gh release upload "$tag" "projects/$PROJECT/facts-report.md" --clobber || true
 

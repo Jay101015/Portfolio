@@ -388,7 +388,7 @@ def resolve_media(sb: dict, project: str, slug: str) -> list[str]:
         for sc in sb["scenes"]:
             p = sc["props"]
             src = p.get("src")
-            if sc["type"] == "clip" and src and not src.startswith("projects/") and not os.path.exists(os.path.join(src_dir, src)):
+            if sc["type"] in ("clip", "broll") and src and not src.startswith("projects/") and not os.path.exists(os.path.join(src_dir, src)):
                 fb = p.get("fallback")
                 if fb and os.path.exists(os.path.join(src_dir, fb)):
                     notes.append(f"scene {sc['id']}: footage '{src}' not present, using the fallback still '{fb}'")
@@ -401,7 +401,7 @@ def resolve_media(sb: dict, project: str, slug: str) -> list[str]:
                     p.pop("vol", None)
                     src = fb
             if src and not src.startswith("projects/") and os.path.exists(os.path.join(src_dir, src)):
-                if sc["type"] == "clip":
+                if sc["type"] in ("clip", "broll"):
                     notes.extend(fit_clip(sc, os.path.join(src_dir, src)))
                 p["src"] = f"projects/{slug}/{folder}/{src}"
             sticker = p.get("sticker")
@@ -435,6 +435,7 @@ def resolve_media(sb: dict, project: str, slug: str) -> list[str]:
                 sc["type"] = "still"
                 p.pop("from", None)
                 p.pop("vol", None)
+            # a broll scene with no footage keeps its type: the frame shows what was asked for, so the cut still reads
     return notes
 
 

@@ -858,6 +858,97 @@ export const PaperStill: React.FC<P> = ({scene, brand}) => {
   );
 };
 
+// ------------------------------------------------------------------ b-roll: the footage fills the frame
+/** Stock footage as its own scene, How Money Works style: the clip covers the whole frame with a slow push-in, a short
+ * caption on a white label in the corner, the credit small beside it. With no footage yet the frame says what was
+ * asked for, so the cut still reads in a preview render. */
+export const PaperBroll: React.FC<P> = ({scene, brand}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const {u, pad, width, height, isVertical} = useLayout();
+  const total = Math.max(1, Math.round((scene.end - scene.start) * fps));
+  const src: string | undefined = scene.props.src;
+  const caption: string | undefined = scene.props.caption;
+  const credit: string | undefined = scene.props.credit;
+  const s = pop(frame, fps, Math.round(fps * 0.35), 12);
+  const labelSize = (isVertical ? 60 : 54) * u;
+  const bottom = isVertical ? height * 0.2 : pad * 0.9;
+  const media = src ? (
+    scene.props.loop && scene.props.clipDur ? (
+      <Loop durationInFrames={Math.max(1, Math.round(Number(scene.props.clipDur) * fps))}>
+        <Media src={src} props={{zoom: 'in', ...scene.props}} durationFrames={total} width={width} height={height} />
+      </Loop>
+    ) : (
+      <Media src={src} props={{zoom: 'in', ...scene.props}} durationFrames={total} width={width} height={height} />
+    )
+  ) : null;
+  return (
+    <AbsoluteFill style={{background: src ? '#111' : brand.bg, overflow: 'hidden'}}>
+      {src ? (
+        <>
+          <div style={{position: 'absolute', inset: 0, overflow: 'hidden'}}>{media}</div>
+          <div style={{position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%)'}} />
+        </>
+      ) : (
+        <div style={{position: 'absolute', left: pad, right: pad, top: pad, bottom: pad, border: `${4 * u}px dashed ${brand.muted}`, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: pad, textAlign: 'center', fontFamily: hand(brand), fontSize: 46 * u, lineHeight: 1.2, color: brand.muted}}>
+          {`footage: ${scene.props.want ?? scene.props.search ?? 'b-roll'}`}
+        </div>
+      )}
+      {caption ? (
+        <div style={{position: 'absolute', left: pad * 0.8, bottom, transform: `rotate(-1deg) scale(${0.9 + 0.1 * s})`, transformOrigin: 'left bottom', opacity: Math.min(1, s * 1.5), background: '#fff', color: brand.ink, fontFamily: hand(brand), fontSize: labelSize, lineHeight: 1.15, padding: `${10 * u}px ${26 * u}px`, boxShadow: `0 ${8 * u}px ${24 * u}px rgba(0,0,0,0.3)`, maxWidth: isVertical ? width - pad * 1.6 : width * 0.6}}>
+          <Write text={caption} frame={frame} fps={fps} start={Math.round(fps * 0.4)} cps={30} />
+        </div>
+      ) : null}
+      {credit ? <div style={{position: 'absolute', right: pad * 0.6, bottom: pad * 0.45, fontFamily: hand(brand), fontSize: 26 * u, color: src ? 'rgba(255,255,255,0.85)' : brand.muted, opacity: fadeIn(frame, 14, 10), textShadow: src ? '0 1px 4px rgba(0,0,0,0.6)' : undefined}}>{credit}</div> : null}
+    </AbsoluteFill>
+  );
+};
+
+// ------------------------------------------------------------------ news: a real headline on a clipping
+/** A headline pinned to the board like a newspaper clipping: outlet and date along the top, the line big, the source's
+ * address small underneath. The render fills headline/outlet/date/url from a real article (`search=`), or the editor
+ * writes them in. */
+export const PaperNews: React.FC<P> = ({scene, brand}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const {u, pad, width, isVertical} = useLayout();
+  const headline: string | undefined = scene.props.headline;
+  const outlet: string = String(scene.props.outlet ?? '');
+  const date: string = String(scene.props.date ?? '');
+  const url: string = String(scene.props.url ?? '');
+  const caption: string | undefined = scene.props.caption;
+  const domain = url.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
+  const w = isVertical ? width - pad * 2 : width * 0.74;
+  const s = pop(frame, fps, 0, 14);
+  const headSize = (isVertical ? 62 : 72) * u * ((headline ?? '').length > 80 ? 0.8 : 1);
+  const lineAt = Math.round(fps * 0.35);
+  return (
+    <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', padding: pad}}>
+      <div style={{position: 'relative', width: w, transform: `rotate(-1.2deg) translateY(${(1 - s) * 40 * u}px)`, opacity: Math.min(1, s * 1.4)}}>
+        <div style={{background: '#fff', padding: `${34 * u}px ${44 * u}px ${30 * u}px`, boxShadow: `0 ${14 * u}px ${40 * u}px rgba(40,30,10,0.25)`, border: `${2 * u}px solid rgba(0,0,0,0.08)`}}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 20 * u, marginBottom: 14 * u}}>
+            <div style={{fontFamily: brand.display, fontWeight: 700, fontSize: 30 * u, letterSpacing: '0.14em', textTransform: 'uppercase', color: brand.ink, opacity: fadeIn(frame, 4, 8)}}>{outlet || (domain || 'the press')}</div>
+            <div style={{fontFamily: hand(brand), fontSize: 32 * u, color: brand.muted, opacity: fadeIn(frame, 6, 8)}}>{date}</div>
+          </div>
+          <div style={{height: 3 * u, background: brand.ink, opacity: 0.85, marginBottom: 22 * u, transform: `scaleX(${lin(frame, 4, 14)})`, transformOrigin: 'left'}} />
+          <div style={{fontFamily: brand.display, fontWeight: 800, fontSize: headSize, lineHeight: 1.08, color: headline ? brand.ink : brand.muted, letterSpacing: -1 * u, opacity: fadeIn(frame, lineAt, 10), transform: `translateY(${(1 - ease(frame, lineAt, lineAt + 12)) * 14 * u}px)`}}>
+            {headline ?? `headline: ${scene.props.search ?? 'a real one, found at render'}`}
+          </div>
+          {domain ? <div style={{marginTop: 22 * u, fontFamily: hand(brand), fontSize: 26 * u, color: brand.muted, opacity: fadeIn(frame, lineAt + 10, 10)}}>{domain}</div> : null}
+        </div>
+        {brand.board ? (
+          <div style={{position: 'absolute', left: '50%', top: -22 * u, width: 56 * u, height: 56 * u, borderRadius: '50%', background: `radial-gradient(circle at 35% 30%, #ff8a80, ${brand.accent2} 70%)`, boxShadow: `0 ${4 * u}px ${8 * u}px rgba(0,0,0,0.3)`, transform: 'translateX(-50%)'}} />
+        ) : null}
+        {caption ? (
+          <div style={{position: 'absolute', left: 30 * u, bottom: -74 * u, fontFamily: hand(brand), fontSize: 48 * u, color: brand.accent2, transform: 'rotate(1deg)'}}>
+            <Write text={caption} frame={frame} fps={fps} start={lineAt + 16} cps={30} color={brand.accent2} />
+          </div>
+        ) : null}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 // ------------------------------------------------------------------ sticker: a GIF or picture on top of any scene
 const STICK: Record<string, React.CSSProperties> = {
   tr: {top: '9%', right: '5%'},
@@ -932,6 +1023,10 @@ export const PaperSwitch: React.FC<P> = ({scene, brand}) => {
     case 'image':
     case 'clip':
       return <PaperStill scene={scene} brand={brand} />;
+    case 'broll':
+      return <PaperBroll scene={scene} brand={brand} />;
+    case 'news':
+      return <PaperNews scene={scene} brand={brand} />;
     default:
       return null;
   }

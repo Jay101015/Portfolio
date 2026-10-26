@@ -643,15 +643,68 @@ spoken word is checked against the original, word by word, before the pass
 is accepted; a pass that changes a word is refused. The pass runs by itself
 when a transcription is loaded and the script has no headlines yet.
 
-### Stock b-roll in the picture column
+### Stock b-roll: its own scene
 
-A text scene can show a stock clip instead of a drawing: `clip="busy high street"`
-names what to search for, the render's footage finder fetches a free-use clip
-(Pexels with `PEXELS_API_KEY`, Pixabay with `PIXABAY_API_KEY`, else Wikimedia Commons or the Internet Archive),
-and it plays in a white-framed card where the drawing would be, with its
-credit. The editor's pass uses a drawing for the cast's moments and a clip for
-the world, about one in three scenes. The model is How Money Works:
-`docs/style-how-money-works.md`.
+Footage is a scene of its own, the way How Money Works cuts away from the
+board to the world:
+
+```
+[broll search="crowd rushing busy street" caption="What ignoring it looks like"]
+Everyone pays it and nobody looks.
+```
+
+The clip fills the whole frame with a slow push-in, the caption on a white
+label in the corner, the credit beside it; a hard cut in and a hard cut back to
+a clean board. The render's footage finder fetches a free-use clip for it,
+Pixabay first (`PIXABAY_API_KEY`), then Pexels (`PEXELS_API_KEY`), Wikimedia
+Commons and the Internet Archive, and writes `src=` and `credit=` back into the
+script. With no footage yet the frame says what was asked for. The editor's
+pass puts about one broll scene in every four, between board scenes.
+
+`clip="busy high street"` on a text scene still gives the small framed card
+beside the words, for when the words must stay on screen.
+
+### Real figures and news
+
+A finance video should show the real number, not a guess, with the publisher
+and the month it was published. Put `fact=` on a stat scene:
+
+```
+[stat fact="uk.cpi" sub="and your savings pay less"]
+Inflation is running at nearly four per cent.
+
+[stat fact="base rate"]
+The Bank of England base rate is four per cent.
+```
+
+Before the render, `pipeline/find_facts.py` fills `value=`, `source=` ("ONS,
+September 2026") and a label from the official series: the Office for National
+Statistics API (inflation, unemployment, pay growth, GDP, the saving ratio),
+the Bank of England's database (Bank Rate, mortgage rates) and FRED (US
+inflation, the Fed funds rate, unemployment, mortgage rates, median income, the
+S&P 500). Allowances that change once a year (the ISA allowance, the Lifetime
+ISA bonus, the personal allowance, the state pension, the 401(k) and IRA
+limits) are fixed with their tax year and checked each April. `fact=` takes a
+key or plain words; `python3 -m pipeline.find_facts --list` prints the
+catalogue.
+
+For what may happen (a rule changing, a rate rising, a government plan), a
+news scene pins a real headline to the board with its outlet and date:
+
+```
+[news search="state pension age rise"]
+The government is looking at raising the pension age again.
+```
+
+The render finds the most recent article from a reputable outlet (BBC, the
+Guardian, the FT, Reuters, Bloomberg, the Times, the Telegraph, Sky, Which?,
+MoneySavingExpert, GOV.UK and the US equivalents) through the GDELT index, or
+you write `headline=`, `outlet=`, `date=` and `url=` yourself.
+
+Every render writes `facts-report.md`: the figures filled, the headlines found,
+and every sentence that states a figure or a UK/US claim without a source on
+the board, for the editor's pass to verify. The rule is in EDITOR.md: real
+figures with a publisher and date, the host's own numbers excepted.
 
 ### Standing rules for the pictures
 

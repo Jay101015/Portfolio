@@ -28,15 +28,18 @@ is not, the scene is cut in the wrong place.
    broken-car, a reaction). Never a greeting, never the channel name, never "in this video", never a vague line.
 2. `[title kicker="<3 or 4 words>" subtitle="<the promise, with the number>"]` holding the rest of the opening.
 3. Every `[text]` scene gets `board="<a proper headline, 3 to 8 words, that a viewer would repeat: the point of
-   that paragraph, not a fragment of it>"` and either `art="<a drawing name from the list below that shows the
-   moment the paragraph describes>"` or `clip="<3 to 5 words of stock b-roll to search for>"` (a busy high
-   street, a car dealership, a payslip on a desk, a bank branch, a supermarket till). The drawing for the cast's
-   moments (Sam, Maya, a feeling), the clip for the world (places, money, work, shops), roughly one clip in every
-   three scenes, so the video moves like a documentary: the model is How Money Works (see
-   docs/style-how-money-works.md). The render fetches the clip from Pexels, Wikimedia Commons or the Internet
-   Archive (`pipeline/find_footage.py`) and shows its credit. The drawings must tell the story in order with the words (payday, then rent-day, then
+   that paragraph, not a fragment of it>"` and `art="<a drawing name from the list below that shows the moment the
+   paragraph describes>"`. The drawings must tell the story in order with the words (payday, then rent-day, then
    piggy-coin...), a reaction drawing (sam-*, maya-*) for a feeling, and the board line must not say what the drawing
    already shows. The same drawing may come back when the same moment does.
+   Stock footage is its own scene, never a picture beside the words: `[broll search="<3 to 5 words of stock
+   footage to search for>" caption="<the point, 2 to 6 words>"]` holding the sentence or two about the world
+   (places, money, work, shops, crowds: a busy high street, a car dealership, a payslip on a desk, a bank branch,
+   a supermarket till). The footage fills the whole frame with the caption on a white label and the credit, the
+   way How Money Works cuts to footage (see docs/style-how-money-works.md). Roughly one broll scene in every
+   four, between board scenes, so the video moves like a documentary; the render fetches it from Pixabay, Pexels,
+   Wikimedia Commons or the Internet Archive (`pipeline/find_footage.py`). (`clip=` on a text scene still gives
+   the small framed card beside the words; use it only when the words must stay on screen.)
 4. `[stat value="<the figure>" label="<what it is, handwritten>" sub="<short note>"]` only where the narration states
    a real figure; the value is a figure actually said, formatted (£2,400, 20%). Never a stat with a made-up or
    meaningless value.
@@ -45,6 +48,19 @@ is not, the scene is cut in the wrong place.
 6. `[recap title="<2 or 3 words>"]` with 2 to 4 `- ` lines (one per takeaway, in order) on the paragraph where the
    host sums up: the `- ` lines first, then the narration.
 7. Keep an `[outro]` if there is one; one is added at render time if not.
+8. Real figures, never guesses. Where the host states or leans on a figure about the UK or the US (inflation, the
+   base rate, a tax allowance, the state pension, US rates, what people earn or save), the board shows the real
+   number with its publisher and date: `[stat fact="<a catalogue key or plain words: uk.cpi, base rate, isa
+   allowance, us inflation>" sub="<short note>"]` on that paragraph. The render fills `value=`, `source=` ("ONS,
+   September 2026") and a label from the official series (ONS, Bank of England, FRED for the US; `python3 -m
+   pipeline.find_facts --list` prints the catalogue). A figure the catalogue does not carry: look it up (web
+   search, an official or reputable source), write `value=` and `source="<publisher>, <month year>"` yourself,
+   and never round it into a different claim. Where the host says what may happen (a rule changing, a rate rising,
+   the government planning something), a `[news search="<what it is about, 3 to 6 words>"]` scene holding that
+   sentence: the render pins a real headline with its outlet and date (reputable outlets only), or you write
+   `headline=`, `outlet=`, `date=` and `url=` from what you found. The host's own numbers (what I put in each
+   month, what I earn) need no source. After a render, facts-report.md lists every sentence that states a figure
+   without a source: give each one a fact, a source, a news scene, or leave it as the host's own experience.
 
 Headlines are plain spoken English, sentence case, no hashtags, no exclamation marks. The money words land in
 colour by themselves: the figure in a line is green, or red when the line is about a fee, a loss, a debt.

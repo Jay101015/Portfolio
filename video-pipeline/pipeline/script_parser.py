@@ -31,7 +31,7 @@ from typing import Any
 
 WORDS_PER_SEC = 2.6  # typical YouTube narration pace; replaced by real timings after alignment
 SCENE_GAP_SEC = 0.35
-SCENE_TYPES = {"title", "text", "stat", "list", "chart", "compare", "quote", "image", "still", "clip", "poster", "score", "avatar", "outro", "art", "bite", "grow", "pie", "shrink", "takeaway", "recap", "hook"}
+SCENE_TYPES = {"title", "text", "stat", "list", "chart", "compare", "quote", "image", "still", "clip", "poster", "score", "avatar", "outro", "art", "bite", "grow", "pie", "shrink", "takeaway", "recap", "hook", "broll", "news"}
 
 TAG_RE = re.compile(r"^\[(\w+)([^\]]*)\]\s*$")
 ATTR_RE = re.compile(r'(\w+)=(?:"([^"]*)"|(\S+))')
@@ -111,7 +111,8 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
             if k in a:
                 p[k] = a[k]
     elif b.type == "stat":
-        for k in ("value", "label", "sub", "source", "from", "trend"):
+        # fact="uk.cpi" (or plain words: "uk inflation") is filled in at render time with the real figure, its source and date
+        for k in ("value", "label", "sub", "source", "from", "trend", "fact"):
             if k in a:
                 p[k] = a[k]
         if "count" in a:
@@ -165,7 +166,8 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
         for k in ("src", "caption", "prompt", "credit", "zoom", "search", "fallback", "want", "from", "focus", "mag", "rotate", "flip", "bright", "contrast", "sat", "bw", "look"):
             if k in a:
                 p[k] = a[k]
-    elif b.type == "clip":
+    elif b.type in ("clip", "broll"):
+        # broll: the footage fills the whole frame, a short caption and the credit over it; clip: the framed card
         for k in ("src", "caption", "credit", "fallback", "search", "want", "zoom", "focus", "mag", "rotate", "flip", "bright", "contrast", "sat", "bw", "look"):
             if k in a:
                 p[k] = a[k]
@@ -173,6 +175,11 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
             p["from"] = float(a["from"])
         if "vol" in a:
             p["vol"] = float(a["vol"])
+    elif b.type == "news":
+        # a real headline: search= asks the render to find one (GDELT, reputable outlets), or give headline/outlet/date/url yourself
+        for k in ("search", "headline", "outlet", "date", "url", "caption", "source"):
+            if k in a:
+                p[k] = a[k]
     elif b.type == "poster":
         for k in ("src", "title", "year", "director", "runtime", "genre", "starring", "tagline"):
             if k in a:

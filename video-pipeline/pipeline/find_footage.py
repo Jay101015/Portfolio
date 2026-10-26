@@ -342,17 +342,19 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
                 break
             report["scenes"].append(entry)
             continue
-        if sc["type"] not in ("clip", "still", "image"):
+        if sc["type"] not in ("clip", "still", "image", "broll"):
             continue
         src = p.get("src")
         if src and os.path.exists(os.path.join(media, src)):
             report["scenes"].append({"id": sc["id"], "status": "present", "src": src})
             continue
-        want = "video" if sc["type"] == "clip" else "image"
+        want = "video" if sc["type"] in ("clip", "broll") else "image"
         q = query_for(sc, film)
         entry: dict[str, Any] = {"id": sc["id"], "type": sc["type"], "query": q, "status": "not found", "candidates": []}
         chosen: Hit | None = None
-        for name in providers:
+        # a full-frame b-roll scene wants everyday stock footage: the stock libraries first, the archives last
+        order = [n for n in ("pixabay", "pexels", "commons", "archive") if n in providers] if sc["type"] == "broll" else providers
+        for name in order:
             print(f"scene {sc['id']}: asking {name} for '{q}'", flush=True)
             try:
                 if name == "archive" and pd_film and film:
@@ -365,6 +367,8 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
             for h in hits:
                 entry["candidates"].append({"provider": h.provider, "title": h.title, "license": h.license_name, "page": h.page, "kind": h.kind})
             usable = [h for h in hits if h.license in allowed and (h.kind == want or want == "image")]
+            if sc["type"] == "broll":
+                usable = [h for h in usable if h.kind == "video"]  # the whole frame is the footage: a still will not do
             if usable:
                 chosen = usable[0]
                 break
@@ -381,7 +385,7 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
                 report["scenes"].append(entry)
                 continue
             # Replace the footage and its credit; drop a from= offset that was written for a different file.
-            new_md = rewrite_tag(new_md, sc["id"], sb, {"src": fname, "credit": attribution(chosen)}, to_type="clip" if chosen.kind == "video" else "still", drop=("from",))
+            new_md = rewrite_tag(new_md, sc["id"], sb, {"src": fname, "credit": attribution(chosen)}, to_type=None if sc["type"] == "broll" else ("clip" if chosen.kind == "video" else "still"), drop=("from",))
         report["scenes"].append(entry)
 
     if not dry_run and new_md != md:

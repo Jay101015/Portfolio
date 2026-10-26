@@ -1275,6 +1275,7 @@ export const ArtLayer: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand})
   const {height, width, isVertical} = useLayout();
   const name = pickArt(scene.props.art, undefined);
   if (!name || !brand.board) return null;
+  if (scene.type === 'broll' || scene.type === 'news') return null; // the footage and the clipping carry no drawing
   // on a text scene in the illustrated style a named traced drawing is the scene's big picture (PaperText draws it), unless it was dragged somewhere
   if (brand.illustrated && (scene.type === 'text' || scene.type === 'hook') && isTraced(name) && scene.props.art_x === undefined) return null;
   const at = String(scene.props.art_at ?? (isVertical ? 'br' : 'tr'));
