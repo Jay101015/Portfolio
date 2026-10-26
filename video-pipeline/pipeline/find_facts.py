@@ -47,6 +47,7 @@ class Fact:
     unit: str = ""  # "%", "£", "$", "" (a plain number), "£/week"
     series: str = ""
     dataset: str = ""  # ONS only
+    path: str = ""  # ONS only: the series' section on ons.gov.uk, for the site's own JSON when the API refuses
     aliases: tuple[str, ...] = ()
     value: str = ""  # fixed facts: the figure as written
     asof: str = ""  # fixed facts: the tax year or date it applies to
@@ -57,14 +58,14 @@ class Fact:
 
 CATALOGUE: tuple[Fact, ...] = (
     # --- United Kingdom: live series
-    Fact("uk.cpi", "UK inflation (CPI)", "ONS", "ons", "%", "D7G7", "MM23", ("uk inflation", "inflation", "cpi", "inflation rate", "price rises")),
-    Fact("uk.cpih", "UK inflation (CPIH)", "ONS", "ons", "%", "L55O", "MM23", ("cpih", "inflation including housing")),
+    Fact("uk.cpi", "UK inflation (CPI)", "ONS", "ons", "%", "D7G7", "MM23", path="economy/inflationandpriceindices", aliases=("uk inflation", "inflation", "cpi", "inflation rate", "price rises")),
+    Fact("uk.cpih", "UK inflation (CPIH)", "ONS", "ons", "%", "L55O", "MM23", path="economy/inflationandpriceindices", aliases=("cpih", "inflation including housing")),
     Fact("uk.base-rate", "Bank of England base rate", "Bank of England", "boe", "%", "IUMABEDR", "", ("base rate", "bank rate", "interest rate", "interest rates", "bank of england rate"), decimals=2),
     Fact("uk.mortgage-2y", "Average 2-year fixed mortgage rate (75% LTV)", "Bank of England", "boe", "%", "IUMBV34", "", ("mortgage rate", "mortgage rates", "2 year fix", "two year fix", "fixed rate mortgage"), decimals=2),
-    Fact("uk.unemployment", "UK unemployment rate", "ONS", "ons", "%", "MGSX", "LMS", ("unemployment", "jobless rate", "unemployment rate")),
-    Fact("uk.pay-growth", "UK regular pay growth (a year)", "ONS", "ons", "%", "KAI9", "LMS", ("wage growth", "pay growth", "wages", "pay rises", "earnings growth")),
-    Fact("uk.gdp-growth", "UK GDP growth (quarter on quarter)", "ONS", "ons", "%", "IHYQ", "PN2", ("gdp", "gdp growth", "economy growth", "growth", "recession")),
-    Fact("uk.saving-ratio", "UK households' saving ratio", "ONS", "ons", "%", "DGD8", "UKEA", ("saving ratio", "savings ratio", "savings rate uk", "how much people save")),
+    Fact("uk.unemployment", "UK unemployment rate", "ONS", "ons", "%", "MGSX", "LMS", path="employmentandlabourmarket/peoplenotinwork/unemployment", aliases=("unemployment", "jobless rate", "unemployment rate")),
+    Fact("uk.pay-growth", "UK regular pay growth (a year)", "ONS", "ons", "%", "KAI9", "LMS", path="employmentandlabourmarket/peopleinwork/earningsandworkinghours", aliases=("wage growth", "pay growth", "wages", "pay rises", "earnings growth")),
+    Fact("uk.gdp-growth", "UK GDP growth (quarter on quarter)", "ONS", "ons", "%", "IHYQ", "PN2", path="economy/grossdomesticproductgdp", aliases=("gdp", "gdp growth", "economy growth", "growth", "recession")),
+    Fact("uk.saving-ratio", "UK households' saving ratio", "ONS", "ons", "%", "DGD8", "UKEA", path="economy/grossdomesticproductgdp", aliases=("saving ratio", "savings ratio", "savings rate uk", "how much people save")),
     # --- United Kingdom: allowances and limits (checked each April; the asof is the tax year)
     Fact("uk.isa-allowance", "ISA allowance (a year)", "HMRC", "fixed", "£", aliases=("isa allowance", "isa limit", "isa"), value="£20,000", asof="2025/26 tax year", note="unchanged since April 2017; check the Budget"),
     Fact("uk.lisa-bonus", "Lifetime ISA bonus", "HMRC", "fixed", "%", aliases=("lisa bonus", "lifetime isa bonus", "lisa"), value="25%", asof="2025/26 tax year"),
@@ -161,9 +162,31 @@ def _ons_period(date: str) -> str:
     return date.strip()
 
 
+def ons_urls(f: Fact) -> list[str]:
+    """Three doors to the same series: the website's own JSON, the API, the beta API."""
+    cdid, ds = f.series.lower(), f.dataset.lower()
+    out = []
+    if f.path:
+        out.append(f"https://www.ons.gov.uk/{f.path}/timeseries/{cdid}/{ds}/data")
+    out.append(f"https://api.ons.gov.uk/timeseries/{f.series.upper()}/dataset/{f.dataset.upper()}/data")
+    out.append(f"https://api.beta.ons.gov.uk/v1/timeseries/{cdid}/dataset/{ds}/data")
+    return out
+
+
 def fetch_ons(f: Fact, fetch: Callable[[str], str]) -> Obs:
-    url = f"https://api.ons.gov.uk/timeseries/{f.series.lower()}/dataset/{f.dataset.lower()}/data"
-    d = json.loads(fetch(url))
+    errors = []
+    d: dict[str, Any] = {}
+    for url in ons_urls(f):
+        try:
+            d = json.loads(fetch(url))
+            if d.get("months") or d.get("quarters") or d.get("years"):
+                break
+            errors.append(f"{url.split('/')[2]}: no observations")
+        except Exception as e:  # noqa: BLE001
+            errors.append(f"{url.split('/')[2]}: {str(e)[:60]}")
+            d = {}
+    if not d:
+        raise RuntimeError("; ".join(errors))
     title = str((d.get("description") or {}).get("title", ""))
     for k in ("months", "quarters", "years"):
         rows = d.get(k) or []
@@ -254,20 +277,39 @@ def _gdelt_date(seen: str) -> str:
     return f"{int(m.group(3))} {MONTH_NAMES[int(m.group(2)) - 1]} {m.group(1)}"
 
 
-def find_headline(search: str, fetch: Callable[[str], str], region: str = "uk") -> dict[str, str] | None:
-    """The most recent article from a reputable outlet about `search` (GDELT doc index, last six months)."""
-    q = f'"{search}"' if " " in search and len(search) < 60 else search
-    country = " sourcecountry:UK" if region == "uk" else (" sourcecountry:US" if region == "us" else "")
-    url = "https://api.gdeltproject.org/api/v2/doc/doc?" + urllib.parse.urlencode({"query": q + " sourcelang:english" + country, "mode": "ArtList", "format": "json", "maxrecords": 25, "sort": "DateDesc", "timespan": "6m"})
+def _gdelt(query: str, fetch: Callable[[str], str], timespan: str, notes: list[str]) -> list[dict[str, Any]]:
+    url = "https://api.gdeltproject.org/api/v2/doc/doc?" + urllib.parse.urlencode({"query": query, "mode": "ArtList", "format": "json", "maxrecords": 30, "sort": "DateDesc", "timespan": timespan})
+    raw = fetch(url) or ""
     try:
-        d = json.loads(fetch(url) or "{}")
+        d = json.loads(raw)
     except json.JSONDecodeError:
-        d = {}
+        notes.append(f"gdelt said: {raw.strip()[:100]}")  # GDELT answers a bad query in plain words, not JSON
+        return []
     arts = d.get("articles") or []
-    if not arts and country:
-        return find_headline(search, fetch, region="any")
-    good = [a for a in arts if _outlet(str(a.get("domain", ""))) in GOOD_OUTLETS.values()]
-    pick = (good or arts or [None])[0]
+    notes.append(f"{query} ({timespan}): {len(arts)} article(s)")
+    return arts
+
+
+def find_headline(search: str, fetch: Callable[[str], str], region: str = "uk", notes: list[str] | None = None) -> dict[str, str] | None:
+    """The most recent article from a reputable outlet about `search` (GDELT doc index): the exact phrase in the
+    region's press first, then anywhere, then the words in any order over a year."""
+    notes = notes if notes is not None else []
+    country = " sourcecountry:UK" if region == "uk" else (" sourcecountry:US" if region == "us" else "")
+    phrase = f'"{search}"' if " " in search else search
+    words = " ".join(w for w in re.findall(r"[a-z0-9]+", search.lower()) if len(w) > 2)
+    tries = [(phrase + " sourcelang:english" + country, "6m"), (phrase + " sourcelang:english", "6m"), (words + " sourcelang:english" + country, "12m"), (words + " sourcelang:english", "12m")]
+    seen = set()
+    for q, span in tries:
+        if (q, span) in seen:
+            continue
+        seen.add((q, span))
+        arts = _gdelt(q, fetch, span, notes)
+        good = [a for a in arts if _outlet(str(a.get("domain", ""))) in GOOD_OUTLETS.values()]
+        if good or (arts and span == "12m"):
+            pick = (good or arts)[0]
+            break
+    else:
+        return None
     if not pick:
         return None
     title = re.sub(r"\s+", " ", str(pick.get("title", ""))).replace('"', "'").strip()[:140]
@@ -337,13 +379,14 @@ def fill(project: str, fetch: Callable[[str], str] = _fetch, dry_run: bool = Fal
             search = str(p["search"])
             region = "us" if re.search(r"\b(us|usa|america|american|fed)\b", search, re.I) else "uk"
             print(f"scene {sc['id']}: looking for a headline about '{search}'", flush=True)
+            notes: list[str] = []
             try:
-                hit = find_headline(search, fetch, region)
+                hit = find_headline(search, fetch, region, notes)
             except Exception as e:  # noqa: BLE001
                 report["news"].append({"id": sc["id"], "search": search, "status": f"failed: {str(e)[:120]}"})
                 continue
             if not hit or not hit["headline"]:
-                report["news"].append({"id": sc["id"], "search": search, "status": "nothing found: the editor's pass writes headline=, outlet=, date= and url="})
+                report["news"].append({"id": sc["id"], "search": search, "status": "nothing found (" + "; ".join(notes)[:300] + "): the editor's pass writes headline=, outlet=, date= and url="})
                 continue
             report["news"].append({"id": sc["id"], "search": search, "status": "filled", **hit})
             if not dry_run:

@@ -16,7 +16,7 @@ GDELT = json.dumps({"articles": [
 
 
 def fake_fetch(url: str) -> str:
-    if "api.ons.gov.uk" in url:
+    if "ons.gov.uk" in url:
         return ONS
     if "bankofengland" in url:
         return BOE
@@ -96,3 +96,26 @@ def test_dry_run_leaves_the_script(tmp_path):
     ff.fill(str(proj), fetch=fake_fetch, dry_run=True)
     assert "value=" not in (proj / "script.md").read_text(encoding="utf-8")
     assert os.path.exists(proj / "facts-report.md")
+
+
+def test_unfilled_fact_and_headline_become_board_lines():
+    from pipeline.build import degrade_unfilled
+    sb = parse_script("# F\ntheme: whiteboard\n\n[stat fact=\"base rate\"]\nRates.\n\n[news search=\"pension charge cap\"]\nNews.\n\n[stat fact=\"uk.cpi\" value=\"3.8%\"]\nKept.\n")
+    notes = degrade_unfilled(sb)
+    assert sb["scenes"][0]["type"] == "text" and sb["scenes"][0]["props"]["board"] == "Bank of England base rate"
+    assert sb["scenes"][1]["type"] == "text" and sb["scenes"][1]["props"]["board"] == "Pension charge cap"
+    assert sb["scenes"][2]["type"] == "stat" and len(notes) == 2
+
+
+def test_headline_search_widens_when_the_phrase_finds_nothing():
+    calls = []
+
+    def fetch(url):
+        calls.append(url)
+        if "%22" in url:  # the exact phrase finds nothing
+            return json.dumps({"articles": []})
+        return GDELT
+
+    notes = []
+    hit = ff.find_headline("pension charge cap", fetch, "uk", notes)
+    assert hit and hit["outlet"] == "BBC News" and len(calls) >= 3 and any("12m" in n for n in notes)

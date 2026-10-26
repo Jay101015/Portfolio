@@ -378,6 +378,29 @@ def fit_clip(sc: dict, path: str) -> list[str]:
     return notes
 
 
+def degrade_unfilled(sb: dict) -> list[str]:
+    """A stat whose fact= never got its value, or a news scene with no headline, becomes a text scene with the
+    board line it can honestly show: the figure's name, or the headline's subject. A blank board or a placeholder
+    card never reaches a final."""
+    from .find_facts import resolve
+
+    notes = []
+    for sc in sb["scenes"]:
+        p = sc["props"]
+        if sc["type"] == "stat" and p.get("fact") and not p.get("value"):
+            f = resolve(str(p["fact"]))
+            board = p.get("label") or (f.label if f else str(p["fact"]))
+            sc["type"] = "text"
+            sc["props"] = {"board": board, **({"art": p["art"]} if p.get("art") else {})}
+            notes.append(f"scene {sc['id']}: the real figure for '{p['fact']}' was not filled in; the board shows '{board}' without a number")
+        elif sc["type"] == "news" and not p.get("headline"):
+            board = p.get("caption") or str(p.get("search", "in the news")).strip().capitalize()
+            sc["type"] = "text"
+            sc["props"] = {"board": board}
+            notes.append(f"scene {sc['id']}: no headline was found for '{p.get('search', '')}'; the board shows '{board}' instead of a clipping")
+    return notes
+
+
 def resolve_media(sb: dict, project: str, slug: str) -> list[str]:
     """Point every src at the published copy; swap a clip for its fallback still when the footage is not there."""
     notes = []
@@ -650,6 +673,8 @@ def main(argv: list[str] | None = None) -> int:
         sb["visemes"] = al.visemes_from_words(sb["scenes"], sb["fps"], sb["durationSec"])
 
     # Footage, stills and posters live in <project>/media (images/ still works for older projects).
+    for note in degrade_unfilled(sb):
+        print(note)
     for note in resolve_media(sb, project, slug):
         print(note)
     for folder in ("media", "images"):
