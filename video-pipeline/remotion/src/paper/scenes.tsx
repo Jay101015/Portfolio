@@ -803,7 +803,6 @@ export const PaperOutro: React.FC<P> = ({scene, brand}) => {
           })}
         </div>
       ) : null}
-      <div style={{fontFamily: hand(brand), fontSize: 28 * u, color: brand.muted, marginTop: 50 * u, maxWidth: '80%', opacity: fadeIn(frame, brand.board ? slotsAt + fps : 30, 10)}}>education and entertainment only, not financial, tax or legal advice. do your own research.</div>
     </AbsoluteFill>
   );
 };

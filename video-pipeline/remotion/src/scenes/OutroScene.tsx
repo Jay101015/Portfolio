@@ -32,11 +32,6 @@ export const OutroScene: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand
           ))}
         </div>
       ) : null}
-      <Reveal delay={30} from="none">
-        <div style={{fontSize: 22 * u, color: brand.muted, marginTop: 50 * u, maxWidth: '80%', margin: glossy ? `${50 * u}px auto 0` : undefined}}>
-          This video is for education and entertainment only and is not financial, tax, or legal advice. Do your own research.
-        </div>
-      </Reveal>
     </AbsoluteFill>
   );
 };

@@ -22,7 +22,7 @@ Every year, prices go up, and the same tenner buys you a little bit less.
 [text board="Invest it, don't park it" art="investing-app"]
 So instead of letting it sit there, you put two hundred pounds a month into a low-cost global index fund, inside a stocks and shares ISA, so you never pay tax on the growth.
 
-[grow from="£200" per="month" years="30" rate="7%" label="£200 a month, 30 years" source="7% a year, the market's rough long-run average; illustrative"]
+[grow from="£200" per="month" years="30" rate="7%" label="£200 a month, 30 years"]
 Over thirty years, you'd pay in seventy-two thousand pounds. But if the market grows at around seven percent a year, which it has roughly averaged over the long run, that pot becomes around two hundred and forty-four thousand. Most of that is growth, not your money.
 
 [takeaway title="Time beats amount" n="1" of="1"]
