@@ -13,10 +13,10 @@ Two hundred pounds a month. That's it. Leave it alone for thirty years, and it c
 [title kicker="The Everyday Investor" subtitle="Why small amounts win"]
 Here's how that actually works.
 
-[broll search="british pound notes" caption="Cash is shrinking"]
+[broll search="british pound notes" caption="Cash is shrinking" src="03-british-pound-notes.mp4" credit="Video 295411 by DEZYNE_3D via Pixabay"]
 First, the bad news. Money sitting in your current account is shrinking.
 
-[stat fact="uk.cpi" sub="the same tenner buys a little less"]
+[stat fact="uk.cpi" sub="the same tenner buys a little less" value="3.5%" source="ONS, September 2026" label="UK inflation (CPI)"]
 Every year, prices go up, and the same tenner buys you a little bit less.
 
 [text board="Invest it, don't park it" art="investing-app"]
