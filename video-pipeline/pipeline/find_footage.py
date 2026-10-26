@@ -30,6 +30,7 @@ import re
 import shutil
 import sys
 import urllib.parse
+import urllib.error
 import urllib.request
 from dataclasses import dataclass
 from typing import Any, Callable
@@ -62,8 +63,18 @@ DOWNLOAD_WALL = 240.0  # seconds a single download may take in all (the socket t
 
 def _get_json(url: str, headers: dict[str, str] | None = None) -> Any:
     req = urllib.request.Request(url, headers={"User-Agent": UA, **(headers or {})})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        # Surface the server's own words (Pixabay says '[ERROR 400] "key" is invalid.'), never the key itself.
+        body = ""
+        try:
+            body = e.read().decode("utf-8", "replace").strip()
+        except Exception:
+            pass
+        body = re.sub(r"[0-9a-f]{20,}", "…", body)[:160]
+        raise RuntimeError(f"HTTP {e.code} from {urllib.parse.urlsplit(url).netloc}: {body or e.reason}") from None
 
 
 def _download(url: str, dst: str, headers: dict[str, str] | None = None) -> None:
@@ -303,7 +314,7 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
                     hits = PROVIDERS[name](q, "video", get)
                 except Exception as e:  # noqa: BLE001
                     entry["candidates"].append({"provider": name, "error": str(e)})
-                    answers.append(f"{name}: error {str(e)[:60]}")
+                    answers.append(f"{name}: error {str(e)[:140]}")
                     continue
                 for h in hits:
                     entry["candidates"].append({"provider": h.provider, "title": h.title, "license": h.license_name, "page": h.page, "kind": h.kind})
