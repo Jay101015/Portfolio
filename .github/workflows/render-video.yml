@@ -74,7 +74,7 @@ jobs:
           cache-dependency-path: video-pipeline/requirements.txt
 
       - name: System packages
-        run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+        run: command -v ffmpeg >/dev/null || (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg)
 
       - name: Install
         run: |
