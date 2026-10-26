@@ -161,9 +161,9 @@ class ArtLibraryTests(unittest.TestCase):
         text = "if you have got a credit card an overdraft or a buy now pay later charging you twenty percent paying it off is a guaranteed return no investment beats that step two start an emergency fund money you do not touch unless something goes wrong"
         ws = []
         t = 0.0
-        for w in text.split():
+        for i, w in enumerate(text.split()):
             ws.append({"w": w, "s": round(t, 2), "e": round(t + 0.25, 2)})
-            t += 0.3
+            t += 0.27 + (i % 5) * 0.02  # ordinary gaps of 20 to 100 ms
             if w == "that":  # a breath before "step two"
                 t += 0.6
         sents = sentences(ws)

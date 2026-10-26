@@ -45,7 +45,7 @@ def sentences(words: list[Word]) -> list[list[Word]]:
     punctuated = sum(1 for w in words if re.search(r"[.!?,;:…]$", w["w"])) >= max(3, len(words) // 60)
     gaps = sorted((words[i + 1]["s"] - words[i]["e"]) for i in range(len(words) - 1))
     # without punctuation, break at roughly one gap in twelve: the longest ones
-    breath = gaps[int(len(gaps) * (1 - 1 / 12))] if gaps and not punctuated else 0.9
+    breath = max(0.35, gaps[int(len(gaps) * (1 - 1 / 12))]) if gaps and not punctuated else 0.9  # a breath is at least a third of a second
     cap = 40 if punctuated else 22
     out: list[list[Word]] = []
     cur: list[Word] = []
