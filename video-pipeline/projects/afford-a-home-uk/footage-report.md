@@ -4,9 +4,9 @@ Topic: what each salary can buy in London and across the UK, for a first-time bu
 
 | scene | query | result | licence | attribution |
 |---|---|---|---|---|
-| 10 | apartment building uk | downloaded 10-apartment-building-uk.mp4 | Pixabay Content License | Video 34330 by FilipFilipovic via Pixabay |
-| 21 | commuter train uk | downloaded 21-commuter-train-uk.mp4 | Pixabay Content License | Video 3608 by Coverr-Free-Footage via Pixabay |
-| 24 | estate agent window property listings | downloaded 24-estate-agent-window-property-listings.mp4 | Pixabay Content License | Video 29886 by conolan via Pixabay |
+| 10 | | already in media/: 10-apartment-building-uk.mp4 | | |
+| 21 | | already in media/: 21-commuter-train-uk.mp4 | | |
+| 24 | | already in media/: 24-estate-agent-window-property-listings.mp4 | | |
 | 42 | | already in media/: watch-next-200-1000-10000.mp4 | | |
 
 ## What counts as free use here
