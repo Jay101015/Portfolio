@@ -52,8 +52,10 @@ one change at a time where possible, so a result can be read.
   stock has nothing. Ask Jeffrey for 10-second phone clips of his house hunt for videos like this.
 - The quick transcript dropped a whole sentence (Basildon and Chelmsford). Rule: after a render, diff the script
   against the render's transcript and put back anything missing.
-- One spoken figure was wrong (stamp duty on £1.25 million is about £51,250, not £69,000). Rule: check every
-  figure in the recording before building; flag wrong ones to Jeffrey and keep them off the board.
+- The editor wrongly flagged a correct figure: stamp duty on £1.25 million is £68,750 at the rates from April 2025
+  (0% to £125K, 2%, 5% to £925K, 10% to £1.5M), so Jeffrey's £69,000 was right. Rule: check every figure in the
+  recording before building, and work any tax figure out band by band from the GOV.UK rates page before calling
+  it wrong.
 - Four drawings showed a couple (estate agent's window, viewing, deposit wall, moving boxes) in a video Jeffrey
   asked to be about one buyer. Rule: the people in the drawings match who the video is for; look at every drawing
   on a contact sheet of the render before it goes out, not only the footage.
