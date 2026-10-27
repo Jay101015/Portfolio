@@ -71,8 +71,8 @@ jobs:
           cache: pip
           cache-dependency-path: video-pipeline/requirements.txt
 
-      - name: ffmpeg (a static build from GitHub; apt only as the fallback)
-        timeout-minutes: 10
+      - name: ffmpeg (Ubuntu package first with short timeouts; a stable static build as the fallback)
+        timeout-minutes: 16
         run: bash scripts/install-ffmpeg.sh
 
       - name: Install

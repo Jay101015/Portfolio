@@ -502,7 +502,9 @@ def render(props_path: str, out_path: str, composition: str, concurrency: str | 
     # the index (moov) goes at the front and the voice is one channel: a phone streaming the file from a chat or
     # the studio plays the sound straight away instead of waiting for the whole file (with the index at the end it
     # played picture and no sound), and the voice is mono anyway
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", listing, "-c:v", "copy", "-c:a", "aac", "-ac", "1", "-b:a", "160k", "-movflags", "+faststart", out_path], check=True)
+    # -nostdin and a time limit: a join that stalls (it once sat for an hour after every frame was rendered)
+    # fails the run in minutes instead of using up the whole job
+    subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", listing, "-c:v", "copy", "-c:a", "aac", "-ac", "1", "-b:a", "160k", "-movflags", "+faststart", out_path], check=True, stdin=subprocess.DEVNULL, timeout=900)
     print(f"joined {len(parts)} chunks -> {out_path}", flush=True)
 
 
