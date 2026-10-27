@@ -156,3 +156,7 @@ So, the short version. Banks will usually lend you around 4.5 times your salary.
 
 [text board="Follow my road to a first home" art="keys"]
 And I'll continue to document my search and my road to getting my first home in future videos. Please like and subscribe if you want to see how it goes.
+
+[broll src="watch-next-200-1000-10000.mp4" caption="Watch next: £200, £1,000 or £10,000 after payday" credit="The Everyday Investor" vol=1 dur=91]
+
+[outro title="The Everyday Investor" cta="Subscribe for the next one" dur=20 cards=on]

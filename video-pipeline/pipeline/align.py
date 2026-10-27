@@ -333,6 +333,9 @@ def align(storyboard: dict[str, Any], transcript: list[Word], total_sec: float) 
         nxt = next((starts[j] for j in range(si + 1, n) if starts[j] is not None), None)
         if nxt is not None:
             starts[si] = nxt - dur
+        elif si > 0 and not per_scene[si - 1] and starts[si - 1] is not None and next((j for j in range(si - 1, -1, -1) if per_scene[j]), None) is not None:
+            # silent scenes after the last word run one after another (a "watch next" preview, then the end card)
+            starts[si] = starts[si - 1] + float(scenes[si - 1]["props"].get("dur", 3.0))
         else:
             prev_words = next((per_scene[j] for j in range(si - 1, -1, -1) if per_scene[j]), None)
             starts[si] = (prev_words[-1]["e"] + 0.3) if prev_words else 0.0

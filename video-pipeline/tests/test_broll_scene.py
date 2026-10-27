@@ -137,3 +137,17 @@ def test_scout_writes_a_wide_candidates_sheet_without_downloading(tmp_path, monk
     assert len(report["scenes"][0]["top"]) == 6
     assert sheets and sheets[0][1] == 6
     assert "Scout." in (proj / "script.md").read_text(encoding="utf-8")  # the script is left alone
+
+
+def test_silent_scenes_after_the_last_word_play_one_after_another():
+    from pipeline import align as al
+    from pipeline.script_parser import parse_script
+    md = ('title: T\ntheme: whiteboard\nsource: voiceover\n\n[text board="One"]\nHello there friend.\n\n'
+          '[broll src="next.mp4" caption="Watch next" vol=1 dur=30]\n\n[outro dur=20]\n')
+    words = [{"w": "Hello", "s": 0.5, "e": 0.9}, {"w": "there", "s": 1.0, "e": 1.3}, {"w": "friend.", "s": 1.4, "e": 2.0}]
+    sb = al.align(parse_script(md), words, 2.5)
+    teaser, outro = sb["scenes"][1], sb["scenes"][2]
+    assert teaser["props"]["vol"] == 1
+    assert abs((teaser["end"] - teaser["start"]) - 30) < 0.01
+    assert abs((outro["end"] - outro["start"]) - 20) < 0.01
+    assert sb["durationSec"] >= 2.3 + 50
