@@ -6,6 +6,10 @@ Every board scene carries the slow push-in (`brand.motion` stays on): a still fr
 Every long video aims for **10 minutes** (8 is the floor: YouTube only places mid-roll ads from 8 minutes). The
 length comes from the script, never from slow pacing or padding: a recording under 10 minutes is flagged to Jeffrey
 with the section that would add the minutes, before it is built.
+When a finished recording still falls short, the ending makes up the difference, never the middle: after the last
+spoken word a `[broll src="watch-next-<slug>.mp4" caption="Watch next: <its title>" credit="The Everyday Investor"
+vol=1 dur=<seconds>]` plays the opening of an earlier video of his with its own sound (cut at the end of a sentence,
+up to about 90 seconds), then `[outro dur=20 cards=on]` holds the subscribe page for YouTube's 20-second end screen.
 
 A draft built from a recording has the words but not the board. Before the studio shows it, give it the editor's
 pass: rewrite ONLY the scene tags so the board tells the story properly. The narration is the host's own words,
