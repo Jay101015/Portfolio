@@ -2,6 +2,7 @@
 
 The channel is **The Everyday Investor** (youtube.com/@TheEverydayInvestor1): that name, never MONEY MOVES, on the
 end card, the title kicker and the corner. The host says "Road to £100K" for his own series.
+Every board scene carries the slow push-in (`brand.motion` stays on): a still frame reads as a slide.
 
 A draft built from a recording has the words but not the board. Before the studio shows it, give it the editor's
 pass: rewrite ONLY the scene tags so the board tells the story properly. The narration is the host's own words,
