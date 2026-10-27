@@ -37,7 +37,7 @@ jobs:
       - name: Install
         run: |
           pip install -r requirements.txt
-          command -v ffmpeg || (sudo apt-get update -q && sudo apt-get install -y -q --no-install-recommends ffmpeg)
+          bash scripts/install-ffmpeg.sh
       - name: Search
         env:
           QUERIES: ${{ github.event.inputs.queries }}
