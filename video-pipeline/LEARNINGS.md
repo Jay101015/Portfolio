@@ -34,6 +34,10 @@ one change at a time where possible, so a result can be read.
   Credits in the corner of footage looked like watermarks; rule: credits go in the description (credits.txt).
 - Open question: retention curve not in yet. When it is, note where viewers leave and why.
 
+### Can You Afford a Home? (2026-10-27)
+- Did not (production): the push-in zoom was there but at 3% per scene nobody could see it on a phone. Rule: 4–8%
+  per scene, moving from the first frame (EDITOR.md). Check motion by comparing a scene's first and last frames.
+
 ### Shorts (2026-10-27)
 - 5 to 6 views each on day one, far behind the long video. Too early to judge; check at 7 days. If they stay low,
   test a different first line and on-screen hook before changing anything else.

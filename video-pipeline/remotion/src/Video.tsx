@@ -190,12 +190,13 @@ const Camera: React.FC<{scene: Scene; toon: boolean; push?: boolean; children: R
   const local = useCurrentFrame();
   const {fps, width} = useVideoConfig();
   if (push) {
-    // the board look's slow push-in: about 3% over a scene, eased, reset on every cut, so the frame is never quite
-    // still (a still frame reads as a slide; a moving one reads as film). A one-second cut barely moves.
+    // the board look's slow push-in, reset on every cut, so the frame is never quite still (a still frame reads as a
+    // slide; a moving one reads as film). About 4% on a short scene up to 8% on a long one: 3% was invisible on a
+    // phone. It moves from the first frame (ease-out, not ease-in-out) so the drift is seen, not just the end state.
     const dur = Math.max(1, Math.round((scene.end - scene.start) * fps));
-    const amount = Math.min(0.035, 0.012 + (dur / fps) * 0.0025);
+    const amount = Math.min(0.08, 0.03 + (dur / fps) * 0.004);
     const p = Math.min(1, local / dur);
-    const z = 1 + amount * (p * p * (3 - 2 * p));
+    const z = 1 + amount * (p * (2 - p) * 0.6 + p * 0.4);
     return <AbsoluteFill style={{transform: `scale(${z})`, transformOrigin: '50% 48%'}}>{children}</AbsoluteFill>;
   }
   const t = scene.start + local / fps;

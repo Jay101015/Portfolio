@@ -4,7 +4,7 @@ Read LEARNINGS.md first: every video should beat the last one, and its lessons a
 
 The channel is **The Everyday Investor** (youtube.com/@TheEverydayInvestor1): that name, never MONEY MOVES, on the
 end card, the title kicker and the corner. The host says "Road to £100K" for his own series.
-Every board scene carries the slow push-in (`brand.motion` stays on): a still frame reads as a slide.
+Every board scene carries the slow push-in (`brand.motion` stays on): a still frame reads as a slide. It is 4–8% per scene and moves from the first frame; 3% was invisible on a phone.
 Every long video aims for **10 minutes** (8 is the floor: YouTube only places mid-roll ads from 8 minutes). The
 length comes from the script, never from slow pacing or padding: a recording under 10 minutes is flagged to Jeffrey
 with the section that would add the minutes, before it is built.
