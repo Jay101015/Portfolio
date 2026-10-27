@@ -1577,5 +1577,266 @@
    "work optional"
   ],
   "prompt": "a man in his sixties watering plants in a garden, a dog beside him"
+ },
+ {
+  "name": "isa-shield",
+  "about": "Sam holding a shield marked ISA, three arrows labelled tax bouncing off it",
+  "tags": [
+   "isa",
+   "tax",
+   "shield",
+   "tax-free",
+   "allowance",
+   "protect"
+  ],
+  "search": [
+   "isa",
+   "tax",
+   "tax free",
+   "tax-free",
+   "shield",
+   "allowance",
+   "stocks and shares isa",
+   "cash isa",
+   "protect",
+   "wrapper"
+  ],
+  "prompt": "Sam holding a shield with ISA on it, arrows marked tax bouncing off"
+ },
+ {
+  "name": "lisa-bonus",
+  "about": "Maya dropping a £1,000 note into a glass jar while a hand from above adds a £250 bonus",
+  "tags": [
+   "lisa",
+   "lifetime isa",
+   "bonus",
+   "government",
+   "first home",
+   "25%"
+  ],
+  "search": [
+   "lisa",
+   "lifetime isa",
+   "bonus",
+   "government bonus",
+   "25%",
+   "free money",
+   "first home",
+   "deposit",
+   "top up",
+   "jar"
+  ],
+  "prompt": "Maya putting £1,000 into a jar, a hand from above dropping in £250"
+ },
+ {
+  "name": "pension-match",
+  "about": "Sam and his boss each placing a coin on a stack of coins, labelled me and boss",
+  "tags": [
+   "pension",
+   "employer match",
+   "workplace pension",
+   "contribution",
+   "boss",
+   "match"
+  ],
+  "search": [
+   "pension",
+   "employer",
+   "match",
+   "matching",
+   "workplace pension",
+   "contribution",
+   "boss",
+   "auto-enrolment",
+   "salary sacrifice",
+   "free money"
+  ],
+  "prompt": "two people each putting a coin on a stack, labelled me and boss"
+ },
+ {
+  "name": "phone-balance-drop",
+  "about": "Sam frowning at a phone showing a falling chart, hand on his head",
+  "tags": [
+   "loss",
+   "crash",
+   "dip",
+   "portfolio down",
+   "panic",
+   "red"
+  ],
+  "search": [
+   "loss",
+   "lost",
+   "crash",
+   "dip",
+   "down",
+   "falling",
+   "drop",
+   "red",
+   "panic",
+   "portfolio",
+   "market fell",
+   "sell",
+   "volatility"
+  ],
+  "prompt": "Sam looking at a phone with a falling chart, hand on his head"
+ },
+ {
+  "name": "phone-balance-up",
+  "about": "Maya smiling at a phone showing a rising chart, a small fist pump",
+  "tags": [
+   "gain",
+   "growth",
+   "portfolio up",
+   "green",
+   "win"
+  ],
+  "search": [
+   "gain",
+   "gains",
+   "growth",
+   "up",
+   "rising",
+   "green",
+   "profit",
+   "return",
+   "win",
+   "compound",
+   "portfolio",
+   "market rose"
+  ],
+  "prompt": "Maya looking at a phone with a rising chart, small fist pump"
+ },
+ {
+  "name": "emergency-jar",
+  "about": "a big glass jar labelled 3 months half full of banknotes, a spanner and a cracked phone beside it",
+  "tags": [
+   "emergency fund",
+   "buffer",
+   "3 months",
+   "savings",
+   "rainy day"
+  ],
+  "search": [
+   "emergency fund",
+   "emergency",
+   "buffer",
+   "three months",
+   "3 months",
+   "six months",
+   "rainy day",
+   "safety net",
+   "repair",
+   "broken phone",
+   "car repair",
+   "easy access"
+  ],
+  "prompt": "a glass jar labelled 3 months half full of notes, a spanner and a broken phone beside it"
+ },
+ {
+  "name": "bnpl-boxes",
+  "about": "Sam sitting among parcel boxes, each tagged pay later, worried",
+  "tags": [
+   "bnpl",
+   "buy now pay later",
+   "klarna",
+   "parcels",
+   "debt",
+   "shopping"
+  ],
+  "search": [
+   "buy now pay later",
+   "bnpl",
+   "pay later",
+   "klarna",
+   "clearpay",
+   "parcels",
+   "boxes",
+   "shopping",
+   "instalments",
+   "debt",
+   "late fee",
+   "missed payment"
+  ],
+  "prompt": "Sam surrounded by parcel boxes tagged pay later, worried"
+ },
+ {
+  "name": "inflation-trolley",
+  "about": "Maya at a supermarket trolley frowning at a long receipt with a small up arrow on it",
+  "tags": [
+   "inflation",
+   "prices",
+   "supermarket",
+   "cost of living",
+   "receipt"
+  ],
+  "search": [
+   "inflation",
+   "prices",
+   "price rise",
+   "cost of living",
+   "supermarket",
+   "groceries",
+   "food shop",
+   "receipt",
+   "expensive",
+   "cpi",
+   "purchasing power",
+   "losing value"
+  ],
+  "prompt": "Maya at a supermarket trolley frowning at a receipt with an up arrow"
+ },
+ {
+  "name": "road-to-100k",
+  "about": "a winding road with a sign reading 100K and a small figure walking past milestones of 20K, 40K, 60K, 80K",
+  "tags": [
+   "road to 100k",
+   "series",
+   "goal",
+   "milestone",
+   "journey",
+   "net worth"
+  ],
+  "search": [
+   "road to 100k",
+   "100k",
+   "100,000",
+   "goal",
+   "target",
+   "milestone",
+   "journey",
+   "progress",
+   "net worth",
+   "series",
+   "update",
+   "long way",
+   "path"
+  ],
+  "prompt": "a winding road with a 100K sign and a figure walking past milestones"
+ },
+ {
+  "name": "laptop-standing-order",
+  "about": "a laptop showing a calendar with one date circled and an arrow to a savings jar",
+  "tags": [
+   "standing order",
+   "automatic",
+   "payday",
+   "direct debit",
+   "calendar"
+  ],
+  "search": [
+   "standing order",
+   "automatic",
+   "automate",
+   "direct debit",
+   "calendar",
+   "day after payday",
+   "set and forget",
+   "transfer",
+   "schedule",
+   "pay yourself first",
+   "savings"
+  ],
+  "prompt": "a laptop with a calendar, one date circled, an arrow to a savings jar"
  }
 ]

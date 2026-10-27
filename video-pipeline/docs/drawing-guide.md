@@ -52,6 +52,16 @@ full size per drawing would sharpen them if ever needed.
 - stock-chart-laptop: a young man at a laptop, a chart on the screen climbing up and to the right, his hand on the mouse
 - estate-agent: an estate agent with a clipboard and keys outside a terraced house, a To Let board beside her
 - tax-return: a brown envelope opened on a table, a tax return form and a calculator, a hand with a pen over the form
+- isa-shield: Sam holding a shield marked ISA, three arrows labelled tax bouncing off it
+- lisa-bonus: Maya dropping a £1,000 note into a glass jar while a hand from above adds a £250 bonus
+- pension-match: Sam and his boss each placing a coin on a stack of coins, labelled me and boss
+- phone-balance-drop: Sam frowning at a phone showing a falling chart, hand on his head
+- phone-balance-up: Maya smiling at a phone showing a rising chart, a small fist pump
+- emergency-jar: a big glass jar labelled 3 months half full of banknotes, a spanner and a cracked phone beside it
+- bnpl-boxes: Sam sitting among parcel boxes, each tagged pay later, worried
+- inflation-trolley: Maya at a supermarket trolley frowning at a long receipt with a small up arrow on it
+- road-to-100k: a winding road with a sign reading 100K and a small figure walking past milestones of 20K, 40K, 60K, 80K
+- laptop-standing-order: a laptop showing a calendar with one date circled and an arrow to a savings jar
 - pub-round: three friends at a pub bar with drinks, one tapping a bank card on the reader
 - online-shopping: a young woman on a sofa shopping on her phone, a stack of delivery parcels beside her
 - commute-platform: a young man on a crowded train platform with headphones and a takeaway coffee, a train arriving
