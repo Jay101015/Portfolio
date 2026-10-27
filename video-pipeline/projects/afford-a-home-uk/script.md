@@ -37,7 +37,7 @@ Now the prices. The average home in London is around £550,000. Across the whole
 [takeaway title="On £25,000 a year" n="1" of="4"]
 Let's start at £25,000 a year. At 4.5 times your salary, a bank might lend you around £112,000. Add a £12,000 deposit and your budget is around £125,000. That's around £600 a month.
 
-[broll search="housing estate aerial" stock="189742" caption="£125K: a small-town flat or a terrace"]
+[broll search="housing estate aerial" stock="189742" caption="£125K: a small-town flat or a terrace" src="08-housing-estate-aerial.mp4" credit="Video 189742 by amadeusiom via Pixabay"]
 In London, that's very hard to find. Across the UK, it's a flat in a lot of small towns, or a terraced house in some parts of the North East, Wales and Scotland.
 
 [takeaway title="On £50,000 a year" n="2" of="4"]
@@ -61,7 +61,7 @@ At that price, there's no first-time buyer relief on stamp duty, so you pay arou
 [text board="£250K a year: an average home, not a mansion" art="maya-shrug"]
 Even a quarter of a million a year salary gets you roughly an average home in Kensington or Chelsea. Not a mansion.
 
-[broll search="london skyline thames" stock="27028" caption="London, honestly"]
+[broll search="london skyline thames" stock="27028" caption="London, honestly" src="16-london-skyline-thames.mp4" credit="Video 27028 by davide_giordani via Pixabay"]
 So let's talk about London honestly.
 
 [list title="The average London home"]
@@ -114,7 +114,7 @@ Take the average Essex home. A 10% deposit is around £36,000. Save £1,000 a mo
 [stat value="+£1,000" label="Lifetime ISA bonus on £4,000 a year" sub="2 years 9 months instead of 3" source="GOV.UK"]
 But put £4,000 a year into a Lifetime ISA and the government adds £1,000 per year on top. That cuts it to around two years nine months. Free money, just for saving in the right account.
 
-[broll search="piggy bank coins" stock="93550" caption="£1,000 saved every payday, first"]
+[broll search="piggy bank coins" stock="93550" caption="£1,000 saved every payday, first" src="31-piggy-bank-coins.mp4" credit="Video 93550 by NickyPe via Pixabay"]
 And that's exactly why I put £1,000 into savings every payday, automatically, before I can even spend it. It's the least glamorous part of buying a home, but it's the most important.
 
 [text board="The costs nobody talks about" art="sam-surprised"]

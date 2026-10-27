@@ -4,10 +4,13 @@ Topic: what each salary can buy in London and across the UK, for a first-time bu
 
 | scene | query | result | licence | attribution |
 |---|---|---|---|---|
+| 8 | housing estate aerial | downloaded 08-housing-estate-aerial.mp4 | Pixabay Content License | Video 189742 by amadeusiom via Pixabay |
 | 10 | | already in media/: 10-apartment-building-uk.mp4 | | |
-| 21 | | already in media/: 21-commuter-train-uk.mp4 | | |
-| 24 | | already in media/: 24-estate-agent-window-property-listings.mp4 | | |
-| 42 | | already in media/: watch-next-200-1000-10000.mp4 | | |
+| 16 | london skyline thames | downloaded 16-london-skyline-thames.mp4 | Pixabay Content License | Video 27028 by davide_giordani via Pixabay |
+| 22 | | already in media/: 21-commuter-train-uk.mp4 | | |
+| 25 | | already in media/: 24-estate-agent-window-property-listings.mp4 | | |
+| 31 | piggy bank coins | downloaded 31-piggy-bank-coins.mp4 | Pixabay Content License | Video 93550 by NickyPe via Pixabay |
+| 43 | | already in media/: watch-next-200-1000-10000.mp4 | | |
 
 ## What counts as free use here
 
