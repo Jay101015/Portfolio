@@ -43,7 +43,7 @@ In London, that's very hard to find. Across the UK, it's a flat in a lot of smal
 [takeaway title="On £50,000 a year" n="2" of="4"]
 £50,000. Borrowing jumps to around £225,000. With a £25,000 deposit, that's a budget of £250,000, around £1,200 a month. That's close to the UK average home.
 
-[broll search="apartment building uk" caption="London: a one-bed in the outer boroughs" pick="2"]
+[broll search="apartment building uk" caption="London: a one-bed in the outer boroughs" pick="2" src="10-apartment-building-uk.mp4" credit="Video 34330 by FilipFilipovic via Pixabay"]
 In London, it's still mostly a one-bed flat in outer boroughs, if you can find one.
 
 [takeaway title="On £100,000 a year" n="3" of="4"]
@@ -79,7 +79,7 @@ In Havering, around the Essex border, it's around £449,000. That needs about £
 [text board="£75K on your own, for a flat" art="sam-worried"]
 So if you're searching the outer boroughs, that's your best shot. But you'd still need a salary of around £75,000 or more on your own. And for a house rather than a flat, the numbers get tight really fast.
 
-[broll search="commuter train uk" caption="Looking outside the city" pick="1"]
+[broll search="commuter train uk" caption="Looking outside the city" pick="1" src="21-commuter-train-uk.mp4" credit="Video 3608 by Coverr-Free-Footage via Pixabay"]
 Which is exactly why so many Londoners look outside the city. And that's where my story comes in.
 
 [stat value="£360,000" label="The average home in Essex" sub="£200K less than London" source="HM Land Registry, 2026"]
@@ -89,7 +89,7 @@ The average home in Essex is around £360,000. That's £200,000 less than the av
 bars: Harlow and Thurrock:320000, Southend:328000, Basildon:367000, Chelmsford:378000
 And it varies a lot by town. Harlow, Thurrock: the average home there is around £320,000. Southend, around £328,000. Basildon, £367,000, and Chelmsford, £378,000.
 
-[broll search="estate agent window property listings" caption="It depends on the street" pick="3"]
+[broll search="estate agent window property listings" caption="It depends on the street" pick="3" src="24-estate-agent-window-property-listings.mp4" credit="Video 29886 by conolan via Pixabay"]
 Those are the averages for all homes, so a two or three bed can sit above or below, depending on the street.
 
 [text board="My search: a 2 to 3 bed in Essex" art="house-viewing"]

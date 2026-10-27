@@ -23,10 +23,9 @@ These sentences state a figure or a UK/US claim and the scene has no source on t
 - scene 16: To buy the average home in London with a 10% deposit, you'd need around £55,000 saved and an income of around £111,000.
 - scene 18: In Barking, the average home is around £376,000.
 - scene 20: But you'd still need a salary of around £75,000 or more on your own.
-- scene 23: Harlow, Thurrock: the average home there is around £320,000.
-- scene 25: On my salary of £60,000, a bank would lend me around £270,000.
-- scene 31: As a first-time buyer in England, you pay nothing on the first £300,000, then 5% on the part between £300,000 and £500,000.
-- scene 36: You buy a share of the home, often between 25 and 75%, and pay rent on the rest.
+- scene 26: On my salary of £60,000, a bank would lend me around £270,000.
+- scene 32: As a first-time buyer in England, you pay nothing on the first £300,000, then 5% on the part between £300,000 and £500,000.
+- scene 37: You buy a share of the home, often between 25 and 75%, and pay rent on the rest.
 
 ## The catalogue
 
