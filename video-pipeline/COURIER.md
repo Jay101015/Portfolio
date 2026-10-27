@@ -11,6 +11,9 @@ Read LEARNINGS.md before building; after delivery, add the new video to its scor
 after it is published, pull its numbers (live views, the retention curve, traffic sources) and write what
 worked, what did not, and the rule it changes.
 
+Look at every drawing too (a frame from each board scene on one sheet): the people in them must match who the
+video is for (one buyer, not a couple, when the script says so).
+
 Check the length: the goal is 10 minutes, 8 at the least (mid-roll ads start at 8). Say the running time when the
 video is delivered, and if it is short, which section a fresh recording could add.
 

@@ -46,6 +46,9 @@ one change at a time where possible, so a result can be read.
   against the render's transcript and put back anything missing.
 - One spoken figure was wrong (stamp duty on £1.25 million is about £51,250, not £69,000). Rule: check every
   figure in the recording before building; flag wrong ones to Jeffrey and keep them off the board.
+- Four drawings showed a couple (estate agent's window, viewing, deposit wall, moving boxes) in a video Jeffrey
+  asked to be about one buyer. Rule: the people in the drawings match who the video is for; look at every drawing
+  on a contact sheet of the render before it goes out, not only the footage.
 - Reached 10 minutes with a "watch next" preview of the £200 video and a 20-second end card. To judge at 7 days:
   how many viewers stay into the preview, and whether the £200 video gets views from the end screen.
 

@@ -16,7 +16,7 @@ To buy the average home in London, you'd need to earn around £111,000 a year.
 [title kicker="The Everyday Investor" subtitle="What £25K, £50K, £100K and £250K buy"]
 So what can you actually afford on your salary? In this video, I'll show you what you can buy on £25,000, £50,000, £100,000 and even £250,000, in London and across the UK.
 
-[text board="I'm house hunting too" art="estate-agent-window"]
+[text board="I'm house hunting too" art="estate-agent"]
 And then I'll show you exactly where I land, because I'm also house hunting right now.
 
 [text board="Banks lend about 4.5 times your salary" art="mortgage-offer-letter"]
@@ -92,7 +92,7 @@ And it varies a lot by town. Harlow, Thurrock: the average home there is around 
 [broll search="estate agent window property listings" caption="It depends on the street" pick="3" src="24-estate-agent-window-property-listings.mp4" credit="Video 29886 by conolan via Pixabay"]
 Those are the averages for all homes, so a two or three bed can sit above or below, depending on the street.
 
-[text board="My search: a 2 to 3 bed in Essex" art="house-viewing"]
+[text board="My search: a 2 to 3 bed in Essex" art="train-to-london"]
 So here's what I'm looking for: a two to three bedroom house in Essex.
 
 [list title="My numbers"]
@@ -102,7 +102,7 @@ So here's what I'm looking for: a two to three bedroom house in Essex.
 - About £310,000 to spend
 On my salary of £60,000, a bank would lend me around £270,000. With my deposit of £30 to £40K, my budget comes to around £310,000. That puts me right in the range for a two or three bedroom house, looking around places such as Tilbury.
 
-[text board="The real wall is the deposit" art="deposit-wall"]
+[text board="The real wall is the deposit" art="sam-counting"]
 For most people, though, the real wall isn't the mortgage. It's the deposit.
 
 [stat value="£36,000" label="10% down on the average Essex home" sub="3 years at £1,000 a month"]
@@ -123,7 +123,7 @@ But the house price isn't the whole story. There are costs nobody talks about.
 - Over £500K: no relief
 First, stamp duty. As a first-time buyer in England, you pay nothing on the first £300,000, then 5% on the part between £300,000 and £500,000. So on a £360,000 home, that's about £3,000. On £400,000, £5,000. And if the home costs more than £500,000, you lose the first-time buyer relief.
 
-[text board="Solicitors, surveys, fees: a few thousand more" art="moving-boxes"]
+[text board="Solicitors, surveys, fees: a few thousand more" art="contract-signing"]
 Then there are solicitors, surveys, mortgage fees and moving costs. Budget a few thousand pounds on top of your deposit so you're not caught short.
 
 [text board="Three ways to stretch, each with a catch" art="crossroads"]
