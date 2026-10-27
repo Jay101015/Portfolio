@@ -7,6 +7,13 @@ and loads the result by itself.
 
 ## Before a video goes out
 
+Check the length: the goal is 10 minutes, 8 at the least (mid-roll ads start at 8). Say the running time when the
+video is delivered, and if it is short, which section a fresh recording could add.
+
+Footage the stock libraries do not have (UK streets, terraces, estates, named places) is not forced: push
+`scout.txt` with a few searches first (`.github/workflows/footage-scout.yml`, a contact sheet in minutes on the
+footage-scout release), and where nothing fits use a drawing or Jeffrey's own phone clips.
+
 Open the render's `footage-check.png` (kept with the project and on the release page): one frame from every piece of
 footage beside the words it plays under. For a clip that does not show the idea of its sentence, open
 `footage-candidates.png`: the finder ranked twenty results and shows the chosen clip with the two runners-up. If a

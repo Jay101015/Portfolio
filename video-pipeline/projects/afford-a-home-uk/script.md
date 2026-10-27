@@ -37,13 +37,13 @@ Now the prices. The average home in London is around £550,000. Across the whole
 [takeaway title="On £25,000 a year" n="1" of="4"]
 Let's start at £25,000 a year. At 4.5 times your salary, a bank might lend you around £112,000. Add a £12,000 deposit and your budget is around £125,000. That's around £600 a month.
 
-[broll search="row of terraced houses street" caption="£125K: a small-town terrace" src="08-row-of-terraced-houses-street.mp4" credit="Video 7426 by Life-Of-Vids via Pixabay"]
+[text board="£125K: a small-town flat or a terrace" art="first-flat"]
 In London, that's very hard to find. Across the UK, it's a flat in a lot of small towns, or a terraced house in some parts of the North East, Wales and Scotland.
 
 [takeaway title="On £50,000 a year" n="2" of="4"]
 £50,000. Borrowing jumps to around £225,000. With a £25,000 deposit, that's a budget of £250,000, around £1,200 a month. That's close to the UK average home.
 
-[broll search="apartment block balconies exterior" caption="London: a one-bed in the outer boroughs" src="10-apartment-block-balconies-exterior.mp4" credit="Video 61193 by Train_Video via Pixabay"]
+[broll search="apartment building uk" caption="London: a one-bed in the outer boroughs" pick="2"]
 In London, it's still mostly a one-bed flat in outer boroughs, if you can find one.
 
 [takeaway title="On £100,000 a year" n="3" of="4"]
@@ -58,7 +58,7 @@ And now, £250,000 a year. Top 1% territory. At 4.5 times, the bank could lend y
 [text board="No first-time buyer relief up here" art="stamp-duty-receipt"]
 At that price, there's no first-time buyer relief on stamp duty, so you pay around £69,000 in stamp duty alone.
 
-[broll search="white stucco townhouses street" caption="£250K a year: an average Kensington home" src="15-white-stucco-townhouses-street.mp4" credit="Video 1697 by Activedia via Pixabay"]
+[text board="£250K a year: an average home, not a mansion" art="maya-shrug"]
 Even a quarter of a million a year salary gets you roughly an average home in Kensington or Chelsea. Not a mansion.
 
 [list title="The average London home"]
@@ -79,7 +79,7 @@ In Havering, around the Essex border, it's around £449,000. That needs about £
 [text board="£75K on your own, for a flat" art="sam-worried"]
 So if you're searching the outer boroughs, that's your best shot. But you'd still need a salary of around £75,000 or more on your own. And for a house rather than a flat, the numbers get tight really fast.
 
-[broll search="commuters train station platform" caption="Looking outside the city" src="21-commuters-train-station-platform.mp4" credit="Video 9831 by Sephelonor via Pixabay"]
+[broll search="commuter train uk" caption="Looking outside the city" pick="1"]
 Which is exactly why so many Londoners look outside the city. And that's where my story comes in.
 
 [stat value="£360,000" label="The average home in Essex" sub="£200K less than London" source="HM Land Registry, 2026"]
@@ -123,7 +123,7 @@ But the house price isn't the whole story. There are costs nobody talks about.
 - Over £500K: no relief
 First, stamp duty. As a first-time buyer in England, you pay nothing on the first £300,000, then 5% on the part between £300,000 and £500,000. So on a £360,000 home, that's about £3,000. On £400,000, £5,000. And if the home costs more than £500,000, you lose the first-time buyer relief.
 
-[broll search="packing cardboard moving boxes" caption="A few thousand on top" src="32-packing-cardboard-moving-boxes.mp4" credit="Video 8686 by matlevesque via Pixabay"]
+[text board="Solicitors, surveys, fees: a few thousand more" art="moving-boxes"]
 Then there are solicitors, surveys, mortgage fees and moving costs. Budget a few thousand pounds on top of your deposit so you're not caught short.
 
 [text board="Three ways to stretch, each with a catch" art="crossroads"]

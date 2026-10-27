@@ -3,6 +3,9 @@
 The channel is **The Everyday Investor** (youtube.com/@TheEverydayInvestor1): that name, never MONEY MOVES, on the
 end card, the title kicker and the corner. The host says "Road to £100K" for his own series.
 Every board scene carries the slow push-in (`brand.motion` stays on): a still frame reads as a slide.
+Every long video aims for **10 minutes** (8 is the floor: YouTube only places mid-roll ads from 8 minutes). The
+length comes from the script, never from slow pacing or padding: a recording under 10 minutes is flagged to Jeffrey
+with the section that would add the minutes, before it is built.
 
 A draft built from a recording has the words but not the board. Before the studio shows it, give it the editor's
 pass: rewrite ONLY the scene tags so the board tells the story properly. The narration is the host's own words,
