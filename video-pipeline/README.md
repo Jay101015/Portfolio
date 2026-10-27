@@ -805,6 +805,9 @@ Built in on purpose:
 - Every `clip`, `still`, `image` and `broll` carries a `credit=` tag. It is not drawn on the picture (a line in
   the corner reads as a watermark): every render writes `credits.txt`, one line per piece of footage, to paste
   into the video description. `credits: screen` in the header draws them on the picture as well.
+- Named companies and public bodies are not in stock: docs/footage-sources.md lists the press rooms and
+  Open Government Licence sources that are free for commentary, and how a link in `media/sources.txt` gets a clip
+  into a scene.
 - The finder ranks twenty results a scene (words in common with the search, how often the clip has been used, a
   landscape frame, a length that fits) and never simply takes the library's first. `footage-candidates.png` shows
   the chosen clip and two runners-up per scene; `pick=2` on the scene takes the second.

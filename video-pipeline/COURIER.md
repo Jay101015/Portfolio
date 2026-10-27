@@ -12,7 +12,9 @@ footage beside the words it plays under. For a clip that does not show the idea 
 `footage-candidates.png`: the finder ranked twenty results and shows the chosen clip with the two runners-up. If a
 runner-up is right, put `pick=2` (or `pick=3`) on the scene, drop its `src=`/`credit=` and delete the file from
 `media/`; if none is right, change the `search=` words to name the thing in the picture. Either way before the
-video is sent. The same for the opening: the first five seconds are checked frame by frame.
+video is sent. The same for the opening: the first five seconds are checked frame by frame. A scene that names a
+company or a public body gets its footage from that organisation's press room or an Open Government Licence source
+(docs/footage-sources.md), linked in media/sources.txt, not from a stock search.
 
 ## Steps (for Claude in the courier session, when the user says "send")
 

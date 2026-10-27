@@ -43,7 +43,11 @@ is not, the scene is cut in the wrong place.
    way How Money Works cuts to footage (see docs/style-how-money-works.md). The search words name what is in
    the picture of the idea (things and actions: a supermarket trolley, hands counting notes, keys handed over),
    never a place or a mood for its own sake ("london rain" finds the London Eye); the clip must show what the
-   sentence is about, and the render's footage-check.png is looked at before the video goes out. Roughly one broll scene in every
+   sentence is about, and the render's footage-check.png is looked at before the video goes out. When the sentence
+   names a company, a person or a public body (Microsoft, HMRC, the Bank of England, the Chancellor), stock has
+   nothing: use that organisation's own press footage or an Open Government Licence clip, linked in
+   media/sources.txt and put on the scene as src= with credit= (docs/footage-sources.md lists where to look and
+   the terms); never a broadcaster's clip as decoration. Roughly one broll scene in every
    four, between board scenes, so the video moves like a documentary; the render fetches it from Pixabay, Pexels,
    Wikimedia Commons or the Internet Archive (`pipeline/find_footage.py`). (`clip=` on a text scene still gives
    the small framed card beside the words; use it only when the words must stay on screen.)
