@@ -62,6 +62,16 @@ full size per drawing would sharpen them if ever needed.
 - inflation-trolley: Maya at a supermarket trolley frowning at a long receipt with a small up arrow on it
 - road-to-100k: a winding road with a sign reading 100K and a small figure walking past milestones of 20K, 40K, 60K, 80K
 - laptop-standing-order: a laptop showing a calendar with one date circled and an arrow to a savings jar
+- cash-vs-stocks-isa: Maya at a signpost with two arms, Cash ISA one way and Stocks & Shares the other, wondering which
+- overdraft-hole: Sam sitting at the bottom of a hole with a ladder up it, a bank card lying at the top edge
+- credit-score-meter: Sam watching a speedometer-style dial with a needle in the middle, thinking
+- student-loan-letter: Maya reading a letter at a table with a graduation cap on it
+- car-finance-monthly: Sam in a car showroom looking at a price tag that reads per month, thinking
+- christmas-bags: Maya with a pile of shopping bags with bows, reading a long receipt
+- first-flat: Maya holding a cardboard box in an empty flat, keys in her other hand
+- index-fund-basket: one big basket full of dozens of small eggs, a hand placing one more in
+- sam-celebrating: Sam with both arms raised and a big grin
+- maya-shrug: Maya shrugging with her palms up, no idea
 - pub-round: three friends at a pub bar with drinks, one tapping a bank card on the reader
 - online-shopping: a young woman on a sofa shopping on her phone, a stack of delivery parcels beside her
 - commute-platform: a young man on a crowded train platform with headphones and a takeaway coffee, a train arriving

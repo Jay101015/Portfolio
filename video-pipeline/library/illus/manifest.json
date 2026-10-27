@@ -1838,5 +1838,266 @@
    "savings"
   ],
   "prompt": "a laptop with a calendar, one date circled, an arrow to a savings jar"
+ },
+ {
+  "name": "cash-vs-stocks-isa",
+  "about": "Maya at a signpost with two arms, Cash ISA one way and Stocks & Shares the other, wondering which",
+  "tags": [
+   "isa",
+   "cash isa",
+   "stocks and shares isa",
+   "choice",
+   "which isa"
+  ],
+  "search": [
+   "isa",
+   "cash isa",
+   "stocks and shares isa",
+   "s&s isa",
+   "which isa",
+   "choice",
+   "choose",
+   "decide",
+   "either",
+   "versus",
+   "signpost",
+   "two options"
+  ],
+  "prompt": "Maya at a signpost reading Cash ISA and Stocks & Shares"
+ },
+ {
+  "name": "overdraft-hole",
+  "about": "Sam sitting at the bottom of a hole with a ladder up it, a bank card lying at the top edge",
+  "tags": [
+   "overdraft",
+   "debt",
+   "hole",
+   "in the red",
+   "climb out"
+  ],
+  "search": [
+   "overdraft",
+   "overdrawn",
+   "in the red",
+   "debt",
+   "hole",
+   "dig out",
+   "climb out",
+   "minus",
+   "bank charges",
+   "arranged overdraft",
+   "unarranged"
+  ],
+  "prompt": "Sam at the bottom of a hole with a ladder, a bank card at the top"
+ },
+ {
+  "name": "credit-score-meter",
+  "about": "Sam watching a speedometer-style dial with a needle in the middle, thinking",
+  "tags": [
+   "credit score",
+   "credit rating",
+   "dial",
+   "meter",
+   "experian"
+  ],
+  "search": [
+   "credit score",
+   "credit rating",
+   "credit file",
+   "experian",
+   "equifax",
+   "clearscore",
+   "score",
+   "rating",
+   "meter",
+   "dial",
+   "eligibility",
+   "soft check"
+  ],
+  "prompt": "a speedometer dial with a needle, Sam watching it nervously"
+ },
+ {
+  "name": "student-loan-letter",
+  "about": "Maya reading a letter at a table with a graduation cap on it",
+  "tags": [
+   "student loan",
+   "graduate",
+   "plan 2",
+   "repayment",
+   "letter"
+  ],
+  "search": [
+   "student loan",
+   "student finance",
+   "slc",
+   "plan 2",
+   "plan 5",
+   "graduate",
+   "repayment",
+   "9%",
+   "threshold",
+   "letter",
+   "uni",
+   "university"
+  ],
+  "prompt": "Maya reading a letter at a table, a graduation cap beside her"
+ },
+ {
+  "name": "car-finance-monthly",
+  "about": "Sam in a car showroom looking at a price tag that reads per month, thinking",
+  "tags": [
+   "car finance",
+   "pcp",
+   "per month",
+   "showroom",
+   "monthly payment"
+  ],
+  "search": [
+   "car finance",
+   "pcp",
+   "hp",
+   "hire purchase",
+   "per month",
+   "monthly payment",
+   "showroom",
+   "dealership",
+   "new car",
+   "lease",
+   "balloon payment",
+   "apr"
+  ],
+  "prompt": "Sam in a car showroom looking at a tag reading per month"
+ },
+ {
+  "name": "christmas-bags",
+  "about": "Maya with a pile of shopping bags with bows, reading a long receipt",
+  "tags": [
+   "christmas",
+   "presents",
+   "gifts",
+   "shopping",
+   "overspend",
+   "january"
+  ],
+  "search": [
+   "christmas",
+   "xmas",
+   "presents",
+   "gifts",
+   "festive",
+   "december",
+   "january",
+   "shopping bags",
+   "receipt",
+   "overspent",
+   "black friday",
+   "sales"
+  ],
+  "prompt": "Maya with shopping bags with bows, holding a long receipt"
+ },
+ {
+  "name": "first-flat",
+  "about": "Maya holding a cardboard box in an empty flat, keys in her other hand",
+  "tags": [
+   "first flat",
+   "moving out",
+   "renting",
+   "keys",
+   "move in"
+  ],
+  "search": [
+   "first flat",
+   "moving out",
+   "move out",
+   "moving in",
+   "renting",
+   "rent",
+   "tenant",
+   "deposit",
+   "keys",
+   "flat",
+   "apartment",
+   "empty room",
+   "landlord"
+  ],
+  "prompt": "Maya holding a box in an empty flat, keys in her other hand"
+ },
+ {
+  "name": "index-fund-basket",
+  "about": "one big basket full of dozens of small eggs, a hand placing one more in",
+  "tags": [
+   "index fund",
+   "diversify",
+   "eggs in one basket",
+   "spread",
+   "global fund"
+  ],
+  "search": [
+   "index fund",
+   "tracker",
+   "diversify",
+   "diversification",
+   "spread",
+   "basket",
+   "eggs",
+   "all in one",
+   "global",
+   "s&p 500",
+   "ftse",
+   "etf",
+   "fund"
+  ],
+  "prompt": "a basket full of eggs, a hand placing one more in"
+ },
+ {
+  "name": "sam-celebrating",
+  "about": "Sam with both arms raised and a big grin",
+  "tags": [
+   "celebrate",
+   "win",
+   "yes",
+   "goal hit",
+   "delighted"
+  ],
+  "search": [
+   "celebrate",
+   "celebrating",
+   "win",
+   "won",
+   "yes",
+   "did it",
+   "hit the goal",
+   "milestone",
+   "delighted",
+   "finally",
+   "paid off",
+   "debt free"
+  ],
+  "prompt": "Sam with both arms up, big grin"
+ },
+ {
+  "name": "maya-shrug",
+  "about": "Maya shrugging with her palms up, no idea",
+  "tags": [
+   "shrug",
+   "no idea",
+   "unsure",
+   "dunno",
+   "confused"
+  ],
+  "search": [
+   "shrug",
+   "no idea",
+   "don't know",
+   "dunno",
+   "unsure",
+   "not sure",
+   "confused",
+   "who knows",
+   "guess",
+   "whatever",
+   "doesn't matter"
+  ],
+  "prompt": "Maya shrugging, palms up"
  }
 ]
