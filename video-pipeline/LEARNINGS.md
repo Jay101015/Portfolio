@@ -18,7 +18,7 @@ one change at a time where possible, so a result can be read.
 | What To Do With £200, £1,000 and £10,000 After Payday | 7:29 | 2026-10-26 | 149 (day 1) | not yet in analytics | best start so far |
 | Short: What to do with £200 | 0:48 | 2026-10-27 | 6 (day 1) | | |
 | Short: Looking to purchase your first home? | 0:44 | 2026-10-27 | 5 (day 1) | | |
-| Can You Afford a Home? (London and the UK) | 10:01 | not yet | | | first 10-minute build |
+| Can You Afford a Home? (London and the UK) | 10:04 | not yet | | | first 10-minute build; levelled to -14 LUFS; ad breaks ~2:55, ~5:46, 8:10 |
 
 ## Lessons so far
 
