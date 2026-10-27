@@ -14,6 +14,9 @@ worked, what did not, and the rule it changes.
 Look at every drawing too (a frame from each board scene on one sheet): the people in them must match who the
 video is for (one buyer, not a couple, when the script says so).
 
+Check the loudness: every file (the long video and each Short) should read about -14 LUFS
+(`ffmpeg -i <file> -af ebur128 -f null -`); the render levels them itself, so a file far off means that step failed.
+
 Check the length: the goal is 10 minutes, 8 at the least (mid-roll ads start at 8). Say the running time when the
 video is delivered, and if it is short, which section a fresh recording could add.
 

@@ -151,3 +151,22 @@ def test_silent_scenes_after_the_last_word_play_one_after_another():
     assert abs((teaser["end"] - teaser["start"]) - 30) < 0.01
     assert abs((outro["end"] - outro["start"]) - 20) < 0.01
     assert sb["durationSec"] >= 2.3 + 50
+
+
+def test_level_audio_brings_a_quiet_video_to_minus_14_lufs(tmp_path):
+    import json as _json
+    import shutil
+    import subprocess as sp
+    import pytest
+    if not shutil.which("ffmpeg"):
+        pytest.skip("ffmpeg not installed")
+    from pipeline.build import level_audio
+    src = tmp_path / "quiet.mp4"
+    sp.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-f", "lavfi", "-i", "color=c=white:s=320x180:d=6", "-f", "lavfi",
+            "-i", "sine=frequency=440:duration=6,volume=0.05", "-shortest", "-c:v", "libx264", "-c:a", "aac", str(src)], check=True)
+    note = level_audio(str(src))
+    assert note and "-> -14 LUFS" in note
+    out = sp.run(["ffmpeg", "-nostdin", "-hide_banner", "-i", str(src), "-af", "loudnorm=print_format=json", "-f", "null", "-"],
+                 capture_output=True, text=True).stderr
+    m = _json.loads(out[out.rindex("{"): out.rindex("}") + 1])
+    assert abs(float(m["input_i"]) + 14) < 1.0

@@ -49,6 +49,9 @@ one change at a time where possible, so a result can be read.
 - Four drawings showed a couple (estate agent's window, viewing, deposit wall, moving boxes) in a video Jeffrey
   asked to be about one buyer. Rule: the people in the drawings match who the video is for; look at every drawing
   on a contact sheet of the render before it goes out, not only the footage.
+- Loudness varied: the long video came out at -16 LUFS and the Shorts between -15 and -18, though the voice was
+  levelled to -14 before rendering (the render and the cuts lose some). YouTube never turns a quiet video up.
+  Rule: every finished file is levelled to -14 LUFS as the last step of the render (build.py `level_audio`).
 - Reached 10 minutes with a "watch next" preview of the £200 video and a 20-second end card. To judge at 7 days:
   how many viewers stay into the preview, and whether the £200 video gets views from the end screen.
 

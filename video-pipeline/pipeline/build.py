@@ -462,6 +462,34 @@ def resolve_media(sb: dict, project: str, slug: str) -> list[str]:
     return notes
 
 
+def level_audio(path: str, target: float = -14.0, peak: float = -1.5) -> str | None:
+    """Bring a finished video's sound to the same loudness as every other one: -14 LUFS (where YouTube plays
+    everything; it turns loud videos down but never quiet ones up) with peaks under -1.5 dBTP. Two passes of
+    ffmpeg's loudnorm, measured then applied as one even gain, so the voice and a "watch next" preview keep
+    their balance and every Short lands at the same level as the long video. The picture is copied untouched.
+    Returns a one-line report, or None when the file has no sound."""
+    probe = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "a", "-show_entries", "stream=index", "-of", "csv=p=0", path], capture_output=True, text=True)
+    if not probe.stdout.strip():
+        return None
+    meas = subprocess.run(["ffmpeg", "-nostdin", "-hide_banner", "-i", path, "-vn", "-af", f"loudnorm=I={target}:TP={peak}:LRA=11:print_format=json", "-f", "null", "-"],
+                          capture_output=True, text=True, stdin=subprocess.DEVNULL, timeout=900)
+    text = meas.stderr
+    try:
+        m = json.loads(text[text.rindex("{"): text.rindex("}") + 1])
+    except ValueError:
+        return f"level: could not measure {os.path.basename(path)}; left as it was"
+    if float(m.get("input_i", "-70")) < -60:
+        return None
+    flt = (f"loudnorm=I={target}:TP={peak}:LRA=11:measured_I={m['input_i']}:measured_TP={m['input_tp']}:"
+           f"measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true")
+    tmp = path + ".level.mp4"
+    subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", path, "-map", "0:v:0", "-map", "0:a:0", "-c:v", "copy", "-af", flt,
+                    "-ar", "48000", "-c:a", "aac", "-ac", "1", "-b:a", "160k", "-movflags", "+faststart", tmp],
+                   check=True, stdin=subprocess.DEVNULL, timeout=900)
+    os.replace(tmp, path)
+    return f"level: {os.path.basename(path)} {float(m['input_i']):.1f} -> {target:.0f} LUFS"
+
+
 def render(props_path: str, out_path: str, composition: str, concurrency: str | None, timeout_ms: int = 120000, chunk: int = 450, retries: int = 2) -> None:
     """Render in frame chunks, retrying a chunk that fails, then join the chunks with ffmpeg.
 
@@ -479,6 +507,9 @@ def render(props_path: str, out_path: str, composition: str, concurrency: str | 
     if chunk <= 0 or total <= chunk:
         if _remotion(base[:4] + [out_path] + base[4:], REMOTION) != 0:
             raise SystemExit("render failed")
+        note = level_audio(out_path)
+        if note:
+            print(note, flush=True)
         return
     tmp = os.path.join(os.path.dirname(out_path), ".cache", "chunks", composition)
     shutil.rmtree(tmp, ignore_errors=True)
@@ -506,6 +537,9 @@ def render(props_path: str, out_path: str, composition: str, concurrency: str | 
     # fails the run in minutes instead of using up the whole job
     subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", listing, "-c:v", "copy", "-c:a", "aac", "-ac", "1", "-b:a", "160k", "-movflags", "+faststart", out_path], check=True, stdin=subprocess.DEVNULL, timeout=900)
     print(f"joined {len(parts)} chunks -> {out_path}", flush=True)
+    note = level_audio(out_path)
+    if note:
+        print(note, flush=True)
 
 
 def keep_spans(src: str, dst: str, spans: list[tuple[float, float]], lead: float, tail: float) -> None:
