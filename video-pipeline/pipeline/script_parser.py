@@ -171,6 +171,8 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
         for k in ("src", "caption", "credit", "fallback", "search", "want", "zoom", "focus", "mag", "rotate", "flip", "bright", "contrast", "sat", "bw", "look"):
             if k in a:
                 p[k] = a[k]
+        if "pick" in a:  # pick=2: the second of the finder's candidates (footage-candidates.png shows three)
+            p["pick"] = int(a["pick"])
         if "from" in a:
             p["from"] = float(a["from"])
         if "vol" in a:

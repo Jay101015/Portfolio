@@ -54,6 +54,8 @@ class Hit:
     author: str
     page: str  # where it came from, for the report
     ext: str
+    thumb: str = ""  # a small preview image, for footage-candidates.png
+    score: float = 0.0  # the finder's ranking, for the report
 
 
 # ----------------------------------------------------------------------------- http (swappable for tests)
@@ -216,7 +218,7 @@ def search_pixabay(query: str, want: str, get: Callable = _get_json) -> list[Hit
     if not key:
         return []
     if want == "video":
-        url = "https://pixabay.com/api/videos/?" + urllib.parse.urlencode({"key": key, "q": query, "per_page": 5, "safesearch": "true", "video_type": "film"})  # real footage, no cartoons or 3D renders
+        url = "https://pixabay.com/api/videos/?" + urllib.parse.urlencode({"key": key, "q": query, "per_page": 20, "safesearch": "true", "video_type": "film"})  # real footage, no cartoons or 3D renders
         data = get(url)
         hits = []
         for v in relevant(data.get("hits", []), query):
@@ -224,11 +226,13 @@ def search_pixabay(query: str, want: str, get: Callable = _get_json) -> list[Hit
             f = files.get("medium") or files.get("large") or files.get("small")
             if not f or not f.get("url"):
                 continue
-            hit = Hit("pixabay", f"Video {v['id']}", f["url"], "video", "pixabay", "Pixabay Content License", str(v.get("user", "")), str(v.get("pageURL", "")), "mp4")
-            hits.append((int(f.get("height") or 0) > int(f.get("width") or 0), hit))
-        # a phone-shot vertical clip loses two thirds of its picture in a 16:9 frame: landscape first, order kept otherwise
-        return [h for _, h in sorted(hits, key=lambda x: x[0])]
-    url = "https://pixabay.com/api/?" + urllib.parse.urlencode({"key": key, "q": query, "per_page": 5, "image_type": "photo", "safesearch": "true"})
+            hit = Hit("pixabay", f"Video {v['id']}", f["url"], "video", "pixabay", "Pixabay Content License", str(v.get("user", "")), str(v.get("pageURL", "")), "mp4", thumb=str(f.get("thumbnail") or ""))
+            hit.score = rank(v, query, int(f.get("width") or 0), int(f.get("height") or 0))
+            hits.append(hit)
+        # the best-ranked first: the words in common, then how many people have used it, then a landscape frame
+        # and a length that fits a scene; the twentieth result is as welcome as the first if it scores better
+        return sorted(hits, key=lambda h: -h.score)
+    url = "https://pixabay.com/api/?" + urllib.parse.urlencode({"key": key, "q": query, "per_page": 20, "image_type": "photo", "safesearch": "true"})
     data = get(url)
     return [Hit("pixabay", f"Photo {p['id']}", p.get("largeImageURL") or p.get("webformatURL", ""), "image", "pixabay", "Pixabay Content License", str(p.get("user", "")), str(p.get("pageURL", "")), "jpg") for p in relevant(data.get("hits", []), query) if p.get("largeImageURL") or p.get("webformatURL")]
 
@@ -239,6 +243,27 @@ def _stem(w: str) -> str:
         if len(w) > len(end) + 2 and w.endswith(end):
             return w[: -len(end)]
     return w
+
+
+def rank(v: dict[str, Any], query: str, width: int = 0, height: int = 0) -> float:
+    """A stock clip's score: three points a word its tags share with the search, up to three for how often it has
+    been used (a clip thousands of people chose is rarely an owl), two for a landscape frame, one for a length that
+    fits a scene (6 to 40 seconds). The library's own order counts for nothing."""
+    import math
+
+    words = {_stem(w) for w in query.split() if len(w) > 2 and w.lower() not in STOP}
+    have = {_stem(w) for t in str(v.get("tags", "") or "").split(",") for w in t.split()}
+    n = len(words & have)
+    if not n:  # nothing in common with the search: it sits below every clip that has something, however popular
+        return round(math.log10(1 + float(v.get("downloads") or v.get("views") or 0)) / 20, 2)
+    score = 3.0 * n
+    score += min(3.0, math.log10(1 + float(v.get("downloads") or v.get("views") or 0)) / 2)
+    if width and height and width >= height:
+        score += 2.0
+    dur = float(v.get("duration") or 0)
+    if 6 <= dur <= 40:
+        score += 1.0
+    return round(score, 2)
 
 
 def relevant(hits: list[dict[str, Any]], query: str) -> list[dict[str, Any]]:
@@ -402,7 +427,11 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
             if sc["type"] == "broll":
                 usable = [h for h in usable if h.kind == "video"]  # the whole frame is the footage: a still will not do
             if usable:
-                chosen = usable[0]
+                # pick=2 takes the second candidate (footage-candidates.png shows the first three)
+                want_pick = max(1, int(p.get("pick") or 1))
+                chosen = usable[min(want_pick, len(usable)) - 1]
+                entry["top"] = [{"title": h.title, "page": h.page, "thumb": h.thumb, "credit": attribution(h), "score": h.score} for h in usable[:3]]
+                entry["pick"] = min(want_pick, len(usable))
                 break
         if not chosen:
             report["scenes"].append(entry)
@@ -427,7 +456,46 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
     write_report(project, report)
     write_credits(project, parse_script(new_md))
     write_check_sheet(project, parse_script(new_md))
+    if not dry_run:
+        write_candidates_sheet(project, report, download)
     return report
+
+
+def write_candidates_sheet(project: str, report: dict[str, Any], download: Callable = _download, out_name: str = "footage-candidates.png") -> str | None:
+    """footage-candidates.png: for every footage scene the clip that was chosen and the two runners-up, as preview
+    frames with their scores, so a wrong choice is fixed with `pick=2` on the scene rather than a new search."""
+    rows = [s for s in report["scenes"] if s.get("top")]
+    if not rows:
+        return None
+    tmp = os.path.join(project, ".cache", "footage-candidates")
+    shutil.rmtree(tmp, ignore_errors=True)
+    os.makedirs(tmp, exist_ok=True)
+    font = next((f for f in ("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", "/usr/share/fonts/dejavu/DejaVuSans.ttf") if os.path.exists(f)), None)
+    fontopt = f"fontfile={font}:" if font else ""
+    tiles: list[str] = []
+    for r, s in enumerate(rows):
+        for i in range(3):
+            c = s["top"][i] if i < len(s["top"]) else None
+            tile = os.path.join(tmp, f"t{r * 3 + i:03d}.png")
+            label = f"scene {s['id']} pick={i + 1}" + (" (chosen)" if c and i + 1 == s.get("pick", 1) else "") + (f"  {c['title']}  score {c['score']}" if c else "  (no more candidates)")
+            with open(os.path.join(tmp, f"l{r:02d}{i}.txt"), "w", encoding="utf-8") as f:
+                f.write(label)
+            src = None
+            if c and c.get("thumb"):
+                src = os.path.join(tmp, f"p{r:02d}{i}.jpg")
+                try:
+                    download(c["thumb"], src, None)
+                except Exception:  # noqa: BLE001
+                    src = None
+            vf = f"scale=320:180:force_original_aspect_ratio=decrease,pad=320:210:(ow-iw)/2:0:white,drawtext={fontopt}textfile={os.path.join(tmp, f'l{r:02d}{i}.txt')}:fontsize=12:fontcolor=black:x=4:y=186"
+            if src:
+                subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-frames:v", "1", "-vf", vf, tile], check=False)
+            if not os.path.exists(tile):
+                subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "color=c=0xdddddd:size=320x180", "-frames:v", "1", "-vf", vf, tile], check=False)
+            tiles.append(tile)
+    out = os.path.join(project, out_name)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-framerate", "1", "-i", os.path.join(tmp, "t%03d.png"), "-vf", f"tile=3x{len(rows)}:padding=4:color=white", "-frames:v", "1", out], check=False)
+    return out if os.path.exists(out) else None
 
 
 def write_check_sheet(project: str, sb: dict[str, Any], out_name: str = "footage-check.png") -> str | None:

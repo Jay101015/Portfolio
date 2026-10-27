@@ -74,3 +74,47 @@ def test_check_sheet_puts_each_clip_beside_its_words(tmp_path):
     md = 'title: T\n\n[broll search="x" caption="Top up" src="a.mp4" credit="c"]\nTop up your fund to three months of costs.\n\n[text board="B"]\nNo footage here.\n'
     out = write_check_sheet(str(tmp_path), parse_script(md))
     assert out and os.path.getsize(out) > 1000
+
+
+def test_rank_prefers_matching_popular_landscape_clips():
+    from pipeline.find_footage import rank
+
+    owl = rank({"tags": "owl, bird", "downloads": 50000, "duration": 12}, "paying bills laptop", 1920, 1080)
+    weak = rank({"tags": "laptop, desk", "downloads": 3, "duration": 12}, "paying bills laptop", 720, 1280)
+    good = rank({"tags": "laptop, bills, paying", "downloads": 3000, "duration": 15}, "paying bills laptop", 1920, 1080)
+    assert good > weak > owl
+
+
+def test_pick_takes_the_second_candidate_and_lists_the_top_three(tmp_path, monkeypatch):
+    from pipeline import find_footage as ff
+
+    proj = tmp_path / "p"
+    proj.mkdir()
+    (proj / "script.md").write_text('title: T\n\n[broll search="laptop bills" caption="Bills" pick="2"]\nPay them.\n', encoding="utf-8")
+    monkeypatch.setenv("PIXABAY_API_KEY", "k")
+
+    def get(url, headers=None):
+        return {"hits": [
+            {"id": 1, "tags": "laptop, bills", "downloads": 900, "duration": 10, "user": "a", "pageURL": "p1", "videos": {"medium": {"url": "u1", "width": 1920, "height": 1080, "thumbnail": "t1"}}},
+            {"id": 2, "tags": "laptop, bills", "downloads": 800, "duration": 10, "user": "b", "pageURL": "p2", "videos": {"medium": {"url": "u2", "width": 1920, "height": 1080, "thumbnail": "t2"}}},
+            {"id": 3, "tags": "laptop", "downloads": 10, "duration": 10, "user": "c", "pageURL": "p3", "videos": {"medium": {"url": "u3", "width": 1920, "height": 1080, "thumbnail": "t3"}}},
+        ]}
+
+    rep = ff.find(str(proj), ["pixabay"], dry_run=True, get=get)
+    s = rep["scenes"][0]
+    assert s["credit"] == "Video 2 by b via Pixabay" and s["pick"] == 2
+    assert [t["title"] for t in s["top"]] == ["Video 1", "Video 2", "Video 3"]
+
+
+def test_candidates_sheet_is_written(tmp_path):
+    import os
+    import subprocess
+
+    from pipeline.find_footage import write_candidates_sheet
+
+    def download(url, dst, headers=None):
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "testsrc=size=160x90:rate=1", "-frames:v", "1", dst], check=True)
+
+    report = {"scenes": [{"id": 3, "pick": 1, "top": [{"title": "Video 1", "page": "p", "thumb": "x", "credit": "c", "score": 9.0}, {"title": "Video 2", "page": "p", "thumb": "x", "credit": "c", "score": 7.0}]}]}
+    out = write_candidates_sheet(str(tmp_path), report, download)
+    assert out and os.path.getsize(out) > 500
