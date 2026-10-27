@@ -85,8 +85,12 @@ Which is exactly why so many Londoners look outside the city. And that's where m
 [stat value="£360,000" label="The average home in Essex" sub="£200K less than London" source="HM Land Registry, 2026"]
 The average home in Essex is around £360,000. That's £200,000 less than the average home in London, and many towns are still a short train ride into the city.
 
-[broll search="estate agent window property listings" caption="Harlow, Thurrock, Southend: about £320K" src="23-estate-agent-window-property-listings.mp4" credit="Video 1027 by Coverr-Free-Footage via Pixabay"]
-And it varies a lot by town. Harlow, Thurrock: the average home there is around £320,000. Southend, around £328,000.
+[chart bar title="The average home, town by town" y="£" source="HM Land Registry, 2026"]
+bars: Harlow and Thurrock:320000, Southend:328000, Basildon:367000, Chelmsford:378000
+And it varies a lot by town. Harlow, Thurrock: the average home there is around £320,000. Southend, around £328,000. Basildon, £367,000, and Chelmsford, £378,000.
+
+[broll search="estate agent window property listings" caption="It depends on the street" pick="3"]
+Those are the averages for all homes, so a two or three bed can sit above or below, depending on the street.
 
 [text board="My search: a 2 to 3 bed in Essex" art="house-viewing"]
 So here's what I'm looking for: a two to three bedroom house in Essex.

@@ -1,8 +1,8 @@
 {
  "shorts": [
   {"name": "short-1", "scenes": [16, 17, 20], "hook": "London needs £111K a year"},
-  {"name": "short-2", "scenes": [26, 27, 28, 29], "hook": "Free £1,000 a year for your deposit"},
-  {"name": "short-3", "scenes": [22, 24, 25], "hook": "My house hunt: the real numbers"},
-  {"name": "short-4", "scenes": [33, 34, 35], "hook": "Can't afford it? 2 ways people stretch"}
+  {"name": "short-2", "scenes": [27, 28, 29, 30], "hook": "Free £1,000 a year for your deposit"},
+  {"name": "short-3", "scenes": [22, 25, 26], "hook": "My house hunt: the real numbers"},
+  {"name": "short-4", "scenes": [34, 35, 36], "hook": "Can't afford it? 2 ways people stretch"}
  ]
 }
