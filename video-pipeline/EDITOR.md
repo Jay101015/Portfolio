@@ -1,5 +1,7 @@
 # The editor's pass
 
+Read LEARNINGS.md first: every video should beat the last one, and its lessons are rules here.
+
 The channel is **The Everyday Investor** (youtube.com/@TheEverydayInvestor1): that name, never MONEY MOVES, on the
 end card, the title kicker and the corner. The host says "Road to £100K" for his own series.
 Every board scene carries the slow push-in (`brand.motion` stays on): a still frame reads as a slide.

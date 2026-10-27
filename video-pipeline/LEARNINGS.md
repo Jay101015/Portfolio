@@ -1,0 +1,57 @@
+# What each video taught us
+
+Every video should beat the one before it. This file is read before every editor pass (EDITOR.md) and before
+every build (COURIER.md), and updated twice after each upload: at 48 hours and at 7 days, from the channel's own
+numbers (vidIQ: `vidiq_user_videos` for live counts, `vidiq_channel_analytics` with `report=audience_retention`
+and `filters=video==<id>` for the drop-off curve, `report=traffic_sources` for where views came from).
+YouTube's analytics lag two to three days; the per-video counts are near live.
+
+Each entry: the numbers, what worked, what did not, and the rule it changed. A rule that came from a lesson goes
+into EDITOR.md or COURIER.md too, so it is applied, not just remembered. Keep the test list at the bottom honest:
+one change at a time where possible, so a result can be read.
+
+## Scoreboard
+
+| Video | Length | Published | Views (when) | Avg view | Notes |
+| --- | --- | --- | --- | --- | --- |
+| I Turned £3K Into £11K… Then Lost It (Road to £100K Ep. 1) | 9:47 | 2026-10-25 | 17 (day 2) | 4:56, 51% (2 views measured) | personal story |
+| What To Do With £200, £1,000 and £10,000 After Payday | 7:29 | 2026-10-26 | 149 (day 1) | not yet in analytics | best start so far |
+| Short: What to do with £200 | 0:48 | 2026-10-27 | 6 (day 1) | | |
+| Short: Looking to purchase your first home? | 0:44 | 2026-10-27 | 5 (day 1) | | |
+| Can You Afford a Home? (London and the UK) | 10:01 | not yet | | | first 10-minute build |
+
+## Lessons so far
+
+### £200 / £1,000 / £10,000 (2026-10-26)
+- Worked: a concrete money question in the title with three amounts; 149 views in a day on a 5-subscriber
+  channel, so the topic and packaging are pulling viewers in from outside the channel.
+- Did not: 7:29 is under 8 minutes, so no mid-roll ads. Rule: aim for 10 minutes (EDITOR.md).
+- Did not (production): silences cut into the voice at scene changes ("calm" pace) made the delivery sound broken;
+  rule: voiceover videos run tight. The heavy clean-up made a clean recording watery; rule: `voice: natural`.
+  Quick opening cuts ended before the writing finished; rule: writing and drawings are timed to finish inside
+  short scenes. Footage that did not show the sentence (a London Eye under "top up your emergency fund", an owl);
+  rule: footage-check.png is looked at before anything goes out, search words name the thing in the picture.
+  Credits in the corner of footage looked like watermarks; rule: credits go in the description (credits.txt).
+- Open question: retention curve not in yet. When it is, note where viewers leave and why.
+
+### Shorts (2026-10-27)
+- 5 to 6 views each on day one, far behind the long video. Too early to judge; check at 7 days. If they stay low,
+  test a different first line and on-screen hook before changing anything else.
+
+### Can You Afford a Home? (built 2026-10-27)
+- The stock libraries have no UK homes (a search for terraced houses returned rice terraces in Asia, Kensington
+  returned a puppet). Rule: scout footage first (scout.txt), and use a drawing or Jeffrey's own phone clips where
+  stock has nothing. Ask Jeffrey for 10-second phone clips of his house hunt for videos like this.
+- The quick transcript dropped a whole sentence (Basildon and Chelmsford). Rule: after a render, diff the script
+  against the render's transcript and put back anything missing.
+- One spoken figure was wrong (stamp duty on £1.25 million is about £51,250, not £69,000). Rule: check every
+  figure in the recording before building; flag wrong ones to Jeffrey and keep them off the board.
+- Reached 10 minutes with a "watch next" preview of the £200 video and a 20-second end card. To judge at 7 days:
+  how many viewers stay into the preview, and whether the £200 video gets views from the end screen.
+
+## Tests to run next (one at a time)
+1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage?
+2. Thumbnail: a face (Jeffrey) vs no face, once Canva thumbnails are in use.
+3. Shorts: open on the number ("£250 free from the government") vs a question.
+4. Recordings cleaned in Descript (fillers and long pauses cut, sound left natural) vs not: compare retention in
+   the first 60 seconds.

@@ -7,6 +7,10 @@ and loads the result by itself.
 
 ## Before a video goes out
 
+Read LEARNINGS.md before building; after delivery, add the new video to its scoreboard. At 48 hours and 7 days
+after it is published, pull its numbers (live views, the retention curve, traffic sources) and write what
+worked, what did not, and the rule it changes.
+
 Check the length: the goal is 10 minutes, 8 at the least (mid-roll ads start at 8). Say the running time when the
 video is delivered, and if it is short, which section a fresh recording could add.
 
