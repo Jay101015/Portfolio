@@ -186,9 +186,18 @@ const SlideIn: React.FC<{children: React.ReactNode}> = ({children}) => {
 const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
 
 /** Camera moves on the big reactions: a punch-in on shock, a shake on anger, a bounce on a laugh. */
-const Camera: React.FC<{scene: Scene; toon: boolean; children: React.ReactNode}> = ({scene, toon, children}) => {
+const Camera: React.FC<{scene: Scene; toon: boolean; push?: boolean; children: React.ReactNode}> = ({scene, toon, push, children}) => {
   const local = useCurrentFrame();
   const {fps, width} = useVideoConfig();
+  if (push) {
+    // the board look's slow push-in: about 3% over a scene, eased, reset on every cut, so the frame is never quite
+    // still (a still frame reads as a slide; a moving one reads as film). A one-second cut barely moves.
+    const dur = Math.max(1, Math.round((scene.end - scene.start) * fps));
+    const amount = Math.min(0.035, 0.012 + (dur / fps) * 0.0025);
+    const p = Math.min(1, local / dur);
+    const z = 1 + amount * (p * p * (3 - 2 * p));
+    return <AbsoluteFill style={{transform: `scale(${z})`, transformOrigin: '50% 48%'}}>{children}</AbsoluteFill>;
+  }
   const t = scene.start + local / fps;
   const {pose, changedAt} = resolveAvatar(scene, t);
   const since = Math.max(0, Math.round((t - changedAt) * fps));
@@ -347,7 +356,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
         return (
           <Sequence key={scene.id} from={from} durationInFrames={dur} name={`${scene.id} ${scene.type}`}>
             <SceneFade durationInFrames={dur} toon={brand.toon} transition={tr} dir={scene.id % 2 ? 1 : -1}>
-              <Camera scene={scene} toon={brand.toon}>
+              <Camera scene={scene} toon={brand.toon} push={!!brand.board && !['broll', 'clip', 'still', 'image', 'outro'].includes(scene.type) && String(flags.motion ?? 'on').toLowerCase() !== 'off'}>
                 {keep && prev ? <KeptBoard prev={prev} brand={brand} mode={keep} /> : null}
                 {tr === 'slide' && prev ? <SlideOut prev={prev} brand={brand} /> : null}
                 {board}

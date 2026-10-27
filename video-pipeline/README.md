@@ -395,6 +395,11 @@ On the command line, `python -m pipeline.build projects/x --shorts 3` plans
 and renders them (`projects/x/shorts.json`, the studio's picks, says which
 if it exists; the plan used is written to `shorts-plan.json`).
 
+#### Motion
+
+Every board scene has a slow push-in, about 3% over the scene, eased, reset on each cut, so the frame is never quite
+still (a one-second cut barely moves; footage scenes have their own). `brand.motion: off` in the header turns it off.
+
 #### Pace
 
 `pace: calm` (the illustrated style's default) gives every scene air: it
