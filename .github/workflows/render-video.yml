@@ -13,9 +13,9 @@ on:
         required: true
         default: "jurassic-park"
       vertical:
-        description: "Also render the 9:16 version"
+        description: "Also render a full 9:16 copy of the long video (the Shorts are rendered either way)"
         type: boolean
-        default: true
+        default: false
       shorts_only:
         description: "Only cut and render the Shorts (shorts.json), not the main video"
         type: boolean
@@ -111,7 +111,8 @@ jobs:
           PROJECT: ${{ steps.pick.outputs.project }}
         run: |
           flags=""
-          if [ "${{ github.event.inputs.vertical }}" != "false" ]; then flags="--vertical"; fi
+          # a full vertical copy of a 10-minute video doubles the render; the Shorts already cover 9:16
+          if [ "${{ github.event.inputs.vertical }}" = "true" ]; then flags="--vertical"; fi
           if [ "${{ github.event.inputs.shorts_only }}" = "true" ]; then flags="--only-shorts"; fi
           python -m pipeline.build "projects/$PROJECT" --model base.en --concurrency 2 $flags
 
