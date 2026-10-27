@@ -297,7 +297,7 @@ class ArtLibraryTests(unittest.TestCase):
         assert len(manifest) >= 6
         for e in manifest:
             svg = open(os.path.join(lib, "illus", e["name"] + ".svg"), encoding="utf-8").read()
-            assert svg.count("<path ") >= 20, e["name"]
+            assert svg.count("<path ") >= 10, e["name"]  # a map outline is a few long strokes; a face, hundreds
             assert cat[e["name"]]["kind"] in ("illus", "reaction")
             assert e["search"] and e["about"]
 

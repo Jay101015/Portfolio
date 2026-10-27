@@ -141,6 +141,16 @@ colour by themselves: the figure in a line is green, or red when the line is abo
 - index-fund-basket: one big basket full of dozens of small eggs, a hand placing one more in
 - sam-celebrating: Sam with both arms raised and a big grin
 - maya-shrug: Maya shrugging with her palms up, no idea
+- house-price-tag: a small terraced house with a large price tag hanging off it
+- london-essex-map: a map outline with two places marked and a dotted railway line joining them
+- deposit-wall: Sam and Maya looking up at a tall brick wall with a money bag sitting on top
+- calculator-table: Maya at a table with a calculator, a pen and a sheet of sums
+- shared-ownership-house: a house split down the middle, a key on one half and a rent sign on the other
+- estate-agent-window: Sam and Maya looking at house listings in an estate agent's window
+- mortgage-offer-letter: Sam opening a letter with a house symbol on it, pleased
+- house-viewing: an estate agent showing Sam and Maya round an empty room
+- train-to-london: a commuter train heading towards a city skyline
+- stamp-duty-receipt: a long receipt with a big rubber stamp pressed onto it
 - pub-round: three friends at a pub bar with drinks, one tapping a bank card on the reader
 - online-shopping: a young woman on a sofa shopping on her phone, a stack of delivery parcels beside her
 - commute-platform: a young man on a crowded train platform with headphones and a takeaway coffee, a train arriving

@@ -2099,5 +2099,256 @@
    "doesn't matter"
   ],
   "prompt": "Maya shrugging, palms up"
+ },
+ {
+  "name": "house-price-tag",
+  "about": "a small terraced house with a large price tag hanging off it",
+  "tags": [
+   "house price",
+   "home",
+   "property",
+   "cost",
+   "terraced house"
+  ],
+  "search": [
+   "house price",
+   "house prices",
+   "home",
+   "property",
+   "average home",
+   "terraced",
+   "cost of a house",
+   "price tag",
+   "asking price",
+   "valuation"
+  ],
+  "prompt": "a terraced house with a big price tag"
+ },
+ {
+  "name": "london-essex-map",
+  "about": "a map outline with two places marked and a dotted railway line joining them",
+  "tags": [
+   "map",
+   "london",
+   "essex",
+   "commute",
+   "where to buy"
+  ],
+  "search": [
+   "map",
+   "london",
+   "essex",
+   "region",
+   "area",
+   "where",
+   "borough",
+   "county",
+   "commute",
+   "outside london",
+   "move out",
+   "location",
+   "town"
+  ],
+  "prompt": "a map with London and Essex joined by a dotted line"
+ },
+ {
+  "name": "deposit-wall",
+  "about": "Sam and Maya looking up at a tall brick wall with a money bag sitting on top",
+  "tags": [
+   "deposit",
+   "wall",
+   "barrier",
+   "saving for a deposit",
+   "hard"
+  ],
+  "search": [
+   "deposit",
+   "the deposit",
+   "wall",
+   "barrier",
+   "hurdle",
+   "out of reach",
+   "can't afford",
+   "saving up",
+   "10%",
+   "ten percent",
+   "first home",
+   "ladder"
+  ],
+  "prompt": "Sam and Maya looking up at a brick wall with a money bag on top"
+ },
+ {
+  "name": "calculator-table",
+  "about": "Maya at a table with a calculator, a pen and a sheet of sums",
+  "tags": [
+   "calculator",
+   "sums",
+   "budget",
+   "work out",
+   "affordability"
+  ],
+  "search": [
+   "calculator",
+   "calculate",
+   "work out",
+   "sums",
+   "maths",
+   "budget",
+   "affordability",
+   "how much",
+   "times salary",
+   "4.5x",
+   "add up",
+   "numbers"
+  ],
+  "prompt": "Maya at a table with a calculator and a sheet of sums"
+ },
+ {
+  "name": "shared-ownership-house",
+  "about": "a house split down the middle, a key on one half and a rent sign on the other",
+  "tags": [
+   "shared ownership",
+   "part rent",
+   "part buy",
+   "housing association"
+  ],
+  "search": [
+   "shared ownership",
+   "part rent",
+   "part buy",
+   "share of",
+   "housing association",
+   "staircasing",
+   "rent and mortgage",
+   "half the home"
+  ],
+  "prompt": "a house split in two, a key on one side and RENT on the other"
+ },
+ {
+  "name": "estate-agent-window",
+  "about": "Sam and Maya looking at house listings in an estate agent's window",
+  "tags": [
+   "estate agent",
+   "listings",
+   "house hunting",
+   "rightmove",
+   "viewing"
+  ],
+  "search": [
+   "estate agent",
+   "agent",
+   "listings",
+   "rightmove",
+   "zoopla",
+   "house hunting",
+   "looking for a house",
+   "window",
+   "for sale",
+   "on the market"
+  ],
+  "prompt": "Sam and Maya looking at listings in an estate agent's window"
+ },
+ {
+  "name": "mortgage-offer-letter",
+  "about": "Sam opening a letter with a house symbol on it, pleased",
+  "tags": [
+   "mortgage offer",
+   "approved",
+   "agreement in principle",
+   "letter",
+   "lender"
+  ],
+  "search": [
+   "mortgage offer",
+   "mortgage",
+   "approved",
+   "approval",
+   "agreement in principle",
+   "aip",
+   "decision in principle",
+   "lender",
+   "letter",
+   "offer",
+   "accepted",
+   "the bank said yes"
+  ],
+  "prompt": "Sam opening a letter with a house on it, smiling"
+ },
+ {
+  "name": "house-viewing",
+  "about": "an estate agent showing Sam and Maya round an empty room",
+  "tags": [
+   "viewing",
+   "house viewing",
+   "empty room",
+   "agent",
+   "look round"
+  ],
+  "search": [
+   "viewing",
+   "viewings",
+   "look round",
+   "look around",
+   "empty room",
+   "show round",
+   "agent",
+   "open house",
+   "second viewing",
+   "this house",
+   "the house we saw"
+  ],
+  "prompt": "an estate agent showing Sam and Maya an empty room"
+ },
+ {
+  "name": "train-to-london",
+  "about": "a commuter train heading towards a city skyline",
+  "tags": [
+   "train",
+   "commute",
+   "commuter",
+   "london",
+   "rail"
+  ],
+  "search": [
+   "train",
+   "commute",
+   "commuter",
+   "commuting",
+   "rail",
+   "railway",
+   "into london",
+   "to london",
+   "the city",
+   "short train ride",
+   "station",
+   "line"
+  ],
+  "prompt": "a commuter train heading towards a city skyline"
+ },
+ {
+  "name": "stamp-duty-receipt",
+  "about": "a long receipt with a big rubber stamp pressed onto it",
+  "tags": [
+   "stamp duty",
+   "tax",
+   "sdlt",
+   "fees",
+   "receipt"
+  ],
+  "search": [
+   "stamp duty",
+   "sdlt",
+   "land tax",
+   "tax on",
+   "fees",
+   "costs on top",
+   "solicitor",
+   "conveyancing",
+   "survey",
+   "legal fees",
+   "receipt",
+   "bill"
+  ],
+  "prompt": "a receipt with a large rubber stamp pressed on it"
  }
 ]
