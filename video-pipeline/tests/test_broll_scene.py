@@ -118,3 +118,22 @@ def test_candidates_sheet_is_written(tmp_path):
     report = {"scenes": [{"id": 3, "pick": 1, "top": [{"title": "Video 1", "page": "p", "thumb": "x", "credit": "c", "score": 9.0}, {"title": "Video 2", "page": "p", "thumb": "x", "credit": "c", "score": 7.0}]}]}
     out = write_candidates_sheet(str(tmp_path), report, download)
     assert out and os.path.getsize(out) > 500
+
+
+def test_scout_writes_a_wide_candidates_sheet_without_downloading(tmp_path, monkeypatch):
+    from pipeline import find_footage as ff
+    proj = tmp_path / "scout"
+    proj.mkdir()
+    (proj / "script.md").write_text('title: T\n\n[broll search="laptop bills" caption="x"]\nScout.\n', encoding="utf-8")
+    monkeypatch.setenv("PIXABAY_API_KEY", "k")
+    hits = [{"id": i, "tags": "laptop, bills", "downloads": 900 - i, "duration": 10, "user": "u", "pageURL": f"p{i}",
+             "videos": {"medium": {"url": f"u{i}", "width": 1920, "height": 1080, "thumbnail": f"t{i}"}}} for i in range(1, 9)]
+    fetched = []
+    sheets = []
+    monkeypatch.setattr(ff, "write_candidates_sheet", lambda project, report, download, per=3, **k: sheets.append((report, per)))
+    report = ff.find(str(proj), ["pixabay"], dry_run=True, get=lambda url, headers=None: {"hits": hits},
+                     download=lambda *a: fetched.append(a), top_n=6, sheet=True)
+    assert not fetched  # a scout downloads no footage
+    assert len(report["scenes"][0]["top"]) == 6
+    assert sheets and sheets[0][1] == 6
+    assert "Scout." in (proj / "script.md").read_text(encoding="utf-8")  # the script is left alone

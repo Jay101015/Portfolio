@@ -1,0 +1,64 @@
+name: Scout footage
+
+# Search the stock libraries for a list of b-roll queries and publish a contact sheet of the best hits for each,
+# without rendering anything: a few minutes instead of a 45-minute render, so a clip is chosen by eye before the
+# render. Each row of footage-scout.png is one query; the tile labels give the pick= to put on the scene.
+# Push video-pipeline/scout.txt (one search per line) or run it by hand with the searches separated by ;.
+on:
+  push:
+    paths:
+      - "video-pipeline/scout.txt"
+  workflow_dispatch:
+    inputs:
+      queries:
+        description: "Searches separated by ; (e.g. victorian terraced houses; block of flats uk)"
+        required: false
+      per:
+        description: "Hits to show per query"
+        default: "6"
+
+permissions:
+  contents: write
+
+jobs:
+  scout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: video-pipeline
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: video-pipeline/requirements.txt
+      - name: Install
+        run: |
+          pip install -r requirements.txt
+          command -v ffmpeg || (sudo apt-get update -q && sudo apt-get install -y -q --no-install-recommends ffmpeg)
+      - name: Search
+        env:
+          QUERIES: ${{ github.event.inputs.queries }}
+          PER: ${{ github.event.inputs.per }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+        run: |
+          mkdir -p projects/_scout
+          python - <<'PY'
+          import os
+          raw = os.environ.get("QUERIES") or open("scout.txt", encoding="utf-8").read().replace("\n", ";")
+          qs = [q.strip().replace('"', '') for q in raw.split(";") if q.strip() and not q.strip().startswith("#")]
+          body = "".join(f'[broll search="{q}" caption="{q}"]\nScout.\n\n' for q in qs)
+          open("projects/_scout/script.md", "w", encoding="utf-8").write("# Scout\ntheme: whiteboard\nhost: none\n\n" + body)
+          PY
+          python -m pipeline.find_footage projects/_scout --providers pixabay,pexels --scout "${PER:-6}"
+          cp projects/_scout/footage-candidates.png projects/_scout/footage-scout.png
+      - name: Publish the sheet
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="footage-scout"
+          gh release view "$tag" >/dev/null 2>&1 || gh release create "$tag" --title "Footage scout" --notes "The latest footage-scout.png and its report." --target "${{ github.sha }}"
+          gh release upload "$tag" projects/_scout/footage-scout.png projects/_scout/footage-report.md --clobber

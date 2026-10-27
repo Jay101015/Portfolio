@@ -315,7 +315,9 @@ def slugify(s: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")[:40] or "clip"
 
 
-def find(project: str, providers: list[str], dry_run: bool = False, get: Callable = _get_json, download: Callable = _download) -> dict[str, Any]:
+def find(project: str, providers: list[str], dry_run: bool = False, get: Callable = _get_json, download: Callable = _download, top_n: int = 3, sheet: bool = False) -> dict[str, Any]:
+    """`top_n` candidates per footage scene go on footage-candidates.png; `sheet` writes that sheet on a dry run too
+    (a scouting run: search only, the preview frames come from the libraries' thumbnails)."""
     script_path = os.path.join(project, "script.md")
     with open(script_path, encoding="utf-8") as f:
         md = f.read()
@@ -430,7 +432,7 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
                 # pick=2 takes the second candidate (footage-candidates.png shows the first three)
                 want_pick = max(1, int(p.get("pick") or 1))
                 chosen = usable[min(want_pick, len(usable)) - 1]
-                entry["top"] = [{"title": h.title, "page": h.page, "thumb": h.thumb, "credit": attribution(h), "score": h.score} for h in usable[:3]]
+                entry["top"] = [{"title": h.title, "page": h.page, "thumb": h.thumb, "credit": attribution(h), "score": h.score} for h in usable[:max(3, top_n)]]
                 entry["pick"] = min(want_pick, len(usable))
                 break
         if not chosen:
@@ -456,12 +458,12 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
     write_report(project, report)
     write_credits(project, parse_script(new_md))
     write_check_sheet(project, parse_script(new_md))
-    if not dry_run:
-        write_candidates_sheet(project, report, download)
+    if not dry_run or sheet:
+        write_candidates_sheet(project, report, download, per=max(3, top_n))
     return report
 
 
-def write_candidates_sheet(project: str, report: dict[str, Any], download: Callable = _download, out_name: str = "footage-candidates.png") -> str | None:
+def write_candidates_sheet(project: str, report: dict[str, Any], download: Callable = _download, out_name: str = "footage-candidates.png", per: int = 3) -> str | None:
     """footage-candidates.png: for every footage scene the clip that was chosen and the two runners-up, as preview
     frames with their scores, so a wrong choice is fixed with `pick=2` on the scene rather than a new search."""
     rows = [s for s in report["scenes"] if s.get("top")]
@@ -474,9 +476,9 @@ def write_candidates_sheet(project: str, report: dict[str, Any], download: Calla
     fontopt = f"fontfile={font}:" if font else ""
     tiles: list[str] = []
     for r, s in enumerate(rows):
-        for i in range(3):
+        for i in range(per):
             c = s["top"][i] if i < len(s["top"]) else None
-            tile = os.path.join(tmp, f"t{r * 3 + i:03d}.png")
+            tile = os.path.join(tmp, f"t{r * per + i:03d}.png")
             label = f"scene {s['id']} pick={i + 1}" + (" (chosen)" if c and i + 1 == s.get("pick", 1) else "") + (f"  {c['title']}  score {c['score']}" if c else "  (no more candidates)")
             with open(os.path.join(tmp, f"l{r:02d}{i}.txt"), "w", encoding="utf-8") as f:
                 f.write(label)
@@ -494,7 +496,7 @@ def write_candidates_sheet(project: str, report: dict[str, Any], download: Calla
                 subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "color=c=0xdddddd:size=320x180", "-frames:v", "1", "-vf", vf, tile], check=False)
             tiles.append(tile)
     out = os.path.join(project, out_name)
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-framerate", "1", "-i", os.path.join(tmp, "t%03d.png"), "-vf", f"tile=3x{len(rows)}:padding=4:color=white", "-frames:v", "1", out], check=False)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-framerate", "1", "-i", os.path.join(tmp, "t%03d.png"), "-vf", f"tile={per}x{len(rows)}:padding=4:color=white", "-frames:v", "1", out], check=False)
     return out if os.path.exists(out) else None
 
 
@@ -615,8 +617,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("project")
     ap.add_argument("--providers", default="archive,commons,pexels,pixabay")
     ap.add_argument("--dry-run", action="store_true", help="search and report, download nothing, leave the script alone")
+    ap.add_argument("--scout", type=int, default=0, metavar="N", help="search only and write footage-candidates.png with the top N hits per scene")
     args = ap.parse_args(argv)
-    report = find(os.path.abspath(args.project), [p.strip() for p in args.providers.split(",") if p.strip()], args.dry_run)
+    report = find(os.path.abspath(args.project), [p.strip() for p in args.providers.split(",") if p.strip()], args.dry_run or args.scout > 0, top_n=args.scout or 3, sheet=args.scout > 0)
     found = sum(1 for s in report["scenes"] if s["status"] in ("downloaded", "dry-run"))
     print(f"{found} scene(s) matched, {sum(1 for s in report['scenes'] if s['status'] == 'not found')} not found; see footage-report.md")
     return 0
