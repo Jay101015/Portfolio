@@ -15,6 +15,12 @@ def test_parse_broll_and_news():
     assert n["type"] == "news" and n["props"]["headline"] == "Fees eat a third of pots" and n["props"]["outlet"] == "FT"
 
 
+def test_watch_next_broll_keeps_next_and_vol():
+    sb = parse_script("# W\ntheme: whiteboard\nhost: none\n\n[broll src=\"next.mp4\" caption=\"Watch next: X\" vol=1 dur=9 next=on]\n")
+    p = sb["scenes"][0]["props"]
+    assert p["next"] == "on" and p["vol"] == 1.0
+
+
 def test_broll_asks_the_stock_libraries_first(tmp_path, monkeypatch):
     proj = tmp_path / "p"
     (proj / "media").mkdir(parents=True)
@@ -38,6 +44,24 @@ def test_broll_asks_the_stock_libraries_first(tmp_path, monkeypatch):
     assert '[broll search="crowd busy street" caption="What ignoring it looks like" src="02-crowd-busy-street.mp4" credit="Video 7 by someone via Pixabay"]' in md
     assert os.path.exists(proj / "media" / "02-crowd-busy-street.mp4")
     assert [s for s in r["scenes"] if s["id"] == 2][0]["status"] == "downloaded"
+
+
+def test_stock_takes_that_exact_clip_whatever_the_order(tmp_path, monkeypatch):
+    proj = tmp_path / "p"
+    (proj / "media").mkdir(parents=True)
+    (proj / "script.md").write_text('# S\ntheme: whiteboard\nhost: none\n\n[broll search="london skyline" caption="London" stock="9"]\nLondon, honestly.\n', encoding="utf-8")
+    monkeypatch.setenv("PIXABAY_API_KEY", "k")
+    clip = lambda i, n: {"id": i, "user": "u", "tags": "london, skyline", "downloads": n, "pageURL": f"https://pixabay.com/videos/x-{i}/", "videos": {"medium": {"url": f"https://cdn/{i}.mp4", "width": 1920, "height": 1080}}}
+
+    def get(url, headers=None):
+        return {"hits": [clip(8, 100000), clip(9, 10)]} if "pixabay.com/api/videos" in url else {}
+
+    def download(url, dst, headers=None):
+        with open(dst, "wb") as f:
+            f.write(b"\x00" * 10)
+
+    ff.find(str(proj), ["pixabay"], get=get, download=download)
+    assert 'credit="Video 9 by u via Pixabay"' in (proj / "script.md").read_text(encoding="utf-8")
 
 
 def test_credits_file_lists_every_credit_once(tmp_path):

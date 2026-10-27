@@ -29,15 +29,15 @@ First, the rule that decides almost everything. Most high street lenders will le
 - A 30-year mortgage
 So your budget is simple: what the bank will lend you, plus your deposit. In this video, I'll assume a 10% deposit and borrowing of 4.5 times your salary, which is towards the top end of what most lenders will give. And to work out the monthly payments, I'm using today's average two-year fixed rate of just under 5%, over a 30-year mortgage.
 
-[compare title="Where you buy matters most" source="HM Land Registry, 2026"]
+[compare title="London vs the rest of the UK" source="HM Land Registry, 2026"]
 left: London | £550K | The average home
-right: The UK | £273K | The average home
+right: The rest of the UK | £273K | The UK average home
 Now the prices. The average home in London is around £550,000. Across the whole of the UK, it's about £273,000. Exactly half. So where you buy matters more than almost anything else.
 
 [takeaway title="On £25,000 a year" n="1" of="4"]
 Let's start at £25,000 a year. At 4.5 times your salary, a bank might lend you around £112,000. Add a £12,000 deposit and your budget is around £125,000. That's around £600 a month.
 
-[text board="£125K: a small-town flat or a terrace" art="first-flat"]
+[broll search="housing estate aerial" stock="189742" caption="£125K: a small-town flat or a terrace"]
 In London, that's very hard to find. Across the UK, it's a flat in a lot of small towns, or a terraced house in some parts of the North East, Wales and Scotland.
 
 [takeaway title="On £50,000 a year" n="2" of="4"]
@@ -61,11 +61,14 @@ At that price, there's no first-time buyer relief on stamp duty, so you pay arou
 [text board="£250K a year: an average home, not a mansion" art="maya-shrug"]
 Even a quarter of a million a year salary gets you roughly an average home in Kensington or Chelsea. Not a mansion.
 
+[broll search="london skyline thames" stock="27028" caption="London, honestly"]
+So let's talk about London honestly.
+
 [list title="The average London home"]
 - £55,000 saved
 - An income of £111,000
 - £2,700 a month
-So let's talk about London honestly. To buy the average home in London with a 10% deposit, you'd need around £55,000 saved and an income of around £111,000. The monthly payment would be around £2,700.
+To buy the average home in London with a 10% deposit, you'd need around £55,000 saved and an income of around £111,000. The monthly payment would be around £2,700.
 
 [stat value="£1.2M" label="Average home in Kensington and Chelsea" sub="it drags the London average up" source="HM Land Registry, August 2026"]
 But London isn't one price. That average gets dragged up a lot by places like Kensington and Chelsea, where the average home is over £1.2 million.
@@ -111,7 +114,7 @@ Take the average Essex home. A 10% deposit is around £36,000. Save £1,000 a mo
 [stat value="+£1,000" label="Lifetime ISA bonus on £4,000 a year" sub="2 years 9 months instead of 3" source="GOV.UK"]
 But put £4,000 a year into a Lifetime ISA and the government adds £1,000 per year on top. That cuts it to around two years nine months. Free money, just for saving in the right account.
 
-[text board="£1,000 saved every payday, first" art="laptop-standing-order"]
+[broll search="piggy bank coins" stock="93550" caption="£1,000 saved every payday, first"]
 And that's exactly why I put £1,000 into savings every payday, automatically, before I can even spend it. It's the least glamorous part of buying a home, but it's the most important.
 
 [text board="The costs nobody talks about" art="sam-surprised"]
@@ -157,6 +160,6 @@ So, the short version. Banks will usually lend you around 4.5 times your salary.
 [text board="Follow my road to a first home" art="keys"]
 And I'll continue to document my search and my road to getting my first home in future videos. Please like and subscribe if you want to see how it goes.
 
-[broll src="watch-next-200-1000-10000.mp4" caption="Watch next: £200, £1,000 or £10,000 after payday" credit="The Everyday Investor" vol=1 dur=91]
+[broll src="watch-next-200-1000-10000.mp4" caption="Watch next: £200, £1,000 or £10,000 after payday" credit="The Everyday Investor" vol=1 dur=91 next=on]
 
 [outro title="The Everyday Investor" cta="Subscribe for the next one" dur=20 cards=on]

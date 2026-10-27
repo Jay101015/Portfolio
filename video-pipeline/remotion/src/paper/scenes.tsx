@@ -11,7 +11,7 @@ import {PaperBite, PaperGrow, PaperPie, PaperShrink} from './money';
 import {Erase} from './erase';
 import {captionLine, keyWords, moneyTint} from './phrase';
 import {Media} from './media';
-import {Loop} from 'remotion';
+import {Loop, Sequence} from 'remotion';
 
 /**
  * The paper look: every scene is laid out like a page someone wrote on. Big words in a serif, notes in
@@ -867,11 +867,59 @@ export const PaperStill: React.FC<P> = ({scene, brand}) => {
   );
 };
 
+// ------------------------------------------------------------------ watch next: another video, framed as one
+/** `[broll ... next=on]`: a preview of another of the channel's videos, framed as a card on a dark backdrop under a
+ * written "Watch next", so it reads as a different video and not as more of this one (a whiteboard video full-frame
+ * after a whiteboard video was seamless). The card lands under a second in and the clip (and its sound) starts with it,
+ * so there is a beat of silence at the cut; the caption, the other video's title, is written under the frame. */
+const WatchNext: React.FC<P> = ({scene, brand}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const {u, pad, width, height, isVertical} = useLayout();
+  const total = Math.max(1, Math.round((scene.end - scene.start) * fps));
+  const src: string | undefined = scene.props.src;
+  const caption = String(scene.props.caption ?? '').replace(/^watch next:\s*/i, '');
+  const delay = Math.round(fps * 0.8);
+  const s = pop(frame, fps, delay, 14);
+  const w = isVertical ? width - pad * 1.2 : width * 0.64;
+  const h = (w * 9) / 16;
+  const top = isVertical ? height * 0.3 : height * 0.22;
+  const head = (isVertical ? 110 : 100) * u;
+  const dark = '#1f2326';
+  return (
+    <AbsoluteFill style={{background: `radial-gradient(ellipse at 50% 45%, #2d3236 0%, ${dark} 70%)`}}>
+      <div style={{position: 'absolute', left: 0, right: 0, top: top - head * 1.5, textAlign: 'center', fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: head, lineHeight: 1, color: '#fff'}}>
+        {brand.board ? <Write text="Watch next" frame={frame} fps={fps} start={0} cps={22} color="#fff" /> : 'Watch next'}
+      </div>
+      <div style={{position: 'absolute', left: (width - w) / 2, top, width: w, height: h, transform: `rotate(-1deg) scale(${0.85 + 0.15 * s})`, opacity: Math.min(1, s * 1.5)}}>
+        <div style={{width: '100%', height: '100%', background: '#fff', padding: 16 * u, boxSizing: 'border-box', boxShadow: `0 ${18 * u}px ${60 * u}px rgba(0,0,0,0.55)`}}>
+          <div style={{position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: '#111'}}>
+            {src ? (
+              <Sequence from={delay} layout="none">
+                <Media src={src} props={{zoom: 'none', vol: scene.props.vol}} durationFrames={total - delay} width={w - 40 * u} height={h - 40 * u} />
+              </Sequence>
+            ) : null}
+          </div>
+        </div>
+        <div style={{position: 'absolute', left: -34 * u, top: -34 * u, width: 92 * u, height: 92 * u, borderRadius: '50%', background: brand.accent2, boxShadow: `0 ${6 * u}px ${14 * u}px rgba(0,0,0,0.3)`, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <div style={{width: 0, height: 0, marginLeft: 8 * u, borderTop: `${20 * u}px solid transparent`, borderBottom: `${20 * u}px solid transparent`, borderLeft: `${32 * u}px solid #fff`}} />
+        </div>
+      </div>
+      {caption ? (
+        <div style={{position: 'absolute', left: pad, right: pad, top: top + h + 40 * u, textAlign: 'center', fontFamily: hand(brand), fontSize: (isVertical ? 64 : 56) * u, lineHeight: 1.15, color: '#fff'}}>
+          {brand.board ? <Write text={caption} frame={frame} fps={fps} start={delay + 6} cps={30} color="#fff" /> : caption}
+        </div>
+      ) : null}
+    </AbsoluteFill>
+  );
+};
+
 // ------------------------------------------------------------------ b-roll: the footage fills the frame
 /** Stock footage as its own scene, How Money Works style: the clip covers the whole frame with a slow push-in, a short
  * caption on a white label in the corner (the credit beside it only with `credits: screen`). With no footage yet the frame says what was
  * asked for, so the cut still reads in a preview render. */
 export const PaperBroll: React.FC<P> = ({scene, brand}) => {
+  if (String(scene.props.next ?? '') === 'on') return <WatchNext scene={scene} brand={brand} />;
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const {u, pad, width, height, isVertical} = useLayout();

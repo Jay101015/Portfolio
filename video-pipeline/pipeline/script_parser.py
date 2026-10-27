@@ -173,10 +173,14 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
                 p[k] = a[k]
         if "pick" in a:  # pick=2: the second of the finder's candidates (footage-candidates.png shows three)
             p["pick"] = int(a["pick"])
+        if "stock" in a:  # stock=27028: that exact library clip, by the number on the scout sheet
+            p["stock"] = a["stock"]
         if "from" in a:
             p["from"] = float(a["from"])
         if "vol" in a:
             p["vol"] = float(a["vol"])
+        if "next" in a:  # next=on: a preview of another of the channel's videos, framed under "Watch next"
+            p["next"] = a["next"]
     elif b.type == "news":
         # a real headline: search= asks the render to find one (GDELT, reputable outlets), or give headline/outlet/date/url yourself
         for k in ("search", "headline", "outlet", "date", "url", "caption", "source"):

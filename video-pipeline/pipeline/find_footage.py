@@ -432,6 +432,15 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
                 # pick=2 takes the second candidate (footage-candidates.png shows the first three)
                 want_pick = max(1, int(p.get("pick") or 1))
                 chosen = usable[min(want_pick, len(usable)) - 1]
+                # stock=27028: that exact clip (its number on the scout sheet), whatever order the library returns today
+                sid = str(p.get("stock") or "").strip()
+                if sid:
+                    exact = [h for h in usable if h.title.split()[-1:] == [sid] or h.page.rstrip("/").endswith(f"-{sid}") or f"/{sid}/" in h.page]
+                    if not exact:
+                        entry["candidates"].append({"provider": name, "error": f"stock={sid} not in this search's results"})
+                        continue
+                    chosen = exact[0]
+                    want_pick = usable.index(chosen) + 1
                 entry["top"] = [{"title": h.title, "page": h.page, "thumb": h.thumb, "credit": attribution(h), "score": h.score} for h in usable[:max(3, top_n)]]
                 entry["pick"] = min(want_pick, len(usable))
                 break
