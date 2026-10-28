@@ -1,0 +1,110 @@
+[
+ {
+  "name": "bank",
+  "tags": [],
+  "about": "",
+  "file": "backgrounds/bank.png",
+  "w": 361,
+  "h": 313,
+  "source": "bg-batch-1.png"
+ },
+ {
+  "name": "cafe",
+  "tags": [],
+  "about": "",
+  "file": "backgrounds/cafe.png",
+  "w": 363,
+  "h": 319,
+  "source": "bg-batch-1.png"
+ },
+ {
+  "name": "estate-agent",
+  "tags": [],
+  "about": "",
+  "file": "backgrounds/estate-agent.png",
+  "w": 363,
+  "h": 316,
+  "source": "bg-batch-1.png"
+ },
+ {
+  "name": "first-flat",
+  "tags": [],
+  "about": "",
+  "file": "backgrounds/first-flat.png",
+  "w": 359,
+  "h": 316,
+  "source": "bg-batch-1.png"
+ },
+ {
+  "name": "graduation-hall",
+  "tags": [],
+  "about": "",
+  "file": "backgrounds/graduation-hall.png",
+  "w": 361,
+  "h": 316,
+  "source": "bg-batch-1.png"
+ },
+ {
+  "name": "high-street",
+  "tags": [],
+  "about": "",
+  "file": "backgrounds/high-street.png",
+  "w": 360,
+  "h": 313,
+  "source": "bg-batch-1.png"
+ },
+ {
+  "name": "kitchen",
+  "tags": [],
+  "about": "",
+  "file": "backgrounds/kitchen.png",
+  "w": 360,
+  "h": 319,
+  "source": "bg-batch-1.png"
+ },
+ {
+  "name": "living-room",
+  "tags": [],
+  "about": "",
+  "file": "backgrounds/living-room.png",
+  "w": 361,
+  "h": 319,
+  "source": "bg-batch-1.png"
+ },
+ {
+  "name": "office",
+  "tags": [],
+  "about": "",
+  "file": "backgrounds/office.png",
+  "w": 360,
+  "h": 316,
+  "source": "bg-batch-1.png"
+ },
+ {
+  "name": "supermarket",
+  "tags": [],
+  "about": "",
+  "file": "backgrounds/supermarket.png",
+  "w": 359,
+  "h": 313,
+  "source": "bg-batch-1.png"
+ },
+ {
+  "name": "terraced-street",
+  "tags": [],
+  "about": "",
+  "file": "backgrounds/terraced-street.png",
+  "w": 359,
+  "h": 319,
+  "source": "bg-batch-1.png"
+ },
+ {
+  "name": "train-platform",
+  "tags": [],
+  "about": "",
+  "file": "backgrounds/train-platform.png",
+  "w": 363,
+  "h": 313,
+  "source": "bg-batch-1.png"
+ }
+]

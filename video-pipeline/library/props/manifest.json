@@ -1,0 +1,146 @@
+[
+ {
+  "name": "coins",
+  "tags": [],
+  "about": "",
+  "file": "props/coins.png",
+  "w": 495,
+  "h": 600,
+  "source": "props-a.png"
+ },
+ {
+  "name": "coins-b",
+  "tags": [],
+  "about": "",
+  "file": "props/coins-b.png",
+  "w": 499,
+  "h": 600,
+  "source": "props-b.png"
+ },
+ {
+  "name": "envelope",
+  "tags": [],
+  "about": "",
+  "file": "props/envelope.png",
+  "w": 600,
+  "h": 456,
+  "source": "props-b.png"
+ },
+ {
+  "name": "form",
+  "tags": [],
+  "about": "",
+  "file": "props/form.png",
+  "w": 520,
+  "h": 600,
+  "source": "props-b.png"
+ },
+ {
+  "name": "house",
+  "tags": [],
+  "about": "",
+  "file": "props/house.png",
+  "w": 571,
+  "h": 600,
+  "source": "props-a.png"
+ },
+ {
+  "name": "house-b",
+  "tags": [],
+  "about": "",
+  "file": "props/house-b.png",
+  "w": 591,
+  "h": 600,
+  "source": "props-b.png"
+ },
+ {
+  "name": "keys",
+  "tags": [],
+  "about": "",
+  "file": "props/keys.png",
+  "w": 547,
+  "h": 600,
+  "source": "props-a.png"
+ },
+ {
+  "name": "keys-b",
+  "tags": [],
+  "about": "",
+  "file": "props/keys-b.png",
+  "w": 495,
+  "h": 600,
+  "source": "props-b.png"
+ },
+ {
+  "name": "note-20",
+  "tags": [],
+  "about": "",
+  "file": "props/note-20.png",
+  "w": 600,
+  "h": 437,
+  "source": "props-a.png"
+ },
+ {
+  "name": "note-20-b",
+  "tags": [],
+  "about": "",
+  "file": "props/note-20-b.png",
+  "w": 600,
+  "h": 436,
+  "source": "props-b.png"
+ },
+ {
+  "name": "payslip",
+  "tags": [],
+  "about": "",
+  "file": "props/payslip.png",
+  "w": 538,
+  "h": 600,
+  "source": "props-a.png"
+ },
+ {
+  "name": "phone",
+  "tags": [],
+  "about": "",
+  "file": "props/phone.png",
+  "w": 454,
+  "h": 600,
+  "source": "props-a.png"
+ },
+ {
+  "name": "phone-b",
+  "tags": [],
+  "about": "",
+  "file": "props/phone-b.png",
+  "w": 424,
+  "h": 600,
+  "source": "props-b.png"
+ },
+ {
+  "name": "piggy-bank",
+  "tags": [],
+  "about": "",
+  "file": "props/piggy-bank.png",
+  "w": 600,
+  "h": 567,
+  "source": "props-a.png"
+ },
+ {
+  "name": "piggy-bank-b",
+  "tags": [],
+  "about": "",
+  "file": "props/piggy-bank-b.png",
+  "w": 600,
+  "h": 577,
+  "source": "props-b.png"
+ },
+ {
+  "name": "tax-envelope",
+  "tags": [],
+  "about": "",
+  "file": "props/tax-envelope.png",
+  "w": 600,
+  "h": 495,
+  "source": "props-a.png"
+ }
+]
