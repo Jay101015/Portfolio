@@ -6,6 +6,12 @@ numbers (vidIQ: `vidiq_user_videos` for live counts, `vidiq_channel_analytics` w
 and `filters=video==<id>` for the drop-off curve, `report=traffic_sources` for where views came from).
 YouTube's analytics lag two to three days; the per-video counts are near live.
 
+Not every video will take off, and that is fine. Views depend on the topic and the algorithm; what we control is
+whether the people who start a video keep watching. So a video is judged on its retention curve and average view
+duration against the one before it, never on views alone. A video that holds viewers better than the last one is
+a success at 40 views, and a video that leaks them is a lesson at 4,000. Quality rising video on video is the
+goal; the views follow it, in their own time.
+
 Each entry: the numbers, what worked, what did not, and the rule it changed. A rule that came from a lesson goes
 into EDITOR.md or COURIER.md too, so it is applied, not just remembered. Keep the test list at the bottom honest:
 one change at a time where possible, so a result can be read.
