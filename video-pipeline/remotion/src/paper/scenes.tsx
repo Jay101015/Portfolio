@@ -780,7 +780,8 @@ export const PaperOutro: React.FC<P> = ({scene, brand}) => {
   const btnH = 110 * u;
   const ctaAt = btnAt + Math.round(fps * 0.5) + 2;
   const slotsAt = brand.board ? ctaAt + writeFrames(cta, fps, 30) + 6 : 20;
-  // the two end-screen boxes (for YouTube's end-screen links) only when `cards=on`: a new channel has nothing to put in them
+  // the two end-screen boxes (for YouTube's end-screen links) only when `cards=on`: a new channel has nothing to put in them.
+  // Plain outlines, no "goes here" labels: YouTube's own video and playlist tiles sit on top of them.
   const cards = ['on', 'yes', 'true', '1'].includes(String(scene.props.cards ?? 'off').toLowerCase());
   return (
     <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.2}}>
@@ -805,9 +806,6 @@ export const PaperOutro: React.FC<P> = ({scene, brand}) => {
                 <svg width={480 * u} height={270 * u} viewBox={`0 0 ${480 * u} ${270 * u}`} style={{position: 'absolute', inset: 0, overflow: 'visible', visibility: d <= 0 ? 'hidden' : undefined}}>
                   <SketchRect x={4} y={4} w={472 * u} h={262 * u} draw={d} win={brand.board ? [at, at + Math.round(fps * 0.45)] : undefined} options={{stroke: brand.muted, strokeWidth: 2.5 * u, seed: 80 + i, roughness: 1.4}} />
                 </svg>
-                <div style={{position: 'relative', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: hand(brand), color: brand.muted, fontSize: 34 * u}}>
-                  {brand.board ? <Write text={`${label} goes here`} frame={frame} fps={fps} start={at + Math.round(fps * 0.45)} cps={34} color={brand.muted} /> : `${label} goes here`}
-                </div>
               </div>
             );
           })}
