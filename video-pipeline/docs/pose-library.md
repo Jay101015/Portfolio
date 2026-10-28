@@ -256,6 +256,16 @@ platform; a high street; a kitchen. Same marker style, lighter lines, no text, n
 draws them with remotion/src/paper/poses.tsx from remotion/public/poses/solid/ (each pose filled with white paper, made
 by scripts/pose-cut.py). In-betweens are found by their `into` in the manifest.
 
+### Sizing him in a room
+
+Never one size for every room. Measure each background once, against something of known height standing at the
+depth where he will stand (a kitchen counter 0.9 m, a front garden wall 1 m, a door 2 m, a for-sale post 2.4 m):
+from two such things find the eye line, then his height on screen is (floor y - eye line) x 1.75 / 1.6. Put him where
+the floor is open at that depth; a table can stand in front of him only if his feet are behind its back edge on
+screen, otherwise he looks as if he is standing on it. A room drawn very close (the living room) is cropped higher so
+he fits. The demo's measurements: estate agent window feet 0.90 height 0.66, first flat 0.79 / 0.62, terraced street
+0.86 / 0.50, living room (cropped at 0.35) 0.60 / 0.47 (shares of the frame).
+
 ### Set pieces (whole-scene moments)
 
 B-roll is the main picture; the character gets two or three set pieces a video, each using a whole background:
