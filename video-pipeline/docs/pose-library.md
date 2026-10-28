@@ -184,7 +184,7 @@ Status: `have` = cut and in the library, blank = still to make.
 
 | pose | shows | tags | status |
 |---|---|---|---|
-| ★ walk | walking side-on, mid-stride | walk, go, move, next | |
+| ★ walk | an 8-drawing walk cycle, side-on (library/poses/source/batch-5a-walk.png; a redo with the left leg shaded grey would read better) | walk, go, move, next | have |
 | run | running side-on | rush, hurry, race | |
 | wave-bye | waving goodbye | bye, see you, leave | |
 | walk-away | walking away from the viewer | leave, away, walk away | |
@@ -192,6 +192,21 @@ Status: `have` = cut and in the library, blank = still to make.
 | peek | peeking in from the side of the frame | sneak, look, hidden | |
 | lean | leaning on the edge of the frame, casual | so, anyway, meanwhile | |
 | point-down | pointing down at subscribe | subscribe, comment, below | |
+
+## How he moves (the house style)
+
+Like Pingu: stop motion with bounce, in black ink.
+
+- Everything moves on twos: 12 changes a second, never smooth.
+- A new pose lands with squash and stretch (wider and shorter, then taller and thinner, then settled) and the words
+  that appear with it land the same way.
+- A small dip in the two frames before the next pose (anticipation).
+- Happy poses (thumbs up, fist pump, arms up, celebrate) land with a little hop.
+- He jiggles slightly while holding, a new tiny offset every other frame, like clay touched between frames.
+- Walking: the walk cycle held 3 frames a drawing, moved one step's worth per drawing, a light rise off each step.
+  **No waddle** (no side-to-side rock). He walks on and off instead of sliding.
+- Next to come: 2-3 in-between drawings for the actions used most (thumbs up, point, wave, shrug, fist pump,
+  facepalm, jump, sit down, hand over) so an arm travels into a pose instead of snapping there.
 
 ## Supporting cast (later)
 
