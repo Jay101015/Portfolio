@@ -68,6 +68,11 @@ is not, the scene is cut in the wrong place.
    four, between board scenes, so the video moves like a documentary; the render fetches it from Pixabay, Pexels,
    Wikimedia Commons or the Internet Archive (`pipeline/find_footage.py`). (`clip=` on a text scene still gives
    the small framed card beside the words; use it only when the words must stay on screen.)
+   **B-roll leads; the character punctuates.** Footage carries most of the picture. The character (docs/pose-library.md)
+   comes in for two or three set pieces a video, at the beats that matter (the hook's payoff, the big number, the
+   ending), and a set piece uses the whole scene: a background from library/backgrounds with him in it, sized to
+   the room, doing one clear thing start to finish (walks in and reacts, jumps on good news, hands over the money,
+   drives the car off). Never the character on every scene; never two set pieces back to back.
 4. `[stat value="<the figure>" label="<what it is, handwritten>" sub="<short note>"]` only where the narration states
    a real figure; the value is a figure actually said, formatted (£2,400, 20%). Never a stat with a made-up or
    meaningless value.

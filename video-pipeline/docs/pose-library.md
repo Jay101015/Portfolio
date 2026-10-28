@@ -256,6 +256,20 @@ platform; a high street; a kitchen. Same marker style, lighter lines, no text, n
 draws them with remotion/src/paper/poses.tsx from remotion/public/poses/solid/ (each pose filled with white paper, made
 by scripts/pose-cut.py). In-betweens are found by their `into` in the manifest.
 
+### Set pieces (whole-scene moments)
+
+B-roll is the main picture; the character gets two or three set pieces a video, each using a whole background:
+walk in, react on the word, act it out, leave. The ones planned, and what each still needs drawn:
+
+| set piece | needs |
+|---|---|
+| walks in, reacts, walks off | have (walk cycle, poses, backgrounds) |
+| jumps on good news | have |
+| hands the money over / it flies away | have |
+| drives the car off the edge of the frame | the car side-on with him at the wheel (2 drawings: still, and leaning back as it pulls away) and the car alone |
+| gets the job (handshake across a desk) | him in a suit (outfit sheet + 8 poses), the interviewer, an interview room |
+| good habit vs bad habit, side by side | the habits batch (8 poses); the split screen is code |
+
 ### Tricks (code, no new drawings)
 
 - Treadmill walk: he walks on the spot while a long street scrolls behind him, for journeys and "years later".
