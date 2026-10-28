@@ -250,6 +250,18 @@ Simple line-art rooms and places with nobody in them, a clear floor in the middl
 on: a bank branch; an estate agent's window and desk; a living room; an office desk; a supermarket aisle; a train
 platform; a high street; a kitchen. Same marker style, lighter lines, no text, no signs with words.
 
+### Tricks (code, no new drawings)
+
+- Treadmill walk: he walks on the spot while a long street scrolls behind him, for journeys and "years later".
+- Pan across a wide background while he walks, the camera following.
+- Props pop in on the word (keys, a £20 note, a payslip) with the same squash and stretch.
+- Speech and thought bubbles drawn on; a thought bubble can hold a prop or a background.
+- Punch-in: a cut to his head and shoulders from any pose for a punchline.
+- Screen shake on shock; motion lines on a fast exit.
+- Foreground objects slide past faster than the background (depth).
+- Montage: a background changes behind a held pose, on the beat (graduation, first job, first flat, keys).
+- Scene change: the next page slides over, or an iris closes on him.
+
 ### Supporting cast (one sheet each, then 8 poses)
 
 An estate agent (smart suit, clipboard); a landlord (cardigan, holding out a hand for rent); a boss (shirt and tie,
