@@ -27,6 +27,13 @@ transcribed and matched to the recording.
   order. Keep every paragraph's words.
 - Attribute values never contain double quotes.
 
+## The writing check (report, never rewrite)
+
+WRITING.md holds the retention rules for the words: open loops, a stake sentence after every big number, a re-hook
+every 60 to 90 seconds, something useful before the title card, an ending with a next step. The words are
+recorded, so the pass changes none of them: it reads the draft against that list and writes each miss as a
+`WRITING:` line in the notes for Jeffrey (the lines are listed in WRITING.md), so the next recording has it.
+
 ## Re-cut the scenes first
 
 A scene is one idea. Move the paragraph breaks so every scene starts where a new thought starts (a step, an amount, a

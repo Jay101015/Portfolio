@@ -7,7 +7,7 @@ and loads the result by itself.
 
 ## Before a video goes out
 
-Read LEARNINGS.md before building; after delivery, add the new video to its scoreboard. At 48 hours and 7 days
+Read LEARNINGS.md and WRITING.md before building (WRITING.md also before drafting any script or recording brief); after delivery, add the new video to its scoreboard. At 48 hours and 7 days
 after it is published, pull its numbers (live views, the retention curve, traffic sources) and write what
 worked, what did not, and the rule it changes.
 

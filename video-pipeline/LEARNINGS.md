@@ -42,6 +42,11 @@ one change at a time where possible, so a result can be read.
 - Did not: three stock clips in ten minutes (18 seconds). Rule: aim for a clip every 90 seconds or so where the
   sentence names something you can film; scout first, then pin the exact clip with `stock=<id>` from the sheet.
 
+### Rules on test (from 2026-10-28)
+- WRITING.md: open loops, stakes after numbers, re-hooks every 60 to 90 seconds, a payoff before the title, an
+  ending with a next step. First video written to it is the next recording. Read its retention curve against the
+  house video's at 48 hours and 7 days; keep the rules that move the curve, drop the ones that do not.
+
 ### Shorts (2026-10-27)
 - 5 to 6 views each on day one, far behind the long video. Too early to judge; check at 7 days. If they stay low,
   test a different first line and on-screen hook before changing anything else.

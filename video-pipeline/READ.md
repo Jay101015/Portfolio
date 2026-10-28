@@ -2,7 +2,8 @@
 
 A phone-first studio and a render pipeline that turn a recording, or a few typed lines, into a whiteboard
 explainer video in the style of How Money Works, two or three times a week, with no editing by hand.
-This file is the map. The detailed rules live in README.md, EDITOR.md, COURIER.md and docs/.
+This file is the map. The detailed rules live in README.md, EDITOR.md, WRITING.md (what the words must do to
+hold viewers), COURIER.md and docs/.
 
 ## 1. The loop, start to finish
 
