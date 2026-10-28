@@ -193,11 +193,16 @@ const Camera: React.FC<{scene: Scene; toon: boolean; push?: boolean; children: R
     // the board look's slow push-in, reset on every cut, so the frame is never quite still (a still frame reads as a
     // slide; a moving one reads as film). About 4% on a short scene up to 8% on a long one: 3% was invisible on a
     // phone. It moves from the first frame (ease-out, not ease-in-out) so the drift is seen, not just the end state.
+    // The camera also pans slightly to the right as it pushes in: the picture slides left by a share of the room the
+    // zoom has made at the sides, so the pan grows with the zoom and the frame's edge never shows. Only a share: the
+    // zoom already moves left-hand words towards the edge, and at 0.3 a headline at the board's margin keeps about
+    // 2.5% of the width clear at the end of the longest scene.
     const dur = Math.max(1, Math.round((scene.end - scene.start) * fps));
     const amount = Math.min(0.08, 0.03 + (dur / fps) * 0.004);
     const p = Math.min(1, local / dur);
     const z = 1 + amount * (p * (2 - p) * 0.6 + p * 0.4);
-    return <AbsoluteFill style={{transform: `scale(${z})`, transformOrigin: '50% 48%'}}>{children}</AbsoluteFill>;
+    const pan = (z - 1) * (width / 2) * 0.3;
+    return <AbsoluteFill style={{transform: `translateX(${-pan}px) scale(${z})`, transformOrigin: '50% 48%'}}>{children}</AbsoluteFill>;
   }
   const t = scene.start + local / fps;
   const {pose, changedAt} = resolveAvatar(scene, t);
