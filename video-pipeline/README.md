@@ -391,6 +391,16 @@ make and edit the hooks. They are cut vertical with captions on and the hook
 pinned at the top of the frame, and your recording is cut to match. They
 come back to the Videos list as Short 1, 2, 3 beside the two cuts.
 
+With a recording, the slices are cut on sentences instead of whole scenes: a Short starts on
+its strongest sentence and stops when the answer lands. It must make sense to someone swiping
+in cold (no "So…", "Second…", "That's why…" or "in this video" to open), and it must pay off
+(end on a figure or a verdict, not a question, a "but…" setup or the next section's heading).
+A slice may keep a line or two of setup, skip the middle and land on the payoff, when the two
+share a figure or a subject. A pick in `shorts.json` can name stretches of time instead of
+scenes (`"spans": [[77.4, 95.3], [102.7, 103.5], ...]`, seconds in the long video); a sentence
+skipped inside a scene keeps that scene on screen rather than drawing it again. Pushing a
+`shorts.json` on its own renders just the Shorts.
+
 On the command line, `python -m pipeline.build projects/x --shorts 3` plans
 and renders them (`projects/x/shorts.json`, the studio's picks, says which
 if it exists; the plan used is written to `shorts-plan.json`).

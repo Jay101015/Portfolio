@@ -31,7 +31,7 @@ from .enhance import enhance, level_from_header
 from .preview import write_preview
 from .auto_script import script_from_words
 from .script_parser import pace_scenes, parse_script
-from .shorts import cut_short, plan_shorts
+from .shorts import cut_short, cut_spans, plan_shorts
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -633,9 +633,13 @@ def render_shorts(project: str, sb: dict, audio: str | None, concurrency: str | 
     for k, short in enumerate(plan, 1):
         name = short.get("name") or f"short-{k}"
         ids = [int(x) for x in short.get("scenes", [])]
-        if not ids:
+        if short.get("spans"):
+            # cut on sentences: stretches of time, which may start or end inside a scene or skip a middle part
+            cut, spans = cut_spans(sb, [tuple(x) for x in short["spans"]], short.get("hook"), name)
+        elif ids:
+            cut, spans = cut_short(sb, ids, short.get("hook"), name)
+        else:
             continue
-        cut, spans = cut_short(sb, ids, short.get("hook"), name)
         if audio:
             os.makedirs(public_dir, exist_ok=True)
             keep_spans(audio, os.path.join(public_dir, f"{name}.mp3"), spans, 0.4, 0.8)
@@ -650,7 +654,7 @@ def render_shorts(project: str, sb: dict, audio: str | None, concurrency: str | 
         with open(props, "w", encoding="utf-8") as f:
             json.dump(cut, f)
         out = os.path.join(project, f"{slug}-{name}.mp4")
-        print(f"short {name}: scenes {ids}, {cut['durationSec']:.0f}s, hook: {cut['hook']}")
+        print(f"short {name}: {'spans ' + str(short['spans']) if short.get('spans') else 'scenes ' + str(ids)}, {cut['durationSec']:.0f}s, hook: {cut['hook']}")
         render(props, out, "Vertical", concurrency, chunk=chunk)
         made.append(out)
     return made

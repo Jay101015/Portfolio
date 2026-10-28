@@ -277,6 +277,58 @@ class ArtLibraryTests(unittest.TestCase):
         assert spans == [(sb["scenes"][1]["start"], sb["scenes"][1]["end"]), (sb["scenes"][2]["start"], sb["scenes"][2]["end"])]
         assert caption_line("The car dealer offered Sam a brand new car on finance, and he nearly signed.") == "The car dealer offered Sam a brand new"
 
+    def _timed(self, scenes):
+        """a storyboard with word timings: scenes of (type, props, text), each word 0.4s, scenes back to back"""
+        out, t = [], 0.0
+        for i, (typ, props, text) in enumerate(scenes, 1):
+            words = []
+            for w in text.split():
+                words.append({"w": w, "s": round(t, 2), "e": round(t + 0.35, 2)})
+                t += 0.4
+            out.append({"id": i, "type": typ, "props": props, "narration": text, "words": words, "start": words[0]["s"], "end": round(t, 2)})
+        return {"slug": "t", "fps": 30, "durationSec": t, "scenes": out}
+
+    def test_shorts_cut_on_sentences_open_cold_and_land_the_answer(self):
+        """With word timings a Short starts on a sentence that stands alone and ends on the answer: the planner skips an
+        opening that leans on what came before ("So...") and a heading-only ending ("£100,000.")."""
+        from pipeline.shorts import plan_shorts, score_sentences, sentences, _SENTS
+        sb = self._timed([
+            ("text", {}, "So that is the setup and now we move on to the part about money and what it means."),
+            ("stat", {}, "Rent in London is around £2,000 a month for a one bed flat in most of the city. "
+                         "That is more than half of a typical take home salary for most people there. "
+                         "Which means saving a deposit takes years longer than anywhere else in the country."),
+            ("text", {}, "£100,000."),
+            ("outro", {}, "Thanks for watching."),
+        ])
+        plan = plan_shorts(sb, 1)
+        c = plan[0]
+        assert "spans" in c and c["first"].startswith("Rent in London") and c["last"].startswith("Which means")
+        assert c["hook"].startswith("Rent in London is around £2,000 a month")
+        by = {sc["id"]: sc for sc in sb["scenes"]}
+        S = sentences(sb)
+        _SENTS.clear()
+        for x in S:
+            _SENTS.setdefault(x["scene"], []).append(x)
+        lean, _ = score_sentences([[S[0]] + S[1:4]], by, [])
+        cold, why = score_sentences([S[1:4]], by, [])
+        assert cold > lean and "ends on the answer" in why
+        heading, why = score_sentences([S[1:5]], by, [])
+        assert "ends on the next heading" in why and heading < cold
+
+    def test_cut_spans_trims_scenes_keeps_a_skipped_scene_whole_and_drops_slivers(self):
+        """cut_spans re-times stretches of time from `lead`; a sentence skipped inside a scene leaves it one scene; a
+        sliver under a quarter of a second joins its neighbour; the audio spans are the stretches, in order."""
+        from pipeline.shorts import cut_spans
+        sb = self._timed([("text", {}, "One two three four. Five six seven eight."),
+                          ("takeaway", {"title": "T"}, "Nine ten eleven twelve. Thirteen fourteen fifteen sixteen. Seventeen eighteen nineteen twenty.")])
+        s1 = sb["scenes"][1]
+        a = s1["words"][0]["s"]
+        cut, audio = cut_spans(sb, [(sb["scenes"][0]["end"] - 0.1, s1["words"][3]["e"] + 0.2), (s1["words"][8]["s"], s1["end"])], "Hook", "short-1")
+        assert len(cut["scenes"]) == 1 and cut["scenes"][0]["src"] == 2 and cut["scenes"][0]["start"] == 0.4
+        assert [w["w"] for w in cut["scenes"][0]["words"]] == ["Nine", "ten", "eleven", "twelve.", "Seventeen", "eighteen", "nineteen", "twenty."]
+        assert len(audio) == 2 and audio[0][0] <= a and audio[1] == (s1["words"][8]["s"], s1["end"])
+        assert abs(cut["durationSec"] - (0.4 + sum(b - x for x, b in audio) + 0.8)) < 1e-3 and cut["hook"] == "Hook" and cut["captions"]
+
     def test_a_recap_lists_the_takeaways_unless_given_its_own_lines(self):
         md = "# T\nslug: t\ntheme: whiteboard\nhost: none\n\n[takeaway title=\"Spend with intention\"]\nOne.\n\n[takeaway title=\"Build a budget\"]\nTwo.\n\n[recap]\nSo, spend with intention and build a budget.\n"
         sb = parse_script(md)

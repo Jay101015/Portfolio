@@ -63,6 +63,11 @@ jobs:
               if [ "${t:-0}" -ge "$newest" ]; then newest=$t; p=$q; fi
             done
             echo "project=${p:-jurassic-park}" >> "$GITHUB_OUTPUT"
+            # a push that changes the Shorts list but not the script only needs the Shorts, not the whole video again
+            changed=$(git diff --name-only "$base" HEAD -- "projects/${p:-none}")
+            if echo "$changed" | grep -q '/shorts.json$' && ! echo "$changed" | grep -q '/script.md$'; then
+              echo "shorts_only=true" >> "$GITHUB_OUTPUT"
+            fi
           fi
 
       - uses: actions/setup-node@v4
@@ -113,7 +118,7 @@ jobs:
           flags=""
           # a full vertical copy of a 10-minute video doubles the render; the Shorts already cover 9:16
           if [ "${{ github.event.inputs.vertical }}" = "true" ]; then flags="--vertical"; fi
-          if [ "${{ github.event.inputs.shorts_only }}" = "true" ]; then flags="--only-shorts"; fi
+          if [ "${{ github.event.inputs.shorts_only }}" = "true" ] || [ "${{ steps.pick.outputs.shorts_only }}" = "true" ]; then flags="--only-shorts"; fi
           python -m pipeline.build "projects/$PROJECT" --model base.en --concurrency 2 $flags
 
       - name: Keep what the run found (script with credits, report, small media) on the branch

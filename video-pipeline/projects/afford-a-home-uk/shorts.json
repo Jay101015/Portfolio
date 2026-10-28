@@ -1,8 +1,10 @@
 {
  "shorts": [
-  {"name": "short-1", "scenes": [16, 17, 18, 21], "hook": "London needs £111K a year"},
-  {"name": "short-2", "scenes": [28, 29, 30, 31], "hook": "Free £1,000 a year for your deposit"},
-  {"name": "short-3", "scenes": [23, 26, 27], "hook": "My house hunt: the real numbers"},
-  {"name": "short-4", "scenes": [35, 36, 37], "hook": "Can't afford it? 2 ways people stretch"}
+  {"name": "short-5", "hook": "What £25K, £50K and £100K actually buys you",
+   "spans": [[77.4, 95.3], [102.69, 103.49], [107.34, 122.08], [128.96, 134.36], [136.9, 139.64]],
+   "why": "the salary ladder, middle sentences trimmed; lands on 'still short of the average home in London'"},
+  {"name": "short-6", "hook": "£250K a year… and it's still not a mansion",
+   "spans": [[142.15, 174.3]],
+   "why": "opens on £250,000 a year, £69,000 stamp duty, payoff: 'Not a mansion.'"}
  ]
 }
