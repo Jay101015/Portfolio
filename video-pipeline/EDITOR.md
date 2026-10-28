@@ -95,6 +95,9 @@ colour by themselves: the figure in a line is green, or red when the line is abo
 
 ## The drawings (name: what it shows)
 
+Stop-motion flipbooks (celebrate, hand-money, train; docs/drawing-guide.md) are in the library but held back: use
+one only when LEARNINGS.md says their test has started, so a change in retention can be read against one thing.
+
 - bank-queue: four people queueing at a bank counter, the clerk behind the desk
 - crossroads: a person with a backpack scratching their head at a fork in the road, two signposts
 - keys: an agent in a suit handing house keys to a buyer and shaking hands, the house behind

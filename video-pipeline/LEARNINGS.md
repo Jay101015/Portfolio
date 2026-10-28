@@ -61,6 +61,11 @@ one change at a time where possible, so a result can be read.
   ending with a next step. First video written to it is the next recording. Read its retention curve against the
   house video's at 48 hours and 7 days; keep the rules that move the curve, drop the ones that do not.
 
+### Queued test: stop-motion flipbooks
+- Three flipbooks (celebrate, hand-money, train) are built and checked, made from one generated strip each. Held
+  back until the house video's retention is in, so the opening change is read on its own. Then use three or four
+  of them at money moments in one video and read the retention graph at exactly those seconds.
+
 ### Shorts (2026-10-27)
 - 5 to 6 views each on day one, far behind the long video. Too early to judge; check at 7 days. If they stay low,
   test a different first line and on-screen hook before changing anything else.

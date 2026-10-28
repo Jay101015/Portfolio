@@ -1,0 +1,56 @@
+[
+ {
+  "name": "celebrate",
+  "about": "Sam cheers: arms up, fists raised, a jump and a landing",
+  "search": [
+   "celebrate",
+   "cheer",
+   "yes",
+   "win",
+   "did it",
+   "happy",
+   "excited",
+   "jump",
+   "sam"
+  ],
+  "frames": 5,
+  "step": 0.2,
+  "source": "celebrate-strip.png"
+ },
+ {
+  "name": "hand-money",
+  "about": "Sam, side on, holds out a fan of banknotes and lets them go",
+  "search": [
+   "pay",
+   "hand over",
+   "give",
+   "money",
+   "cash",
+   "notes",
+   "spend",
+   "deposit",
+   "sam"
+  ],
+  "frames": 5,
+  "step": 0.2,
+  "source": "hand-money-strip.png"
+ },
+ {
+  "name": "train",
+  "about": "Sam steps onto a train and looks back through the closing doors",
+  "search": [
+   "train",
+   "commute",
+   "commuter",
+   "station",
+   "travel",
+   "leave",
+   "move out",
+   "sam"
+  ],
+  "frames": 5,
+  "step": 0.4,
+  "source": "train-strip.png",
+  "note": "the carriage is redrawn from a slightly different angle in each panel, so it plays slower, as cuts"
+ }
+]

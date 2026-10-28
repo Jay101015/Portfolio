@@ -1,10 +1,11 @@
 import React from 'react';
-import {AbsoluteFill, Easing, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Easing, Img, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {Brand, Scene} from '../types';
 import {useLayout} from '../components/layout';
 import {pop, rnd} from '../components/motion';
 import {SketchEllipse, SketchLine, SketchPath} from './sketch';
 import {ILLUS} from './illus';
+import {FLIPS} from './flipbook';
 import {Doodle, Write, writeFrames} from './write';
 import {DOODLES} from './doodles';
 
@@ -195,6 +196,7 @@ export type ArtDef = {
   loop?: number;
   about: string;
   svg?: {w: number; h: number; width: number; paths: string[]}; // a traced illustration: pen strokes in draw order (scripts/illus-trace.py)
+  flip?: {frames: string[]; step: number; loop?: boolean}; // a stop-motion drawing: key poses played in steps (flipbook.ts)
 };
 
 const rays = (cx: number, cy: number, r1: number, r2: number, n: number, at: number, color: Color = 'accent2'): Layer[] =>
@@ -1141,6 +1143,7 @@ export const ART: Record<string, ArtDef> = {
 };
 
 Object.assign(ART, ILLUS); // the traced illustrations join the catalogue under their own names
+Object.assign(ART, FLIPS); // and the stop-motion ones, which only come when a scene names them
 
 const PICK: [RegExp, string][] = Object.entries(ART).map(([name, def]) => [new RegExp('\\b(' + def.tags.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'i'), name]);
 
@@ -1164,8 +1167,8 @@ export const pickArtAmong = (among: (name: string) => boolean, ...texts: (string
   return best;
 };
 
-/** a traced illustration (people and situations) rather than a drawn icon */
-export const isTraced = (name: string) => !!ART[name]?.svg;
+/** a picture of people and situations (a traced illustration or a stop-motion one) rather than a drawn icon */
+export const isTraced = (name: string) => !!(ART[name]?.svg || ART[name]?.flip);
 
 /** Every drawing's name, with what it shows and the words that call it up (for the studio's library). */
 export const artCatalogue = () => Object.entries(ART).map(([name, def]) => ({name, about: def.about, tags: def.tags, search: def.search ?? []}));
@@ -1218,6 +1221,35 @@ const Traced: React.FC<{def: NonNullable<ArtDef['svg']>; size: number; brand: Br
   );
 };
 
+/** How long a stop-motion drawing's poses take to play once, in frames: the first pose held a beat, then one step a pose. */
+const flipFrames = (def: NonNullable<ArtDef['flip']>, fps: number) => Math.round(fps * 0.3) + Math.round(def.step * fps) * (def.frames.length - 1);
+
+/** A stop-motion drawing: the first pose lands, the rest follow in steps (8 or so a second, the way stop motion moves),
+ * and the last pose holds, or the run repeats after a pause with `loop`. A short scene (`by`) gets quicker steps so
+ * the last pose is up before its cut. The frames are ink on a transparent ground, so the board shows through. */
+const Flip: React.FC<{def: NonNullable<ArtDef['flip']>; size: number; start: number; style?: React.CSSProperties; by?: number}> = ({def, size, start, style, by}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const t = frame - start;
+  if (t < 0) return null;
+  const hold = Math.round(fps * 0.3);
+  const n = def.frames.length;
+  const room = by !== undefined ? by - start - hold : Infinity;
+  const step = Math.max(2, Math.min(Math.round(def.step * fps), Math.floor(room / Math.max(1, n - 1))));
+  const run = hold + step * (n - 1);
+  const tt = def.loop ? t % (run + Math.round(fps * 0.9)) : t;
+  const i = tt < hold ? 0 : Math.min(n - 1, 1 + Math.floor((tt - hold) / step));
+  const appear = Math.min(1, t / 4);
+  return (
+    <div style={{position: 'relative', width: size, height: size, opacity: appear, ...style}}>
+      {def.frames.map((f, k) => (
+        // every pose is mounted so each is loaded before it is needed; only the current one shows
+        <Img key={f} src={staticFile(f)} style={{position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', visibility: k === i ? 'visible' : 'hidden'}} />
+      ))}
+    </div>
+  );
+};
+
 /** One drawing from the catalogue, `size` px square, its strokes going on from frame `start`, then moving. */
 export const Art: React.FC<ArtProps> = ({name, size, brand, start = 0, seed = 1, style, by}) => {
   const frame = useCurrentFrame();
@@ -1225,6 +1257,7 @@ export const Art: React.FC<ArtProps> = ({name, size, brand, start = 0, seed = 1,
   const def = ART[name];
   if (!def) return null;
   if (def.svg) return <Traced def={def.svg} size={size} brand={brand} start={start} seed={seed} style={style} by={by} />;
+  if (def.flip) return <Flip def={def.flip} size={size} start={start} style={style} by={by} />;
   const t = (frame - start) / fps;
   const px = size / 100;
   const drawnAll = Math.max(...def.layers.map((l) => l.draw[1]));
@@ -1354,6 +1387,7 @@ export const artSeconds = (name: string) => {
   const def = ART[name];
   if (!def) return 3;
   if (def.svg) return Math.ceil(tracedSeconds(def.svg) + 1.2);
+  if (def.flip) return Math.ceil(flipFrames(def.flip, 30) / 30 + 1.2);
   const drawn = Math.max(...def.layers.map((l) => l.draw[1]));
   return Math.ceil(drawn + (def.loop ?? 2.4) + 0.4);
 };

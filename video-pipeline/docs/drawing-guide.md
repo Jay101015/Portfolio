@@ -89,3 +89,39 @@ full size per drawing would sharpen them if ever needed.
 - hospital-desk: a young woman at a hospital reception desk talking to the receptionist, a waiting area behind
 - airport-departures: a young man at an airport with a suitcase and a passport, the departures board behind him
 - garden-retirement: a man in his sixties watering plants in a garden, a dog beside him, relaxed
+
+## Stop-motion drawings (flipbooks)
+
+A flipbook is a handful of key poses played in steps, the way stop motion moves: the first pose lands, the rest
+follow about five a second, the last one holds. Named on a scene like any drawing (`art="celebrate"`), it takes
+the picture's place. Flipbooks have no tags, so the picker never adds one by itself.
+
+| flipbook | shows |
+|---|---|
+| celebrate | Sam cheers: fists up, a jump, a landing |
+| hand-money | Sam, side on, holds out a fan of notes and lets them go |
+| train | Sam steps onto a train and looks back through the closing doors (the carriage is redrawn in each panel, so it plays slower, as cuts) |
+
+### Making a new one
+
+1. **One character sheet, kept for every strip** (`library/flipbook/source/sam-character-sheet.png`). Its prompt:
+   "Character reference sheet for an animation. A young man in his mid-20s with short curly dark hair, a plain
+   crew-neck t-shirt, slim jeans and white trainers. Three full-body views side by side: front, three-quarter and
+   side. Same size and proportions in all three. Clean black marker line art on a pure white background,
+   hand-drawn whiteboard explainer style, even line weight, no shading, no colour, no text, no labels."
+2. **All the poses in one image**, the sheet attached as the reference (a generator keeps a character far more
+   consistent inside one picture than across several):
+   "Using the character from the reference image exactly as drawn. A horizontal strip of 5 equal square panels,
+   separated by thin gaps, showing one continuous action, left to right: 1) ...; 2) ...; 3) ...; 4) ...; 5) ....
+   Full body in every panel, same size, feet on the same ground line, centred. Clean black marker line art on a
+   pure white background, hand-drawn whiteboard style, no shading, no colour, no text, no panel numbers."
+3. **Check the strip**: the same face, hair and clothes in every panel; the feet on one line; no numbers or
+   lettering; count the fingers on anything a hand holds. Regenerate rather than keep an odd panel out.
+4. **Cut it**: save it as `library/flipbook/source/<name>-strip.png`, then
+   `python3 scripts/flipbook-cut.py library/flipbook/source/<name>-strip.png <name> --anchor feet --gif`
+   (`--anchor back` for a figure facing right that reaches out, `--anchor none` when the background is part of the
+   picture). Look at the GIF it writes, then add the name to `library/flipbook/manifest.json` (`step` is the
+   seconds a pose holds: 0.2 for a figure on a plain board, 0.4 when the background moves).
+
+Good next ones: counting notes, dropping a coin in a jar, being handed house keys, opening a letter and looking
+shocked, shrugging, checking a banking app.
