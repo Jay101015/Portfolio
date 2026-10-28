@@ -25,6 +25,8 @@ import {PaperSwitch, Sticker} from './paper/scenes';
 import {SketchFilterDefs} from './paper/media';
 import {PenHand} from './paper/write';
 import {ArtLayer} from './paper/art';
+import {PoseLayer} from './paper/poses';
+import {CharacterOn} from './paper/character';
 import {Arrow, SketchPath} from './paper/sketch';
 import {FACES, POSES, defaultAvatar, defaultFaceFor, type AvatarConfig, type Face, type Pose} from './avatar/Avatar';
 
@@ -328,6 +330,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
   };
   const avatar: AvatarConfig = {...defaultAvatar, ...(sb.avatar ?? {})};
   return (
+    <CharacterOn.Provider value={!!sb.poses?.length}>
     <AbsoluteFill style={{backgroundColor: brand.bg, fontFamily: brand.font, color: brand.text}}>
       <Background brand={brand} />
       <SketchFilterDefs />
@@ -372,10 +375,12 @@ export const Video: React.FC<Storyboard> = (sb) => {
           </Sequence>
         );
       })}
+      {sb.poses?.length ? <PoseLayer poses={sb.poses} scenes={sb.scenes} /> : null}
       {sb.hook ? <HookBanner text={sb.hook} brand={brand} /> : null}
       <Chrome brand={brand} durationSec={sb.durationSec} />
       {sb.captions ? <Captions scenes={sb.scenes} brand={brand} host={sb.host} always={!!sb.short} /> : null}
       {brand.board && sb.hand ? <PenHand brand={brand} /> : null}
     </AbsoluteFill>
+    </CharacterOn.Provider>
   );
 };

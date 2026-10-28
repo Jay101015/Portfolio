@@ -12,6 +12,7 @@ import {Erase} from './erase';
 import {captionLine, keyWords, moneyTint} from './phrase';
 import {Media} from './media';
 import {Loop, Sequence} from 'remotion';
+import {CharacterOn, isPersonArt} from './character';
 
 /**
  * The paper look: every scene is laid out like a page someone wrote on. Big words in a serif, notes in
@@ -81,9 +82,20 @@ const bigArt = (brand: Brand, art: string | undefined) => !!(brand.illustrated &
 /** A doodle in the top-right corner of the board, drawn after the headline is written. */
 const CornerDoodle: React.FC<{brand: Brand; name?: string; art?: string; frame: number; fps: number; start: number; seed?: number; color?: string; by?: number}> = ({brand, name, art, frame, fps, start, seed = 1, color, by}) => {
   const {u, pad, isVertical} = useLayout();
+  const character = React.useContext(CharacterOn);
   if (!brand.board || (!name && !art)) return null;
   void frame;
   if (bigArt(brand, art)) {
+    // with the character on a Short: no second person, and an object drawing moves left out of his way
+    if (character && isPersonArt(art)) return null;
+    if (character && isVertical) {
+      const small = 560 * u;
+      return (
+        <div style={{position: 'absolute', left: pad * 0.6, bottom: pad * 1.0 + 150 * u, width: small, height: small}}>
+          <Art name={art as string} size={small} brand={brand} start={start} seed={seed} by={by} />
+        </div>
+      );
+    }
     const size = (isVertical ? 760 : 760) * u; // picture first: 70% of the board's height
     return (
       <div style={{position: 'absolute', right: pad * 0.5, width: size, height: size, ...(isVertical ? {bottom: pad * 1.0 + 170 * u, left: '50%', transform: 'translateX(-50%)'} : {top: '50%', transform: 'translateY(-50%)'})}}>

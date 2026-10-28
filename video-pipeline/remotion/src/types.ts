@@ -83,4 +83,9 @@ export type Storyboard = {
   scenes: Scene[];
   hook?: string; // a Short: the line pinned at the top of the frame for the whole video
   short?: string; // a Short's name (short-1, ...)
+  poses?: PoseCue[]; // a Short: the character's poses on the words (paper/poses.tsx)
 };
+
+/** One pose change for the character on a Short: `t` seconds into the Short. `ib`: an in-between drawing (no landing
+ * squash); `hop`: a happy pose lands with a hop; `arc`: a leap lasting that many seconds (a jump). */
+export type PoseCue = {t: number; pose: string; ib?: boolean; hop?: boolean; arc?: number};

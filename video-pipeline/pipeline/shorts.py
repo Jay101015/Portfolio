@@ -487,3 +487,81 @@ def cut_spans(sb: dict[str, Any], spans: list[list[float]], hook: str | None = N
     out["mouth"] = []
     out["visemes"] = []
     return out, audio
+
+
+SHORT_SPEED = 1.2  # Shorts play the voice a little faster than the long video: tighter, and the pitch stays the same
+
+
+def speed_up(cut: dict[str, Any], speed: float) -> dict[str, Any]:
+    """The cut storyboard on a timeline `speed` times faster: every scene, word and cue time divided by it, so the
+    pictures land on the words of a voice sped up by the same amount (ffmpeg atempo keeps the pitch)."""
+    if abs(speed - 1.0) < 1e-6:
+        return cut
+    out = copy.deepcopy(cut)
+    for sc in out["scenes"]:
+        sc["start"], sc["end"] = round(sc["start"] / speed, 3), round(sc["end"] / speed, 3)
+        for w in sc.get("words") or []:
+            w["s"], w["e"] = round(w["s"] / speed, 3), round(w["e"] / speed, 3)
+        for c in sc.get("cues") or []:
+            if "t" in c:
+                c["t"] = round(c["t"] / speed, 3)
+    out["durationSec"] = round(out["durationSec"] / speed, 3)
+    out["speed"] = speed
+    return out
+
+
+# --- the character on a Short -----------------------------------------------------------------------------------------
+
+HAPPY = {"thumbs-up", "fist-pump", "arms-up", "jump", "phone-excited", "relieved", "idea"}  # these land with a little hop
+FOOTAGE = {"broll", "clip", "still", "image"}
+
+
+def short_time(t: float, spans: list[tuple[float, float]], lead: float = 0.4, speed: float = 1.0) -> float | None:
+    """where a moment of the long video (seconds) falls in the Short cut from `spans`, or None if it was cut out"""
+    at = lead
+    for a, b in spans:
+        if a - 0.05 <= t <= b + 0.05:
+            return round((at + max(0.0, t - a)) / speed, 3)
+        at += b - a
+    return None
+
+
+def _inbetweens() -> dict[str, list[str]]:
+    here = os.path.dirname(os.path.abspath(__file__))
+    mf = os.path.join(os.path.dirname(here), "library", "poses", "manifest.json")
+    out: dict[str, list[str]] = {}
+    if os.path.exists(mf):
+        for e in json.load(open(mf, encoding="utf-8")):
+            if e.get("into") and e["name"] != "jump-air" and e["name"] != "jump-crouch":
+                out.setdefault(e["into"], []).append(e["name"])
+    return {k: sorted(v) for k, v in out.items()}
+
+
+def pose_track(cues: list[list[Any]], spans: list[tuple[float, float]], lead: float = 0.4, speed: float = 1.0, fps: int = 30) -> list[dict[str, Any]]:
+    """The character's track for a Short from `cues` [[seconds in the long video, pose], ...]: each pose lands on its
+    word, the in-between drawings of that pose (fist-pump-1, -2, ...) play on twos just before it, `jump` is a crouch,
+    a leap and a landing with arms up, and happy poses land with a hop. Cues in a part that was cut out are dropped."""
+    ib = _inbetweens()
+    step = 4 / fps  # each in-between held four frames: two drawings on twos
+    track: list[dict[str, Any]] = []
+    for t, pose in sorted(cues, key=lambda c: c[0]):
+        at = short_time(float(t), spans, lead, speed)
+        if at is None:
+            continue
+        if pose == "jump":
+            track += [{"t": round(max(0.0, at - step), 3), "pose": "jump-crouch", "ib": True},
+                      {"t": at, "pose": "jump-air", "ib": True, "arc": round(0.4, 3)},
+                      {"t": round(at + 0.4, 3), "pose": "arms-up", "hop": False}]
+            continue
+        before = ib.get(pose, [])
+        for k, name in enumerate(before):
+            track.append({"t": round(max(0.0, at - step * (len(before) - k)), 3), "pose": name, "ib": True})
+        track.append({"t": at, "pose": pose, "hop": pose in HAPPY})
+    track.sort(key=lambda c: c["t"])
+    # an in-between pushed before the previous key would undo it: keep the order of the words
+    out: list[dict[str, Any]] = []
+    for c in track:
+        if out and c["t"] <= out[-1]["t"]:
+            c = dict(c, t=round(out[-1]["t"] + 1 / fps, 3))
+        out.append(c)
+    return out

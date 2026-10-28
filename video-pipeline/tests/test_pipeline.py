@@ -329,6 +329,23 @@ class ArtLibraryTests(unittest.TestCase):
         assert len(audio) == 2 and audio[0][0] <= a and audio[1] == (s1["words"][8]["s"], s1["end"])
         assert abs(cut["durationSec"] - (0.4 + sum(b - x for x, b in audio) + 0.8)) < 1e-3 and cut["hook"] == "Hook" and cut["captions"]
 
+    def test_shorts_play_faster_and_the_character_lands_on_the_words(self):
+        """A Short's timeline runs `speed` times faster (words and scenes divided by it); the character's cues map from
+        the long video into the Short, in-betweens play just before their pose, cut-out moments are dropped."""
+        from pipeline.shorts import cut_spans, speed_up, pose_track, short_time, SHORT_SPEED
+        assert SHORT_SPEED == 1.2
+        sb = self._timed([("text", {}, "One two three four. Five six seven eight."), ("text", {}, "Nine ten eleven twelve.")])
+        cut, audio = cut_spans(sb, [(0.0, 1.6), (3.2, sb["scenes"][1]["end"])], "Hook", "short-1")
+        fast = speed_up(cut, 1.2)
+        assert abs(fast["durationSec"] - cut["durationSec"] / 1.2) < 1e-3
+        assert fast["scenes"][0]["words"][1]["s"] == round(cut["scenes"][0]["words"][1]["s"] / 1.2, 3)
+        assert short_time(0.8, audio, 0.4, 1.2) == round((0.4 + 0.8) / 1.2, 3) and short_time(2.4, audio) is None
+        track = pose_track([[0.8, "fist-pump"], [2.4, "shrug"], [3.6, "thumbs-up"]], audio, 0.4, 1.2)
+        names = [c["pose"] for c in track]
+        assert names == ["fist-pump-1", "fist-pump-2", "fist-pump", "thumbs-up"]  # the shrug fell in the cut-out part
+        assert track[2]["t"] == short_time(0.8, audio, 0.4, 1.2) and track[0]["ib"] and track[2]["hop"] and not track[2].get("ib")
+        assert all(a["t"] < b["t"] for a, b in zip(track, track[1:]))
+
     def test_a_recap_lists_the_takeaways_unless_given_its_own_lines(self):
         md = "# T\nslug: t\ntheme: whiteboard\nhost: none\n\n[takeaway title=\"Spend with intention\"]\nOne.\n\n[takeaway title=\"Build a budget\"]\nTwo.\n\n[recap]\nSo, spend with intention and build a budget.\n"
         sb = parse_script(md)

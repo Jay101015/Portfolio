@@ -401,6 +401,13 @@ scenes (`"spans": [[77.4, 95.3], [102.7, 103.5], ...]`, seconds in the long vide
 skipped inside a scene keeps that scene on screen rather than drawing it again. Pushing a
 `shorts.json` on its own renders just the Shorts.
 
+Shorts play the voice 1.2x faster than the long video (pitch kept; `"speed"` in `shorts.json`, for
+all picks or one, 1 = as recorded). A pick's `"poses": [[seconds in the long video, pose], ...]`
+puts the character on the Short: each pose lands on its word, its in-between drawings play just
+before it, a `jump` crouches, leaps and lands, happy poses hop, all on twos with squash and stretch
+(remotion/src/paper/poses.tsx). He stands at the foot of the frame under the captions, steps out
+while footage plays, and a scene drawing of another person is left out while he is on.
+
 On the command line, `python -m pipeline.build projects/x --shorts 3` plans
 and renders them (`projects/x/shorts.json`, the studio's picks, says which
 if it exists; the plan used is written to `shorts-plan.json`).

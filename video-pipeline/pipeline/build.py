@@ -31,7 +31,7 @@ from .enhance import enhance, level_from_header
 from .preview import write_preview
 from .auto_script import script_from_words
 from .script_parser import pace_scenes, parse_script
-from .shorts import cut_short, cut_spans, plan_shorts
+from .shorts import SHORT_SPEED, cut_short, cut_spans, plan_shorts, pose_track, speed_up
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -542,8 +542,9 @@ def render(props_path: str, out_path: str, composition: str, concurrency: str | 
         print(note, flush=True)
 
 
-def keep_spans(src: str, dst: str, spans: list[tuple[float, float]], lead: float, tail: float) -> None:
-    """Write `dst`: silence of `lead`, then the `spans` of `src` (start, end) back to back, then `tail` of silence."""
+def keep_spans(src: str, dst: str, spans: list[tuple[float, float]], lead: float, tail: float, speed: float = 1.0) -> None:
+    """Write `dst`: silence of `lead`, then the `spans` of `src` (start, end) back to back, then `tail` of silence, the
+    whole thing played `speed` times faster with the pitch kept (atempo)."""
     parts = [f"anullsrc=r=48000:cl=mono,atrim=0:{lead:.3f}[l]"]
     labels = ["[l]"]
     for i, (a, b) in enumerate(spans):
@@ -551,7 +552,8 @@ def keep_spans(src: str, dst: str, spans: list[tuple[float, float]], lead: float
         labels.append(f"[s{i}]")
     parts.append(f"anullsrc=r=48000:cl=mono,atrim=0:{tail:.3f}[t]")
     labels.append("[t]")
-    graph = ";".join(parts) + ";" + "".join(labels) + f"concat=n={len(labels)}:v=0:a=1[out]"
+    tempo = f",atempo={speed:.4f}" if abs(speed - 1.0) > 1e-6 else ""
+    graph = ";".join(parts) + ";" + "".join(labels) + f"concat=n={len(labels)}:v=0:a=1{tempo}[out]"
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-filter_complex", graph, "-map", "[out]", "-ac", "1", "-ar", "48000", "-codec:a", "libmp3lame", "-q:a", "2", dst], check=True)
 
 
@@ -624,7 +626,11 @@ def render_shorts(project: str, sb: dict, audio: str | None, concurrency: str | 
         with open(plan_path, encoding="utf-8") as f:
             plan = json.load(f)
         if isinstance(plan, dict):
+            top_speed = plan.get("speed")
             plan = plan.get("shorts") or []
+            if top_speed is not None:
+                plan = [dict({"speed": top_speed}, **p) for p in plan]
+    default_speed = SHORT_SPEED
     if not plan:
         plan = plan_shorts(sb, want)
     with open(os.path.join(project, "shorts-plan.json"), "w", encoding="utf-8") as f:
@@ -640,9 +646,15 @@ def render_shorts(project: str, sb: dict, audio: str | None, concurrency: str | 
             cut, spans = cut_short(sb, ids, short.get("hook"), name)
         else:
             continue
+        # a Short plays a little faster than the long video (shorts.json "speed", per pick or for all; 1 = as recorded)
+        speed = float(short.get("speed", default_speed))
+        cut = speed_up(cut, speed)
+        if short.get("poses"):
+            # the character, posing on the words (shorts.json "poses": [[seconds in the long video, pose], ...])
+            cut["poses"] = pose_track(short["poses"], spans, 0.4, speed, int(sb.get("fps", 30)))
         if audio:
             os.makedirs(public_dir, exist_ok=True)
-            keep_spans(audio, os.path.join(public_dir, f"{name}.mp3"), spans, 0.4, 0.8)
+            keep_spans(audio, os.path.join(public_dir, f"{name}.mp3"), spans, 0.4, 0.8, speed)
             if sb.get("music"):
                 mix_music(os.path.join(public_dir, f"{name}.mp3"), sb["music"], os.path.join(public_dir, f"{name}-mix.mp3"), float(sb.get("musicDb", -20.0)))
                 os.replace(os.path.join(public_dir, f"{name}-mix.mp3"), os.path.join(public_dir, f"{name}.mp3"))
@@ -654,7 +666,7 @@ def render_shorts(project: str, sb: dict, audio: str | None, concurrency: str | 
         with open(props, "w", encoding="utf-8") as f:
             json.dump(cut, f)
         out = os.path.join(project, f"{slug}-{name}.mp4")
-        print(f"short {name}: {'spans ' + str(short['spans']) if short.get('spans') else 'scenes ' + str(ids)}, {cut['durationSec']:.0f}s, hook: {cut['hook']}")
+        print(f"short {name}: {'spans ' + str(short['spans']) if short.get('spans') else 'scenes ' + str(ids)}, {cut['durationSec']:.0f}s at {speed:g}x, hook: {cut['hook']}")
         render(props, out, "Vertical", concurrency, chunk=chunk)
         made.append(out)
     return made

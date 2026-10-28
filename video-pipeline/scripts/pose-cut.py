@@ -4,7 +4,7 @@
     python3 scripts/pose-cut.py library/poses/source/batch-1-talking.png explain point-board count-fingers ...
 
 Names are given in reading order (left to right, top row first); `-` skips a panel. Each pose becomes
-remotion/public/poses/<name>.png: ink on a transparent ground, the panel's floor line removed, cropped to the figure
+remotion/public/poses/<name>.png: ink on a transparent ground (and poses/solid/<name>.png, filled with white paper), the panel's floor line removed, cropped to the figure
 with a margin, and scaled so a standing figure is STAND_H px tall whatever size the batch drew him at, so poses from
 different sheets cut together without the character changing size. The feet position goes in
 library/poses/manifest.json with the name, so a cut from one pose to the next keeps him on the same spot.
@@ -90,6 +90,22 @@ def cut_panel(a: np.ndarray) -> tuple[np.ndarray, int]:
     return c, g
 
 
+def solid(im: Image.Image) -> Image.Image:
+    """the pose with white paper inside its outline (remotion/public/poses/solid/), so a busy background or footage
+    does not show through his body when he stands in front of it"""
+    from scipy import ndimage
+
+    a = np.array(im)
+    line = ndimage.binary_dilation(a[..., 3] > 60, iterations=2)
+    inside = ndimage.binary_erosion(ndimage.binary_fill_holes(line), iterations=1) | (a[..., 3] > 60)
+    base = np.zeros_like(a)
+    base[..., :3] = 255
+    base[..., 3] = inside * 255
+    out = Image.fromarray(base, "RGBA")
+    out.alpha_composite(im)
+    return out
+
+
 def ink(c: np.ndarray) -> Image.Image:
     """grey ink to opacity: the white ground goes see-through, colour (a tan envelope, a blue card) turns to grey"""
     L = c.astype(np.float32)
@@ -130,6 +146,8 @@ def main(argv: list[str]) -> None:
         im = ink(box)
         im = im.resize((max(1, round(im.width * scale)), max(1, round(im.height * scale))), Image.LANCZOS)
         im.save(os.path.join(OUT, f"{name}.png"), optimize=True)
+        os.makedirs(os.path.join(OUT, "solid"), exist_ok=True)
+        solid(im).save(os.path.join(OUT, "solid", f"{name}.png"), optimize=True)
         # where his feet are in the saved image: the middle of what touches the floor, and the floor itself
         d = c < 140
         feet = d[max(0, g - 45):g + 1]

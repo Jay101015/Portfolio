@@ -1,10 +1,167 @@
 {
  "shorts": [
-  {"name": "short-5", "hook": "What £25K, £50K and £100K actually buys you",
-   "spans": [[77.4, 95.3], [102.69, 103.49], [107.34, 122.08], [128.96, 134.36], [136.9, 139.64]],
-   "why": "the salary ladder, middle sentences trimmed; lands on 'still short of the average home in London'"},
-  {"name": "short-6", "hook": "£250K a year… and it's still not a mansion",
-   "spans": [[142.15, 174.3]],
-   "why": "opens on £250,000 a year, £69,000 stamp duty, payoff: 'Not a mansion.'"}
- ]
+  {
+   "name": "short-5",
+   "hook": "What £25K, £50K and £100K actually buys you",
+   "spans": [
+    [
+     77.4,
+     95.3
+    ],
+    [
+     102.69,
+     103.49
+    ],
+    [
+     107.34,
+     122.08
+    ],
+    [
+     128.96,
+     134.36
+    ],
+    [
+     136.9,
+     139.64
+    ]
+   ],
+   "why": "the salary ladder, middle sentences trimmed; lands on 'still short of the average home in London'",
+   "poses": [
+    [
+     77.6,
+     "welcome"
+    ],
+    [
+     78.67,
+     "count-notes"
+    ],
+    [
+     82.54,
+     "hand-over"
+    ],
+    [
+     86.51,
+     "coin-jar"
+    ],
+    [
+     88.26,
+     "point-board"
+    ],
+    [
+     91.44,
+     "calculator"
+    ],
+    [
+     93.86,
+     "magnifier"
+    ],
+    [
+     102.99,
+     "fist-pump"
+    ],
+    [
+     108.54,
+     "count-notes"
+    ],
+    [
+     111.0,
+     "point-board"
+    ],
+    [
+     114.96,
+     "thumbs-up"
+    ],
+    [
+     121.66,
+     "jump"
+    ],
+    [
+     129.32,
+     "smug"
+    ],
+    [
+     137.2,
+     "but-finger"
+    ],
+    [
+     138.3,
+     "facepalm"
+    ]
+   ]
+  },
+  {
+   "name": "short-6",
+   "hook": "£250K a year… and it's still not a mansion",
+   "spans": [
+    [
+     142.15,
+     174.3
+    ]
+   ],
+   "why": "opens on £250,000 a year, £69,000 stamp duty, payoff: 'Not a mansion.'",
+   "poses": [
+    [
+     142.2,
+     "arms-up"
+    ],
+    [
+     144.08,
+     "smug"
+    ],
+    [
+     146.4,
+     "calculator"
+    ],
+    [
+     148.48,
+     "shocked"
+    ],
+    [
+     151.57,
+     "coin-jar"
+    ],
+    [
+     153.3,
+     "explain"
+    ],
+    [
+     157.38,
+     "card-tap"
+    ],
+    [
+     158.87,
+     "bill-shock"
+    ],
+    [
+     161.36,
+     "thumbs-down"
+    ],
+    [
+     162.94,
+     "brown-envelope"
+    ],
+    [
+     164.89,
+     "money-flies"
+    ],
+    [
+     166.94,
+     "facepalm"
+    ],
+    [
+     168.34,
+     "count-notes"
+    ],
+    [
+     170.94,
+     "explain"
+    ],
+    [
+     173.48,
+     "shrug"
+    ]
+   ]
+  }
+ ],
+ "speed": 1.2
 }

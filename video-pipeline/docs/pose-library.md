@@ -250,6 +250,12 @@ Simple line-art rooms and places with nobody in them, a clear floor in the middl
 on: a bank branch; an estate agent's window and desk; a living room; an office desk; a supermarket aisle; a train
 platform; a high street; a kitchen. Same marker style, lighter lines, no text, no signs with words.
 
+### On a Short
+
+`shorts.json` picks name poses on words (`"poses": [[seconds in the long video, "fist-pump"], ...]`); the render
+draws them with remotion/src/paper/poses.tsx from remotion/public/poses/solid/ (each pose filled with white paper, made
+by scripts/pose-cut.py). In-betweens are found by their `into` in the manifest.
+
 ### Tricks (code, no new drawings)
 
 - Treadmill walk: he walks on the spot while a long street scrolls behind him, for journeys and "years later".
