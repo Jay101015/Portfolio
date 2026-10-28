@@ -251,6 +251,36 @@
   "core": true
  },
  {
+  "name": "facepalm-1",
+  "tags": [
+   "in-between",
+   "facepalm"
+  ],
+  "about": "hand rising to the face, eyes closing",
+  "file": "poses/facepalm-1.png",
+  "w": 373,
+  "h": 859,
+  "foot_x": 185,
+  "floor_y": 833,
+  "source": "batch-ib-b-inbetweens.png",
+  "into": "facepalm"
+ },
+ {
+  "name": "facepalm-2",
+  "tags": [
+   "in-between",
+   "facepalm"
+  ],
+  "about": "hand over the face, head tipping",
+  "file": "poses/facepalm-2.png",
+  "w": 375,
+  "h": 853,
+  "foot_x": 186,
+  "floor_y": 826,
+  "source": "batch-ib-b-inbetweens.png",
+  "into": "facepalm"
+ },
+ {
   "name": "fist-pump",
   "tags": [
    "yes",
@@ -268,6 +298,36 @@
   "core": true
  },
  {
+  "name": "fist-pump-1",
+  "tags": [
+   "in-between",
+   "fist-pump"
+  ],
+  "about": "fist closing at the waist, on the way to a fist pump",
+  "file": "poses/fist-pump-1.png",
+  "w": 379,
+  "h": 872,
+  "foot_x": 188,
+  "floor_y": 846,
+  "source": "batch-ib-b-inbetweens.png",
+  "into": "fist-pump"
+ },
+ {
+  "name": "fist-pump-2",
+  "tags": [
+   "in-between",
+   "fist-pump"
+  ],
+  "about": "fist rising past the chest, cheering",
+  "file": "poses/fist-pump-2.png",
+  "w": 408,
+  "h": 875,
+  "foot_x": 215,
+  "floor_y": 848,
+  "source": "batch-ib-b-inbetweens.png",
+  "into": "fist-pump"
+ },
+ {
   "name": "hand-over",
   "tags": [
    "pay",
@@ -283,6 +343,36 @@
   "floor_y": 810,
   "source": "batch-3-goodnews-money.png",
   "core": true
+ },
+ {
+  "name": "hand-over-1",
+  "tags": [
+   "in-between",
+   "hand-over"
+  ],
+  "about": "taking a \u00a320 note out of his pocket",
+  "file": "poses/hand-over-1.png",
+  "w": 389,
+  "h": 849,
+  "foot_x": 207,
+  "floor_y": 827,
+  "source": "batch-ib-b-inbetweens.png",
+  "into": "hand-over"
+ },
+ {
+  "name": "hand-over-2",
+  "tags": [
+   "in-between",
+   "hand-over"
+  ],
+  "about": "holding a \u00a320 note out",
+  "file": "poses/hand-over-2.png",
+  "w": 702,
+  "h": 852,
+  "foot_x": 195,
+  "floor_y": 827,
+  "source": "batch-ib-b-inbetweens.png",
+  "into": "hand-over"
  },
  {
   "name": "idea",
@@ -316,6 +406,36 @@
   "floor_y": 756,
   "source": "batch-0-sheet.png",
   "core": false
+ },
+ {
+  "name": "jump-air",
+  "tags": [
+   "in-between",
+   "jump"
+  ],
+  "about": "in the air, arms up, cheering",
+  "file": "poses/jump-air.png",
+  "w": 445,
+  "h": 758,
+  "foot_x": 194,
+  "floor_y": 739,
+  "source": "batch-ib-b-inbetweens.png",
+  "into": "jump"
+ },
+ {
+  "name": "jump-crouch",
+  "tags": [
+   "in-between",
+   "jump"
+  ],
+  "about": "crouched to jump, arms swung back (side-on)",
+  "file": "poses/jump-crouch.png",
+  "w": 498,
+  "h": 576,
+  "foot_x": 289,
+  "floor_y": 552,
+  "source": "batch-ib-b-inbetweens.png",
+  "into": "jump"
  },
  {
   "name": "magnifier",
