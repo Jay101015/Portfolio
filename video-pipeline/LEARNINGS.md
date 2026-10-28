@@ -102,6 +102,15 @@ one change at a time where possible, so a result can be read.
   the take, not the script.
 - A card with a figure the voice does not say ("nearly 3x", "salary × 4.5") is a fault, even when it is right.
 
+### Shorts demo: what £25K a year buys (2026-10-28)
+- Review: editor 7, animator 7, retention 7 (round 1); editor 8, animator 8, retention 7 (round 2).
+- The transcript's word times can run 0.4 s early in places (around "small towns, or a terraced"): a cut placed on
+  them landed mid-word. Rule: place every cut on a pause measured in the sound itself, not on a word time.
+- On a vertical slice of a room he must stay clear of the Shorts overlays: feet above the bottom 15% (the title),
+  body left of the button column (right 15%). Cards go beside him, captions high (about 19% down).
+- Retention's ceiling here is the script, not the edit: open on a claim, not a bare salary; give each number its
+  stake out loud; put Jeffrey's own numbers in.
+
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage?
 2. Thumbnail: a face (Jeffrey) vs no face, once Canva thumbnails are in use.
