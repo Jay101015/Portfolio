@@ -93,7 +93,7 @@ Status: `have` = cut and in the library, blank = still to make.
 | atm | at a cash machine | withdraw, cash, ATM | |
 | bank-counter | at a bank counter with a clerk | bank, branch, open an account | |
 | ★ calculator | tapping a calculator | calculate, work out, maths | have |
-| ★ magnifier | reading small print with a magnifying glass | fees, small print, terms, check | have (no feet: redo) |
+| ★ magnifier | reading small print with a magnifying glass | fees, small print, terms, check | have |
 | crypto | holding a giant coin, nervous | crypto, bitcoin, gamble | |
 | pension-pot | putting coins into a pot labelled pension | pension, retire, workplace | |
 
@@ -149,7 +149,7 @@ Status: `have` = cut and in the library, blank = still to make.
 | pose | shows | tags | status |
 |---|---|---|---|
 | ★ buried | buried under a pile of bills | debt, bills, overwhelmed | |
-| ★ cut-card | cutting a credit card with scissors | cut up, credit card, stop | have (no feet: redo) |
+| ★ cut-card | cutting a credit card with scissors | cut up, credit card, stop | have |
 | debt-call | on the phone, sweating | debt collector, call, chased | |
 | awake | lying awake in bed at night | worry, can't sleep, stress | |
 | head-in-hands | sitting at a table, head in hands | stressed, stuck, can't afford | |
@@ -174,7 +174,7 @@ Status: `have` = cut and in the library, blank = still to make.
 
 | pose | shows | tags | status |
 |---|---|---|---|
-| ★ brown-envelope | holding a brown HMRC envelope, nervous | HMRC, tax, letter | have (no feet: redo) |
+| ★ brown-envelope | holding a brown HMRC envelope, nervous | HMRC, tax, letter | have |
 | tax-return | filling in a long form at a desk | tax return, self assessment | |
 | refund | opening a letter, delighted | refund, rebate, money back | |
 | queue | waiting in a long queue, bored | wait, queue, process | |

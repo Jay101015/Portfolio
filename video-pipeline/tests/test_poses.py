@@ -15,11 +15,17 @@ pc = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(pc)
 
 
-def test_each_sheet_cuts_into_eight_panels():
+def test_each_sheet_cuts_into_as_many_panels_as_it_has_poses():
+    with open(os.path.join(ROOT, "library", "poses", "manifest.json"), encoding="utf-8") as fh:
+        from_sheet = {}
+        for e in json.load(fh):
+            from_sheet[e["source"]] = from_sheet.get(e["source"], 0) + 1
     src = os.path.join(ROOT, "library", "poses", "source")
     for f in sorted(os.listdir(src)):
         a = np.array(Image.open(os.path.join(src, f)).convert("L"))
-        assert len(pc.grid(a)) == 8, f
+        n = len(pc.grid(a))
+        # a sheet is a 4 x 2 grid or a short redo row, and holds at least the poses taken from it
+        assert n in (3, 8) and n >= from_sheet.get(f, 0), (f, n)
 
 
 def test_manifest_poses_have_files_feet_and_tags():
