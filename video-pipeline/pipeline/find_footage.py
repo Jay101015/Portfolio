@@ -403,6 +403,9 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
             continue
         if sc["type"] not in ("clip", "still", "image", "broll"):
             continue
+        if p.get("lib"):  # the channel's own footage library: nothing to search for (pipeline/footage_library.py)
+            report["scenes"].append({"id": sc["id"], "status": "library", "src": p["lib"]})
+            continue
         src = p.get("src")
         if src and os.path.exists(os.path.join(media, src)):
             report["scenes"].append({"id": sc["id"], "status": "present", "src": src})

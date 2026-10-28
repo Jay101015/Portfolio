@@ -68,6 +68,9 @@ is not, the scene is cut in the wrong place.
    four, between board scenes, so the video moves like a documentary; the render fetches it from Pixabay, Pexels,
    Wikimedia Commons or the Internet Archive (`pipeline/find_footage.py`). (`clip=` on a text scene still gives
    the small framed card beside the words; use it only when the words must stay on screen.)
+   The channel's own footage comes first: `[broll lib="<name>" caption="..."]` uses a clip from library/footage
+   (manifest.json says what each shows and whether it is landscape or vertical; vertical clips are for Shorts),
+   before any stock search.
    **B-roll leads; the character punctuates.** Footage carries most of the picture. The character (docs/pose-library.md)
    comes in for two or three set pieces a video, at the beats that matter (the hook's payoff, the big number, the
    ending), and a set piece uses the whole scene: a background from library/backgrounds with him in it, sized to

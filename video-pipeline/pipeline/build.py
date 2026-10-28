@@ -31,6 +31,7 @@ from .enhance import enhance, level_from_header
 from .preview import write_preview
 from .auto_script import script_from_words
 from .script_parser import pace_scenes, parse_script
+from .footage_library import use_library
 from .shorts import SHORT_SPEED, cut_short, cut_spans, plan_shorts, pose_track, speed_up
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -807,6 +808,8 @@ def main(argv: list[str] | None = None) -> int:
 
     # Footage, stills and posters live in <project>/media (images/ still works for older projects).
     for note in degrade_unfilled(sb):
+        print(note)
+    for note in use_library(sb, project):
         print(note)
     for note in resolve_media(sb, project, slug):
         print(note)

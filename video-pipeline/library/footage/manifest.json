@@ -1,0 +1,14 @@
+[
+ {"name": "tower-bridge-office-window", "file": "tower-bridge-office-window.mp4", "orientation": "landscape", "w": 1920, "h": 1080, "seconds": 10.6,
+  "about": "Tower Bridge and the City through an office window, two people in silhouette in the foreground",
+  "tags": ["london", "city", "work", "office", "tower bridge", "job", "career", "skyline"],
+  "source": "Pexels", "id": "14949216", "page": "https://www.pexels.com/video/14949216/", "license": "Pexels licence", "credit": "Video via Pexels"},
+ {"name": "uk-suburb-drone", "file": "uk-suburb-drone.mp4", "orientation": "vertical", "w": 1080, "h": 1920, "seconds": 15.0,
+  "about": "drone shot rising over a street of UK semi-detached houses with cars on the drives, rooftops to the horizon",
+  "tags": ["houses", "housing", "home", "suburb", "uk", "property", "street", "mortgage", "first home"],
+  "source": "Pexels", "id": "12543236", "page": "https://www.pexels.com/video/12543236/", "license": "Pexels licence", "credit": "Video via Pexels"},
+ {"name": "office-interview-handshake", "file": "office-interview-handshake.mp4", "orientation": "vertical", "w": 1080, "h": 1920, "seconds": 20.4,
+  "about": "a man at an office desk with a laptop stands and shakes hands with a woman across the table (an interview or a deal)",
+  "tags": ["job", "interview", "handshake", "hired", "first job", "office", "deal", "agreement", "boss"],
+  "source": "Pexels", "id": "5438947", "page": "https://www.pexels.com/video/5438947/", "license": "Pexels licence", "credit": "Video via Pexels"}
+]

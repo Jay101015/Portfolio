@@ -194,3 +194,17 @@ def test_level_audio_brings_a_quiet_video_to_minus_14_lufs(tmp_path):
                  capture_output=True, text=True).stderr
     m = _json.loads(out[out.rindex("{"): out.rindex("}") + 1])
     assert abs(float(m["input_i"]) + 14) < 1.0
+
+
+def test_a_broll_scene_can_use_the_footage_library(tmp_path):
+    """[broll lib="name"] copies that clip from library/footage into the project and points the scene at it, with
+    its credit; a name the library does not have is a warning, not a crash."""
+    from pipeline.footage_library import manifest, use_library
+    from pipeline.script_parser import parse_script
+
+    name = next(iter(manifest()))
+    sb = parse_script(f'# T\nslug: t\n\n[broll lib="{name}" caption="Homes"]\nHouses everywhere.\n\n[broll lib="nope"]\nMore.\n')
+    notes = use_library(sb, str(tmp_path))
+    p = sb["scenes"][0]["props"]
+    assert p["src"] == manifest()[name]["file"] and (tmp_path / "media" / p["src"]).exists() and p["credit"]
+    assert any("WARNING" in n and "nope" in n for n in notes)

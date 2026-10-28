@@ -342,7 +342,7 @@ class ArtLibraryTests(unittest.TestCase):
         assert short_time(0.8, audio, 0.4, 1.2) == round((0.4 + 0.8) / 1.2, 3) and short_time(2.4, audio) is None
         track = pose_track([[0.8, "fist-pump"], [2.4, "shrug"], [3.6, "thumbs-up"]], audio, 0.4, 1.2)
         names = [c["pose"] for c in track]
-        assert names == ["fist-pump-1", "fist-pump-2", "fist-pump", "thumbs-up"]  # the shrug fell in the cut-out part
+        assert names == ["fist-pump-1", "fist-pump-2", "fist-pump", "thumbs-up-1", "thumbs-up-2", "thumbs-up"]  # the shrug fell in the cut-out part
         assert track[2]["t"] == short_time(0.8, audio, 0.4, 1.2) and track[0]["ib"] and track[2]["hop"] and not track[2].get("ib")
         assert all(a["t"] < b["t"] for a, b in zip(track, track[1:]))
 
