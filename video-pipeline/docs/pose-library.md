@@ -20,12 +20,12 @@ Status: `have` = cut and in the library, blank = still to make.
 | ★ point-board | arm out pointing at the board beside him | look, this, here, number, chart | |
 | ★ count-fingers | holding up fingers, counting off | first, second, third, one, two, three, steps | |
 | ★ thumbs-up | thumbs up, smile | good, works, yes, recommend | |
-| thumbs-down | thumbs down, grimace | bad, avoid, don't, no | |
+| ★ thumbs-down | thumbs down, grimace | bad, avoid, don't, no | |
 | ★ but-finger | one finger raised, eyebrows up | but, however, wait, catch | |
 | me | hand on chest | I, me, my, personally | |
 | huge | arms spread wide | huge, massive, all, everything | |
 | tiny | finger and thumb pinched | tiny, small, a little, only | |
-| stop | palm out towards the viewer | stop, don't, never, hold on | |
+| ★ stop | palm out towards the viewer | stop, don't, never, hold on | |
 | welcome | friendly wave | hi, welcome, today, let's | |
 | air-quotes | both hands making air quotes, sceptical | so-called, "free", supposedly | |
 
@@ -45,9 +45,9 @@ Status: `have` = cut and in the library, blank = still to make.
 | angry | fists clenched at sides, scowl | angry, unfair, rip-off, annoyed | |
 | laughing | head back, laughing | funny, joke, ridiculous | |
 | crying | tears, head down | lost, cry, devastated | |
-| relieved | wiping brow, exhale | phew, relief, safe, finally | |
-| suspicious | side-eye, leaning back | scam, too good, suspicious, catch | |
-| idea | finger up, lightbulb over head | idea, trick, hack, realise | |
+| ★ relieved | wiping brow, exhale | phew, relief, safe, finally | |
+| ★ suspicious | side-eye, leaning back | scam, too good, suspicious, catch | |
+| ★ idea | finger up, lightbulb over head | idea, trick, hack, realise | |
 | nervous | tugging collar, sweating | nervous, pressure, deadline | |
 
 ## C. Good news (8)
@@ -59,7 +59,7 @@ Status: `have` = cut and in the library, blank = still to make.
 | jump | mid-jump, fists up | jump, finally, approved | have (celebrate-b 3) |
 | dance | little dance, one leg up | party, happy, payday | |
 | clapping | clapping hands | well done, congratulations | |
-| phone-excited | looking at phone, delighted | notification, approved, paid | |
+| ★ phone-excited | looking at phone, delighted | notification, approved, paid | |
 | victory | V for victory, wink | beat, won, ahead | |
 | proud | hands on hips, chest out | proud, achieved, made it | |
 
@@ -75,10 +75,10 @@ Status: `have` = cut and in the library, blank = still to make.
 | ★ coin-jar | dropping a coin in a jar | save, savings, put away | |
 | coin-stack | stacking coins carefully | build, grow, stack | |
 | ★ bill-shock | holding a long bill, eyes wide | bill, invoice, cost, how much | |
-| card-tap | tapping a card on a reader | pay, card, contactless | |
+| ★ card-tap | tapping a card on a reader | pay, card, contactless | |
 | money-rain | notes falling around him, arms out | rich, windfall, bonus | |
 | juggling | juggling bills and coins | juggle, balance, budget | |
-| money-flies | notes flying away, reaching after them | lose, waste, gone, fees | |
+| ★ money-flies | notes flying away, reaching after them | lose, waste, gone, fees | |
 | sign-cheque | signing a cheque or form | sign, agree, commit | |
 | hide-money | tucking notes under a mattress | hide, cash, under the mattress | |
 
@@ -92,8 +92,8 @@ Status: `have` = cut and in the library, blank = still to make.
 | statement | reading a bank statement | statement, check, account | |
 | atm | at a cash machine | withdraw, cash, ATM | |
 | bank-counter | at a bank counter with a clerk | bank, branch, open an account | |
-| calculator | tapping a calculator | calculate, work out, maths | |
-| magnifier | reading small print with a magnifying glass | fees, small print, terms, check | |
+| ★ calculator | tapping a calculator | calculate, work out, maths | |
+| ★ magnifier | reading small print with a magnifying glass | fees, small print, terms, check | |
 | crypto | holding a giant coin, nervous | crypto, bitcoin, gamble | |
 | pension-pot | putting coins into a pot labelled pension | pension, retire, workplace | |
 
