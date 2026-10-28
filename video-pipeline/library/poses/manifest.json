@@ -428,14 +428,29 @@
    "in-between",
    "jump"
   ],
-  "about": "crouched to jump, arms swung back (side-on)",
+  "about": "crouched to jump, facing the viewer, arms swung back",
   "file": "poses/jump-crouch.png",
+  "w": 348,
+  "h": 561,
+  "foot_x": 179,
+  "floor_y": 537,
+  "source": "batch-ib-jump-crouch-front.png",
+  "into": "jump"
+ },
+ {
+  "name": "jump-crouch-side",
+  "tags": [
+   "jump",
+   "crouch",
+   "side"
+  ],
+  "about": "crouched to jump, side-on (facing right)",
+  "file": "poses/jump-crouch-side.png",
   "w": 498,
   "h": 576,
   "foot_x": 289,
   "floor_y": 552,
-  "source": "batch-ib-b-inbetweens.png",
-  "into": "jump"
+  "source": "batch-ib-b-inbetweens.png"
  },
  {
   "name": "magnifier",
@@ -523,6 +538,36 @@
   "core": true
  },
  {
+  "name": "point-board-1",
+  "tags": [
+   "in-between",
+   "point-board"
+  ],
+  "about": "arm lifting out to the side",
+  "file": "poses/point-board-1.png",
+  "w": 446,
+  "h": 859,
+  "foot_x": 159,
+  "floor_y": 816,
+  "source": "batch-ib-a-inbetweens.png",
+  "into": "point-board"
+ },
+ {
+  "name": "point-board-2",
+  "tags": [
+   "in-between",
+   "point-board"
+  ],
+  "about": "arm nearly straight, finger extending",
+  "file": "poses/point-board-2.png",
+  "w": 527,
+  "h": 859,
+  "foot_x": 163,
+  "floor_y": 816,
+  "source": "batch-ib-a-inbetweens.png",
+  "into": "point-board"
+ },
+ {
   "name": "ponder",
   "tags": [
    "consider",
@@ -587,6 +632,36 @@
   "floor_y": 808,
   "source": "batch-2-reactions.png",
   "core": true
+ },
+ {
+  "name": "shrug-1",
+  "tags": [
+   "in-between",
+   "shrug"
+  ],
+  "about": "elbows bending, hands turning out",
+  "file": "poses/shrug-1.png",
+  "w": 480,
+  "h": 867,
+  "foot_x": 232,
+  "floor_y": 822,
+  "source": "batch-ib-a-inbetweens.png",
+  "into": "shrug"
+ },
+ {
+  "name": "shrug-2",
+  "tags": [
+   "in-between",
+   "shrug"
+  ],
+  "about": "palms up at the waist, eyebrows rising",
+  "file": "poses/shrug-2.png",
+  "w": 507,
+  "h": 868,
+  "foot_x": 250,
+  "floor_y": 823,
+  "source": "batch-ib-a-inbetweens.png",
+  "into": "shrug"
  },
  {
   "name": "sit",
@@ -751,6 +826,36 @@
   "core": true
  },
  {
+  "name": "thumbs-up-1",
+  "tags": [
+   "in-between",
+   "thumbs-up"
+  ],
+  "about": "fist closing at the waist, on the way to a thumbs up",
+  "file": "poses/thumbs-up-1.png",
+  "w": 338,
+  "h": 859,
+  "foot_x": 179,
+  "floor_y": 816,
+  "source": "batch-ib-a-inbetweens.png",
+  "into": "thumbs-up"
+ },
+ {
+  "name": "thumbs-up-2",
+  "tags": [
+   "in-between",
+   "thumbs-up"
+  ],
+  "about": "thumb lifting at chest height",
+  "file": "poses/thumbs-up-2.png",
+  "w": 336,
+  "h": 859,
+  "foot_x": 177,
+  "floor_y": 816,
+  "source": "batch-ib-a-inbetweens.png",
+  "into": "thumbs-up"
+ },
+ {
   "name": "welcome",
   "tags": [
    "hi",
@@ -766,6 +871,38 @@
   "floor_y": 820,
   "source": "batch-0-sheet.png",
   "core": false
+ },
+ {
+  "name": "welcome-1",
+  "tags": [
+   "in-between",
+   "welcome"
+  ],
+  "about": "hand rising beside the hip",
+  "file": "poses/welcome-1.png",
+  "w": 336,
+  "h": 870,
+  "foot_x": 161,
+  "floor_y": 825,
+  "source": "batch-ib-a-inbetweens.png",
+  "flipped": true,
+  "into": "welcome"
+ },
+ {
+  "name": "welcome-2",
+  "tags": [
+   "in-between",
+   "welcome"
+  ],
+  "about": "hand at shoulder height, palm opening",
+  "file": "poses/welcome-2.png",
+  "w": 345,
+  "h": 870,
+  "foot_x": 159,
+  "floor_y": 825,
+  "source": "batch-ib-a-inbetweens.png",
+  "flipped": true,
+  "into": "welcome"
  },
  {
   "name": "worried",

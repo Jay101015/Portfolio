@@ -24,8 +24,8 @@ def test_each_sheet_cuts_into_as_many_panels_as_it_has_poses():
     for f in sorted(os.listdir(src)):
         a = np.array(Image.open(os.path.join(src, f)).convert("L"))
         n = len(pc.grid(a))
-        # a sheet is a 4 x 2 grid or a short redo row, and holds at least the poses taken from it
-        assert n in (3, 8) and n >= from_sheet.get(f, 0), (f, n)
+        # a sheet is a 4 x 2 grid, a short redo row or a single redone panel, and holds at least the poses taken from it
+        assert n in (1, 3, 8) and n >= from_sheet.get(f, 0), (f, n)
 
 
 def test_manifest_poses_have_files_feet_and_tags():
