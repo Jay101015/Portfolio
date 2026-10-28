@@ -4,36 +4,44 @@
   "tags": [],
   "about": "",
   "file": "backgrounds/bank.png",
-  "w": 361,
-  "h": 313,
-  "source": "bg-batch-1.png"
+  "w": 1608,
+  "h": 1224,
+  "source": "bg-batch-2b.png",
+  "standin": true,
+  "note": "enlarged 4x from a grid; replace with a full-size single image"
  },
  {
   "name": "cafe",
   "tags": [],
   "about": "",
   "file": "backgrounds/cafe.png",
-  "w": 363,
-  "h": 319,
-  "source": "bg-batch-1.png"
+  "w": 1608,
+  "h": 1272,
+  "source": "bg-batch-2a.png",
+  "standin": true,
+  "note": "enlarged 4x from a grid; replace with a full-size single image"
  },
  {
   "name": "estate-agent",
   "tags": [],
   "about": "",
   "file": "backgrounds/estate-agent.png",
-  "w": 363,
-  "h": 316,
-  "source": "bg-batch-1.png"
+  "w": 1608,
+  "h": 1180,
+  "source": "bg-batch-2a.png",
+  "standin": true,
+  "note": "enlarged 4x from a grid; replace with a full-size single image"
  },
  {
   "name": "first-flat",
   "tags": [],
   "about": "",
   "file": "backgrounds/first-flat.png",
-  "w": 359,
-  "h": 316,
-  "source": "bg-batch-1.png"
+  "w": 1588,
+  "h": 1180,
+  "source": "bg-batch-2a.png",
+  "standin": true,
+  "note": "enlarged 4x from a grid; replace with a full-size single image"
  },
  {
   "name": "graduation-hall",
@@ -49,62 +57,76 @@
   "tags": [],
   "about": "",
   "file": "backgrounds/high-street.png",
-  "w": 360,
-  "h": 313,
-  "source": "bg-batch-1.png"
+  "w": 1612,
+  "h": 1176,
+  "source": "bg-batch-2b.png",
+  "standin": true,
+  "note": "enlarged 4x from a grid; replace with a full-size single image"
  },
  {
   "name": "kitchen",
   "tags": [],
   "about": "",
   "file": "backgrounds/kitchen.png",
-  "w": 360,
-  "h": 319,
-  "source": "bg-batch-1.png"
+  "w": 1588,
+  "h": 1272,
+  "source": "bg-batch-2a.png",
+  "standin": true,
+  "note": "enlarged 4x from a grid; replace with a full-size single image"
  },
  {
   "name": "living-room",
   "tags": [],
   "about": "",
   "file": "backgrounds/living-room.png",
-  "w": 361,
-  "h": 319,
-  "source": "bg-batch-1.png"
+  "w": 1612,
+  "h": 1272,
+  "source": "bg-batch-2a.png",
+  "standin": true,
+  "note": "enlarged 4x from a grid; replace with a full-size single image"
  },
  {
   "name": "office",
   "tags": [],
   "about": "",
   "file": "backgrounds/office.png",
-  "w": 360,
-  "h": 316,
-  "source": "bg-batch-1.png"
+  "w": 1612,
+  "h": 1224,
+  "source": "bg-batch-2b.png",
+  "standin": true,
+  "note": "enlarged 4x from a grid; replace with a full-size single image"
  },
  {
   "name": "supermarket",
   "tags": [],
   "about": "",
   "file": "backgrounds/supermarket.png",
-  "w": 359,
-  "h": 313,
-  "source": "bg-batch-1.png"
+  "w": 1604,
+  "h": 1176,
+  "source": "bg-batch-2b.png",
+  "standin": true,
+  "note": "enlarged 4x from a grid; replace with a full-size single image"
  },
  {
   "name": "terraced-street",
   "tags": [],
   "about": "",
   "file": "backgrounds/terraced-street.png",
-  "w": 359,
-  "h": 319,
-  "source": "bg-batch-1.png"
+  "w": 1604,
+  "h": 1188,
+  "source": "bg-batch-2b.png",
+  "standin": true,
+  "note": "enlarged 4x from a grid; replace with a full-size single image"
  },
  {
   "name": "train-platform",
   "tags": [],
   "about": "",
   "file": "backgrounds/train-platform.png",
-  "w": 363,
-  "h": 313,
-  "source": "bg-batch-1.png"
+  "w": 1608,
+  "h": 1176,
+  "source": "bg-batch-2b.png",
+  "standin": true,
+  "note": "enlarged 4x from a grid; replace with a full-size single image"
  }
 ]
