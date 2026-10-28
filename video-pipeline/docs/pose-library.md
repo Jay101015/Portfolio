@@ -206,3 +206,38 @@ beside him in the same style.
    Same size, same ground line, black marker line art on white, no shading, no colour, no text.
 3. Check: the same face, hair and clothes in every panel; hands with five fingers; nothing cut off.
 4. Cut, tag in the manifest, mark `have` here.
+
+## Batches ahead, by the videos coming
+
+The first five batches served the house video. These are for what the channel makes next: the three series in
+docs/monetisation-plan.md (One number, Where the money goes, How it actually works), Road to £100K, the house-hunt
+series and the drafts waiting in projects/. Make a batch a week or two before the video that needs it; the order
+below follows the likely next scripts. Every batch uses the template prompt (same character as the reference sheet,
+4 × 2 grid of 8 boxed panels, full body with feet on the ground line, black line art on white, no text) with these
+eight poses. Money is always British: "£20 and £50 Bank of England notes, pound coins, no dollar signs".
+
+| batch | for | the eight poses |
+|---|---|---|
+| 5 | house hunt, everyday | holding up house keys, beaming; house hunting with a phone, looking around; carrying a tall stack of moving boxes; at a desk on a laptop; reading a payslip, frowning; arms full of shopping bags; buried to the chest in bills; walking side-on, mid-stride |
+| 6 | investing (One number, £200 a month, Road to £100K) | watering a small plant that grows coins; pushing a snowball that is bigger than him; relaxing in a chair while a coin pile grows beside him; holding a basket overflowing with tiny different buildings (an index fund); standing patiently beside a tall hourglass; riding a rising chart line like a surfboard; holding two jars, one much fuller than the other (fees); balancing on a seesaw (risk) |
+| 7 | pensions and time | handing a coin to an older version of himself; dropping coins into a large pot; a hand reaching in from the side to add coins to his pot (employer match); in a deckchair with a drink (retired); reading a long statement, pleased; flipping a big wall calendar; looking at a clock, worried; older version of himself with a walking stick, smiling |
+| 8 | debt and credit (How it works: credit scores, buy now pay later, car finance) | looking at a big dial gauge (credit score); a chain of small parcels tied to his ankle (buy now pay later); leaning on a car holding a contract (car finance); juggling four bank cards; climbing out of a hole with a ladder; a phone in his hand buzzing with payments; tearing up a contract; shaking hands to close a deal, unsure |
+| 9 | scams and safety | on the phone, suspicious; at a laptop, warning sign on the screen; hugging a large padlock; looking at a flyer that is too good to be true, eyebrow raised; feeding letters into a shredder; calling his bank, relieved; holding a fishing hook with a card on it (phishing); arms crossed, shaking his head, "no" |
+| 10 | work, income, side hustles | on a bike with a delivery bag; at a laptop at night under a lamp; photographing clothes to sell online; shaking hands across a desk (interview); opening an envelope, delighted (pay rise); slumped asleep at a desk with coffee cups; carrying a box of desk things out (quitting); at a laptop in a coffee shop (freelance) |
+| 11 | spending and budgeting (Gen Z, everyday money) | pushing a supermarket trolley; comparing two price tags; holding a takeaway coffee; ordering food on his phone on the sofa; dividing coins into three jars; cancelling a subscription on his phone, satisfied; cooking at a hob, proud; holding a receipt that unrolls to the floor |
+| 12 | where the money goes | at the cinema with popcorn and a ticket; at a concert, phone up, cheering; holding a pair of trainers, admiring them; pulling a suitcase at an airport; on the sofa with a remote (streaming); at a petrol pump, shocked at the price; at a bar with a tab; holding a ticket, staring at the price in disbelief |
+| 13 | life events | in a graduation cap and gown; in a suit holding a ring box; pushing a pram; first day at a new job with a lanyard; blowing out birthday candles; carrying a bag out of his parents' front door; unpacking in a tiny first flat; on a beach on holiday |
+| 14 | close-ups for punchlines (head and shoulders only, not full body) | laughing; shocked; smug; crying; angry; deadpan stare at the viewer; eyes wide with an idea; wincing |
+
+### Backgrounds (one batch, no people)
+
+Simple line-art rooms and places with nobody in them, a clear floor in the middle third for the character to stand
+on: a bank branch; an estate agent's window and desk; a living room; an office desk; a supermarket aisle; a train
+platform; a high street; a kitchen. Same marker style, lighter lines, no text, no signs with words.
+
+### Supporting cast (one sheet each, then 8 poses)
+
+An estate agent (smart suit, clipboard); a landlord (cardigan, holding out a hand for rent); a boss (shirt and tie,
+coffee mug); a bank adviser (lanyard, tablet); a friend (a young woman, casual); a scammer (hoodie, sly grin). Each
+gets a character sheet first, then poses that stand beside him: handing over, shaking hands, pointing, laughing,
+arms crossed, talking, shrugging, waving.
