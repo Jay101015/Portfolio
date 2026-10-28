@@ -89,6 +89,19 @@ one change at a time where possible, so a result can be read.
 - Reached 10 minutes with a "watch next" preview of the £200 video and a 20-second end card. To judge at 7 days:
   how many viewers stay into the preview, and whether the £200 video gets views from the end screen.
 
+### Demo: b-roll leads, the character punctuates (2026-10-28)
+- Review: editor 6, animator 7, retention 6 (round 1, v2); editor 5, animator 6, retention 7 (round 2, v3);
+  editor 8, animator 8, retention 8 (final check, v4). Jeffrey scored v1 7.25 (sizing off, a motorway for Essex).
+- Cuts made from the storyboard's word times clipped words ("For", the end of "£310,000"): those times agree with
+  the recording on average but single words can be a second out. Rule: cut a hand-built edit on the measured times
+  in transcript.json, at the quietest point between two words.
+- The recording has patches of digital silence where the noise gate zeroed it (67.2 s, 311.1 s). A cut into one, or
+  room tone taken from one, drops the sound to nothing. Rule: cut outside the gated patches and lay a continuous
+  room-tone bed under the whole edit.
+- Captions built from the script showed words Jeffrey did not say ("per year" for "a year"). Rule: captions follow
+  the take, not the script.
+- A card with a figure the voice does not say ("nearly 3x", "salary × 4.5") is a fault, even when it is right.
+
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage?
 2. Thumbnail: a face (Jeffrey) vs no face, once Canva thumbnails are in use.
