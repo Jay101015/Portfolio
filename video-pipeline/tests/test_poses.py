@@ -1,0 +1,34 @@
+"""The pose library: every source sheet cuts into its eight panels, and every pose in the manifest has its file,
+its feet position and its tags."""
+import importlib.util
+import json
+import os
+
+import pytest
+
+np = pytest.importorskip("numpy")
+Image = pytest.importorskip("PIL.Image")
+
+ROOT = os.path.join(os.path.dirname(__file__), "..")
+spec = importlib.util.spec_from_file_location("pose_cut", os.path.join(ROOT, "scripts", "pose-cut.py"))
+pc = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(pc)
+
+
+def test_each_sheet_cuts_into_eight_panels():
+    src = os.path.join(ROOT, "library", "poses", "source")
+    for f in sorted(os.listdir(src)):
+        a = np.array(Image.open(os.path.join(src, f)).convert("L"))
+        assert len(pc.grid(a)) == 8, f
+
+
+def test_manifest_poses_have_files_feet_and_tags():
+    with open(os.path.join(ROOT, "library", "poses", "manifest.json"), encoding="utf-8") as fh:
+        poses = json.load(fh)
+    assert len(poses) >= 40
+    for e in poses:
+        im = Image.open(os.path.join(ROOT, "remotion", "public", e["file"]))
+        assert im.mode == "RGBA" and im.size == (e["w"], e["h"]), e["name"]
+        # the floor can sit below the drawing (a jump), never above its middle
+        assert 0 < e["foot_x"] < e["w"] and e["floor_y"] > e["h"] * 0.5, e["name"]
+        assert e["tags"], e["name"]

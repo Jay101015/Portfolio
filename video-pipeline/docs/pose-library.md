@@ -2,9 +2,9 @@
 
 The videos cut between held poses of one character on the words of the voice (an animatic, the way the reference
 Short does it). This is the list of poses to build up to, grouped by situation, so any script on any money topic
-has a pose for its moments. One character throughout (the b-set man: spiky hair, long sleeves rolled up, jeans,
-trainers), drawn from his character sheet. Every pose is flipped left to right for free, so each line here is two
-usable drawings.
+has a pose for its moments. One character throughout (curly dark hair, a plain long-sleeved top with the sleeves pushed up, jeans with
+turned-up hems, trainers: library/poses/source/batch-0-sheet.png is his sheet), drawn from that sheet.
+Every pose is flipped left to right for free, so each line here is two usable drawings.
 
 ★ marks the core 40, made first. Each video then adds about 8 for the moments it had no good pose for, so the library
 passes 100 on what the scripts actually need. Poses are made in batches of 8 per image (one strip keeps the
@@ -16,50 +16,50 @@ Status: `have` = cut and in the library, blank = still to make.
 
 | pose | shows | tags | status |
 |---|---|---|---|
-| ★ explain | open hand out to the side, mid-sentence | explain, so, here's, the thing | have (hand-money-b 3) |
-| ★ point-board | arm out pointing at the board beside him | look, this, here, number, chart | |
-| ★ count-fingers | holding up fingers, counting off | first, second, third, one, two, three, steps | |
-| ★ thumbs-up | thumbs up, smile | good, works, yes, recommend | |
-| ★ thumbs-down | thumbs down, grimace | bad, avoid, don't, no | |
-| ★ but-finger | one finger raised, eyebrows up | but, however, wait, catch | |
+| ★ explain | open hand out to the side, mid-sentence | explain, so, here's, the thing | have |
+| ★ point-board | arm out pointing at the board beside him | look, this, here, number, chart | have |
+| ★ count-fingers | holding up fingers, counting off | first, second, third, one, two, three, steps | have |
+| ★ thumbs-up | thumbs up, smile | good, works, yes, recommend | have |
+| ★ thumbs-down | thumbs down, grimace | bad, avoid, don't, no | have |
+| ★ but-finger | one finger raised, eyebrows up | but, however, wait, catch | have |
 | me | hand on chest | I, me, my, personally | |
 | huge | arms spread wide | huge, massive, all, everything | |
 | tiny | finger and thumb pinched | tiny, small, a little, only | |
-| ★ stop | palm out towards the viewer | stop, don't, never, hold on | |
-| welcome | friendly wave | hi, welcome, today, let's | |
+| ★ stop | palm out towards the viewer | stop, don't, never, hold on | have |
+| welcome | friendly wave | hi, welcome, today, let's | have |
 | air-quotes | both hands making air quotes, sceptical | so-called, "free", supposedly | |
 
 ## B. Reactions (16)
 
 | pose | shows | tags | status |
 |---|---|---|---|
-| ★ shocked | jaw dropped, hands up by face | shocked, what, can't believe, insane | |
-| ★ worried | biting nails, eyes wide | worried, scared, risk, afraid | |
-| ★ confused | scratching head, frown | confusing, complicated, why, how | |
-| ★ facepalm | hand over face | mistake, oops, stupid, regret | |
-| ★ shrug | shoulders up, palms up | depends, who knows, maybe, whatever | |
-| ★ thinking | hand on chin, looking up | think, consider, wonder, exactly where | have (celebrate-b 1, near enough) |
-| smug | arms crossed, half smile | told you, easy, obviously | |
+| ★ shocked | jaw dropped, hands up by face | shocked, what, can't believe, insane | have |
+| ★ worried | biting nails, eyes wide | worried, scared, risk, afraid | have |
+| ★ confused | scratching head, frown | confusing, complicated, why, how | have |
+| ★ facepalm | hand over face | mistake, oops, stupid, regret | have |
+| ★ shrug | shoulders up, palms up | depends, who knows, maybe, whatever | have |
+| ★ thinking | hand on chin, looking up | think, consider, wonder, exactly where | have |
+| smug | arms crossed, half smile | told you, easy, obviously | have |
 | eye-roll | eyes rolled, head tilted | again, of course, typical | |
 | slumped | shoulders down, sigh | tired, sigh, hard, struggle | have (hand-money-b 4, near enough) |
 | angry | fists clenched at sides, scowl | angry, unfair, rip-off, annoyed | |
 | laughing | head back, laughing | funny, joke, ridiculous | |
 | crying | tears, head down | lost, cry, devastated | |
-| ★ relieved | wiping brow, exhale | phew, relief, safe, finally | |
-| ★ suspicious | side-eye, leaning back | scam, too good, suspicious, catch | |
-| ★ idea | finger up, lightbulb over head | idea, trick, hack, realise | |
+| ★ relieved | wiping brow, exhale | phew, relief, safe, finally | have |
+| ★ suspicious | side-eye, leaning back | scam, too good, suspicious, catch | have |
+| ★ idea | finger up, lightbulb over head | idea, trick, hack, realise | have |
 | nervous | tugging collar, sweating | nervous, pressure, deadline | |
 
 ## C. Good news (8)
 
 | pose | shows | tags | status |
 |---|---|---|---|
-| ★ fist-pump | one fist pumped, grin | yes, win, did it, nailed | have (celebrate-b 2, 4) |
-| ★ arms-up | both arms up, cheering | celebrate, amazing, free money | have (celebrate-b 5) |
-| jump | mid-jump, fists up | jump, finally, approved | have (celebrate-b 3) |
+| ★ fist-pump | one fist pumped, grin | yes, win, did it, nailed | have |
+| ★ arms-up | both arms up, cheering | celebrate, amazing, free money | have |
+| jump | mid-jump, fists up | jump, finally, approved | have |
 | dance | little dance, one leg up | party, happy, payday | |
 | clapping | clapping hands | well done, congratulations | |
-| ★ phone-excited | looking at phone, delighted | notification, approved, paid | |
+| ★ phone-excited | looking at phone, delighted | notification, approved, paid | have |
 | victory | V for victory, wink | beat, won, ahead | |
 | proud | hands on hips, chest out | proud, achieved, made it | |
 
@@ -67,18 +67,18 @@ Status: `have` = cut and in the library, blank = still to make.
 
 | pose | shows | tags | status |
 |---|---|---|---|
-| ★ count-notes | counting a fan of notes | count, cash, notes, how much | have (hand-money-b 1) |
-| ★ hand-over | arm out offering notes | pay, give, hand over, spend | have (hand-money-b 2) |
+| ★ count-notes | counting a fan of notes | count, cash, notes, how much | have |
+| ★ hand-over | arm out offering notes | pay, give, hand over, spend | have |
 | receive | hands out catching notes | receive, get paid, income | |
-| ★ empty-pockets | pockets turned out, sheepish | broke, nothing left, skint | |
+| ★ empty-pockets | pockets turned out, sheepish | broke, nothing left, skint | have |
 | empty-wallet | holding an open empty wallet | wallet, spent, gone | |
-| ★ coin-jar | dropping a coin in a jar | save, savings, put away | |
+| ★ coin-jar | dropping a coin in a jar | save, savings, put away | have |
 | coin-stack | stacking coins carefully | build, grow, stack | |
-| ★ bill-shock | holding a long bill, eyes wide | bill, invoice, cost, how much | |
-| ★ card-tap | tapping a card on a reader | pay, card, contactless | |
+| ★ bill-shock | holding a long bill, eyes wide | bill, invoice, cost, how much | have |
+| ★ card-tap | tapping a card on a reader | pay, card, contactless | have |
 | money-rain | notes falling around him, arms out | rich, windfall, bonus | |
 | juggling | juggling bills and coins | juggle, balance, budget | |
-| ★ money-flies | notes flying away, reaching after them | lose, waste, gone, fees | |
+| ★ money-flies | notes flying away, reaching after them | lose, waste, gone, fees | have |
 | sign-cheque | signing a cheque or form | sign, agree, commit | |
 | hide-money | tucking notes under a mattress | hide, cash, under the mattress | |
 
@@ -86,14 +86,14 @@ Status: `have` = cut and in the library, blank = still to make.
 
 | pose | shows | tags | status |
 |---|---|---|---|
-| ★ phone-chart-up | looking at a phone, chart rising on screen | invest, gains, up, portfolio | |
-| ★ chart-down | looking at a falling chart, hands on head | crash, lose, down, red | |
+| ★ phone-chart-up | looking at a phone, chart rising on screen | invest, gains, up, portfolio | have |
+| ★ chart-down | looking at a falling chart, hands on head | crash, lose, down, red | have |
 | laptop-invest | at a laptop, clicking buy | buy, invest, ISA, platform | |
 | statement | reading a bank statement | statement, check, account | |
 | atm | at a cash machine | withdraw, cash, ATM | |
 | bank-counter | at a bank counter with a clerk | bank, branch, open an account | |
-| ★ calculator | tapping a calculator | calculate, work out, maths | |
-| ★ magnifier | reading small print with a magnifying glass | fees, small print, terms, check | |
+| ★ calculator | tapping a calculator | calculate, work out, maths | have |
+| ★ magnifier | reading small print with a magnifying glass | fees, small print, terms, check | have (no feet: redo) |
 | crypto | holding a giant coin, nervous | crypto, bitcoin, gamble | |
 | pension-pot | putting coins into a pot labelled pension | pension, retire, workplace | |
 
@@ -149,7 +149,7 @@ Status: `have` = cut and in the library, blank = still to make.
 | pose | shows | tags | status |
 |---|---|---|---|
 | ★ buried | buried under a pile of bills | debt, bills, overwhelmed | |
-| ★ cut-card | cutting a credit card with scissors | cut up, credit card, stop | |
+| ★ cut-card | cutting a credit card with scissors | cut up, credit card, stop | have (no feet: redo) |
 | debt-call | on the phone, sweating | debt collector, call, chased | |
 | awake | lying awake in bed at night | worry, can't sleep, stress | |
 | head-in-hands | sitting at a table, head in hands | stressed, stuck, can't afford | |
@@ -174,7 +174,7 @@ Status: `have` = cut and in the library, blank = still to make.
 
 | pose | shows | tags | status |
 |---|---|---|---|
-| ★ brown-envelope | holding a brown HMRC envelope, nervous | HMRC, tax, letter | |
+| ★ brown-envelope | holding a brown HMRC envelope, nervous | HMRC, tax, letter | have (no feet: redo) |
 | tax-return | filling in a long form at a desk | tax return, self assessment | |
 | refund | opening a letter, delighted | refund, rebate, money back | |
 | queue | waiting in a long queue, bored | wait, queue, process | |
@@ -188,7 +188,7 @@ Status: `have` = cut and in the library, blank = still to make.
 | run | running side-on | rush, hurry, race | |
 | wave-bye | waving goodbye | bye, see you, leave | |
 | walk-away | walking away from the viewer | leave, away, walk away | |
-| sit | sitting on a chair | sit, wait, settle | |
+| sit | sitting on a chair | sit, wait, settle | have |
 | peek | peeking in from the side of the frame | sneak, look, hidden | |
 | lean | leaning on the edge of the frame, casual | so, anyway, meanwhile | |
 | point-down | pointing down at subscribe | subscribe, comment, below | |

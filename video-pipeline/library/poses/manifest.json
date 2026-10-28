@@ -1,0 +1,670 @@
+[
+ {
+  "name": "arms-up",
+  "tags": [
+   "celebrate",
+   "amazing",
+   "free money"
+  ],
+  "about": "both arms up, cheering",
+  "file": "poses/arms-up.png",
+  "w": 503,
+  "h": 855,
+  "foot_x": 253,
+  "floor_y": 834,
+  "source": "batch-3-goodnews-money.png",
+  "core": true
+ },
+ {
+  "name": "bill-shock",
+  "tags": [
+   "bill",
+   "invoice",
+   "cost",
+   "how much"
+  ],
+  "about": "holding a long bill, eyes wide",
+  "file": "poses/bill-shock.png",
+  "w": 360,
+  "h": 842,
+  "foot_x": 182,
+  "floor_y": 814,
+  "source": "batch-3-goodnews-money.png",
+  "core": true
+ },
+ {
+  "name": "brown-envelope",
+  "tags": [
+   "HMRC",
+   "tax",
+   "letter"
+  ],
+  "about": "holding a brown HMRC envelope, nervous",
+  "file": "poses/brown-envelope.png",
+  "w": 377,
+  "h": 845,
+  "foot_x": 176,
+  "floor_y": 824,
+  "source": "batch-4-money-investing.png",
+  "note": "legs run off the panel: no feet, redo",
+  "core": true
+ },
+ {
+  "name": "but-finger",
+  "tags": [
+   "but",
+   "however",
+   "wait",
+   "catch"
+  ],
+  "about": "one finger raised, eyebrows up",
+  "file": "poses/but-finger.png",
+  "w": 348,
+  "h": 826,
+  "foot_x": 178,
+  "floor_y": 800,
+  "source": "batch-1-talking.png",
+  "core": true
+ },
+ {
+  "name": "calculator",
+  "tags": [
+   "calculate",
+   "work out",
+   "maths"
+  ],
+  "about": "tapping a calculator",
+  "file": "poses/calculator.png",
+  "w": 387,
+  "h": 845,
+  "foot_x": 172,
+  "floor_y": 824,
+  "source": "batch-4-money-investing.png",
+  "core": true
+ },
+ {
+  "name": "card-tap",
+  "tags": [
+   "pay",
+   "card",
+   "contactless"
+  ],
+  "about": "tapping a card on a reader",
+  "file": "poses/card-tap.png",
+  "w": 652,
+  "h": 853,
+  "foot_x": 265,
+  "floor_y": 828,
+  "source": "batch-4-money-investing.png",
+  "core": true
+ },
+ {
+  "name": "chart-down",
+  "tags": [
+   "crash",
+   "lose",
+   "down",
+   "red"
+  ],
+  "about": "looking at a falling chart, hands on head",
+  "file": "poses/chart-down.png",
+  "w": 792,
+  "h": 855,
+  "foot_x": 209,
+  "floor_y": 830,
+  "source": "batch-4-money-investing.png",
+  "core": true
+ },
+ {
+  "name": "coin-jar",
+  "tags": [
+   "save",
+   "savings",
+   "put away"
+  ],
+  "about": "dropping a coin in a jar",
+  "file": "poses/coin-jar.png",
+  "w": 564,
+  "h": 838,
+  "foot_x": 142,
+  "floor_y": 812,
+  "source": "batch-3-goodnews-money.png",
+  "core": true
+ },
+ {
+  "name": "confused",
+  "tags": [
+   "confusing",
+   "complicated",
+   "why",
+   "how"
+  ],
+  "about": "scratching head, frown",
+  "file": "poses/confused.png",
+  "w": 400,
+  "h": 846,
+  "foot_x": 228,
+  "floor_y": 828,
+  "source": "batch-2-reactions.png",
+  "core": true
+ },
+ {
+  "name": "count-fingers",
+  "tags": [
+   "first",
+   "second",
+   "third",
+   "one",
+   "two",
+   "three",
+   "steps"
+  ],
+  "about": "holding up fingers, counting off",
+  "file": "poses/count-fingers.png",
+  "w": 371,
+  "h": 838,
+  "foot_x": 205,
+  "floor_y": 820,
+  "source": "batch-1-talking.png",
+  "core": true
+ },
+ {
+  "name": "count-notes",
+  "tags": [
+   "count",
+   "cash",
+   "notes",
+   "how much"
+  ],
+  "about": "counting a fan of notes",
+  "file": "poses/count-notes.png",
+  "w": 354,
+  "h": 855,
+  "foot_x": 177,
+  "floor_y": 836,
+  "source": "batch-3-goodnews-money.png",
+  "core": true
+ },
+ {
+  "name": "cut-card",
+  "tags": [
+   "cut up",
+   "credit card",
+   "stop"
+  ],
+  "about": "cutting a credit card with scissors",
+  "file": "poses/cut-card.png",
+  "w": 500,
+  "h": 838,
+  "foot_x": 226,
+  "floor_y": 818,
+  "source": "batch-4-money-investing.png",
+  "note": "legs run off the panel: no feet, redo",
+  "core": true
+ },
+ {
+  "name": "empty-pockets",
+  "tags": [
+   "broke",
+   "nothing left",
+   "skint"
+  ],
+  "about": "pockets turned out, sheepish",
+  "file": "poses/empty-pockets.png",
+  "w": 444,
+  "h": 842,
+  "foot_x": 214,
+  "floor_y": 810,
+  "source": "batch-3-goodnews-money.png",
+  "core": true
+ },
+ {
+  "name": "explain",
+  "tags": [
+   "explain",
+   "so",
+   "here's",
+   "the thing"
+  ],
+  "about": "open hand out to the side, mid-sentence",
+  "file": "poses/explain.png",
+  "w": 490,
+  "h": 838,
+  "foot_x": 180,
+  "floor_y": 820,
+  "source": "batch-1-talking.png",
+  "core": true
+ },
+ {
+  "name": "facepalm",
+  "tags": [
+   "mistake",
+   "oops",
+   "stupid",
+   "regret"
+  ],
+  "about": "hand over face",
+  "file": "poses/facepalm.png",
+  "w": 350,
+  "h": 828,
+  "foot_x": 181,
+  "floor_y": 810,
+  "source": "batch-2-reactions.png",
+  "core": true
+ },
+ {
+  "name": "fist-pump",
+  "tags": [
+   "yes",
+   "win",
+   "did it",
+   "nailed"
+  ],
+  "about": "one fist pumped, grin",
+  "file": "poses/fist-pump.png",
+  "w": 388,
+  "h": 855,
+  "foot_x": 207,
+  "floor_y": 836,
+  "source": "batch-3-goodnews-money.png",
+  "core": true
+ },
+ {
+  "name": "hand-over",
+  "tags": [
+   "pay",
+   "give",
+   "hand over",
+   "spend"
+  ],
+  "about": "arm out offering notes",
+  "file": "poses/hand-over.png",
+  "w": 562,
+  "h": 842,
+  "foot_x": 179,
+  "floor_y": 810,
+  "source": "batch-3-goodnews-money.png",
+  "core": true
+ },
+ {
+  "name": "idea",
+  "tags": [
+   "idea",
+   "trick",
+   "hack",
+   "realise"
+  ],
+  "about": "finger up, lightbulb over head",
+  "file": "poses/idea.png",
+  "w": 362,
+  "h": 832,
+  "foot_x": 193,
+  "floor_y": 810,
+  "source": "batch-2-reactions.png",
+  "core": true
+ },
+ {
+  "name": "jump",
+  "tags": [
+   "jump",
+   "finally",
+   "approved"
+  ],
+  "about": "mid-jump, fists up",
+  "file": "poses/jump.png",
+  "w": 387,
+  "h": 717,
+  "foot_x": 161,
+  "floor_y": 756,
+  "source": "batch-0-sheet.png",
+  "core": false
+ },
+ {
+  "name": "magnifier",
+  "tags": [
+   "fees",
+   "small print",
+   "terms",
+   "check"
+  ],
+  "about": "reading small print with a magnifying glass",
+  "file": "poses/magnifier.png",
+  "w": 537,
+  "h": 828,
+  "foot_x": 147,
+  "floor_y": 808,
+  "source": "batch-4-money-investing.png",
+  "note": "legs run off the panel: no feet, redo",
+  "core": true
+ },
+ {
+  "name": "money-flies",
+  "tags": [
+   "lose",
+   "waste",
+   "gone",
+   "fees"
+  ],
+  "about": "notes flying away, reaching after them",
+  "file": "poses/money-flies.png",
+  "w": 861,
+  "h": 855,
+  "foot_x": 187,
+  "floor_y": 830,
+  "source": "batch-4-money-investing.png",
+  "core": true
+ },
+ {
+  "name": "phone-chart-up",
+  "tags": [
+   "invest",
+   "gains",
+   "up",
+   "portfolio"
+  ],
+  "about": "looking at a phone, chart rising on screen",
+  "file": "poses/phone-chart-up.png",
+  "w": 437,
+  "h": 832,
+  "foot_x": 186,
+  "floor_y": 808,
+  "source": "batch-4-money-investing.png",
+  "core": true
+ },
+ {
+  "name": "phone-excited",
+  "tags": [
+   "notification",
+   "approved",
+   "paid"
+  ],
+  "about": "looking at phone, delighted",
+  "file": "poses/phone-excited.png",
+  "w": 370,
+  "h": 840,
+  "foot_x": 183,
+  "floor_y": 820,
+  "source": "batch-3-goodnews-money.png",
+  "core": true
+ },
+ {
+  "name": "point-board",
+  "tags": [
+   "look",
+   "this",
+   "here",
+   "number",
+   "chart"
+  ],
+  "about": "arm out pointing at the board beside him",
+  "file": "poses/point-board.png",
+  "w": 521,
+  "h": 838,
+  "foot_x": 188,
+  "floor_y": 820,
+  "source": "batch-1-talking.png",
+  "core": true
+ },
+ {
+  "name": "ponder",
+  "tags": [
+   "consider",
+   "hmm",
+   "maybe"
+  ],
+  "about": "hand on chin, half smile",
+  "file": "poses/ponder.png",
+  "w": 295,
+  "h": 788,
+  "foot_x": 147,
+  "floor_y": 760,
+  "source": "batch-0-sheet.png"
+ },
+ {
+  "name": "relieved",
+  "tags": [
+   "phew",
+   "relief",
+   "safe",
+   "finally"
+  ],
+  "about": "wiping brow, exhale",
+  "file": "poses/relieved.png",
+  "w": 352,
+  "h": 832,
+  "foot_x": 175,
+  "floor_y": 810,
+  "source": "batch-2-reactions.png",
+  "core": true
+ },
+ {
+  "name": "shocked",
+  "tags": [
+   "shocked",
+   "what",
+   "can't believe",
+   "insane"
+  ],
+  "about": "jaw dropped, hands up by face",
+  "file": "poses/shocked.png",
+  "w": 350,
+  "h": 846,
+  "foot_x": 174,
+  "floor_y": 830,
+  "source": "batch-2-reactions.png",
+  "core": true
+ },
+ {
+  "name": "shrug",
+  "tags": [
+   "depends",
+   "who knows",
+   "maybe",
+   "whatever"
+  ],
+  "about": "shoulders up, palms up",
+  "file": "poses/shrug.png",
+  "w": 608,
+  "h": 832,
+  "foot_x": 302,
+  "floor_y": 808,
+  "source": "batch-2-reactions.png",
+  "core": true
+ },
+ {
+  "name": "sit",
+  "tags": [
+   "sit",
+   "wait",
+   "settle"
+  ],
+  "about": "sitting on a chair",
+  "file": "poses/sit.png",
+  "w": 478,
+  "h": 674,
+  "foot_x": 238,
+  "floor_y": 655,
+  "source": "batch-0-sheet.png",
+  "core": false
+ },
+ {
+  "name": "smug",
+  "tags": [
+   "told you",
+   "easy",
+   "obviously"
+  ],
+  "about": "arms crossed, half smile",
+  "file": "poses/smug.png",
+  "w": 312,
+  "h": 788,
+  "foot_x": 155,
+  "floor_y": 758,
+  "source": "batch-0-sheet.png",
+  "core": false
+ },
+ {
+  "name": "stand",
+  "tags": [
+   "stand",
+   "neutral",
+   "listen"
+  ],
+  "about": "standing facing the viewer, relaxed",
+  "file": "poses/stand.png",
+  "w": 301,
+  "h": 847,
+  "foot_x": 150,
+  "floor_y": 822,
+  "source": "batch-0-sheet.png"
+ },
+ {
+  "name": "stand-3q",
+  "tags": [
+   "stand",
+   "turn",
+   "look"
+  ],
+  "about": "standing three-quarter on",
+  "file": "poses/stand-3q.png",
+  "w": 307,
+  "h": 845,
+  "foot_x": 170,
+  "floor_y": 820,
+  "source": "batch-0-sheet.png"
+ },
+ {
+  "name": "stand-side",
+  "tags": [
+   "side",
+   "profile",
+   "wait"
+  ],
+  "about": "standing side-on",
+  "file": "poses/stand-side.png",
+  "w": 189,
+  "h": 847,
+  "foot_x": 97,
+  "floor_y": 822,
+  "source": "batch-0-sheet.png"
+ },
+ {
+  "name": "stop",
+  "tags": [
+   "stop",
+   "don't",
+   "never",
+   "hold on"
+  ],
+  "about": "palm out towards the viewer",
+  "file": "poses/stop.png",
+  "w": 356,
+  "h": 826,
+  "foot_x": 190,
+  "floor_y": 800,
+  "source": "batch-1-talking.png",
+  "core": true
+ },
+ {
+  "name": "suspicious",
+  "tags": [
+   "scam",
+   "too good",
+   "suspicious",
+   "catch"
+  ],
+  "about": "side-eye, leaning back",
+  "file": "poses/suspicious.png",
+  "w": 348,
+  "h": 832,
+  "foot_x": 164,
+  "floor_y": 810,
+  "source": "batch-2-reactions.png",
+  "core": true
+ },
+ {
+  "name": "thinking",
+  "tags": [
+   "think",
+   "consider",
+   "wonder",
+   "exactly where"
+  ],
+  "about": "hand on chin, looking up",
+  "file": "poses/thinking.png",
+  "w": 332,
+  "h": 826,
+  "foot_x": 164,
+  "floor_y": 800,
+  "source": "batch-1-talking.png",
+  "core": true
+ },
+ {
+  "name": "thumbs-down",
+  "tags": [
+   "bad",
+   "avoid",
+   "don't",
+   "no"
+  ],
+  "about": "thumbs down, grimace",
+  "file": "poses/thumbs-down.png",
+  "w": 373,
+  "h": 826,
+  "foot_x": 207,
+  "floor_y": 802,
+  "source": "batch-1-talking.png",
+  "core": true
+ },
+ {
+  "name": "thumbs-up",
+  "tags": [
+   "good",
+   "works",
+   "yes",
+   "recommend"
+  ],
+  "about": "thumbs up, smile",
+  "file": "poses/thumbs-up.png",
+  "w": 354,
+  "h": 838,
+  "foot_x": 189,
+  "floor_y": 820,
+  "source": "batch-1-talking.png",
+  "core": true
+ },
+ {
+  "name": "welcome",
+  "tags": [
+   "hi",
+   "welcome",
+   "today",
+   "let's"
+  ],
+  "about": "friendly wave",
+  "file": "poses/welcome.png",
+  "w": 391,
+  "h": 845,
+  "foot_x": 152,
+  "floor_y": 820,
+  "source": "batch-0-sheet.png",
+  "core": false
+ },
+ {
+  "name": "worried",
+  "tags": [
+   "worried",
+   "scared",
+   "risk",
+   "afraid"
+  ],
+  "about": "biting nails, eyes wide",
+  "file": "poses/worried.png",
+  "w": 338,
+  "h": 846,
+  "foot_x": 168,
+  "floor_y": 828,
+  "source": "batch-2-reactions.png",
+  "core": true
+ }
+]
