@@ -24,20 +24,24 @@ with their money, and they trust a channel more for not doing that.
 4. **A re-hook every 60 to 90 seconds.** Attention resets. Each new section opens with a line that promises the
    next bit is worth staying for: "and this is where it gets worse", "here's the bit that changed my plan",
    "now the number that actually decides it". Takeaway cards (README.md) are the on-screen form of the same thing.
-5. **Pay off inside the first minute.** One genuinely useful thing before the title card ("banks lend about 4.5
+5. **No scene-setting before the hook.** The payday video opened with "Payday hits. The rent's gone out..." and
+   viewers left after 14 seconds on average; Episode 1 opened with "Just after Covid..." and lost 70% by 0:12.
+   The first sentence is a number or a sharp claim; by 15 seconds the viewer has heard two specific things the
+   video will give them. Mood, backstory and "let me explain" come after that, never before.
+6. **Pay off inside the first minute.** One genuinely useful thing before the title card ("banks lend about 4.5
    times your salary: multiply yours, add your deposit, that's your budget"). It proves the video is worth the
    time and buys the next nine minutes. The hook rules in EDITOR.md still apply: the first line is the number,
    never a greeting.
-6. **Specific beats round.** "£2,170 a month" is more believable and more memorable than "about £2,000". Keep the
+7. **Specific beats round.** "£2,170 a month" is more believable and more memorable than "about £2,000". Keep the
    odd numbers; they show the work was done.
-7. **Jeffrey is the story.** "I'm house hunting too" is the channel's biggest retention asset. The same facts from
+8. **Jeffrey is the story.** "I'm house hunting too" is the channel's biggest retention asset. The same facts from
    someone in the middle of the problem are a story; from a stranger they are a lecture, and people finish stories.
    Give his own situation screen time: his salary, his deposit, the town, what the agent said, what he decided.
-8. **Name the viewer's doubt.** "You're probably thinking that's impossible on £25K." Saying what they are thinking
+9. **Name the viewer's doubt.** "You're probably thinking that's impossible on £25K." Saying what they are thinking
    keeps them in the conversation. It costs nothing.
-9. **Plain and warm.** "Income multiple" loses people; "how many times your salary the bank will lend" does not.
+10. **Plain and warm.** "Income multiple" loses people; "how many times your salary the bank will lend" does not.
    One idea a sentence; no jargon the viewer would have to look up.
-10. **End with momentum.** The last 30 seconds are the summary and one clear next step ("work out your number
+11. **End with momentum.** The last 30 seconds are the summary and one clear next step ("work out your number
     tonight"), then the watch-next card. A video that trails off is skipped at the end, which drags average view
     duration down.
 

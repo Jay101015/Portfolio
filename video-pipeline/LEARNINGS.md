@@ -20,8 +20,8 @@ one change at a time where possible, so a result can be read.
 
 | Video | Length | Published | Views (when) | Avg view | Notes |
 | --- | --- | --- | --- | --- | --- |
-| I Turned £3K Into £11K… Then Lost It (Road to £100K Ep. 1) | 9:47 | 2026-10-25 | 17 (day 2) | 4:56, 51% (2 views measured) | personal story |
-| What To Do With £200, £1,000 and £10,000 After Payday | 7:29 | 2026-10-26 | 149 (day 1) | not yet in analytics | best start so far |
+| I Turned £3K Into £11K… Then Lost It (Road to £100K Ep. 1) | 9:47 | 2026-10-25 | 11 (to 25 Oct) | 1:52, 19%; 70% gone by 0:12 | personal story; reached mostly people who knew the channel |
+| What To Do With £200, £1,000 and £10,000 After Payday | 7:29 | 2026-10-26 | 155 (36 h) | ~14 s, ~3% | 141 of 155 views from YouTube recommendations; pushed for ~20 h, then flatlined once viewers left |
 | Short: What to do with £200 | 0:48 | 2026-10-27 | 6 (day 1) | | |
 | Short: Looking to purchase your first home? | 0:44 | 2026-10-27 | 5 (day 1) | | |
 | Can You Afford a Home? (London and the UK) | 10:04 | not yet | | | first 10-minute build; levelled to -14 LUFS; ad breaks ~2:55, ~5:46, 8:10 |
@@ -38,7 +38,15 @@ one change at a time where possible, so a result can be read.
   short scenes. Footage that did not show the sentence (a London Eye under "top up your emergency fund", an owl);
   rule: footage-check.png is looked at before anything goes out, search words name the thing in the picture.
   Credits in the corner of footage looked like watermarks; rule: credits go in the description (credits.txt).
-- Open question: retention curve not in yet. When it is, note where viewers leave and why.
+- Channel review #1 (28 Oct, 36 hours in): average view about 14 seconds (3%). YouTube recommended it to
+  strangers within a day (141 of 155 views), then stopped once it saw them leave. So the packaging works and the
+  opening does not. It opened with scene-setting ("Payday hits. The rent's gone out...") before any number.
+  Episode 1 had the same shape: a story lead-in ("Just after Covid...") and 70% gone by 0:12.
+  Rule (WRITING.md): a number or a sharp claim in the first sentence, specific teasers by 15 seconds, no
+  scene-setting before the hook. The house video already opens this way, so it is the test.
+  What success looks like next: average view above 1 minute, and views still climbing after 48 hours.
+  To check: the Engagement tab's retention graph, to see whether viewers leave at 3 seconds (a thumbnail or
+  title promise the opening does not keep) or at 15 (the hook itself).
 
 ### Can You Afford a Home? (2026-10-27)
 - Did not (production): the push-in zoom was there but at 3% per scene nobody could see it on a phone. Rule: 4–8%
