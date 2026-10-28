@@ -110,7 +110,7 @@ one change at a time where possible, so a result can be read.
   body left of the button column (right 15%). Cards go beside him, captions high (about 19% down).
 - Retention's ceiling here is the script, not the edit: open on a claim, not a bare salary; give each number its
   stake out loud; put Jeffrey's own numbers in.
-- Posted as "Can You Buy a House on £25K a Year? (UK)" (title suggested). 30 views 8 minutes after upload, the
+- Posted (suggested title "Can You Buy a House on £25K a Year? (UK)"; confirm what was used). 30 views 8 minutes after upload, the
   fastest start yet (the earlier Shorts had 5 to 6 views on day one; the salary-ladder Short about 20 soon after
   posting). Check at 48 hours and 7 days: views, "viewed vs swiped away", average percentage viewed.
 
