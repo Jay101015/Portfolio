@@ -10,6 +10,8 @@ Writes into <out dir>:
 - overview.png: a frame every 2 seconds (every 1 second for a Short), each stamped with its time
 - opening.png: the first 6 seconds, a frame every half second (the scroll-in moment)
 - cuts.png: the first frame after every cut, stamped, so each scene can be checked against its words
+- facts.md "Eyes": every stretch of 4 seconds or more where nothing new happens on screen (no cut, no writing, no
+  pose, no footage moving; the slow push-in alone does not count), and how many times a minute something does
 """
 import argparse
 import json
@@ -40,6 +42,28 @@ def cuts(path: str, thresh: float = 0.3) -> list[float]:
         if not out or c - out[-1] > 0.5:
             out.append(c)
     return out
+
+
+def idle_stretches(path: str, fps: int = 5, event: float = 0.45, longest: float = 4.0) -> tuple[list[tuple[float, float]], float]:
+    """Stretches where the picture does not change enough to hold an eye: the mean frame-to-frame difference (96x54,
+    grey, 0-255) stays under `event`. A board's slow push-in measures about 0.1-0.3, writing and footage 0.5 and up.
+    Returns the stretches of `longest` seconds or more, and the visual events a minute (a change starting)."""
+    import numpy as np
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", path, "-vf", f"fps={fps},scale=96:54,format=gray", "-f", "rawvideo", "-"], capture_output=True, check=True).stdout
+    x = np.frombuffer(raw, np.uint8).reshape(-1, 54, 96).astype(np.float32)
+    if len(x) < 2:
+        return [], 0.0
+    busy = np.abs(np.diff(x, axis=0)).mean(axis=(1, 2)) >= event
+    out, start = [], None
+    for i, b in enumerate(list(busy) + [True]):
+        if not b and start is None:
+            start = i
+        elif b and start is not None:
+            if (i - start) / fps >= longest:
+                out.append((round(start / fps, 1), round(i / fps, 1)))
+            start = None
+    starts = int(np.sum(busy[1:] & ~busy[:-1])) + int(busy[0])
+    return out, round(starts / (len(busy) / fps / 60), 1)
 
 
 def frame_at(path: str, t: float, w: int) -> Image.Image:
@@ -118,6 +142,9 @@ def main() -> None:
              f"- loudness {lufs} LUFS integrated (target -14), true peak {peak} dBFS (keep under -1)",
              f"- {len(cs)} cuts{' (with the storyboard scene changes)' if changes else ''}; longest stretch with no cut {longest[0]:.1f}s from {longest[1]:.1f}s",
              "", "## Cuts (seconds)", "", ", ".join(f"{c:.2f}" for c in cs) or "none"]
+    idle, per_min = idle_stretches(args.video)
+    lines += ["", "## Eyes", "", f"- something new on screen {per_min} times a minute; still for 4 s or more: {len(idle)} times, {sum(b - a for a, b in idle):.0f}s in all"]
+    lines += [f"- still {int(a // 60)}:{a % 60:04.1f} to {int(b // 60)}:{b % 60:04.1f} ({b - a:.1f}s)" for a, b in idle]
     if words:
         lines += ["", "## Words (start time, word)", ""]
         line, t0 = [], None
