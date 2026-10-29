@@ -531,8 +531,9 @@ def cut_spans(sb: dict[str, Any], spans: list[list[float]], hook: str | None = N
     keep[-1]["end"] = round(t + tail, 3)
     if keep[0]["type"] == "set":
         keep[0]["props"].pop("walk", None)
-    if keep[-1]["type"] == "set":
-        keep[-1]["props"]["leave"] = "no"  # the last picture holds for the loop
+    for c in keep:
+        if c["type"] == "set":
+            c["props"]["leave"] = "no"  # on a phone a character walking out reads as the end; the last picture holds for the loop
     out["scenes"] = keep
     out["durationSec"] = round(t + tail, 3)
     out["captions"] = True

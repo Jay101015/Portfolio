@@ -362,12 +362,19 @@ def fit_clip(sc: dict, path: str) -> list[str]:
     # Footage the finder fetched (a search= tag and no from= of its own) opens past the first
     # fifteen percent of the file, so a found film does not play its title cards.
     found = p.get("from") is None and bool(p.get("search"))
-    if dur - margin < scene_len:
+    if dur - margin - start < scene_len and (dur - margin) / scene_len >= 0.5:
+        # too short from where it was asked to start: the whole clip, played slower to fill the scene (down to half
+        # speed, which reads as a slow, deliberate shot; a loop shows as a freeze and a jump back to an earlier frame)
+        p["from"] = 0.0
+        p["rate"] = round((dur - margin) / scene_len, 3)
+        p.pop("loop", None)
+        notes.append(f"scene {sc['id']}: '{os.path.basename(path)}' is {dur:.1f}s for a {scene_len:.1f}s scene{f' from {start:g}s' if start else ''}; it plays from the start at {p['rate']:.2f}x speed")
+    elif dur - margin < scene_len:
         if found:
             start = dur * 0.15
         p["from"] = round(min(start, max(0.0, dur - margin - 1.0)), 2)
         p["loop"] = True
-        notes.append(f"scene {sc['id']}: '{os.path.basename(path)}' is {dur:.1f}s, shorter than the scene ({scene_len:.1f}s); it loops")
+        notes.append(f"WARNING: scene {sc['id']}: '{os.path.basename(path)}' is {dur:.1f}s, under half the scene ({scene_len:.1f}s); it loops, which shows. Use a longer clip or split the scene")
     else:
         if found:
             start = min(dur * 0.15, dur - margin - scene_len)

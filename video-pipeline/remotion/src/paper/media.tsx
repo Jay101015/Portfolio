@@ -96,6 +96,7 @@ export const Media: React.FC<{src: string; props: MediaProps; durationFrames: nu
   if (isGif(src)) return <Gif src={file} width={boxW} height={boxH} fit="cover" style={style} />;
   // footage is silent unless the scene asks for its sound (vol=1: a "watch next" preview of another video)
   const vol = num(props.vol, 0);
-  if (isVideo(src)) return <OffthreadVideo src={file} muted={vol <= 0} volume={Math.max(0, vol)} startFrom={Math.round(num(props.from, 0) * fps)} style={style} />;
+  // rate=: a clip a little shorter than its scene plays slower to fill it (a loop shows as a freeze and a jump back)
+  if (isVideo(src)) return <OffthreadVideo src={file} muted={vol <= 0} volume={Math.max(0, vol)} startFrom={Math.round(num(props.from, 0) * fps)} playbackRate={num(props.rate, 1)} style={style} />;
   return <Img src={file} style={style} />;
 };

@@ -88,9 +88,11 @@ const figureAt = (scene: Scene, cues: SetCue[], st: Stage, W: number, H: number,
   }
   // the exit: with time left after the last word, he turns and walks off the nearer edge (walk in, act, leave)
   const lastWord = (scene.words ?? []).length ? (scene.words as {e: number}[])[(scene.words as {e: number}[]).length - 1].e : scene.end;
-  const leaveAt = Math.max(lastWord + 0.15, scene.end - 0.75);
-  if (scene.props.leave !== 'no' && scene.end - leaveAt >= 0.35 && tq >= leaveAt) {
-    const dir = st.x > 0.5 ? 1 : -1;
+  const leaveAt = lastWord + 0.15;
+  const exitDir = st.x > 0.5 ? 1 : -1;
+  const needed = ((exitDir > 0 ? W - X : X) + 0.3 * hpx) / (WALK.step * hpx) / 8; // seconds to walk clear of the edge
+  if (scene.props.leave !== 'no' && scene.end - leaveAt >= needed && tq >= leaveAt) {
+    const dir = exitDir;
     const dk = Math.floor((tq - leaveAt) * 8);
     const fr = WALK.frames[WALK.cycle[dk % WALK.cycle.length]];
     return {kind: 'walk' as const, src: fr.file, e: fr, x: X + dir * (dk + 1) * WALK.step * hpx, lift: [0, 4, 2][dk % 3] * (hpx / 400), flip: dir < 0, sx: 1, sy: 1, age: 99, name: 'walk'};
@@ -107,13 +109,15 @@ const figureAt = (scene: Scene, cues: SetCue[], st: Stage, W: number, H: number,
     name = cue.pose as string;
     at = Math.max(cue.t, walkEnd);
     // point-board points to the right as drawn: it points at the cards unless the script says which way
-    flip = cue.flip ?? (name.startsWith('point-board') ? cardsLeft : false);
+    flip = cue.flip ?? (name.startsWith('point-board') || name.startsWith('hand-over') ? cardsLeft : false); // both drawn reaching right: towards the cards
     const age = (tq - at) * STOP;
     if (!cue.ib) [sx, sy] = squashAt(age);
     if (cue.hop && age < 8) lift = (H > W ? 0.04 : 0.06) * hpx * Math.sin((Math.PI * age) / 8); // lower on a Short: clear of the captions
     if (cue.arc) {
       const p = Math.min(1, (tq - cue.t + 1 / STOP) / cue.arc);
       lift = 0.32 * hpx * Math.sin(Math.PI * p);
+      // on a Short the top of the leap (fists above his head) stays under the captions
+      if (H > W) lift = Math.min(lift, Math.max(0.04 * hpx, st.floor * H - hpx - 0.3 * H));
       [sx, sy] = [1, 1];
     }
   }
@@ -179,7 +183,9 @@ export const SetScene: React.FC<{scene: Scene; brand: Brand}> = ({scene}) => {
   // the slow push-in with a slight pan right, on the stop-motion clock; a shake on a shock
   const dur = Math.max(0.5, scene.end - scene.start);
   const pp = Math.min(1, Math.max(0, (tq - scene.start) / dur));
-  const amount = Math.min(0.08, 0.03 + dur * 0.004);
+  // a long set piece pushes further, towards him, so the payoff reads on a phone; a short one drifts as the board does
+  const amount = dur > 9 && !vertical ? Math.min(0.14, 0.03 + dur * 0.008) : Math.min(0.08, 0.03 + dur * 0.004);
+  const origin = dur > 9 && !vertical ? `${st.x * 100}% ${(st.floor - st.h * 0.55) * 100}%` : '50% 48%';
   let z = 1 + amount * (pp * (2 - pp) * 0.6 + pp * 0.4);
   const pan = (z - 1) * (W / 2) * 0.3;
   let shx = 0, shy = 0;
@@ -191,15 +197,21 @@ export const SetScene: React.FC<{scene: Scene; brand: Brand}> = ({scene}) => {
   }
   const shadowW = hpx * 0.28 * Math.max(0.45, 1 - fig.lift / (0.5 * hpx));
   // cards and props, in the order they land, in a column on the side he is not (the last few)
-  const landed = cues.filter((c) => (c.do === 'card' || c.do === 'prop') && c.t <= tq + 1e-6);
+  const poseAt = (t: number) => cues.filter((c) => c.do === 'pose' && c.t <= t + 0.3).pop()?.pose ?? '';
+  const inHand = (c: SetCue) => c.do === 'prop' && poseAt(c.t).startsWith('hand-over');
+  const landed = cues.filter((c) => (c.do === 'card' || (c.do === 'prop' && !inHand(c))) && c.t <= tq + 1e-6);
   const shown = landed.slice(-(vertical ? 4 : 5));
-  const colX = (cardsLeft ? (vertical ? 0.3 : 0.26) : vertical ? 0.7 : 0.74) * W;
+  const held = cues.filter((c) => inHand(c) && c.t <= tq + 1e-6 && fig.name.startsWith('hand-over'));
+  const he = POSE['hand-over'];
+  const reach = he ? (he.w - he.foot_x) * s * 0.92 : 0.3 * hpx;
+  const handDir = cardsLeft ? -1 : 1;
+  const colX = (cardsLeft ? (vertical ? 0.29 : 0.26) : vertical ? 0.71 : 0.74) * W;
   const y0 = (vertical ? 0.3 : 0.2) * H;
   const step = (vertical ? 0.09 : 0.118) * H;
-  const maxw = (vertical ? 0.56 : 0.44) * W;
+  const maxw = (vertical ? 0.52 : 0.44) * W;
   return (
     <AbsoluteFill>
-      <AbsoluteFill style={{transform: `translate(${-pan + shx}px, ${shy}px) scale(${z})`, transformOrigin: '50% 48%'}}>
+      <AbsoluteFill style={{transform: `translate(${-pan + shx}px, ${shy}px) scale(${z})`, transformOrigin: origin}}>
         <Room file={(p.roomFile as string) ?? room.file} room={room} st={st} vertical={vertical} k={k} id={scene.id} />
         <div style={{position: 'absolute', left: fig.x - shadowW / 2, top: Y - shadowW * 0.07, width: shadowW, height: shadowW * 0.14, borderRadius: '50%', background: 'rgba(26,23,20,0.22)', filter: `blur(${5 * u}px)`}} />
         <Img
@@ -210,6 +222,13 @@ export const SetScene: React.FC<{scene: Scene; brand: Brand}> = ({scene}) => {
           }}
         />
       </AbsoluteFill>
+      {held.map((c, i) => {
+        const ph = (vertical ? 0.09 : 0.12) * H;
+        const [sx, sy] = squashAt((tq - c.t) * STOP);
+        const hx = fig.x + handDir * (reach + ph * 0.35);
+        const hy = Y - hpx * 0.6;
+        return <Img key={`h${i}`} src={staticFile(`props/solid/${c.prop}.png`)} style={{position: 'absolute', left: hx - ph / 2, top: hy - ph * 0.55, height: ph, filter: 'contrast(1.9)', transform: `scale(${sx}, ${sy})`, transformOrigin: '50% 100%'}} />;
+      })}
       <Column items={shown} colX={colX} y0={y0} step={step} maxw={maxw} tq={tq} k={k} left={cardsLeft} vertical={vertical} W={W} H={H} />
     </AbsoluteFill>
   );
@@ -225,7 +244,7 @@ const Column: React.FC<{items: SetCue[]; colX: number; y0: number; step: number;
       if (c.do === 'prop') {
         const ph = (vertical ? 0.075 : 0.11) * H;
         const [sx, sy] = squashAt(age);
-        return <Img key={`p${i}`} src={staticFile(`props/solid/${c.prop}.png`)} style={{position: 'absolute', left: colX - ph / 2, top: y - ph / 2, height: ph, transform: `rotate(${tilt * 3}deg) scale(${sx}, ${sy})`, transformOrigin: '50% 100%'}} />;
+        return <Img key={`p${i}`} src={staticFile(`props/solid/${c.prop}.png`)} style={{position: 'absolute', left: colX - ph / 2, top: y - ph / 2, height: ph, filter: 'contrast(1.9)', transform: `rotate(${tilt * 3}deg) scale(${sx}, ${sy})`, transformOrigin: '50% 100%'}} />;
       }
       return <Card key={`c${i}`} c={c} x={colX} y={y} age={age} tilt={tilt} vertical={vertical} W={W} maxw={maxw} />;
     })}
