@@ -3,6 +3,7 @@ import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {Brand, Scene, Word} from '../types';
 import {useLayout} from './layout';
 import {hostPosFor} from '../hostPos';
+import {setCaptionsHigh} from '../paper/setpiece';
 
 type Chunk = {words: Word[]; s: number; e: number; tilt: number};
 
@@ -60,10 +61,12 @@ export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string; a
     );
   }
   if (brand.paper) {
-    // ink on the page, the word being said swiped with a highlighter
+    // ink on the page, the word being said swiped with a highlighter. A Short with set pieces carries them high, on a
+    // white pill (as the £25K Short did): under the hook, over his head, clear of the Shorts title and buttons.
+    const high = isVertical && setCaptionsHigh(scenes);
     return (
-      <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: isVertical ? height * 0.3 : 52 * u, ...sideStyle}}>
-        <div style={{maxWidth: `calc(100% - ${pad * 2}px)`, fontFamily: isVertical ? brand.display : brand.font, fontSize: (isVertical ? 78 : 40) * u, fontWeight: isVertical ? 800 : 700, lineHeight: 1.2, textAlign: 'center', color: brand.ink}}>
+      <AbsoluteFill style={high ? {justifyContent: 'flex-start', alignItems: 'center', paddingTop: height * 0.155} : {justifyContent: 'flex-end', alignItems: 'center', paddingBottom: isVertical ? height * 0.3 : 52 * u, ...sideStyle}}>
+        <div style={{maxWidth: `calc(100% - ${pad * 2}px)`, fontFamily: isVertical ? brand.display : brand.font, fontSize: (isVertical ? (high ? 76 : 78) : 40) * u, fontWeight: isVertical ? 800 : 700, lineHeight: 1.2, textAlign: 'center', color: brand.ink, ...(high ? {background: 'rgba(255,255,255,0.94)', borderRadius: 24 * u, padding: `${10 * u}px ${30 * u}px`} : {})}}>
           {chunk.words.map((w, i) => {
             const since = t - w.s;
             const swipe = Math.max(0, Math.min(1, (since + 0.02) / 0.16));

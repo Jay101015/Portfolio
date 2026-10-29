@@ -30,7 +30,8 @@ from . import align as al
 from .enhance import enhance, level_from_header
 from .preview import write_preview
 from .auto_script import script_from_words
-from .script_parser import pace_scenes, parse_script
+from .script_parser import pace_scenes, parse_script, time_cues
+from .voice import fill_gated, snap_cuts, take_words, tighten_pauses
 from .footage_library import use_library
 from .shorts import SHORT_SPEED, cut_short, cut_spans, plan_shorts, pose_track, speed_up
 
@@ -558,6 +559,28 @@ def keep_spans(src: str, dst: str, spans: list[tuple[float, float]], lead: float
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-filter_complex", graph, "-map", "[out]", "-ac", "1", "-ar", "48000", "-codec:a", "libmp3lame", "-q:a", "2", dst], check=True)
 
 
+def tidy_voice(project: str, audio: str, header: dict[str, str]) -> str:
+    """The recording with its gated silences filled with room tone and its long pauses closed up (pipeline/voice.py).
+    A project transcribed before this step existed keeps its recording as it was, so its Shorts' cut points (seconds
+    in shorts.json) still land where they did; `pauses: tight|keep` in the header decides either way."""
+    kept = os.path.join(project, "transcript.json")
+    legacy = False
+    if os.path.exists(kept):
+        with open(kept, encoding="utf-8") as f:
+            legacy = json.load(f).get("audio") == "voice-trim.wav"
+    mode = header.get("pauses", "keep" if legacy else "tight").strip().lower()
+    if mode == "keep":
+        return audio
+    audio, n = fill_gated(audio, os.path.join(project, ".cache", "voice-filled.wav"))
+    if n:
+        print(f"voice: {n} patches of digital silence filled with the room's own tone")
+    longest = float(header.get("pauses.longest", 0.7))
+    audio, gone, _ = tighten_pauses(audio, os.path.join(project, ".cache", "voice-tight.wav"), longest=longest)
+    if gone:
+        print(f"voice: pauses over {longest:.1f}s closed up to 0.4s ({gone:.1f}s of dead air taken out)")
+    return audio
+
+
 def trim_lead(src: str, dst: str, keep: float = 0.3) -> str:
     """Cut the room tone before the first word down to `keep` seconds: a phone recording starts a second or two before
     the speaker does, and the video should open on the voice."""
@@ -733,6 +756,8 @@ def main(argv: list[str] | None = None) -> int:
         total = al.audio_duration(audio)
         if before - total > 0.2:
             print(f"trimmed {before - total:.1f}s of room tone before the first word")
+        audio = tidy_voice(project, audio, _header_lines(md))
+        total = al.audio_duration(audio)
         wav = al.to_wav16k(audio, os.path.join(project, ".cache", "asr16k.wav"))
         hint = " ".join(sc["narration"] for sc in sb["scenes"]) if sb else ""
         words = transcript_for(project, audio, wav, total, args, hint)
@@ -755,6 +780,8 @@ def main(argv: list[str] | None = None) -> int:
         sb["captions"] = False
     slug = sb["slug"]
     print(f"storyboard: {len(sb['scenes'])} scenes, estimated {sb['durationSec']:.0f}s")
+    for problem in sb.get("problems") or []:
+        print(f"WARNING: {problem}")
 
     align_report = ""
     public_dir = os.path.join(REMOTION, "public", "projects", slug)
@@ -764,6 +791,12 @@ def main(argv: list[str] | None = None) -> int:
             sb = al.align(sb, words, total)
             align_report = al.report(sb)
             print(align_report)
+            # the cuts on the quietest moment between scenes, measured in the sound; captions follow the take
+            moved = snap_cuts(sb, wav)
+            for sc in sb["scenes"]:
+                time_cues(sc)
+            changed = take_words(sb, words)
+            print(f"cuts: {moved} moved onto the pause between words; captions: {changed} words follow the take, not the script")
             for line in long_scenes(sb):
                 print(line)
         else:

@@ -11,7 +11,7 @@ import manifest from '../../../library/poses/manifest.json';
 type Entry = {name: string; w: number; h: number; foot_x: number; floor_y: number};
 const BY_NAME: Record<string, Entry> = Object.fromEntries((manifest as Entry[]).map((e) => [e.name, e]));
 const STAND_H = 800; // a standing figure in the saved poses, head to toe
-const FOOTAGE = new Set(['broll', 'clip', 'still', 'image']);
+const FOOTAGE = new Set(['broll', 'clip', 'still', 'image', 'set']); // off during footage, and during a set piece (it draws him in the room)
 
 // squash and stretch after a landing, two frames each: squash, stretch, a smaller squash, settled
 const SQUASH: [number, number][] = [[1.08, 0.92], [0.95, 1.06], [1.02, 0.98]];

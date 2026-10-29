@@ -117,6 +117,18 @@ Locally:
 
     python -m pipeline.enhance in.m4a out.mp3 --level strong --measure
 
+Then the edit is fitted to it (pipeline/voice.py):
+
+- patches of digital silence (a phone's noise gate) are filled with the room's own tone, so the sound never drops to
+  nothing at a cut;
+- pauses over 0.7 s are closed up to 0.4 s, before transcription, so every time in the video is on the tightened
+  recording (`pauses: keep` leaves them; `pauses.longest: 1.0` sets the limit). A project transcribed before this
+  existed keeps its recording as it was, so its Shorts' cut points still land;
+- each cut between scenes goes on the quietest moment between their words, measured in the sound, not on the word
+  times (a recogniser's word times can run 0.4 s early);
+- the captions follow what you said where it differs from the script by a small word ("a year" for "per year"),
+  keeping the script's figures and names.
+
 ## A written script and your voice
 
 If you wrote a script and read from it, give the studio both. In Read, paste it
@@ -687,6 +699,22 @@ pass puts about one broll scene in every four, between board scenes.
 
 `clip="busy high street"` on a text scene still gives the small framed card
 beside the words, for when the words must stay on screen.
+
+### Set pieces: the character in a room
+
+Between the footage, two or three times a video, the character acts out a beat in
+a whole drawn room, the numbers landing on cards beside him:
+
+```
+[set room=first-flat walk cards="£12,000 deposit; £125,000; ink:£600 a month"]
+Add a {count-notes} £12,000 deposit and your budget is around {fist-pump} £125,000. {prop=keys} That's around £600 a month.
+```
+
+He is sized and placed from the room's measured spot (landscape and Short crops
+both), walks in from the side that is clear, lands each `{pose}` on the next word
+with its in-betweens, and props pop in on their word. Rooms, cues, cards and how
+to measure a new room: docs/pose-library.md "Set pieces" and "Sizing him in a
+room". The demos the format was built from are in experiments/broll-character.
 
 ### Real figures and news
 

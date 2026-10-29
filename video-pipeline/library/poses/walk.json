@@ -1,0 +1,70 @@
+{
+ "about": "walk cycle facing right, played on threes (8 drawings a second); mirror for a walk to the left",
+ "cycle": [
+  0,
+  3,
+  1,
+  4,
+  7,
+  5
+ ],
+ "step": 0.1284,
+ "frames": [
+  {
+   "file": "poses/walk/0.png",
+   "w": 689,
+   "h": 921,
+   "foot_x": 319,
+   "floor_y": 846
+  },
+  {
+   "file": "poses/walk/1.png",
+   "w": 693,
+   "h": 921,
+   "foot_x": 338,
+   "floor_y": 846
+  },
+  {
+   "file": "poses/walk/2.png",
+   "w": 697,
+   "h": 921,
+   "foot_x": 316,
+   "floor_y": 846
+  },
+  {
+   "file": "poses/walk/3.png",
+   "w": 689,
+   "h": 921,
+   "foot_x": 359,
+   "floor_y": 846
+  },
+  {
+   "file": "poses/walk/4.png",
+   "w": 689,
+   "h": 921,
+   "foot_x": 360,
+   "floor_y": 838
+  },
+  {
+   "file": "poses/walk/5.png",
+   "w": 693,
+   "h": 921,
+   "foot_x": 350,
+   "floor_y": 838
+  },
+  {
+   "file": "poses/walk/6.png",
+   "w": 691,
+   "h": 921,
+   "foot_x": 330,
+   "floor_y": 838
+  },
+  {
+   "file": "poses/walk/7.png",
+   "w": 689,
+   "h": 921,
+   "foot_x": 379,
+   "floor_y": 840
+  }
+ ]
+}

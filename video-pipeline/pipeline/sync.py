@@ -95,6 +95,38 @@ def _is_structure(line: str) -> bool:
     return s.startswith(STRUCTURE) or low.startswith(STRUCTURE_KEYS) or s.startswith("<!--") or s.startswith("//")
 
 
+CUE_TOKEN = re.compile(r"\{[a-z][a-z0-9_-]*(?::[a-z]+)?(?:=[a-z0-9-]+)?\}")
+
+
+def carry_cues(written: str, said: str) -> str:
+    """The cues written in the prose ({shocked}, {count-notes}, {prop=keys}) put back into the words as said: each goes
+    before the same word it stood before, matched in order, or at the same share of the way through if that word was
+    not said."""
+    tokens = written.split()
+    if not any(CUE_TOKEN.search(t) for t in tokens):
+        return said
+    norm = lambda w: re.sub(r"[^\w£%]", "", w.lower())  # noqa: E731
+    plain = [CUE_TOKEN.sub("", t) for t in tokens]
+    words = said.split()
+    inserts: list[tuple[int, str]] = []
+    pos = 0
+    n_plain = sum(1 for t in plain if t) or 1
+    seen = 0
+    for i, t in enumerate(tokens):
+        cues = CUE_TOKEN.findall(t)
+        if cues:
+            nxt = next((norm(p) for p in plain[i:] if p), "")
+            hit = next((j for j in range(pos, len(words)) if norm(words[j]) == nxt), None)
+            at = hit if hit is not None else min(len(words), round(len(words) * seen / n_plain))
+            inserts += [(at, c) for c in cues]
+            pos = max(pos, at)
+        if plain[i]:
+            seen += 1
+    for at, c in sorted(inserts, key=lambda x: x[0], reverse=True):
+        words.insert(at, c)
+    return " ".join(words)
+
+
 def rewrite_prose(md: str, texts: list[str]) -> tuple[str, list[int]]:
     """Replace the spoken prose of tagged block i with texts[i]; keep everything else. Returns the new script and
     the (1-based) scenes that were left as written because nothing was said in them."""
@@ -111,7 +143,7 @@ def rewrite_prose(md: str, texts: list[str]) -> tuple[str, list[int]]:
         said = texts[block] if block < len(texts) else ""
         out.extend(pending)
         if said:
-            out.append(said)
+            out.append(carry_cues(" ".join(prose_kept), said))
         else:
             out.extend(prose_kept)
             kept.append(block + 1)

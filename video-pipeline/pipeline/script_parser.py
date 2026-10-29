@@ -29,9 +29,11 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
+from . import setpiece
+
 WORDS_PER_SEC = 2.6  # typical YouTube narration pace; replaced by real timings after alignment
 SCENE_GAP_SEC = 0.35
-SCENE_TYPES = {"title", "text", "stat", "list", "chart", "compare", "quote", "image", "still", "clip", "poster", "score", "avatar", "outro", "art", "bite", "grow", "pie", "shrink", "takeaway", "recap", "hook", "broll", "news"}
+SCENE_TYPES = {"title", "text", "stat", "list", "chart", "compare", "quote", "image", "still", "clip", "poster", "score", "avatar", "outro", "art", "bite", "grow", "pie", "shrink", "takeaway", "recap", "hook", "broll", "news", "set"}
 
 TAG_RE = re.compile(r"^\[(\w+)([^\]]*)\]\s*$")
 ATTR_RE = re.compile(r'(\w+)=(?:"([^"]*)"|(\S+))')
@@ -321,6 +323,8 @@ def time_cues(sc: dict[str, Any]) -> None:
         if "face" in c:
             cue["face"] = c["face"]
         cues.append(cue)
+    if sc.get("setWords") is not None:
+        cues += setpiece.timed(sc)
     sc["cues"] = cues
 
 
@@ -461,9 +465,11 @@ def parse_script(md: str) -> dict[str, Any]:
         blocks.append(Block(type="outro", attrs={"title": "The Everyday Investor", "cta": "Subscribe for the next one", "dur": "12"}))
 
     scenes = []
+    problems: list[str] = []
     for i, b in enumerate(blocks, 1):
-        narration, cues = split_cues(_narration_for(b))
-        scenes.append({
+        # a set piece's cues name poses from the pose library ({count-notes}, {prop=keys}); setpiece reads them
+        narration, cues = (_narration_for(b), []) if b.type == "set" else split_cues(_narration_for(b))
+        sc = {
             "id": i,
             "type": b.type,
             "start": 0.0,
@@ -473,7 +479,10 @@ def parse_script(md: str) -> dict[str, Any]:
             "cueWords": cues,
             "cues": [],
             "props": _block_to_props(b, title),
-        })
+        }
+        if b.type == "set":
+            problems += setpiece.plan(sc, b.attrs)
+        scenes.append(sc)
     if scenes and header.get("kicker") and scenes[0]["type"] == "title":
         scenes[0]["props"].setdefault("kicker", header["kicker"])
 
@@ -511,4 +520,5 @@ def parse_script(md: str) -> dict[str, Any]:
         "scenes": scenes,
         "timing": "estimated",
         "pace": dict(zip(("lead", "hold"), pace_for(header))),
+        "problems": problems,
     }

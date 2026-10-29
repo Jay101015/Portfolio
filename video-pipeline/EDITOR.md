@@ -75,7 +75,9 @@ is not, the scene is cut in the wrong place.
    comes in for two or three set pieces a video, at the beats that matter (the hook's payoff, the big number, the
    ending), and a set piece uses the whole scene: a background from library/backgrounds with him in it, sized to
    the room, doing one clear thing start to finish (walks in and reacts, jumps on good news, hands over the money,
-   drives the car off). Never the character on every scene; never two set pieces back to back.
+   drives the car off). Never the character on every scene; never two set pieces back to back. Write one as
+   `[set room=<a measured room> walk cards="..."]` with `{pose}` cues before the words (docs/pose-library.md
+   "Set pieces"); keep it to one beat of 6 to 14 seconds.
 4. `[stat value="<the figure>" label="<what it is, handwritten>" sub="<short note>"]` only where the narration states
    a real figure; the value is a figure actually said, formatted (£2,400, 20%). Never a stat with a made-up or
    meaningless value.

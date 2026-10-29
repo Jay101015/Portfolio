@@ -48,6 +48,7 @@ export type SceneType =
   | 'hook' | 'takeaway'
   | 'broll' // stock footage filling the whole frame, a short caption and the credit over it
   | 'news' // a real headline on a clipping card: outlet, date, the line
+  | 'set' // a set piece: the character acting out a moment in a whole drawn room (paper/setpiece.tsx)
   | 'recap'
   | 'bite'
   | 'grow'

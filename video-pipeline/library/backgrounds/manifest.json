@@ -30,7 +30,16 @@
   "h": 1180,
   "source": "bg-batch-2a.png",
   "standin": true,
-  "note": "enlarged 4x from a grid; replace with a full-size single image"
+  "note": "enlarged 4x from a grid; replace with a full-size single image",
+  "spot": {
+   "x": 0.36,
+   "floor": 0.823,
+   "h": 0.46,
+   "land_top": 0.9,
+   "by": "window ledge and poster frames; reviewed 2026-10-28",
+   "walk_from": "left",
+   "walk_dx": 0.28
+  }
  },
  {
   "name": "first-flat",
@@ -41,7 +50,16 @@
   "h": 1180,
   "source": "bg-batch-2a.png",
   "standin": true,
-  "note": "enlarged 4x from a grid; replace with a full-size single image"
+  "note": "enlarged 4x from a grid; replace with a full-size single image",
+  "spot": {
+   "x": 0.56,
+   "floor": 0.732,
+   "h": 0.469,
+   "land_top": 0.55,
+   "by": "counter 0.9 m at his waist, door 2 m above his head; reviewed 2026-10-28",
+   "walk_from": "right",
+   "walk_dx": 0.2
+  }
  },
  {
   "name": "graduation-hall",
@@ -83,7 +101,16 @@
   "h": 1272,
   "source": "bg-batch-2a.png",
   "standin": true,
-  "note": "enlarged 4x from a grid; replace with a full-size single image"
+  "note": "enlarged 4x from a grid; replace with a full-size single image",
+  "spot": {
+   "x": 0.43,
+   "floor": 0.51,
+   "h": 0.321,
+   "land_top": 0.35,
+   "by": "window sill at his waist, floor lamp; on the floor behind the table, clear of it; reviewed 2026-10-28",
+   "walk_from": "right",
+   "walk_dx": 0.2
+  }
  },
  {
   "name": "office",
@@ -94,7 +121,15 @@
   "h": 1224,
   "source": "bg-batch-2b.png",
   "standin": true,
-  "note": "enlarged 4x from a grid; replace with a full-size single image"
+  "note": "enlarged 4x from a grid; replace with a full-size single image; the New York tower in the window painted out 2026-10-29",
+  "spot": {
+   "x": 0.441,
+   "floor": 0.72,
+   "h": 0.41,
+   "by": "both desk rows (0.75 m), horizon 0.395; reviewed 2026-10-29",
+   "walk_from": "right",
+   "walk_dx": 0.25
+  }
  },
  {
   "name": "supermarket",
@@ -116,7 +151,15 @@
   "h": 1188,
   "source": "bg-batch-2b.png",
   "standin": true,
-  "note": "enlarged 4x from a grid; replace with a full-size single image"
+  "note": "enlarged 4x from a grid; replace with a full-size single image",
+  "spot": {
+   "x": 0.53,
+   "floor": 0.8,
+   "h": 0.36,
+   "by": "garden wall at his hip, for-sale post above him, horizon 0.624; reviewed 2026-10-29",
+   "walk_from": "left",
+   "walk_dx": 0.28
+  }
  },
  {
   "name": "train-platform",

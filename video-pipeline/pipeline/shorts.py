@@ -465,12 +465,11 @@ def cut_spans(sb: dict[str, Any], spans: list[list[float]], hook: str | None = N
         if keep and keep[-1]["src"] == sc["id"]:
             c = keep[-1]
             c["words"] += words
+            c["_pieces"].append((a, b, shift))
         else:
             c = copy.deepcopy(sc)
             c["words"] = words
-            for cue in c.get("cues", []) or []:
-                if "t" in cue:
-                    cue["t"] = round(max(a, cue["t"]) + shift, 3)
+            c["_pieces"] = [(a, b, shift)]
             c["start"] = round(t, 3)
             c["src"] = sc["id"]
             c["id"] = len(keep) + 1
@@ -479,6 +478,23 @@ def cut_spans(sb: dict[str, Any], spans: list[list[float]], hook: str | None = N
         c["narration"] = " ".join(str(w["w"]) for w in c["words"]) or sc.get("narration", "")
         audio.append((a, b))
         t = c["end"]
+    for c in keep:
+        # a cue moves with the piece of the scene it falls in; one cued before the cut lands at the cut (at once), one in
+        # a part that was skipped or after the last piece is dropped (a card for a sentence the Short leaves out)
+        pieces_ = c.pop("_pieces")
+        cues = []
+        for cue in c.get("cues", []) or []:
+            if "t" not in cue:
+                cues.append(cue)
+                continue
+            a0, _, s0 = pieces_[0]
+            if cue["t"] < a0:
+                cues.append(dict(cue, t=round(a0 + s0, 3)))
+                continue
+            hit = next(((pa, sh) for pa, pb, sh in pieces_ if pa - 0.05 <= cue["t"] <= pb + 0.05), None)
+            if hit:
+                cues.append(dict(cue, t=round(max(hit[0], cue["t"]) + hit[1], 3)))
+        c["cues"] = cues
     out["scenes"] = keep
     out["durationSec"] = round(t + tail, 3)
     out["captions"] = True

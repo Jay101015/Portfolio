@@ -263,13 +263,40 @@ depth where he will stand (a kitchen counter 0.9 m, a front garden wall 1 m, a d
 from two such things find the eye line, then his height on screen is (floor y - eye line) x 1.75 / 1.6. Put him where
 the floor is open at that depth; a table can stand in front of him only if his feet are behind its back edge on
 screen, otherwise he looks as if he is standing on it. A room drawn very close (the living room) is cropped higher so
-he fits. The demo's measurements: estate agent window feet 0.90 height 0.66, first flat 0.79 / 0.62, terraced street
-0.86 / 0.50, living room (cropped at 0.35) 0.60 / 0.47 (shares of the frame).
+he fits.
+
+Each measured room keeps its spot in library/backgrounds/manifest.json (`spot`: x, floor and h as shares of the
+drawing; `land_top` where the landscape crop was chosen by eye; `walk_from`/`walk_dx`, the side he can walk in from
+without crossing anything nearer the camera). pipeline/setpiece.py turns the spot into both frames: the landscape crop
+(the full width, a 16:9 band, his feet above the captions at 0.80) and the Short's 9:16 slice (him about two thirds
+across, the cards beside him, his feet above the Shorts title at 0.80 and his head under the captions at 0.26,
+zooming in a little when the spot needs it). Check a room, or try a new spot, with
+`python3 scripts/room-stage.py <room> [--x --floor --h]`: it draws him in both crops with the caption and Shorts
+zones. Measured so far: estate-agent, first-flat, living-room, office (the New York tower painted out of its window),
+terraced-street. A room without a spot cannot be used in a [set] scene until it is measured.
 
 ### Set pieces (whole-scene moments)
 
 B-roll is the main picture; the character gets two or three set pieces a video, each using a whole background:
-walk in, react on the word, act it out, leave. The ones planned, and what each still needs drawn:
+walk in, react on the word, act it out, leave. In a script:
+
+    [set room=first-flat walk cards="£12,000 deposit; £125,000; ink:£600 a month; 3 years -> 2 years 9 months"]
+    Add a {count-notes} £12,000 deposit and your budget is around {fist-pump} £125,000. {prop=keys} That's around
+    £600 a month, and three years becomes {point-board} two.
+
+- `{pose}` before a word: he lands that pose on it (in-betweens first, a hop on happy poses; `{jump}` is crouch,
+  leap, landing). `{pose:flip}` mirrors it. point-board points at the cards by itself.
+- `{prop=keys}`: a prop from library/props pops into the card column on that word.
+- `cards=`: each lands on the word its figure is said ("3" also matches "three"); `@word` picks the word; `red:`,
+  `green:`, `ink:` the colour (figures green, words ink); `old -> new` strikes the old one through. With no cards=,
+  every amount said gets a card; `cards=off` for none.
+- `walk`: he walks in from the room's clear side first (`walk=left|right` to choose).
+- With no `{pose}` written, poses are picked from the words by the pose tags (a pose every six words at most).
+
+The render (remotion/src/paper/setpiece.tsx) crops the room for the frame, lightens it and boils it on 12 drawings
+a second, keeps the push-in and a shake on a shock on the same clock, and pins the cards outside the push so they
+stay still. A Short with set pieces carries its captions high, on a white pill. The ones planned, and what each still
+needs drawn:
 
 | set piece | needs |
 |---|---|

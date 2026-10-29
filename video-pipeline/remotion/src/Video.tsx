@@ -27,10 +27,12 @@ import {PenHand} from './paper/write';
 import {ArtLayer} from './paper/art';
 import {PoseLayer} from './paper/poses';
 import {CharacterOn} from './paper/character';
+import {SetScene} from './paper/setpiece';
 import {Arrow, SketchPath} from './paper/sketch';
 import {FACES, POSES, defaultAvatar, defaultFaceFor, type AvatarConfig, type Face, type Pose} from './avatar/Avatar';
 
 const SceneSwitch: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}) => {
+  if (scene.type === 'set') return <SetScene scene={scene} brand={brand} />;
   if (['bite', 'grow', 'pie', 'shrink', 'takeaway', 'recap', 'hook', 'broll', 'news'].includes(scene.type)) return <PaperSwitch scene={scene} brand={brand} />; // the money pictures and the takeaway cards are drawn the same in every look
   if (brand.paper && ['title', 'stat', 'text', 'list', 'compare', 'chart', 'quote', 'outro', 'still', 'image', 'clip', 'art'].includes(scene.type)) return <PaperSwitch scene={scene} brand={brand} />;
   switch (scene.type) {
@@ -151,6 +153,8 @@ const sceneArt = (scene: Scene, brand: Brand): string | undefined => {
 };
 const boardTransition = (scene: Scene, prev: Scene | null, brand: Brand): Transition => {
   const asked = scene.props.transition;
+  // a set piece turns in like a page, and the page after it turns over it (on the board look; elsewhere a cut)
+  if (prev && !asked && (scene.type === 'set' || prev.type === 'set')) return brand.board ? 'slide' : 'cut';
   if (asked === 'wipe' || asked === 'slide') return brand.board && prev ? asked : 'cut';
   if (!brand.board || !brand.illustrated || !prev || asked || keepMode(scene)) return transitionFor(scene, brand.toon);
   if (scene.type === 'outro') return 'cut';
@@ -365,7 +369,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
         return (
           <Sequence key={scene.id} from={from} durationInFrames={dur} name={`${scene.id} ${scene.type}`}>
             <SceneFade durationInFrames={dur} toon={brand.toon} transition={tr} dir={scene.id % 2 ? 1 : -1}>
-              <Camera scene={scene} toon={brand.toon} push={!!brand.board && !['broll', 'clip', 'still', 'image', 'outro'].includes(scene.type) && String(flags.motion ?? 'on').toLowerCase() !== 'off'}>
+              <Camera scene={scene} toon={brand.toon} push={!!brand.board && !['broll', 'clip', 'still', 'image', 'outro', 'set'].includes(scene.type) && String(flags.motion ?? 'on').toLowerCase() !== 'off'}>
                 {keep && prev ? <KeptBoard prev={prev} brand={brand} mode={keep} /> : null}
                 {tr === 'slide' && prev ? <SlideOut prev={prev} brand={brand} /> : null}
                 {board}
