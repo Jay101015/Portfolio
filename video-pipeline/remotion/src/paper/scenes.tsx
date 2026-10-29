@@ -135,25 +135,25 @@ export const PaperTitle: React.FC<P> = ({scene, brand}) => {
   const subtitle: string | undefined = scene.props.subtitle;
   const kicker: string | undefined = scene.props.kicker;
   const words = title.split(/\s+/).filter(Boolean);
-  const kickerDone = kicker ? doneAt(brand, kicker, fps, 0, 2, 34) : 0;
+  const kickerDone = kicker ? doneAt(brand, kicker, fps, 0, 2, 60) : 0;
   const titleStart = brand.board ? kickerDone + 2 : 4;
-  const titleDone = brand.board ? doneAt(brand, title, fps, titleStart, 3, 20) : 10 + words.length * 3;
+  const titleDone = brand.board ? doneAt(brand, title, fps, titleStart, 3, 48) : 10 + words.length * 3;
   const ul = ease(frame, titleDone, titleDone + fps * 0.6);
-  const subStart = titleDone + Math.round(fps * 0.5);
+  const subStart = titleDone + Math.round(fps * 0.25);
   return (
     <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.2}}>
       {kicker ? (
         <div style={{fontFamily: hand(brand), fontSize: 46 * u, color: brand.accent2, marginBottom: 10 * u, transform: 'rotate(-2deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8)}}>
-          {brand.board ? <Write text={kicker} frame={frame} fps={fps} start={0} cps={34} color={brand.accent2} /> : kicker}
+          {brand.board ? <Write text={kicker} frame={frame} fps={fps} start={0} cps={60} color={brand.accent2} /> : kicker}
         </div>
       ) : null}
       <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: (isVertical ? 96 : 124) * u * (brand.board ? 1.08 : 1), lineHeight: 1.02, letterSpacing: brand.board ? 0 : -2 * u, color: brand.ink, maxWidth: isVertical ? '100%' : '82%'}}>
-        <Txt brand={brand} text={title} frame={frame} fps={fps} start={titleStart} cps={20} seed={3} />
+        <Txt brand={brand} text={title} frame={frame} fps={fps} start={titleStart} cps={48} seed={3} />
       </div>
       <Underline width={Math.min(width * 0.42, 640 * u)} stroke={brand.accent2} thickness={7 * u} win={[titleDone, titleDone + fps * 0.6]} easeOut seed={5} style={{marginTop: 18 * u}} />
       {subtitle ? (
         <div style={{fontSize: (isVertical ? 40 : 44) * u, color: brand.muted, marginTop: 26 * u, maxWidth: isVertical ? '100%' : '62%', lineHeight: 1.35, opacity: brand.board ? 1 : fadeIn(frame, 18, 10)}}>
-          {brand.board ? <Write text={subtitle} frame={frame} fps={fps} start={subStart} cps={34} color={brand.muted} /> : subtitle}
+          {brand.board ? <Write text={subtitle} frame={frame} fps={fps} start={subStart} cps={60} color={brand.muted} /> : subtitle}
         </div>
       ) : null}
       <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, title, subtitle)} art={scene.props.sticker || scene.props.art || scene.props.icon || brand.illustrated ? undefined : autoArt(brand, title, subtitle, scene.narration)} frame={frame} fps={fps} start={titleDone + fps * 0.7} seed={1} color={brand.blue} />
@@ -298,7 +298,9 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   const wrong: string | undefined = scene.props.wrong;
   const wrongDone = wrong ? 4 + writeFrames(wrong, fps, 30) : 0;
   const firstAt = lines.length ? lines[0].at : fps;
-  const wrongErase: [number, number] = [wrongDone + Math.round(fps * 0.6), 0];
+  // the wrong idea is struck through first, then rubbed out, so nobody reads it as the point
+  const strikeWin: [number, number] = [wrongDone + 2, wrongDone + 2 + Math.round(fps * 0.3)];
+  const wrongErase: [number, number] = [strikeWin[1] + Math.round(fps * 0.45), 0];
   wrongErase[1] = wrongErase[0] + Math.round(fps * 0.6);
   // with a wrong idea on the board first, the real phrases wait until it has cleared (the voice runs on; the writing catches up)
   const shift = wrong ? Math.max(0, wrongErase[1] + 4 - firstAt) : 0;
@@ -314,7 +316,7 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   const renderPage = (pg: typeof lines, offset: number) => (
     <div style={{position: 'absolute', inset: 0}}>
       {pg.map((ln, i) => {
-        const at = offset + i === 0 ? fitStart(ln.at, total) : ln.at; // the first line of a quick cut does not wait for the voice
+        const at = offset + i === 0 && !wrong ? fitStart(ln.at, total) : ln.at; // the first line of a quick cut does not wait for the voice (unless a wrong idea is still being cleared)
         return (
           <div key={offset + i} style={lineStyle}>
             {explicit ? <Write text={ln.text} frame={frame} fps={fps} start={at} cps={fitCps(ln.text, fps, at, 22, total)} tint={tint(ln.text)} /> : <WriteSpoken words={ln.words} t={t} fps={fps} sceneStart={scene.start} tint={tint(ln.words.map((w) => w.w).join(' '))} />}
@@ -330,7 +332,11 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
         {wrong ? (
           <Erase win={wrongErase} brand={brand} width={boxW} height={boxH * 0.45} style={{position: 'absolute', left: 0, top: 0}}>
             <div style={{...lineStyle, color: brand.accent2}}>
-              <Write text={wrong} frame={frame} fps={fps} start={4} cps={30} color={brand.accent2} />
+              <span style={{position: 'relative', display: 'inline-block'}}>
+                <Write text={wrong} frame={frame} fps={fps} start={4} cps={30} color={brand.accent2} />
+                {frame < strikeWin[0] ? null : <span style={{position: 'absolute', left: -6 * u, top: '52%', height: 7 * u, borderRadius: 4 * u, background: brand.ink, transform: 'rotate(-2deg)', transformOrigin: 'left',
+                  width: `calc(${100 * Math.min(1, Math.max(0, (frame - strikeWin[0]) / (strikeWin[1] - strikeWin[0])))}% + ${12 * u}px)`}} />}
+              </span>
             </div>
           </Erase>
         ) : null}
