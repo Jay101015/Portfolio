@@ -38,7 +38,7 @@ last videos used is what this one should not lean on again, and the unused list 
 - scene type: text ×14, broll ×7, stat ×6, list ×4, takeaway ×4, compare ×3, hook, title, chart, pie, recap, outro
 
 ## is-the-dream-dead-gen-z
-- footage: file:watch-next-200-1000-10000.mp4 ×2, lib:uni-students-library, search:uk supermarket shopping basket food prices, lib:uk-flats-block-drone, lib:uk-semis-street-pan, lib:estate-agent-sold, search:young man looking at job adverts on laptop, lib:tower-bridge-office-window, stock:197, lib:businessman-phone-city, stock:143376, lib:tradesman-van-tools, lib:drill-in-hand, search:hand signing document with pen close up, search:red stock prices falling on trading screen, search:barista handing takeaway coffee to customer paying by card, file:jeffrey-ai-everyday.mp4, stock:8252
+- footage: file:watch-next-200-1000-10000.mp4 ×2, lib:uni-students-library, stock:47601, lib:uk-flats-block-drone, lib:uk-semis-street-pan, lib:estate-agent-sold, stock:268230, lib:tower-bridge-office-window, stock:197, lib:businessman-phone-city, stock:143376, lib:tradesman-van-tools, lib:drill-in-hand, stock:4952, stock:3758, stock:1046, file:jeffrey-ai-everyday.mp4, stock:8252
 - drawing: inflation-trolley, graduate, road-to-100k, student-loan-letter, maya-worried, phone-balance-up, index-fund-basket, lisa-bonus, maya-surprised, maya-pleased
 - doodle: trending-down, triangle-alert, sprout, umbrella, hand-coins, hourglass
 - room: estate-agent, office, terraced-street, first-flat
