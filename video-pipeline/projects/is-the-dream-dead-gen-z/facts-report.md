@@ -8,7 +8,7 @@ No `fact=` on any stat scene.
 
 ## Headlines
 
-No `[news]` scene with a search=.
+- scene 37 (FTSE 100 biggest one day fall): failed: HTTP Error 429: Too Many Requests
 
 ## Claims to verify in the editor's pass
 

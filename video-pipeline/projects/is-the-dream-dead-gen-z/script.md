@@ -31,7 +31,7 @@ Let's start with the thing you feel every time you tap your card.
 [shrink value="£100" to="£77" years=5 label="£100 of 2021 money, today" note="£100 today buys what £77 did in 2021" source="ONS CPI, July 2026" cards="red:prices up 30% since 2021@percent; red:£100 today buys what £77 did@seventy-seven"]
 Since the start of 2021, prices have gone up by about thirty percent. So a hundred pounds today buys what seventy-seven pounds bought then.
 
-[broll search="uk supermarket shopping basket food prices" caption="The weekly shop" cards="red:food +38% since before Covid@thirty-eight" src="08-uk-supermarket-shopping-basket-food-pric.mp4" credit="Video 47601 by Engin_Akyurt via Pixabay"]
+[broll search="uk supermarket shopping basket food prices" caption="The weekly shop" cards="red:food +38% since before Covid@thirty-eight" src="08-uk-supermarket-shopping-basket-food-pric.mp4" credit="Video 47600 by Engin_Akyurt via Pixabay"]
 Food is worse. The weekly shop costs about thirty-eight percent more than it did before Covid.
 
 [stat value="£1,406" label="Average UK private rent, a month" sub="up almost 4% in a year" source="ONS, October 2026" art=rent-day art_at=tr art_size=0.45 art_start=3]
@@ -98,7 +98,7 @@ Hands: electricians, plumbers, anything physical in a real building.
 [broll lib="drill-in-hand" caption="AI can't do this" cards="red:AI can't rewire your kitchen@rewire"]
 AI can draft a contract, but it can't rewire your kitchen.
 
-[broll search="hand signing document with pen close up" caption="Judgement" pick=2 cards="green:judgement@judgement; ink:signs off@signs; red:takes the blame@blame"]
+[broll search="hand signing document with pen close up" caption="Judgement" pick=2 cards="green:judgement@judgement; ink:signs off@signs; red:takes the blame@blame" src="30-hand-signing-document-with-pen-close-up.mp4" credit="Video 131993 by Dx21 via Pixabay"]
 And judgement: the person who signs off, owns the decision, and takes the blame if it goes wrong.
 
 [text board="AI is creating jobs too | Roles like mine" icon=sprout cards="green:new jobs, made by AI@creating; green:roles like mine@mine; ink:barely existed a few years ago@existed"]
@@ -142,7 +142,7 @@ And check your workplace pension. If you're twenty-two or over and earn more tha
 [text board="Not taking the match | = turning down a pay rise | Free money, every month" art=pension-match cards="green:plenty match more@Plenty"]
 Plenty will match more if you put in more. If you're not taking the full match, you're turning down a pay rise. Free money, every single month.
 
-[broll search="barista handing takeaway coffee to customer paying by card" caption="£3.50 a day" pick=2 cards="red:£3.50 every working day@fifty; red:about £900 a year@nine"]
+[broll search="barista handing takeaway coffee to customer paying by card" caption="£3.50 a day" pick=2 cards="red:£3.50 every working day@fifty; red:about £900 a year@nine" src="44-barista-handing-takeaway-coffee-to-custo.mp4" credit="Video 15484 by ThorstenF via Pixabay"]
 And you'll hear people say, just stop buying coffee. A three pound fifty coffee every working day is about nine hundred pounds a year.
 
 [text board="£900 won't close an £83K gap | Two things do: time + your income | Biggest lever: your pay" art=deposit-wall]
