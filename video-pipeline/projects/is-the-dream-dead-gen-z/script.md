@@ -17,7 +17,7 @@ Since 2021, the things you buy have gone up about thirty percent, Your pay? Bare
 [broll lib="uni-students-library" caption="Our generation" cards="ink:grad jobs: nearly halved@halved; red:a home: 7.6× your salary@seven"]
 Graduate jobs in the UK have nearly halved in a year, and a home now costs about seven point six times your salary. So honestly, is the dream dead for Gen Z?
 
-[text board="What your money buys | What AI is doing | My plan"]
+[text board="What your money buys | What AI is doing | How we stay ahead"]
 I'll show you what your money actually buys now, what AI is actually doing to jobs, because I work in it every day, and at the end, my honest plan to still get ahead.
 
 [title kicker="The Everyday Investor" subtitle="Is the dream dead for Gen Z?"]
@@ -47,7 +47,7 @@ And here's the thing that really gets me. Once you take prices into account, ave
 And the biggest thing most of us are saving for shows it best. In 1997, the average home in England cost {point-board} three point six times a full salary. Today, it's {shocked} seven point six. In London, ten point six. To get back to our parents' ratio, you'd need to earn around {facepalm} eighty-three grand. That's more than double the typical salary.
 
 [broll lib="uk-semis-street-pan" caption="Homes like these" cards="ink:first-time buyers: 34@thirty-four"]
-To be fair, there's a little good news. Pay has been rising faster than house prices for a few years, so that seven point six is actually the best it's been since 2015. But the average first-time buyer is still thirty-four. And in a few minutes, I'll show you exactly how I plan to beat that.
+To be fair, there's a little good news. Pay has been rising faster than house prices for a few years, so that seven point six is actually the best it's been since 2015. But the average first-time buyer is still thirty-four.
 
 [text board="The bigger threat: the jobs"]
 So the cost of living has squeezed us. But the bigger threat to our generation isn't prices. It's what's happening to the jobs.
@@ -70,8 +70,8 @@ And I see this up close, because it's literally my job. I work in AI consulting,
 [broll search="electrician fitting wiring in a house" caption="Hard to automate" cards="ink:people · hands · judgement@judgement"]
 So which jobs are safest? The ones built on three things AI is still bad at. People: nursing, teaching, selling, leading a team. Hands: electricians, plumbers, anything physical in a real building. AI can draft a contract, but it can't rewire your kitchen. And judgement: the person who signs off, owns the decision, and takes the blame if it goes wrong. And AI is creating jobs too. Roles like mine, helping firms use it properly, barely existed a few years ago.
 
-[text board="4 moves + my real numbers"]
-So that's the bad news. Now the good part. Four things I'd do about it this week, and then my own numbers, including exactly how much I've saved so far.
+[text board="Now the good part"]
+So that's the bad news. Now the good part.
 
 [takeaway title="How we stay ahead" n="3" of="3"]
 So, is the dream dead? No. But you have to play it differently. Here's how we stay ahead, starting with an advantage nobody talks about.
@@ -110,5 +110,5 @@ Here's what I'd do. One: use AI every day, for real work, not for fun. Two: lear
 - Learn AI before it learns your job
 So, is the dream dead? No. But it's a different dream. Things cost more, our pay has barely moved, and AI is changing how careers start. But we have access to investing our parents never had, time on our side, and tools that make us more valuable, if we learn them.
 
-[text board="Is the dream dead? Tell me below"]
+[text board="Is the dream dead? Tell me below | Not financial advice. Capital at risk."]
 Thank you for watching this video. If you enjoyed it, please like and subscribe and make sure to watch my other ones.
