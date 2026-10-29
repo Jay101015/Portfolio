@@ -46,7 +46,7 @@ Then there's one our parents never paid at all. If you went to uni in England re
 [stat value="£1,300 a year" label="Student loan on the typical £39K salary" sub="a second tax, for decades" source="9% over £25,000: Department for Education, August 2025"]
 On the typical salary of thirty-nine thousand three hundred, that's about thirteen hundred pounds a year. A second tax most of us will pay for decades.
 
-[text board="Real pay: barely past 2008" art=payslip]
+[text board="Real pay: barely past 2008" art=inflation-trolley]
 And here's the thing that really gets me. Once you take prices into account, average pay is only a few percent higher than it was in 2008. Eighteen years. Prices kept moving. Our pay basically didn't.
 
 [set room=estate-agent walk cards="1997: 3.6× salary@three; red:today: 7.6×@seven; red:London: 10.6×@ten; red:£83K salary to match@eighty-three"]
@@ -58,7 +58,7 @@ To be fair, there's a little good news. Pay has been rising faster than house pr
 [broll lib="estate-agent-sold" caption="First-time buyers" cards="ink:first-time buyers: 34@average"]
 But the average first-time buyer is still thirty-four.
 
-[text board="The bigger threat: the jobs" art=job-interview]
+[text board="The bigger threat: the jobs" art=maya-worried]
 So the cost of living has squeezed us. But the bigger threat to our generation isn't prices. It's what's happening to the jobs.
 
 [takeaway title="The jobs are changing" n="2" of="3"]
@@ -79,13 +79,13 @@ Now, it's not all AI. Hiring has got more expensive too, with higher National In
 [broll search="office worker laptop artificial intelligence screen" caption="Tasks, not whole jobs" cards="ink:first drafts@drafts; ink:summarising@summarising; ink:simple questions@questions; ink:sorting data@sorting" src="23-office-worker-laptop-artificial-intellig.mp4" credit="Video 197 by Life-Of-Vids via Pixabay"]
 But AI is doing the exact tasks junior people used to learn on. Writing first drafts. Summarising documents. Answering simple customer questions. Sorting data. That's how most of us start a career, and that's what's going first.
 
-[text board="Why hire 3 juniors? | The hiring just shrinks" art=job-interview]
+[text board="Why hire 3 juniors? | The hiring just shrinks" icon=briefcase]
 Think about it from the boss's side. Why hire three juniors to write first drafts when one person with AI can do it in an afternoon? The hiring doesn't stop. It just shrinks.
 
 [set room=office walk cards="ink:me: AI consultant for law firms@consulting; ink:sorting documents@sorting; ink:drafting statements@drafting"]
 And I see this up close, because it's literally my job. I work in AI consulting, {explain} helping law firms use AI properly. Every week, I watch tasks that used to take a person {shocked} hours get done, such as {count-fingers} sorting through a document and drafting up a statement. 
 
-[text board="Left behind: the ones who won't learn it | Use it well: harder to replace" art=sam-worried]
+[text board="Left behind: the ones who won't learn it | Use it well: harder to replace" icon=warning]
 But here's what nobody tells you. The people getting left behind aren't the ones AI replaces. It's the ones who refuse to learn it. The people who use it well become faster, more valuable and harder to replace.
 
 [broll search="nurse talking with patient hospital" caption="People" cards="green:people@people"]
@@ -94,7 +94,7 @@ So which jobs are safest? The ones built on three things AI is still bad at. Peo
 [text board="Hands | AI can't rewire your kitchen" icon=hammer]
 Hands: electricians, plumbers, anything physical in a real building. AI can draft a contract, but it can't rewire your kitchen.
 
-[text board="Judgement | AI is creating jobs too" art=contract-signing]
+[text board="Judgement | AI is creating jobs too" icon=scale]
 And judgement: the person who signs off, owns the decision, and takes the blame if it goes wrong. And AI is creating jobs too. Roles like mine, helping firms use it properly, barely existed a few years ago.
 
 [takeaway title="How we stay ahead" n="3" of="3"]
@@ -115,7 +115,7 @@ And yes, markets fall. Some years your pot will go down, sometimes a lot. That's
 [text board="Index fund: hundreds of companies | Keep paying in: buy cheaper" art=index-fund-basket]
 An index fund spreads your money across hundreds of companies, and if you keep paying in through the bad years, you're buying cheaper. The people who get hurt are usually the ones who panic and sell.
 
-[text board="3 months of essentials first" art=rainy-day-umbrella]
+[text board="3 months of essentials first" icon=umbrella]
 That's also why I'd keep three months of essentials in easy-access savings first, so a broken boiler never forces you to sell at the bottom.
 
 [stat value="£1,000" label="Lifetime ISA bonus, at most, a year" sub="25% bonus, ages 18 to 39, first home up to £450K" source="GOV.UK, 2026"]
@@ -124,7 +124,7 @@ And if a home is the goal, a Lifetime ISA adds a twenty-five percent bonus to wh
 [stat value="3%" label="The least your employer must add to your pension" sub="if you're 22+ and earn over £10,000" source="GOV.UK, 2026"]
 And check your workplace pension. If you're twenty-two or over and earn more than ten thousand pounds, your employer has to pay in at least three percent of your qualifying earnings.
 
-[text board="Not taking the match = turning down a pay rise" art=pension-match]
+[text board="Not taking the match = turning down a pay rise" icon=coins]
 Plenty will match more if you put in more. If you're not taking the full match, you're turning down a pay rise. Free money, every single month.
 
 [stat value="£900" label="a year: a £3.50 coffee every working day" sub="worth knowing, but it won't close an £83K gap"]
@@ -142,8 +142,8 @@ Two: learn to ask it well. Give it the context, show it an example, tell it what
 [broll search="business meeting people talking across table" caption="3: what AI can't do" cards="green:judgement@judgement; green:people@people; green:sitting across the table@table"]
 Three: get good at what it can't do. Judgement, people, ownership, decisions. AI can draft an email, but it can't sit across the table from them.
 
-[set room=office cards="ink:build one useful thing@build; green:this week: one weekly task, with AI@week"]
-And four: {explain} build one thing with it. A tool that saves you an hour, a spreadsheet that tracks your money. The moment you've built one useful thing, you stop being {thumbs-up} scared of it. Start this week. Pick one thing you do every week and do it with AI. That's how I got started.
+[set room=first-flat cards="ink:build one useful thing@build; green:this week: one weekly task, with AI@week"]
+And four: {idea} build one thing with it. A tool that saves you an hour, a spreadsheet that tracks your money. The moment you've built one useful thing, you stop being {thumbs-up} scared of it. Start this week. Pick one thing you do every week and do it with AI. That's how I got started.
 
 [recap title="The short version"]
 - Prices up 30% since 2021
