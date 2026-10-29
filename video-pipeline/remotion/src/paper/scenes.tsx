@@ -312,7 +312,7 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   const boxW = big && !isVertical ? width * 0.42 - pad * 0.6 : width - pad * 2.4;
   const boxH = (isVertical ? (big ? 0.22 : 0.5) : 0.6) * height;
   const lineStyle: React.CSSProperties = {fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 66 : big ? 80 : 84) * u, lineHeight: 1.18, color: brand.ink, marginBottom: 14 * u, maxWidth: '100%'};
-  const tint = (line: string) => moneyTint(line, brand.accent, brand.accent2); // the figure in green, or red when the line is about a cost
+  const tint = (line: string) => moneyTint(String(scene.props.tint ?? '') === 'red' ? `${line} loss` : line, brand.accent, brand.accent2); // the figure in green, or red when the line is about a cost (tint=red: every line)
   const renderPage = (pg: typeof lines, offset: number) => (
     <div style={{position: 'absolute', inset: 0}}>
       {pg.map((ln, i) => {

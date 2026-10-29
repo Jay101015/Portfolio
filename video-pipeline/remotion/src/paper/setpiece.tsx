@@ -267,15 +267,19 @@ export const FootageCards: React.FC<{scene: Scene}> = ({scene}) => {
   const tq = k / STOP;
   const cues = ((scene.cues ?? []) as unknown as SetCue[]).filter((c) => c.do === 'card' && c.t <= tq + 1e-6);
   if (!cues.length) return null;
+  // a Short's board already carries its lines and the captions say the words: its cards would only cover them
+  if (vertical && scene.type !== 'broll') return null;
   // on footage the column is on the right; on a board with a drawing on its right half they go under the written
   // lines on the left, so the page fills up instead of sitting white
-  const underLines = !vertical && scene.type !== 'broll' && !!scene.props.art && scene.props.art !== 'off';
+  // a board with a drawing: the cards go under its written lines, low on the left; a stat keeps them in the right column
+  const underLines = !vertical && scene.type === 'text' && !!scene.props.art && scene.props.art !== 'off';
+  const iconBoard = !vertical && scene.type === 'text' && !underLines; // a corner doodle top right: the column starts below it
   // a chart's lines and bars start low on the left: its cards go top-left, under the title, where the page is empty
   const chart = !vertical && scene.type === 'chart';
   const left = underLines || chart;
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
-      <Column items={cues.slice(-(vertical ? 3 : left ? 3 : 4))} colX={(vertical ? 0.5 : chart ? 0.3 : underLines ? 0.25 : 0.74) * W} y0={(vertical ? 0.3 : chart ? 0.42 : underLines ? 0.56 : 0.2) * H} step={(vertical ? 0.09 : 0.118) * H}
+      <Column items={cues.slice(-(vertical ? 3 : underLines ? 2 : left ? 3 : iconBoard ? 3 : 4))} colX={(vertical ? 0.5 : chart ? 0.3 : underLines ? 0.25 : 0.74) * W} y0={(vertical ? 0.3 : chart ? 0.42 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H} step={(vertical ? 0.09 : underLines ? 0.1 : 0.118) * H}
         maxw={(vertical ? 0.8 : left ? 0.42 : 0.44) * W} tq={tq} k={k} left={left} vertical={vertical} W={W} H={H} />
     </AbsoluteFill>
   );

@@ -224,6 +224,14 @@ def snap_spans(spans: list[tuple[float, float]], wav16k: str, look: float = 0.8)
 
 
 SMALL = re.compile(r"^[a-z']{1,5}$")
+# only these small words follow the take: the joining words a speaker swaps without changing what is said ("a year"
+# for "per year"). A short content word that differs is the recogniser mishearing it ("doors" heard as "bulls",
+# "ISA" as "ISO", "roles" as "rules"), and the script keeps it.
+FUNCTION = {"a", "an", "the", "per", "to", "be", "of", "in", "on", "at", "for", "and", "or", "but", "so", "it", "its",
+            "it's", "is", "are", "was", "were", "we", "you", "i", "our", "your", "my", "that", "this", "just", "about",
+            "up", "out", "with", "from", "by", "as", "if", "then", "than", "do", "does", "did", "have", "has", "had",
+            "can", "will", "would", "get", "got", "very", "really", "all", "some", "any", "now", "there", "here",
+            "they", "them", "their", "he", "she", "his", "her", "me", "us", "not", "no", "yes", "too", "also", "even"}
 FILLERS = {"um", "uh", "er", "erm", "hmm", "mm", "ah"}
 
 
@@ -244,7 +252,7 @@ def take_words(sb: dict[str, Any], transcript: list[dict[str, Any]]) -> int:
         out: list[dict[str, Any]] = []
         for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
             mine, theirs = ws[i1:i2], said[j1:j2]
-            small = lambda xs, ns: 0 < len(xs) <= 2 and all(SMALL.match(n) and n not in FILLERS for n in ns)  # noqa: E731
+            small = lambda xs, ns: 0 < len(xs) <= 2 and all(SMALL.match(n) and n in FUNCTION and n not in FILLERS for n in ns)  # noqa: E731
             if op == "replace" and small(mine, a[i1:i2]) and small(theirs, b[j1:j2]):
                 tail = re.search(r"[.,!?;:]+$", mine[-1]["w"])
                 new = [dict(w=t["w"].strip(".,!?;:"), s=t["s"], e=t["e"]) for t in theirs]

@@ -42,8 +42,9 @@ export const PoseLayer: React.FC<{poses: PoseCue[]; scenes: Scene[]}> = ({poses,
   const vertical = height > width;
   const figH = (vertical ? 0.28 : 0.42) * height;
   const s = figH / STAND_H;
-  const footX = (vertical ? 0.76 : 0.82) * width;
-  const floorY = (vertical ? 0.975 : 0.96) * height;
+  // on a Short he stands clear of the overlays: feet above the title band (bottom 20%), off the button column (right 12%)
+  const footX = (vertical ? 0.68 : 0.82) * width;
+  const floorY = (vertical ? 0.8 : 0.96) * height;
 
   let [sx, sy] = cue.ib ? [1, 1] : squashAt(age);
   let lift = 0;

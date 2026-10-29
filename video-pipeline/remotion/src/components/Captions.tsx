@@ -63,9 +63,13 @@ export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string; a
   if (brand.paper) {
     // ink on the page, the word being said swiped with a highlighter. A Short with set pieces carries them high, on a
     // white pill (as the £25K Short did): under the hook, over his head, clear of the Shorts title and buttons.
-    const high = isVertical && setCaptionsHigh(scenes);
+    // on a board in a Short the board's own lines take the top: the caption goes in the middle, under them and over
+    // the character's head (he stands lower right), clear of the title band and the buttons
+    const onBoard = isVertical && !!current && !['set', 'broll', 'clip', 'still', 'image', 'outro'].includes(current.type);
+    const high = isVertical && (onBoard || setCaptionsHigh(scenes));
+    const topAt = onBoard ? 0.44 : 0.155;
     return (
-      <AbsoluteFill style={high ? {justifyContent: 'flex-start', alignItems: 'center', paddingTop: height * 0.155} : {justifyContent: 'flex-end', alignItems: 'center', paddingBottom: isVertical ? height * 0.3 : 52 * u, ...sideStyle}}>
+      <AbsoluteFill style={high ? {justifyContent: 'flex-start', alignItems: 'center', paddingTop: height * topAt} : {justifyContent: 'flex-end', alignItems: 'center', paddingBottom: isVertical ? height * 0.3 : 52 * u, ...sideStyle}}>
         <div style={{maxWidth: `calc(100% - ${pad * 2}px)`, fontFamily: isVertical ? brand.display : brand.font, fontSize: (isVertical ? (high ? 76 : 78) : 40) * u, fontWeight: isVertical ? 800 : 700, lineHeight: 1.2, textAlign: 'center', color: brand.ink, ...(high ? {background: 'rgba(255,255,255,0.94)', borderRadius: 24 * u, padding: `${10 * u}px ${30 * u}px`} : {})}}>
           {chunk.words.map((w, i) => {
             const since = t - w.s;

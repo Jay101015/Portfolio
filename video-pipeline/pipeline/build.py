@@ -542,6 +542,17 @@ def render(props_path: str, out_path: str, composition: str, concurrency: str | 
         else:
             raise SystemExit(f"render failed: chunk {i} frames {start}-{end} did not render after {retries + 1} attempts")
         parts.append(part)
+    # each chunk's sound runs a few hundredths of a second past its last frame (the encoder's padding), and the join
+    # starts the next chunk after the longer of the two: the picture fell 1.5 s behind the voice over a 7-minute
+    # video. When the sound is laid on in one piece afterwards, the chunks are joined as picture only, frame on frame.
+    whole = can_lay_voice(sb)
+    if whole:
+        bare = []
+        for p in parts:
+            v = p[:-4] + ".v.mp4"
+            subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", p, "-map", "0:v:0", "-c", "copy", v], check=True, stdin=subprocess.DEVNULL, timeout=300)
+            bare.append(v)
+        parts = bare
     listing = os.path.join(tmp, "parts.txt")
     with open(listing, "w", encoding="utf-8") as f:
         for p in parts:
@@ -551,13 +562,27 @@ def render(props_path: str, out_path: str, composition: str, concurrency: str | 
     # played picture and no sound), and the voice is mono anyway
     # -nostdin and a time limit: a join that stalls (it once sat for an hour after every frame was rendered)
     # fails the run in minutes instead of using up the whole job
-    subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", listing, "-c:v", "copy", "-c:a", "aac", "-ac", "1", "-b:a", "160k", "-movflags", "+faststart", out_path], check=True, stdin=subprocess.DEVNULL, timeout=900)
+    audio_args = [] if whole else ["-c:a", "aac", "-ac", "1", "-b:a", "160k"]
+    subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", listing, "-c:v", "copy", *audio_args, "-movflags", "+faststart", out_path], check=True, stdin=subprocess.DEVNULL, timeout=900)
     print(f"joined {len(parts)} chunks -> {out_path}", flush=True)
     if voice_over_whole(out_path, sb):
         print("audio: the voice laid back over the joined picture in one piece (no gap at the chunk joins)", flush=True)
     note = level_audio(out_path)
     if note:
         print(note, flush=True)
+
+
+def has_audio(path: str) -> bool:
+    out = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "a", "-show_entries", "stream=index", "-of", "csv=p=0", path], capture_output=True, text=True).stdout
+    return bool(out.strip())
+
+
+def video_duration(path: str) -> float:
+    out = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=duration", "-of", "csv=p=0", path], capture_output=True, text=True).stdout.strip()
+    try:
+        return float(out)
+    except ValueError:
+        return al.audio_duration(path)
 
 
 WATCH_NEXT_DELAY = 0.8  # the "watch next" card pops in, then its preview starts (WatchNext in paper/scenes.tsx)
@@ -593,17 +618,22 @@ def footage_sound(sb: dict) -> list[tuple[str, float, float, float, float]]:
     return out
 
 
+def can_lay_voice(sb: dict) -> bool:
+    """Whether the sound can be built in one piece from the voice file (and any footage sound), not from the chunks."""
+    if not sb.get("audio") or any(float(sc.get("props", {}).get(k) or 0) > 0 for sc in sb.get("scenes", []) for k in ("clip_vol", "sticker_vol")):
+        return False
+    return os.path.exists(os.path.join(REMOTION, "public", sb["audio"]))
+
+
 def voice_over_whole(video: str, sb: dict) -> bool:
     """Each render chunk's audio is encoded on its own, and joining them leaves 20 to 40 ms of digital silence at
     every join (every 15 seconds). So the joined picture gets one sound track built here in one piece: the voice
     file itself (the room's tone carrying on under the end card), with any footage that plays its own sound (a
     "watch next" preview, vol=) mixed in at its place. Returns whether it did."""
-    if not sb.get("audio") or any(float(sc.get("props", {}).get(k) or 0) > 0 for sc in sb.get("scenes", []) for k in ("clip_vol", "sticker_vol")):
+    if not can_lay_voice(sb):
         return False
     src = os.path.join(REMOTION, "public", sb["audio"])
-    if not os.path.exists(src):
-        return False
-    dur = al.audio_duration(video)
+    dur = al.audio_duration(video) if has_audio(video) else video_duration(video)
     padded = video + ".voice.wav"
     filled = video + ".voice-room.wav"
     mixed = video + ".voice-mix.wav"
