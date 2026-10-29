@@ -31,7 +31,7 @@ Let's start with the thing you feel every time you tap your card.
 [shrink value="£100" to="£77" years=5 label="£100 of 2021 money, today" note="what £100 from 2021 buys today" source="ONS CPI, July 2026"]
 Since the start of 2021, prices have gone up by about thirty percent. So a hundred pounds today buys what seventy-seven pounds bought then.
 
-[broll search="uk supermarket shopping basket food prices" caption="The weekly shop" cards="red:food +38% since before Covid@thirty-eight"]
+[broll search="uk supermarket shopping basket food prices" caption="The weekly shop" cards="red:food +38% since before Covid@thirty-eight" src="08-uk-supermarket-shopping-basket-food-pric.mp4" credit="Video 47601 by Engin_Akyurt via Pixabay"]
 Food is worse. The weekly shop costs about thirty-eight percent more than it did before Covid.
 
 [stat value="£1,406" label="Average UK private rent, a month" sub="up almost 4% in a year" source="ONS, October 2026"]
@@ -76,7 +76,7 @@ And unemployment for sixteen to twenty-four year olds has hit sixteen percent, t
 [broll lib="tower-bridge-office-window" caption="Hiring costs more" cards="red:higher National Insurance@insurance; red:higher minimum wage@minimum"]
 Now, it's not all AI. Hiring has got more expensive too, with higher National Insurance and a higher minimum wage.
 
-[broll search="office worker laptop artificial intelligence screen" caption="Tasks, not whole jobs" cards="ink:first drafts@drafts; ink:summarising@summarising; ink:simple questions@questions; ink:sorting data@sorting"]
+[broll search="office worker laptop artificial intelligence screen" caption="Tasks, not whole jobs" cards="ink:first drafts@drafts; ink:summarising@summarising; ink:simple questions@questions; ink:sorting data@sorting" src="23-office-worker-laptop-artificial-intellig.mp4" credit="Video 197 by Life-Of-Vids via Pixabay"]
 But AI is doing the exact tasks junior people used to learn on. Writing first drafts. Summarising documents. Answering simple customer questions. Sorting data. That's how most of us start a career, and that's what's going first.
 
 [text board="Why hire 3 juniors? | The hiring just shrinks" art=job-interview]
@@ -88,7 +88,7 @@ And I see this up close, because it's literally my job. I work in AI consulting,
 [text board="Safest: people" art=hospital-desk]
 So which jobs are safest? The ones built on three things AI is still bad at. People: nursing, teaching, selling, leading a team.
 
-[broll search="electrician working on wiring" caption="Hands" cards="green:hands@hands"]
+[broll search="electrician working on wiring" caption="Hands" cards="green:hands@hands" src="27-electrician-working-on-wiring.mp4" credit="Video 1046 by Coverr-Free-Footage via Pixabay"]
 Hands: electricians, plumbers, anything physical in a real building. AI can draft a contract, but it can't rewire your kitchen.
 
 [text board="Judgement | AI is creating jobs too" art=contract-signing]
@@ -108,7 +108,7 @@ left: Start at 22 | £450K | by 60
 right: Start at 32 | £208K | by 60
 And time does the heavy lifting. Two hundred pounds a month from age twenty-two, growing at about seven percent a year, could be worth around four hundred and fifty grand by the time you're sixty. Start at about thirty-two, and it's about two hundred and eight thousand. Same money. Less than half the result.
 
-[broll search="stock market chart falling then rising on screen" pick=2 caption="Bad years happen"]
+[broll search="stock market chart falling then rising on screen" pick=2 caption="Bad years happen" src="33-stock-market-chart-falling-then-rising-o.mp4" credit="Video 349091 by MuhammadAhmad10 via Pixabay"]
 And yes, markets fall. Some years your pot will go down, sometimes a lot. That's the price of the growth. An index fund spreads your money across hundreds of companies, and if you keep paying in through the bad years, you're buying cheaper. The people who get hurt are usually the ones who panic and sell.
 
 [text board="3 months of essentials first" art=emergency-jar]
