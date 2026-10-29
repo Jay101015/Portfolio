@@ -45,4 +45,7 @@ def use_library(sb: dict[str, Any], project: str) -> list[str]:
         p["src"] = e["file"]
         p.setdefault("credit", e.get("credit", ""))
         notes.append(f"scene {sc['id']}: footage from the library: {name}")
+        if e.get("orientation") == "vertical":
+            # a 9:16 clip cropped to 16:9 is enlarged about three times: soft beside landscape footage (fine in a Short)
+            notes.append(f"WARNING: scene {sc['id']}: '{name}' is a vertical clip; in the landscape video it is cropped and soft. Use a landscape clip there.")
     return notes

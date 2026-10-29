@@ -324,7 +324,9 @@ class ArtLibraryTests(unittest.TestCase):
         s1 = sb["scenes"][1]
         a = s1["words"][0]["s"]
         cut, audio = cut_spans(sb, [(sb["scenes"][0]["end"] - 0.1, s1["words"][3]["e"] + 0.2), (s1["words"][8]["s"], s1["end"])], "Hook", "short-1")
-        assert len(cut["scenes"]) == 1 and cut["scenes"][0]["src"] == 2 and cut["scenes"][0]["start"] == 0.4
+        # the picture runs from the first frame (under the voice's 0.4 s lead-in) to the last (through the tail)
+        assert len(cut["scenes"]) == 1 and cut["scenes"][0]["src"] == 2 and cut["scenes"][0]["start"] == 0.0
+        assert cut["scenes"][-1]["end"] == cut["durationSec"]
         assert [w["w"] for w in cut["scenes"][0]["words"]] == ["Nine", "ten", "eleven", "twelve.", "Seventeen", "eighteen", "nineteen", "twenty."]
         assert len(audio) == 2 and audio[0][0] <= a and audio[1] == (s1["words"][8]["s"], s1["end"])
         assert abs(cut["durationSec"] - (0.4 + sum(b - x for x, b in audio) + 0.8)) < 1e-3 and cut["hook"] == "Hook" and cut["captions"]

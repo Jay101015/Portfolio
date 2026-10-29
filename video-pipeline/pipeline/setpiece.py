@@ -46,7 +46,7 @@ COMMON = {"this", "here", "what", "how", "why", "one", "two", "three", "first", 
           "up", "down", "red", "today", "let's", "number", "look", "maybe", "wait", "don't", "check", "bad", "side",
           "stand", "turn", "so", "but", "the", "thing", "never", "stop", "listen", "neutral", "settle", "sit"}
 HEAD_CLEAR = 0.26  # in a Short his head stays below this, under the captions
-CARD_SIDE_X = 0.68  # in a vertical slice he stands at this share of the width, the cards beside him
+CARD_SIDE_X = 0.64  # in a vertical slice he stands at this share of the width, the cards beside him
 
 
 def _load(path: str) -> list[dict[str, Any]]:
@@ -177,6 +177,8 @@ def auto_cards(narration: str) -> list[dict[str, Any]]:
             continue
         nxt = " ".join(_norm(x) for x in words[i + 1:i + 3])
         tail = " a year" if nxt in ("a year", "per year") else " a month" if nxt in ("a month", "per month") else ""
+        if fig.endswith("%") and i + 1 < len(words) and re.fullmatch(r"[A-Za-z]{4,}[.,]?", words[i + 1]):
+            tail = " " + words[i + 1].strip(".,")  # "10% deposit", not a bare "10%"
         before = " ".join(words[max(0, i - 6):i])
         cards.append({"text": fig + tail, "old": None, "color": "red" if COST_WORDS.search(before) else "green", "anchor": fig, "word": i})
     return cards
@@ -262,6 +264,17 @@ def plan(sc: dict[str, Any], attrs: dict[str, Any]) -> list[str]:
     anchor_word(cards, narration)
     sc["setWords"] = pose_cues + [c for c in cues if "prop" in c] + [{"word": c["word"], "card": {k: c[k] for k in ("text", "old", "color") if c.get(k)}} for c in cards]
     return problems
+
+
+def plan_cards(sc: dict[str, Any], attrs: dict[str, Any]) -> None:
+    """Cards over a footage scene: the amounts said land on the picture as they are said (or the tag's cards=), so a
+    figure the viewer only hears over footage, and a later card crosses out, has been seen."""
+    spec = str(attrs.get("cards", "")).strip()
+    cards = [] if spec.lower() == "off" else parse_cards(spec) if spec else auto_cards(sc["narration"])
+    if not cards:
+        return
+    anchor_word(cards, sc["narration"])
+    sc["setWords"] = [{"word": c["word"], "card": {k: c[k] for k in ("text", "old", "color") if c.get(k)}} for c in cards]
 
 
 def _inbetweens() -> dict[str, list[str]]:

@@ -288,9 +288,17 @@ def score_sentences(parts: list[list[dict[str, Any]]], by_id: dict[int, dict[str
     elif SETUP_END_RE.search(last) or (re.match(r"but\b", last, re.I) and not VERDICT_RE.search(last)):
         score -= 10
         why.append("ends on a setup")
+    elif sents[-1] is not _all_sents(by_id[sents[-1]["scene"]])[-1]:
+        # the scene goes on after it: a figure that is the setup for the next line ("A 10% deposit is £36,000."
+        # before "Save £1,000 a month and that takes three years") is not where the thought ends
+        score -= 10
+        why.append("ends mid-scene, the thought goes on")
     elif NUMBER_RE.search(last) or VERDICT_RE.search(last) or sents[-1]["type"] == "takeaway":
         score += 12
         why.append("ends on the answer")
+    if by_id[sents[-1]["scene"]]["type"] == "set" and sents[-1] is _all_sents(by_id[sents[-1]["scene"]])[-1]:
+        score += 8
+        why.append("ends on a set piece's payoff")
     # a takeaway card counts when the slice shows it from its first line, not a stray sentence of its end
     if any(by_id[x["scene"]]["type"] == "takeaway" and x is _first_of(by_id[x["scene"]], _all_sents(by_id[x["scene"]])) for x in sents):
         score += 15
@@ -369,13 +377,29 @@ def _all_sents(sc: dict[str, Any]) -> list[dict[str, Any]]:
     return _SENTS.get(sc["id"], [])
 
 
+CLAIM_RE = re.compile(r"\b(?:isn't|is not|not|never|only|free|real|actually|catch|wall|secret|mistake|nobody|everyone|"
+                      r"cuts?|doubles?|halves?|beats?)\b", re.I)
+
+
 def sentence_hook(parts: list[list[dict[str, Any]]], by_id: dict[int, dict[str, Any]]) -> str:
-    """A takeaway's title if the slice shows one, else the first sentence (its first clause, at most 9 words)."""
-    for x in (x for part in parts for x in part):
+    """A takeaway's title if the slice shows one; else the slice's sharpest claim in words it says (a turn like "the
+    real wall isn't the mortgage", free money, a verdict), not the first sentence, which the captions already show
+    word for word as it plays; the first sentence only when nothing else makes a claim. At most 9 words."""
+    sents = [x for part in parts for x in part]
+    for x in sents:
         sc = by_id[x["scene"]]
         if sc["type"] == "takeaway" and sc["props"].get("title") and x is _first_of(sc, _all_sents(sc)):
             return str(sc["props"]["title"])
-    line = caption_line(parts[0][0]["text"], 9)
+
+    def claim(x: dict[str, Any]) -> int:
+        t = x["text"]
+        hay = t.lower()
+        return (3 * bool(CLAIM_RE.search(t)) + 2 * bool(VERDICT_RE.search(t)) + 2 * any(re.search(r"\b" + re.escape(w) + r"\b", hay) for w in CURIOSITY)
+                + bool(NUMBER_RE.search(t)) - 3 * bool(LEANS_RE.search(t) and not CLAIM_RE.search(t)))
+
+    best = max(sents[1:], key=claim, default=None)
+    pick = best if best is not None and claim(best) >= 3 else sents[0]
+    line = caption_line(re.sub(r"^(?:but|and|so)\s+", "", pick["text"], flags=re.I), 9)
     return line[:1].upper() + line[1:] if line else "Watch this"
 
 
@@ -495,6 +519,15 @@ def cut_spans(sb: dict[str, Any], spans: list[list[float]], hook: str | None = N
             if hit:
                 cues.append(dict(cue, t=round(max(hit[0], cue["t"]) + hit[1], 3)))
         c["cues"] = cues
+    # the picture runs from the first frame to the last: the first scene starts under the voice's lead-in and the
+    # last holds through the tail (a blank page there is what a scroller sees first, and what the loop lands on);
+    # a Short that opens on a set piece opens with him already in place, not walking in
+    keep[0]["start"] = 0.0
+    keep[-1]["end"] = round(t + tail, 3)
+    if keep[0]["type"] == "set":
+        keep[0]["props"].pop("walk", None)
+    if keep[-1]["type"] == "set":
+        keep[-1]["props"]["leave"] = "no"  # the last picture holds for the loop
     out["scenes"] = keep
     out["durationSec"] = round(t + tail, 3)
     out["captions"] = True

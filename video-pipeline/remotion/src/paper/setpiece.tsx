@@ -86,6 +86,15 @@ const figureAt = (scene: Scene, cues: SetCue[], st: Stage, W: number, H: number,
       return {kind: 'walk' as const, src: fr.file, e: fr, x: startX + (X - startX) * Math.min(1, (dk + 1) / nd), lift: [0, 4, 2][dk % 3] * (hpx / 400), flip: dir < 0, sx: 1, sy: 1, age: 99, name: 'walk'};
     }
   }
+  // the exit: with time left after the last word, he turns and walks off the nearer edge (walk in, act, leave)
+  const lastWord = (scene.words ?? []).length ? (scene.words as {e: number}[])[(scene.words as {e: number}[]).length - 1].e : scene.end;
+  const leaveAt = Math.max(lastWord + 0.15, scene.end - 0.75);
+  if (scene.props.leave !== 'no' && scene.end - leaveAt >= 0.35 && tq >= leaveAt) {
+    const dir = st.x > 0.5 ? 1 : -1;
+    const dk = Math.floor((tq - leaveAt) * 8);
+    const fr = WALK.frames[WALK.cycle[dk % WALK.cycle.length]];
+    return {kind: 'walk' as const, src: fr.file, e: fr, x: X + dir * (dk + 1) * WALK.step * hpx, lift: [0, 4, 2][dk % 3] * (hpx / 400), flip: dir < 0, sx: 1, sy: 1, age: 99, name: 'walk'};
+  }
   const poses = cues.filter((c) => c.do === 'pose' && c.pose && POSE[c.pose]);
   const now = poses.filter((c) => c.t <= tq + 1e-6);
   const cue = now[now.length - 1];
@@ -101,7 +110,7 @@ const figureAt = (scene: Scene, cues: SetCue[], st: Stage, W: number, H: number,
     flip = cue.flip ?? (name.startsWith('point-board') ? cardsLeft : false);
     const age = (tq - at) * STOP;
     if (!cue.ib) [sx, sy] = squashAt(age);
-    if (cue.hop && age < 8) lift = 0.06 * hpx * Math.sin((Math.PI * age) / 8);
+    if (cue.hop && age < 8) lift = (H > W ? 0.04 : 0.06) * hpx * Math.sin((Math.PI * age) / 8); // lower on a Short: clear of the captions
     if (cue.arc) {
       const p = Math.min(1, (tq - cue.t + 1 / STOP) / cue.arc);
       lift = 0.32 * hpx * Math.sin(Math.PI * p);
@@ -199,17 +208,43 @@ export const SetScene: React.FC<{scene: Scene; brand: Brand}> = ({scene}) => {
           }}
         />
       </AbsoluteFill>
-      {shown.map((c, i) => {
-        const age = (tq - c.t) * STOP;
-        const y = y0 + i * step;
-        const tilt = (cardsLeft ? -2 : 1.5) + (rand(k, 9 + i) - 0.5) * 0.8;
-        if (c.do === 'prop') {
-          const ph = (vertical ? 0.075 : 0.11) * H;
-          const [sx, sy] = squashAt(age);
-          return <Img key={`p${i}`} src={staticFile(`props/solid/${c.prop}.png`)} style={{position: 'absolute', left: colX - ph / 2, top: y - ph / 2, height: ph, transform: `rotate(${tilt * 3}deg) scale(${sx}, ${sy})`, transformOrigin: '50% 100%'}} />;
-        }
-        return <Card key={`c${i}`} c={c} x={colX} y={y} age={age} tilt={tilt} vertical={vertical} W={W} maxw={maxw} />;
-      })}
+      <Column items={shown} colX={colX} y0={y0} step={step} maxw={maxw} tq={tq} k={k} left={cardsLeft} vertical={vertical} W={W} H={H} />
+    </AbsoluteFill>
+  );
+};
+
+/** The cards and props that have landed, stacked down a column, each squashing as it lands. */
+const Column: React.FC<{items: SetCue[]; colX: number; y0: number; step: number; maxw: number; tq: number; k: number; left: boolean; vertical: boolean; W: number; H: number}> = ({items, colX, y0, step, maxw, tq, k, left, vertical, W, H}) => (
+  <>
+    {items.map((c, i) => {
+      const age = (tq - c.t) * STOP;
+      const y = y0 + i * step;
+      const tilt = (left ? -2 : 1.5) + (rand(k, 9 + i) - 0.5) * 0.8;
+      if (c.do === 'prop') {
+        const ph = (vertical ? 0.075 : 0.11) * H;
+        const [sx, sy] = squashAt(age);
+        return <Img key={`p${i}`} src={staticFile(`props/solid/${c.prop}.png`)} style={{position: 'absolute', left: colX - ph / 2, top: y - ph / 2, height: ph, transform: `rotate(${tilt * 3}deg) scale(${sx}, ${sy})`, transformOrigin: '50% 100%'}} />;
+      }
+      return <Card key={`c${i}`} c={c} x={colX} y={y} age={age} tilt={tilt} vertical={vertical} W={W} maxw={maxw} />;
+    })}
+  </>
+);
+
+/** Cards over footage: the amounts said land on the picture as they are said, in a column on the right (landscape)
+ * or under the captions (a Short), on the same stop-motion clock as the set pieces. */
+export const FootageCards: React.FC<{scene: Scene}> = ({scene}) => {
+  const frame = useCurrentFrame();
+  const {fps, width: W, height: H} = useVideoConfig();
+  const vertical = H > W;
+  const t = scene.start + frame / fps;
+  const k = Math.floor(t * STOP);
+  const tq = k / STOP;
+  const cues = ((scene.cues ?? []) as unknown as SetCue[]).filter((c) => c.do === 'card' && c.t <= tq + 1e-6);
+  if (!cues.length) return null;
+  return (
+    <AbsoluteFill style={{pointerEvents: 'none'}}>
+      <Column items={cues.slice(-(vertical ? 3 : 4))} colX={(vertical ? 0.5 : 0.74) * W} y0={(vertical ? 0.3 : 0.2) * H} step={(vertical ? 0.09 : 0.118) * H}
+        maxw={(vertical ? 0.8 : 0.44) * W} tq={tq} k={k} left={false} vertical={vertical} W={W} H={H} />
     </AbsoluteFill>
   );
 };

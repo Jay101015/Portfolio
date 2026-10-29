@@ -27,7 +27,7 @@ import {PenHand} from './paper/write';
 import {ArtLayer} from './paper/art';
 import {PoseLayer} from './paper/poses';
 import {CharacterOn} from './paper/character';
-import {SetScene} from './paper/setpiece';
+import {FootageCards, SetScene} from './paper/setpiece';
 import {Arrow, SketchPath} from './paper/sketch';
 import {FACES, POSES, defaultAvatar, defaultFaceFor, type AvatarConfig, type Face, type Pose} from './avatar/Avatar';
 
@@ -375,6 +375,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
                 {tr === 'slide' && prev ? <SlideOut prev={prev} brand={brand} /> : null}
                 {board}
                 {sb.host === 'none' ? null : <HostLayer sb={sb} scene={scene} avatar={avatar} toon={brand.toon} />}
+                {scene.type === 'broll' ? <FootageCards scene={scene} /> : null}
               </Camera>
             </SceneFade>
           </Sequence>

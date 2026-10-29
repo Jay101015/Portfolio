@@ -68,6 +68,14 @@ def sheet(path: str, times: list[float], w: int, cols: int, out: str) -> None:
     s.save(out)
 
 
+def scene_changes(args) -> list[float]:
+    """the storyboard's own scene boundaries (a page slide or a fade is missed by the cut detector)"""
+    if not args.storyboard:
+        return []
+    sb = json.load(open(args.storyboard, encoding="utf-8"))
+    return [round(float(sc["start"]), 2) for sc in sb.get("scenes", [])[1:]]
+
+
 def words_from(args) -> list[dict]:
     if args.words:
         return json.load(open(args.words, encoding="utf-8"))
@@ -93,6 +101,14 @@ def main() -> None:
     fps = v.get("r_frame_rate", "?")
     lufs, peak = loudness(args.video)
     cs = cuts(args.video)
+    changes = scene_changes(args)
+    if changes:
+        cs = sorted(set(cs) | set(changes))
+        merged: list[float] = []
+        for c in cs:
+            if not merged or c - merged[-1] > 0.5:
+                merged.append(c)
+        cs = merged
     bounds = [0.0] + cs + [dur]
     gaps = [(b - a, a) for a, b in zip(bounds, bounds[1:])]
     longest = max(gaps) if gaps else (dur, 0.0)
@@ -100,7 +116,7 @@ def main() -> None:
     lines = [f"# Review kit: {os.path.basename(args.video)}", "",
              f"- length {dur:.1f}s, {w}x{h} ({'vertical, a Short' if vertical else 'landscape'}), {fps} fps",
              f"- loudness {lufs} LUFS integrated (target -14), true peak {peak} dBFS (keep under -1)",
-             f"- {len(cs)} cuts; longest stretch with no cut {longest[0]:.1f}s from {longest[1]:.1f}s",
+             f"- {len(cs)} cuts{' (with the storyboard scene changes)' if changes else ''}; longest stretch with no cut {longest[0]:.1f}s from {longest[1]:.1f}s",
              "", "## Cuts (seconds)", "", ", ".join(f"{c:.2f}" for c in cs) or "none"]
     if words:
         lines += ["", "## Words (start time, word)", ""]

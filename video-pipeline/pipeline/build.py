@@ -31,7 +31,7 @@ from .enhance import enhance, level_from_header
 from .preview import write_preview
 from .auto_script import script_from_words
 from .script_parser import pace_scenes, parse_script, time_cues
-from .voice import fill_gated, snap_cuts, take_words, tighten_pauses
+from .voice import fill_gated, snap_cuts, snap_spans, take_words, tighten_pauses
 from .footage_library import use_library
 from .shorts import SHORT_SPEED, cut_short, cut_spans, plan_shorts, pose_track, speed_up
 
@@ -700,7 +700,11 @@ def render_shorts(project: str, sb: dict, audio: str | None, concurrency: str | 
         ids = [int(x) for x in short.get("scenes", [])]
         if short.get("spans"):
             # cut on sentences: stretches of time, which may start or end inside a scene or skip a middle part
-            cut, spans = cut_spans(sb, [tuple(x) for x in short["spans"]], short.get("hook"), name)
+            spans_in = [tuple(x) for x in short["spans"]]
+            if audio:
+                # each edge on a pause measured in the sound: the transcript's word times can run early
+                spans_in = snap_spans(spans_in, audio)
+            cut, spans = cut_spans(sb, spans_in, short.get("hook"), name)
         elif ids:
             cut, spans = cut_short(sb, ids, short.get("hook"), name)
         else:

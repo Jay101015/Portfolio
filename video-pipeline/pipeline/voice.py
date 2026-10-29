@@ -188,6 +188,41 @@ def snap_cuts(sb: dict[str, Any], wav16k: str) -> int:
     return moved
 
 
+def snap_spans(spans: list[tuple[float, float]], wav16k: str, look: float = 0.8) -> list[tuple[float, float]]:
+    """A Short's stretches with each start moved back and each end moved on to the nearest pause in the sound: word
+    times can run early, and a span ending on the transcript's end of "£36,000" cut the word off mid-"thousand"."""
+    x = read(wav16k, 16000)
+    sr = 16000
+    win = int(0.03 * sr)
+    db = rms_db(x, win)
+    quiet = db < min(float(np.percentile(db, 10)) + 12, -40)
+    n = len(quiet)
+
+    def end_at(e: float) -> float:
+        i0, i1 = int(e * sr / win), min(n, int((e + look) * sr / win))
+        for i in range(max(0, i0 - 2), i1):
+            if quiet[i] and (i + 1 >= n or quiet[i + 1]):
+                return round(i * win / sr + 0.06, 3)
+        return e
+
+    def start_at(s: float) -> float:
+        i0, i1 = max(0, int((s - look) * sr / win)), min(n - 1, int(s * sr / win) + 2)
+        for i in range(i1, i0 - 1, -1):
+            if quiet[i] and (i - 1 < 0 or quiet[i - 1]):
+                return round(max(0.0, (i + 1) * win / sr - 0.06), 3)
+        return s
+
+    out = [(start_at(a), end_at(b)) for a, b in spans]
+    # pieces that now touch or overlap become one
+    merged: list[tuple[float, float]] = []
+    for a, b in out:
+        if merged and a <= merged[-1][1]:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], b))
+        else:
+            merged.append((a, b))
+    return merged
+
+
 SMALL = re.compile(r"^[a-z']{1,5}$")
 FILLERS = {"um", "uh", "er", "erm", "hmm", "mm", "ah"}
 
