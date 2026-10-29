@@ -1145,7 +1145,8 @@ export const ART: Record<string, ArtDef> = {
 Object.assign(ART, ILLUS); // the traced illustrations join the catalogue under their own names
 Object.assign(ART, FLIPS); // and the stop-motion ones, which only come when a scene names them
 
-const PICK: [RegExp, string][] = Object.entries(ART).map(([name, def]) => [new RegExp('\\b(' + def.tags.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'i'), name]);
+// a drawing with no tags (the stop-motion ones) is never picked by the words: an empty pattern would match every scene
+const PICK: [RegExp, string][] = Object.entries(ART).filter(([, def]) => def.tags.length > 0).map(([name, def]) => [new RegExp('\\b(' + def.tags.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'i'), name]);
 
 /** The drawing for a scene: the one it names, else the one whose words come up most in the texts (a longer, more
  * specific phrase counts for more than a short word, so "piggy bank" beats "save"). `among` narrows the choice. */

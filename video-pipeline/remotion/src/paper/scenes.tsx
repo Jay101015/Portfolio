@@ -79,6 +79,21 @@ const autoArt = (brand: Brand, ...texts: (string | undefined)[]) => (brand.illus
 /** a traced illustration on a scene in the illustrated style is the picture, not a corner note: it gets the right half */
 const bigArt = (brand: Brand, art: string | undefined) => !!(brand.illustrated && art && isTraced(art));
 
+/** board= lines that do not pair one to one with the spoken sentences: each written as the voice reaches its share of
+ * the scene, moved onto the nearest clause break (a word ending in punctuation) within a few words. */
+const boardLinesAt = (texts: string[], words: Word[]): {text: string; from: Word | undefined}[] =>
+  texts.map((text, k) => {
+    if (!words.length) return {text, from: undefined};
+    let at = Math.round((k * words.length) / texts.length);
+    if (k > 0) {
+      for (let d = 0; d <= 4; d++) {
+        if (words[at - 1 - d] && /[.,!?;:]$/.test(words[at - 1 - d].w)) { at -= d; break; }
+        if (words[at - 1 + d] && /[.,!?;:]$/.test(words[at - 1 + d].w)) { at += d; break; }
+      }
+    }
+    return {text, from: words[Math.min(words.length - 1, Math.max(0, at))]};
+  });
+
 /** A doodle in the top-right corner of the board, drawn after the headline is written. */
 const CornerDoodle: React.FC<{brand: Brand; name?: string; art?: string; frame: number; fps: number; start: number; seed?: number; color?: string; by?: number}> = ({brand, name, art, frame, fps, start, seed = 1, color, by}) => {
   const {u, pad, isVertical} = useLayout();
@@ -269,11 +284,15 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   // yourself; `wrong="..."` writes a wrong idea first and clears it before the point is made.
   const MAX = isVertical || brand.illustrated ? 3 : 4; // the illustrated style keeps the board sparse: the picture is the point
   // beside a big picture the board gets one written line: `board=` if given, else the phrase that carries the scene
-  const oneLine = big ? [scene.props.board ? String(scene.props.board).split('|')[0].trim() : captionLine(scene.narration)] : null;
-  const explicit: string[] | null = oneLine ?? (scene.props.board ? String(scene.props.board).split('|').map((x) => x.trim()).filter(Boolean) : null);
+  const boardLines: string[] | null = scene.props.board ? String(scene.props.board).split('|').map((x) => x.trim()).filter(Boolean) : null;
+  // beside a big picture one line, unless board= lists several: then every one of them is written, down the column
+  const oneLine = big && !(boardLines && boardLines.length > 1) ? [boardLines ? boardLines[0] : captionLine(scene.narration)] : null;
+  const explicit: string[] | null = oneLine ?? boardLines;
   const lines = oneLine
     ? [{words: keyWords(sentences[0] ?? [], 4), text: oneLine[0], at: Math.round(((sentences[0]?.[0]?.s ?? scene.start) - scene.start) * fps)}]
-    : sentences.map((g, i) => ({words: keyWords(g, isVertical || brand.illustrated ? 4 : 5), text: explicit ? explicit[i] ?? '' : '', at: Math.round((g[0].s - scene.start) * fps)}));
+    : explicit && explicit.length !== sentences.length
+      ? boardLinesAt(explicit, sentences.flat()).map(({text, from}) => ({words: [] as Word[], text, at: Math.round(((from?.s ?? scene.start) - scene.start) * fps)}))
+      : sentences.map((g, i) => ({words: keyWords(g, isVertical || brand.illustrated ? 4 : 5), text: explicit ? explicit[i] ?? '' : '', at: Math.round((g[0].s - scene.start) * fps)}));
   const pages: (typeof lines)[] = [];
   for (let i = 0; i < lines.length; i += MAX) pages.push(lines.slice(i, i + MAX));
   const wrong: string | undefined = scene.props.wrong;
@@ -587,9 +606,9 @@ export const PaperCompare: React.FC<P> = ({scene, brand}) => {
         </div>
       ) : null}
       <div style={{display: 'flex', flexDirection: isVertical ? 'column' : 'row', gap: 90 * u, alignItems: 'center', position: 'relative'}}>
-        <Card side={left} bad delay={leftAt} tilt={-1.2} seed={41} />
+        <Card side={left} bad={scene.props.good !== 'left'} delay={leftAt} tilt={-1.2} seed={41} />
         <div style={{position: 'absolute', left: '50%', top: '50%', transform: `translate(-50%,-50%) scale(${vs}) rotate(-6deg)`, fontFamily: hand(brand), fontSize: 64 * u, fontWeight: 700, color: brand.ink, zIndex: 2}}>vs</div>
-        <Card side={right} bad={false} delay={rightAt} tilt={1} seed={42} />
+        <Card side={right} bad={scene.props.good === 'left'} delay={rightAt} tilt={1} seed={42} />
       </div>
       <div style={{marginTop: 26 * u}}>
         <Source brand={brand} source={scene.props.source} delay={brand.board ? rightAt + fps : 24} />

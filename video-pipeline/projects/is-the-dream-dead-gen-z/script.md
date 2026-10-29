@@ -11,8 +11,11 @@ source: voiceover
 slug: is-the-dream-dead-gen-z
 topic: what our money buys now, how AI is cutting the jobs our generation starts on, and how we still get ahead
 
-[hook board="Prices up 30%. Grad jobs halved."]
-Since 2021, the things you buy have gone up about thirty percent, Your pay? Barely. And now AI is cutting the jobs that were meant to fix it.
+[hook board="Prices up 30%. Your pay? Barely."]
+Since 2021, the things you buy have gone up about thirty percent, Your pay? Barely.
+
+[text board="Now AI is cutting the jobs"]
+And now AI is cutting the jobs that were meant to fix it.
 
 [broll lib="uni-students-library" caption="Our generation" cards="ink:grad jobs: nearly halved@halved; red:a home: 7.6× your salary@seven"]
 Graduate jobs in the UK have nearly halved in a year, and a home now costs about seven point six times your salary. So honestly, is the dream dead for Gen Z?
@@ -38,16 +41,22 @@ And rent. The average private rent in the UK is now one thousand four hundred an
 For a lot of us, that's over a third of our pay, gone before we've even bought a thing.
 
 [stat value="9%" label="Student loan, on pay over £25,000" sub="Plan 5 graduates, England" source="Department for Education, August 2025"]
-Then there's one our parents never paid at all. If you went to uni in England recently, nine percent of everything you earn over twenty-five thousand goes on your student loan, on top of tax and National Insurance. On the typical salary of thirty-nine thousand three hundred, that's about thirteen hundred pounds a year. A second tax most of us will pay for decades.
+Then there's one our parents never paid at all. If you went to uni in England recently, nine percent of everything you earn over twenty-five thousand goes on your student loan, on top of tax and National Insurance.
+
+[stat value="£1,300 a year" label="Student loan on the typical £39,300 salary" sub="a second tax, for decades" source="9% over £25,000: Department for Education, August 2025"]
+On the typical salary of thirty-nine thousand three hundred, that's about thirteen hundred pounds a year. A second tax most of us will pay for decades.
 
 [text board="Real pay: barely past 2008"]
 And here's the thing that really gets me. Once you take prices into account, average pay is only a few percent higher than it was in 2008. Eighteen years. Prices kept moving. Our pay basically didn't.
 
 [set room=estate-agent walk cards="1997: 3.6× salary@three; red:today: 7.6×@seven; red:London: 10.6×@ten; red:£83K salary to match@eighty-three"]
-And the biggest thing most of us are saving for shows it best. In 1997, the average home in England cost {point-board} three point six times a full salary. Today, it's {shocked} seven point six. In London, ten point six. To get back to our parents' ratio, you'd need to earn around {facepalm} eighty-three grand. That's more than double the typical salary.
+And the {thinking} biggest thing most of us are saving for shows it best. In 1997, the average home in England cost {point-board} three point six times a full salary. Today, it's {shocked} seven point six. In London, ten point six. To get back to our parents' ratio, you'd need to earn {facepalm} around eighty-three grand. That's more than double the typical salary.
 
-[broll lib="uk-semis-street-pan" caption="Homes like these" cards="ink:first-time buyers: 34@thirty-four"]
-To be fair, there's a little good news. Pay has been rising faster than house prices for a few years, so that seven point six is actually the best it's been since 2015. But the average first-time buyer is still thirty-four.
+[broll lib="uk-semis-street-pan" caption="Homes like these" cards="green:7.6×: the best since 2015@best"]
+To be fair, there's a little good news. Pay has been rising faster than house prices for a few years, so that seven point six is actually the best it's been since 2015.
+
+[broll lib="estate-agent-sold" caption="First-time buyers" cards="ink:first-time buyers: 34@thirty-four"]
+But the average first-time buyer is still thirty-four.
 
 [text board="The bigger threat: the jobs"]
 So the cost of living has squeezed us. But the bigger threat to our generation isn't prices. It's what's happening to the jobs.
@@ -58,16 +67,19 @@ Because the jobs we start our careers in are disappearing fast.
 [stat value="8,383" label="UK graduate job ads in July" sub="down from 15,397 a year earlier" source="Adzuna, July 2026"]
 In July, there were about eight thousand four hundred graduate job adverts in the UK, down from over fifteen thousand a year earlier. The lowest since records began in 2016. Nearly half the doors, closed in a single year.
 
-[stat value="16.2%" label="Unemployment, 16 to 24 year olds" sub="the highest since 2015" source="ONS, June 2026"]
-Entry-level roles are down by more than thirty percent since ChatGPT launched. And unemployment for sixteen to twenty-four year olds has hit sixteen percent, the highest since 2015.
+[stat value="−30%" label="Entry-level job ads since ChatGPT launched" sub="November 2022 to now" source="Adzuna, 2025"]
+Entry-level roles are down by more than thirty percent since ChatGPT launched.
 
-[broll search="office worker laptop artificial intelligence screen" caption="Tasks, not whole jobs"]
+[stat value="16.2%" label="Unemployment, 16 to 24 year olds" sub="the highest since 2015" source="ONS, June 2026"]
+And unemployment for sixteen to twenty-four year olds has hit sixteen percent, the highest since 2015.
+
+[broll search="office worker laptop artificial intelligence screen" caption="Tasks, not whole jobs" cards="ink:first drafts@drafts; ink:summarising@summarising; ink:simple questions@questions; ink:sorting data@sorting; red:3 juniors -> 1 person@juniors"]
 Now, it's not all AI. Hiring has got more expensive too, with higher National Insurance and a higher minimum wage. But AI is doing the exact tasks junior people used to learn on. Writing first drafts. Summarising documents. Answering simple customer questions. Sorting data. That's how most of us start a career, and that's what's going first. Think about it from the boss's side. Why hire three juniors to write first drafts when one person with AI can do it in an afternoon? The hiring doesn't stop. It just shrinks.
 
-[set room=office walk cards="ink:sorting documents@sorting; ink:drafting statements@drafting"]
-And I see this up close, because it's literally my job. I work in AI consulting, {explain} helping law firms use AI properly. Every week, I watch tasks that used to take a person hours get done, such as {shocked} sorting through a document and drafting up a statement. But here's what nobody tells you. The people getting left behind {but-finger} aren't the ones AI replaces. It's the ones who refuse to learn it. The people who use it well become faster, more valuable and {thumbs-up} harder to replace.
+[set room=office walk cards="ink:me: AI consultant for law firms@consulting; ink:sorting documents@sorting; ink:drafting statements@drafting"]
+And I see this up close, because it's literally my job. I work in AI consulting, {explain} helping law firms use AI properly. Every week, I watch tasks that used to take a person {shocked} hours get done, such as {count-fingers} sorting through a document and drafting up a statement. {but-finger} But here's what nobody tells you. The people getting left behind {explain} aren't the ones AI replaces. It's the ones who refuse to learn it. The people who use it well become faster, more valuable {thumbs-up} and harder to replace.
 
-[broll search="electrician fitting wiring in a house" caption="Hard to automate" cards="ink:people · hands · judgement@judgement"]
+[broll search="electrician at work" caption="Hard to automate" cards="green:people@people; green:hands@hands; green:judgement@judgement"]
 So which jobs are safest? The ones built on three things AI is still bad at. People: nursing, teaching, selling, leading a team. Hands: electricians, plumbers, anything physical in a real building. AI can draft a contract, but it can't rewire your kitchen. And judgement: the person who signs off, owns the decision, and takes the blame if it goes wrong. And AI is creating jobs too. Roles like mine, helping firms use it properly, barely existed a few years ago.
 
 [text board="Now the good part"]
@@ -76,12 +88,15 @@ So that's the bad news. Now the good part.
 [takeaway title="How we stay ahead" n="3" of="3"]
 So, is the dream dead? No. But you have to play it differently. Here's how we stay ahead, starting with an advantage nobody talks about.
 
-[compare title="£200 a month, growing at 7%"]
+[text board="Stocks & shares ISA | On your phone, in 10 minutes | From a few pounds"]
+First, the money. Our generation has one huge advantage our parents didn't: access. In the 90s, investing meant a broker, big fees and a lump sum. Today, you can open a stocks and shares ISA on your phone in about ten minutes and start with a few pounds.
+
+[compare title="£200 a month, growing at 7%" good=left]
 left: Start at 22 | £452K | by 60
 right: Start at 32 | £208K | by 60
-First, the money. Our generation has one huge advantage our parents didn't: access. In the 90s, investing meant a broker, big fees and a lump sum. Today, you can open a stocks and shares ISA on your phone in about ten minutes and start with a few pounds. And time does the heavy lifting. Two hundred pounds a month from age twenty-two, growing at about seven percent a year, could be worth around four hundred and fifty grand by the time you're sixty. Start at about thirty-two, and it's about two hundred and eight thousand. Same money. Less than half the result.
+And time does the heavy lifting. Two hundred pounds a month from age twenty-two, growing at about seven percent a year, could be worth around four hundred and fifty grand by the time you're sixty. Start at about thirty-two, and it's about two hundred and eight thousand. Same money. Less than half the result.
 
-[broll search="stock market chart falling then rising on screen" caption="Bad years happen"]
+[broll search="stock market chart falling then rising on screen" pick=2 caption="Bad years happen" cards="ink:3 months of essentials first@three"]
 And yes, markets fall. Some years your pot will go down, sometimes a lot. That's the price of the growth. An index fund spreads your money across hundreds of companies, and if you keep paying in through the bad years, you're buying cheaper. The people who get hurt are usually the ones who panic and sell. That's also why I'd keep three months of essentials in easy-access savings first, so a broken boiler never forces you to sell at the bottom.
 
 [stat value="£1,000 a year" label="Lifetime ISA bonus" sub="25% on up to £4,000, ages 18 to 39, homes up to £450K" source="GOV.UK, 2026"]
@@ -93,15 +108,17 @@ And check your workplace pension. If you're twenty-two or over and earn more tha
 [text board="Skip the coffee? Not enough"]
 And you'll hear people say, just stop buying coffee. A three pound fifty coffee every working day is about nine hundred pounds a year. Worth knowing, but it won't close an eighty-three grand gap. Two things close that gap: time, and your income.
 
-[broll lib="tower-bridge-office-window" caption="Your income is your biggest asset"]
+[broll lib="tower-bridge-office-window" caption="Your income is your biggest asset" cards="green:£5,000 pay rise > years of growth@thousand"]
 Because in your twenties, the biggest lever on your money isn't your investments. It's your pay. A five thousand pound pay rise does more for you this year than years of growth on a small pot. And right now, the fastest way to raise your pay is to get good at AI.
 
 [list]
 - Use it every day
 - Ask it well, check its work
 - Do what it can't
-- Build one thing with it
-Here's what I'd do. One: use AI every day, for real work, not for fun. Two: learn to ask it well. Give it the context, show it an example, tell it what good looks like. And check its work, because AI does get things wrong very confidently. It's known to hallucinate. Three: get good at what it can't do. Judgement, people, ownership, decisions. AI can draft an email, but it can't sit across the table from them. And four: build one thing with it. A tool that saves you an hour, a spreadsheet that tracks your money. The moment you've built one useful thing, you stop being scared of it. Start this week. Pick one thing you do every week and do it with AI. That's how I got started.
+Here's what I'd do. One: use AI every day, for real work, not for fun. Two: learn to ask it well. Give it the context, show it an example, tell it what good looks like. And check its work, because AI does get things wrong very confidently. It's known to hallucinate. Three: get good at what it can't do. Judgement, people, ownership, decisions. AI can draft an email, but it can't sit across the table from them.
+
+[set room=office cards="ink:build one useful thing@build; green:this week: one weekly task, with AI@week"]
+And four: {explain} build one thing with it. A tool that saves you an hour, a spreadsheet that tracks your money. The moment you've built one useful thing, you stop being {thumbs-up} scared of it. Start this week. Pick one thing you do every week and do it with AI. That's how I got started.
 
 [recap title="The short version"]
 - Prices up 30% since 2021

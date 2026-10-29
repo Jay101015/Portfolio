@@ -695,7 +695,8 @@ class AlignTests(unittest.TestCase):
             notes = resolve_media(sb, d, "t")
             p1, p2 = sb["scenes"][0]["props"], sb["scenes"][1]["props"]
             self.assertLess(p1["from"] + 2, p1["clipDur"])
-            self.assertTrue(p2.get("loop"))
+            self.assertFalse(p2.get("loop"))                       # 4 s for 6 s: played slower, not looped
+            self.assertAlmostEqual(p2["rate"], (p2["clipDur"] - 0.3) / 6, places=2)
             self.assertEqual(p2["from"], 0.0)
             self.assertTrue(any("run off the end" in n for n in notes))
 
