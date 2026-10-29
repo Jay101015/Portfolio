@@ -492,6 +492,9 @@ def level_audio(path: str, target: float = -14.0, peak: float = -1.5) -> str | N
         return None
     flt = (f"loudnorm=I={target}:TP={peak}:LRA=11:measured_I={m['input_i']}:measured_TP={m['input_tp']}:"
            f"measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true")
+    # linear loudnorm is one even gain and cannot hold the peaks down on its own; a limiter after it does, with room for
+    # the overshoot the AAC encode adds between samples (a render measured -0.7 dBTP with the ceiling at -1.5)
+    flt += f",alimiter=limit={10 ** ((peak - 0.8) / 20):.3f}:level=0:attack=1:release=50"
     tmp = path + ".level.mp4"
     subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", path, "-map", "0:v:0", "-map", "0:a:0", "-c:v", "copy", "-af", flt,
                     "-ar", "48000", "-c:a", "aac", "-ac", "1", "-b:a", "160k", "-movflags", "+faststart", tmp],

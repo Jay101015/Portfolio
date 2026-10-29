@@ -14,30 +14,30 @@ topic: what our money buys now, how AI is cutting the jobs our generation starts
 [hook board="Prices up 30%. Your pay? Barely."]
 Since 2021, the things you buy have gone up about thirty percent, Your pay? Barely.
 
-[text board="Now AI is cutting the jobs"]
+[text board="Now AI is cutting the jobs" art=graduate]
 And now AI is cutting the jobs that were meant to fix it.
 
 [broll lib="uni-students-library" caption="Our generation" cards="ink:grad jobs: nearly halved@halved; red:a home: 7.6× your salary@seven"]
 Graduate jobs in the UK have nearly halved in a year, and a home now costs about seven point six times your salary. So honestly, is the dream dead for Gen Z?
 
-[text board="What your money buys | What AI is doing | How we stay ahead"]
+[text board="What your money buys | What AI is doing | How we stay ahead" art=crossroads]
 I'll show you what your money actually buys now, what AI is actually doing to jobs, because I work in it every day, and at the end, my honest plan to still get ahead.
 
-[title kicker="The Everyday Investor" subtitle="Is the dream dead for Gen Z?"]
+[title kicker="The Everyday Investor" title="Is the dream dead for Gen Z?" subtitle="How we still get ahead"]
 
 [takeaway title="Your money buys less" n="1" of="3"]
 Let's start with the thing you feel every time you tap your card.
 
-[shrink value="£100" to="£77" years=5 label="£100 of 2021 money, today" source="ONS CPI, July 2026"]
+[shrink value="£100" to="£77" years=5 label="£100 of 2021 money, today" note="what £100 from 2021 buys today" source="ONS CPI, July 2026"]
 Since the start of 2021, prices have gone up by about thirty percent. So a hundred pounds today buys what seventy-seven pounds bought then.
 
 [broll search="uk supermarket shopping basket food prices" caption="The weekly shop" cards="red:food +38% since before Covid@thirty-eight"]
 Food is worse. The weekly shop costs about thirty-eight percent more than it did before Covid.
 
-[stat value="£1,406" label="Average UK private rent, a month" sub="up 3.8% in a year" source="ONS, October 2026"]
+[stat value="£1,406" label="Average UK private rent, a month" sub="up almost 4% in a year" source="ONS, October 2026"]
 And rent. The average private rent in the UK is now one thousand four hundred and six pounds a month, up almost four percent in a year.
 
-[broll lib="uk-flats-block-drone" caption="Rent day" cards="red:over a third of your pay@third"]
+[broll lib="uk-flats-block-drone" caption="Rent day" cards="red:over a third of our pay@third"]
 For a lot of us, that's over a third of our pay, gone before we've even bought a thing.
 
 [stat value="9%" label="Student loan, on pay over £25,000" sub="Plan 5 graduates, England" source="Department for Education, August 2025"]
@@ -46,7 +46,7 @@ Then there's one our parents never paid at all. If you went to uni in England re
 [stat value="£1,300 a year" label="Student loan on the typical £39,300 salary" sub="a second tax, for decades" source="9% over £25,000: Department for Education, August 2025"]
 On the typical salary of thirty-nine thousand three hundred, that's about thirteen hundred pounds a year. A second tax most of us will pay for decades.
 
-[text board="Real pay: barely past 2008"]
+[text board="Real pay: barely past 2008" art=payslip]
 And here's the thing that really gets me. Once you take prices into account, average pay is only a few percent higher than it was in 2008. Eighteen years. Prices kept moving. Our pay basically didn't.
 
 [set room=estate-agent walk cards="1997: 3.6× salary@three; red:today: 7.6×@seven; red:London: 10.6×@ten; red:£83K salary to match@eighty-three"]
@@ -58,60 +58,75 @@ To be fair, there's a little good news. Pay has been rising faster than house pr
 [broll lib="estate-agent-sold" caption="First-time buyers" cards="ink:first-time buyers: 34@thirty-four"]
 But the average first-time buyer is still thirty-four.
 
-[text board="The bigger threat: the jobs"]
+[text board="The bigger threat: the jobs" art=job-interview]
 So the cost of living has squeezed us. But the bigger threat to our generation isn't prices. It's what's happening to the jobs.
 
 [takeaway title="The jobs are changing" n="2" of="3"]
 Because the jobs we start our careers in are disappearing fast.
 
-[stat value="8,383" label="UK graduate job ads in July" sub="down from 15,397 a year earlier" source="Adzuna, July 2026"]
+[stat value="8,400" label="UK graduate job ads in July" sub="down from over 15,000 a year earlier" source="Adzuna, July 2026"]
 In July, there were about eight thousand four hundred graduate job adverts in the UK, down from over fifteen thousand a year earlier. The lowest since records began in 2016. Nearly half the doors, closed in a single year.
 
 [stat value="−30%" label="Entry-level job ads since ChatGPT launched" sub="November 2022 to now" source="Adzuna, 2025"]
 Entry-level roles are down by more than thirty percent since ChatGPT launched.
 
-[stat value="16.2%" label="Unemployment, 16 to 24 year olds" sub="the highest since 2015" source="ONS, June 2026"]
+[stat value="16%" label="Unemployment, 16 to 24 year olds" sub="the highest since 2015" source="ONS, June 2026"]
 And unemployment for sixteen to twenty-four year olds has hit sixteen percent, the highest since 2015.
 
-[broll search="office worker laptop artificial intelligence screen" caption="Tasks, not whole jobs" cards="ink:first drafts@drafts; ink:summarising@summarising; ink:simple questions@questions; ink:sorting data@sorting; red:3 juniors -> 1 person@juniors"]
-Now, it's not all AI. Hiring has got more expensive too, with higher National Insurance and a higher minimum wage. But AI is doing the exact tasks junior people used to learn on. Writing first drafts. Summarising documents. Answering simple customer questions. Sorting data. That's how most of us start a career, and that's what's going first. Think about it from the boss's side. Why hire three juniors to write first drafts when one person with AI can do it in an afternoon? The hiring doesn't stop. It just shrinks.
+[broll lib="tower-bridge-office-window" caption="Hiring costs more" cards="red:higher National Insurance@insurance; red:higher minimum wage@minimum"]
+Now, it's not all AI. Hiring has got more expensive too, with higher National Insurance and a higher minimum wage.
+
+[broll search="office worker laptop artificial intelligence screen" caption="Tasks, not whole jobs" cards="ink:first drafts@drafts; ink:summarising@summarising; ink:simple questions@questions; ink:sorting data@sorting"]
+But AI is doing the exact tasks junior people used to learn on. Writing first drafts. Summarising documents. Answering simple customer questions. Sorting data. That's how most of us start a career, and that's what's going first.
+
+[text board="Why hire 3 juniors? | The hiring just shrinks" art=job-interview]
+Think about it from the boss's side. Why hire three juniors to write first drafts when one person with AI can do it in an afternoon? The hiring doesn't stop. It just shrinks.
 
 [set room=office walk cards="ink:me: AI consultant for law firms@consulting; ink:sorting documents@sorting; ink:drafting statements@drafting"]
 And I see this up close, because it's literally my job. I work in AI consulting, {explain} helping law firms use AI properly. Every week, I watch tasks that used to take a person {shocked} hours get done, such as {count-fingers} sorting through a document and drafting up a statement. {but-finger} But here's what nobody tells you. The people getting left behind {explain} aren't the ones AI replaces. It's the ones who refuse to learn it. The people who use it well become faster, more valuable {thumbs-up} and harder to replace.
 
-[broll search="electrician at work" caption="Hard to automate" cards="green:people@people; green:hands@hands; green:judgement@judgement"]
-So which jobs are safest? The ones built on three things AI is still bad at. People: nursing, teaching, selling, leading a team. Hands: electricians, plumbers, anything physical in a real building. AI can draft a contract, but it can't rewire your kitchen. And judgement: the person who signs off, owns the decision, and takes the blame if it goes wrong. And AI is creating jobs too. Roles like mine, helping firms use it properly, barely existed a few years ago.
+[text board="Safest: people" art=hospital-desk]
+So which jobs are safest? The ones built on three things AI is still bad at. People: nursing, teaching, selling, leading a team.
 
-[text board="Now the good part"]
+[broll search="electrician working on wiring" caption="Hands" cards="green:hands@hands"]
+Hands: electricians, plumbers, anything physical in a real building. AI can draft a contract, but it can't rewire your kitchen.
+
+[text board="Judgement | AI is creating jobs too" art=contract-signing]
+And judgement: the person who signs off, owns the decision, and takes the blame if it goes wrong. And AI is creating jobs too. Roles like mine, helping firms use it properly, barely existed a few years ago.
+
+[text board="Now the good part" art=sam-pleased]
 So that's the bad news. Now the good part.
 
 [takeaway title="How we stay ahead" n="3" of="3"]
 So, is the dream dead? No. But you have to play it differently. Here's how we stay ahead, starting with an advantage nobody talks about.
 
-[text board="Stocks & shares ISA | On your phone, in 10 minutes | From a few pounds"]
+[text board="Stocks & shares ISA | On your phone, in 10 minutes | From a few pounds" art=investing-app]
 First, the money. Our generation has one huge advantage our parents didn't: access. In the 90s, investing meant a broker, big fees and a lump sum. Today, you can open a stocks and shares ISA on your phone in about ten minutes and start with a few pounds.
 
 [compare title="£200 a month, growing at 7%" good=left]
-left: Start at 22 | £452K | by 60
+left: Start at 22 | £450K | by 60
 right: Start at 32 | £208K | by 60
 And time does the heavy lifting. Two hundred pounds a month from age twenty-two, growing at about seven percent a year, could be worth around four hundred and fifty grand by the time you're sixty. Start at about thirty-two, and it's about two hundred and eight thousand. Same money. Less than half the result.
 
-[broll search="stock market chart falling then rising on screen" pick=2 caption="Bad years happen" cards="ink:3 months of essentials first@three"]
-And yes, markets fall. Some years your pot will go down, sometimes a lot. That's the price of the growth. An index fund spreads your money across hundreds of companies, and if you keep paying in through the bad years, you're buying cheaper. The people who get hurt are usually the ones who panic and sell. That's also why I'd keep three months of essentials in easy-access savings first, so a broken boiler never forces you to sell at the bottom.
+[broll search="stock market chart falling then rising on screen" pick=2 caption="Bad years happen"]
+And yes, markets fall. Some years your pot will go down, sometimes a lot. That's the price of the growth. An index fund spreads your money across hundreds of companies, and if you keep paying in through the bad years, you're buying cheaper. The people who get hurt are usually the ones who panic and sell.
 
-[stat value="£1,000 a year" label="Lifetime ISA bonus" sub="25% on up to £4,000, ages 18 to 39, homes up to £450K" source="GOV.UK, 2026"]
+[text board="3 months of essentials first" art=emergency-jar]
+That's also why I'd keep three months of essentials in easy-access savings first, so a broken boiler never forces you to sell at the bottom.
+
+[stat value="£1,000" label="Lifetime ISA bonus, a year" sub="25% bonus, ages 18 to 39, first home up to £450K" source="GOV.UK, 2026"]
 And if a home is the goal, a Lifetime ISA adds a twenty-five percent bonus to what you save, up to a thousand pounds a year, if you're eighteen to thirty-nine and buying a first home up to four hundred and fifty thousand. Our parents never had it. Use it.
 
 [stat value="3%" label="The least your employer must add to your pension" sub="if you're 22+ and earn over £10,000" source="GOV.UK, 2026"]
 And check your workplace pension. If you're twenty-two or over and earn more than ten thousand pounds, your employer has to pay in at least three percent of your qualifying earnings. Plenty will match more if you put in more. If you're not taking the full match, you're turning down a pay rise. Free money, every single month.
 
-[text board="Skip the coffee? Not enough"]
+[text board="Skip the coffee? | £3.50 a day ≈ £900 a year" art=coffee-shop]
 And you'll hear people say, just stop buying coffee. A three pound fifty coffee every working day is about nine hundred pounds a year. Worth knowing, but it won't close an eighty-three grand gap. Two things close that gap: time, and your income.
 
-[broll lib="tower-bridge-office-window" caption="Your income is your biggest asset" cards="green:£5,000 pay rise > years of growth@thousand"]
+[text board="Your pay: the biggest lever | £5,000 rise > years of growth" art=pay-rise-ask]
 Because in your twenties, the biggest lever on your money isn't your investments. It's your pay. A five thousand pound pay rise does more for you this year than years of growth on a small pot. And right now, the fastest way to raise your pay is to get good at AI.
 
-[list]
+[list title="My plan: AI habits"]
 - Use it every day
 - Ask it well, check its work
 - Do what it can't
@@ -127,5 +142,9 @@ And four: {explain} build one thing with it. A tool that saves you an hour, a sp
 - Learn AI before it learns your job
 So, is the dream dead? No. But it's a different dream. Things cost more, our pay has barely moved, and AI is changing how careers start. But we have access to investing our parents never had, time on our side, and tools that make us more valuable, if we learn them.
 
-[text board="Is the dream dead? Tell me below | Not financial advice. Capital at risk."]
+[text board="Is the dream dead? Tell me below | Not financial advice. Capital at risk." art=sam-thinking]
 Thank you for watching this video. If you enjoyed it, please like and subscribe and make sure to watch my other ones.
+
+[broll src="watch-next-200-1000-10000.mp4" caption="Watch next: £200, £1,000 or £10,000 after payday" credit="The Everyday Investor" vol=1 dur=16 next=on]
+
+[outro title="The Everyday Investor" cta="Subscribe for the next one" dur=5]

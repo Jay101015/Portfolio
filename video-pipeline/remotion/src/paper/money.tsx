@@ -240,7 +240,7 @@ export const PaperShrink: React.FC<P> = ({scene, brand}) => {
         </div>
       </div>
       <div style={{fontFamily: hand(brand), fontSize: 44 * u, color: brand.accent2, marginTop: 30 * u, transform: 'rotate(-1deg)', transformOrigin: 'left'}}>
-        <Write text={`what ${String(scene.props.value ?? '')} buys after ${years} years`} frame={frame} fps={fps} start={toDone + 6} cps={30} color={brand.accent2} />
+        <Write text={scene.props.note ? String(scene.props.note) : `what ${String(scene.props.value ?? '')} buys after ${years} years`} frame={frame} fps={fps} start={toDone + 6} cps={30} color={brand.accent2} />
       </div>
       <SourceLine brand={brand} source={scene.props.source} frame={frame} fps={fps} start={toDone + fps} />
     </AbsoluteFill>
