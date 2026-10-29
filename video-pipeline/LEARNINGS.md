@@ -25,6 +25,7 @@ one change at a time where possible, so a result can be read.
 | Short: What to do with £200 | 0:48 | 2026-10-27 | 6 (day 1) | | |
 | Short: Looking to purchase your first home? | 0:44 | 2026-10-27 | 5 (day 1) | | |
 | Can You Afford a Home? (London and the UK) | 10:04 | not yet | | | first 10-minute build; levelled to -14 LUFS; ad breaks ~2:55, ~5:46, 8:10 |
+| Is the Dream Dead for Gen Z? | 7:43 | not yet | | | cost of living, AI and entry-level jobs, how to stay ahead; shipped under 8 min by choice (not monetised yet) |
 
 ## Lessons so far
 
@@ -129,6 +130,27 @@ one change at a time where possible, so a result can be read.
 - Rule: a character walking out of frame reads as "the end" on a phone: no exits inside a Short.
 - Open: the planner could lift the sharpest claim to the front as a cold open (retention's idea); the footage
   library needs more landscape UK homes and a saving shot (the street pan had to carry two scenes).
+
+### Is the Dream Dead for Gen Z? (built 2026-10-29)
+- Review: editor 4, animator 6, retention 6 (round 1); editor 6, animator 8, retention 7 (round 2). Round two's
+  must-fixes were then fixed in a final render and checked by eye, not reviewed again.
+- Jeffrey reads at about 175 words a minute, not 159: a 1,540-word script came out at 7:49. Rule: 10 minutes is about
+  1,750 spoken words at his pace. He also left out the personal-plan section, so the two lines that promised it were
+  cut from the take at measured pauses (an open loop costs more than a shorter video).
+- Found by the reviewers and fixed in the pipeline: the stop-motion strips have no tags, and their empty pattern
+  matched every scene, so every illustrated text board showed the same train strip; board= with several lines beside a
+  drawing only wrote the first line (the promises and the disclaimer never showed); a card with no words (the title)
+  took its time out of the scene before it and covered the last line said there (it now gets its own beat in room
+  tone); the compare always put the cross on the left (good=left); a slowed clip played a found film's titles; the
+  limiter after levelling (true peak -0.7 became -2.0); non-breaking spaces now hold ("Gen Z?" on one line).
+- The stock libraries have no electricians or tradespeople (searches returned hens and keyboards). Rule: a board with
+  a doodle, or Jeffrey's own phone clip, for trades; never take the first search result for a job on trust.
+- The library's "Sam" drawings are a curly-haired lookalike of the set-piece character: next to a set piece they read
+  as an off-model double. Rule: on a video with set pieces, boards use Maya, objects or doodles, never Sam.
+- Figures on screen must be the words said ("39K", "16%", "8,400", "over 15,000"), even where the source is more exact.
+- Next recording: his own numbers in the plan; a spoken one-line disclaimer and a specific comment question; end on a
+  bridge to the next video, not "thank you for watching, like and subscribe"; say "ISA", "uni" and "ChatGPT" clearly
+  (Shorts cut from the take carry captions).
 
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage?
