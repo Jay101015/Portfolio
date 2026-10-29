@@ -2350,5 +2350,22 @@
    "bill"
   ],
   "prompt": "a receipt with a large rubber stamp pressed on it"
+ },
+ {
+  "name": "jeffrey",
+  "about": "Jeffrey himself, head and shoulders: short faded haircut, stud earring, light beard and moustache, chain necklace, crew-neck T-shirt, a slight smile (the channel's own face, for the moments he talks about himself; never picked by the words, only by name)",
+  "tags": [
+   "jeffrey"
+  ],
+  "search": [
+   "jeffrey",
+   "me",
+   "host",
+   "presenter",
+   "myself",
+   "my job",
+   "my plan"
+  ],
+  "prompt": "Redrawn from Jeffrey's own drawing as clean black-marker line art on white (his comic portrait, October 2026)."
  }
 ]

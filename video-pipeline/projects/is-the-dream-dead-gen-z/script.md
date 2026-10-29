@@ -20,7 +20,7 @@ And now AI is cutting the jobs that were meant to fix it.
 [broll lib="uni-students-library" caption="Our generation" cards="ink:grad jobs: nearly halved@halved; red:a home: 7.6× your salary@seven"]
 Graduate jobs in the UK have nearly halved in a year, and a home now costs about seven point six times your salary. So honestly, is the dream dead for Gen Z?
 
-[text board="What your money buys | What AI is doing | How we stay ahead" art=crossroads cards="ink:I work in AI, every day@every; green:my honest plan@honest"]
+[text board="What your money buys | What AI is doing | How we stay ahead" art=jeffrey cards="ink:I work in AI, every day@every; green:my honest plan@honest"]
 I'll show you what your money actually buys now, what AI is actually doing to jobs, because I work in it every day, and at the end, my honest plan to still get ahead.
 
 [title dur=2.4 kicker="The Everyday Investor" title="Is the dream dead for Gen Z?" subtitle="How we still get ahead"]
@@ -124,7 +124,7 @@ Same money. Less than half the result.
 [news search="FTSE 100 biggest one day fall" board="Markets fall | Some years, a lot" art=phone-balance-drop cards="red:your pot goes down@down; ink:the price of the growth@price"]
 And yes, markets fall. Some years your pot will go down, sometimes a lot. That's the price of the growth.
 
-[text board="Index fund | = 100s of companies | Keep paying in" art=index-fund-basket cards="green:bad years = buying cheaper@cheaper; red:panic and sell = get hurt@panic"]
+[broll src="jeffrey-index-holdings.mp4" phone=on vol=0 caption="Hundreds of companies" credit="The Everyday Investor" cards="ink:one fund, hundreds of companies@hundreds; green:bad years = buying cheaper@cheaper; red:panic and sell = get hurt@panic"]
 An index fund spreads your money across hundreds of companies, and if you keep paying in through the bad years, you're buying cheaper. The people who get hurt are usually the ones who panic and sell.
 
 [text board="3 months of essentials first" art=umbrella art_at=tr art_size=0.4 art_start=0.3 cards="ink:easy-access savings@easy-access; red:a broken boiler@boiler; red:never sell at the bottom@bottom"]
