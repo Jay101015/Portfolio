@@ -5,15 +5,17 @@ Topic: what our money buys now, how AI is cutting the jobs our generation starts
 | scene | query | result | licence | attribution |
 |---|---|---|---|---|
 | 3 |  | library uni-students-library |  |  |
-| 8 | uk supermarket shopping basket food prices | downloaded 08-uk-supermarket-shopping-basket-food-pric.mp4 | Pixabay Content License | Video 47601 by Engin_Akyurt via Pixabay |
+| 8 | uk supermarket shopping basket food prices | downloaded 08-uk-supermarket-shopping-basket-food-pric.mp4 | Pixabay Content License | Video 47600 by Engin_Akyurt via Pixabay |
 | 10 |  | library uk-flats-block-drone |  |  |
 | 15 |  | library uk-semis-street-pan |  |  |
 | 16 |  | library estate-agent-sold |  |  |
 | 22 |  | library tower-bridge-office-window |  |  |
-| 23 | office worker laptop artificial intelligence screen | downloaded 23-office-worker-laptop-artificial-intellig.mp4 | Pixabay Content License | Video 197 by Life-Of-Vids via Pixabay |
-| 27 | electrician working on wiring | downloaded 27-electrician-working-on-wiring.mp4 | Pixabay Content License | Video 1046 by Coverr-Free-Footage via Pixabay |
-| 33 | stock market chart falling then rising on screen | downloaded 33-stock-market-chart-falling-then-rising-o.mp4 | Pixabay Content License | Video 349091 by MuhammadAhmad10 via Pixabay |
-| 43 | | already in media/: watch-next-200-1000-10000.mp4 | | |
+| 23 | | already in media/: 23-office-worker-laptop-artificial-intellig.mp4 | | |
+| 27 | nurse talking with patient hospital | downloaded 27-nurse-talking-with-patient-hospital.mp4 | Pixabay Content License | Video 143376 by Amorn_mimi via Pixabay |
+| 33 | | already in media/: 33-stock-market-chart-falling-then-rising-o.mp4 | | |
+| 43 | business meeting people talking across table | downloaded 43-business-meeting-people-talking-across-t.mp4 | Pixabay Content License | Video 8252 by Coverr-Free-Footage via Pixabay |
+| 46 | | already in media/: watch-next-200-1000-10000.mp4 | | |
+| 47 | | already in media/: watch-next-200-1000-10000.mp4 | | |
 
 ## What counts as free use here
 

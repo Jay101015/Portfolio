@@ -31,7 +31,7 @@ Let's start with the thing you feel every time you tap your card.
 [shrink value="£100" to="£77" years=5 label="£100 of 2021 money, today" note="£100 today buys what £77 did in 2021" source="ONS CPI, July 2026"]
 Since the start of 2021, prices have gone up by about thirty percent. So a hundred pounds today buys what seventy-seven pounds bought then.
 
-[broll search="uk supermarket shopping basket food prices" caption="The weekly shop" cards="red:food +38% since before Covid@thirty-eight" src="08-uk-supermarket-shopping-basket-food-pric.mp4" credit="Video 47601 by Engin_Akyurt via Pixabay"]
+[broll search="uk supermarket shopping basket food prices" caption="The weekly shop" cards="red:food +38% since before Covid@thirty-eight" src="08-uk-supermarket-shopping-basket-food-pric.mp4" credit="Video 47600 by Engin_Akyurt via Pixabay"]
 Food is worse. The weekly shop costs about thirty-eight percent more than it did before Covid.
 
 [stat value="£1,406" label="Average UK private rent, a month" sub="up almost 4% in a year" source="ONS, October 2026"]
@@ -88,7 +88,7 @@ And I see this up close, because it's literally my job. I work in AI consulting,
 [text board="Left behind: the ones who won't learn it | Use it well: harder to replace" icon=warning]
 But here's what nobody tells you. The people getting left behind aren't the ones AI replaces. It's the ones who refuse to learn it. The people who use it well become faster, more valuable and harder to replace.
 
-[broll search="nurse talking with patient hospital" caption="People" cards="green:people@people"]
+[broll search="nurse talking with patient hospital" caption="People" cards="green:people@people" src="27-nurse-talking-with-patient-hospital.mp4" credit="Video 143376 by Amorn_mimi via Pixabay"]
 So which jobs are safest? The ones built on three things AI is still bad at. People: nursing, teaching, selling, leading a team.
 
 [text board="Hands | AI can't rewire your kitchen" icon=hammer]
@@ -139,7 +139,7 @@ Here's what I'd do. One: use AI every day, for real work, not for fun.
 [text board="2: ask it well | Context · an example · what good looks like | Check it: it hallucinates" art=maya-thinking]
 Two: learn to ask it well. Give it the context, show it an example, tell it what good looks like. And check its work, because AI does get things wrong very confidently. It's known to hallucinate.
 
-[broll search="business meeting people talking across table" caption="3: what AI can't do" cards="green:judgement@judgement; green:people@people; green:sitting across the table@table"]
+[broll search="business meeting people talking across table" caption="3: what AI can't do" cards="green:judgement@judgement; green:people@people; green:sitting across the table@table" src="43-business-meeting-people-talking-across-t.mp4" credit="Video 8252 by Coverr-Free-Footage via Pixabay"]
 Three: get good at what it can't do. Judgement, people, ownership, decisions. AI can draft an email, but it can't sit across the table from them.
 
 [set room=first-flat cards="ink:build one useful thing@build; green:this week: one weekly task, with AI@week"]
