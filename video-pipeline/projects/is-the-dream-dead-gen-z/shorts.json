@@ -1,0 +1,33 @@
+{
+ "shorts": [
+  {
+   "name": "short-1",
+   "hook": "To match your parents, you'd need £83K",
+   "spans": [[82.3, 110.6]],
+   "why": "real pay barely past 2008, then 3.6x to 7.6x salary; lands on 'more than double the typical salary'",
+   "poses": [[82.5, "explain"], [86.6, "thumbs-down"], [89.1, "worried"], [90.8, "shrug"], [95.6, "point-board"], [101.4, "shocked"], [103.4, "bill-shock"], [106.9, "facepalm"], [109.1, "empty-pockets"]]
+  },
+  {
+   "name": "short-2",
+   "hook": "Graduate jobs nearly halved in a year",
+   "spans": [[135.5, 160.4], [169.7, 192.9]],
+   "why": "8,400 vs 15,000 grad job ads, -30% entry level, 16% youth unemployment, the junior tasks AI does; lands on 'It just shrinks.' (the National Insurance aside is cut)",
+   "poses": [[135.9, "point-board"], [141.3, "chart-down"], [147.0, "worried"], [150.6, "thumbs-down"], [157.7, "shocked"], [169.9, "explain"], [173.9, "count-fingers"], [180.3, "shrug"], [184.1, "thinking"], [186.1, "suspicious"], [190.4, "but-finger"]]
+  },
+  {
+   "name": "short-3",
+   "hook": "Start at 22, not 32: £450K vs £208K",
+   "spans": [[268.9, 289.6]],
+   "why": "an ISA on your phone, then £200 a month from 22 vs 32; lands on 'Less than half the result.'",
+   "poses": [[269.1, "phone-excited"], [273.6, "idea"], [275.3, "count-notes"], [279.9, "arms-up"], [283.6, "worried"], [285.3, "thumbs-down"], [288.4, "facepalm"]]
+  },
+  {
+   "name": "short-4",
+   "hook": "3 things AI still can't do",
+   "spans": [[219.2, 245.9]],
+   "why": "people, hands, judgement, and AI creating jobs like Jeffrey's; lands on 'barely existed a few years ago'",
+   "poses": [[219.4, "thinking"], [222.3, "count-fingers"], [224.2, "welcome"], [227.6, "explain"], [233.8, "smug"], [235.8, "but-finger"], [239.0, "worried"], [241.1, "idea"], [243.1, "fist-pump"]]
+  }
+ ],
+ "speed": 1.2
+}
