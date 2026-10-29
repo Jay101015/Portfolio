@@ -539,9 +539,35 @@ def render(props_path: str, out_path: str, composition: str, concurrency: str | 
     # fails the run in minutes instead of using up the whole job
     subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", listing, "-c:v", "copy", "-c:a", "aac", "-ac", "1", "-b:a", "160k", "-movflags", "+faststart", out_path], check=True, stdin=subprocess.DEVNULL, timeout=900)
     print(f"joined {len(parts)} chunks -> {out_path}", flush=True)
+    if voice_over_whole(out_path, sb):
+        print("audio: the voice laid back over the joined picture in one piece (no gap at the chunk joins)", flush=True)
     note = level_audio(out_path)
     if note:
         print(note, flush=True)
+
+
+def voice_over_whole(video: str, sb: dict) -> bool:
+    """Each render chunk's audio is encoded on its own, and joining them leaves 20 to 40 ms of digital silence at
+    every join (every 15 seconds). When the voice is the only sound (footage is muted unless a scene asks for its
+    sound with vol=), the joined picture gets the voice file itself as its sound, in one piece, the room's tone carrying
+    on under the end card. Returns whether it did."""
+    if not sb.get("audio") or any(float(sc.get("props", {}).get(k) or 0) > 0 for sc in sb.get("scenes", []) for k in ("vol", "clip_vol", "sticker_vol")):
+        return False
+    src = os.path.join(REMOTION, "public", sb["audio"])
+    if not os.path.exists(src):
+        return False
+    dur = al.audio_duration(video)
+    padded = video + ".voice.wav"
+    filled = video + ".voice-room.wav"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-af", f"apad=whole_dur={dur:.3f}", "-t", f"{dur:.3f}", "-ac", "1", "-ar", "48000", padded], check=True)
+    track, _ = fill_gated(padded, filled, tone_from=src)
+    tmp = video + ".remux.mp4"
+    subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", video, "-i", track, "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-ac", "1", "-b:a", "160k", "-movflags", "+faststart", tmp], check=True, stdin=subprocess.DEVNULL, timeout=900)
+    os.replace(tmp, video)
+    for p in (padded, filled):
+        if os.path.exists(p):
+            os.remove(p)
+    return True
 
 
 def keep_spans(src: str, dst: str, spans: list[tuple[float, float]], lead: float, tail: float, speed: float = 1.0) -> None:
