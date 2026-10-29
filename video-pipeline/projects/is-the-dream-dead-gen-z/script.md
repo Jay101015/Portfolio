@@ -80,7 +80,7 @@ Now, it's not all AI. Hiring has got more expensive too, with higher National In
 [broll search="office worker laptop artificial intelligence screen" caption="Tasks, not whole jobs" cards="ink:first drafts@drafts; ink:summarising@summarising; ink:simple questions@questions; ink:sorting data@sorting" src="23-office-worker-laptop-artificial-intellig.mp4" credit="Video 197 by Life-Of-Vids via Pixabay"]
 But AI is doing the exact tasks junior people used to learn on. Writing first drafts. Summarising documents. Answering simple customer questions. Sorting data. That's how most of us start a career, and that's what's going first.
 
-[text board="Why hire 3 juniors? | The hiring just shrinks" icon=users]
+[broll lib="businessman-phone-city" caption="The boss's side" cards="red:why hire 3 juniors?@juniors; ink:the hiring just shrinks@shrinks"]
 Think about it from the boss's side. Why hire three juniors to write first drafts when one person with AI can do it in an afternoon? The hiring doesn't stop. It just shrinks.
 
 [set room=office cards="ink:me: AI consultant for law firms@consulting; ink:sorting documents@sorting; ink:drafting statements@drafting"]

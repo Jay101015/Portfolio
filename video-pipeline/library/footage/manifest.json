@@ -280,5 +280,77 @@
   "page": "https://www.pexels.com/video/6195154/",
   "license": "Pexels licence",
   "credit": "Video via Pexels"
+ },
+ {
+  "name": "businessman-phone-city",
+  "file": "businessman-phone-city.mp4",
+  "orientation": "landscape",
+  "w": 1280,
+  "h": 720,
+  "seconds": 5.5,
+  "about": "a young Black businessman in a suit with a backpack checks his phone in front of glass office towers, then looks up",
+  "tags": [
+   "boss",
+   "business",
+   "businessman",
+   "manager",
+   "employer",
+   "hiring",
+   "career",
+   "office",
+   "city",
+   "work",
+   "job",
+   "pay",
+   "professional"
+  ],
+  "source": "Jeffrey's download (source to confirm)",
+  "id": "7188969",
+  "license": "to confirm",
+  "credit": "to confirm"
+ },
+ {
+  "name": "save-money-coins-graphic",
+  "file": "save-money-coins-graphic.mp4",
+  "orientation": "landscape",
+  "w": 1280,
+  "h": 720,
+  "seconds": 5.0,
+  "about": "a motion graphic: SAVE MONEY in white capitals on teal, gold coins rain down and pile up (the words are baked in; a stock-template look, not the whiteboard's)",
+  "tags": [
+   "save money",
+   "saving",
+   "savings",
+   "coins",
+   "emergency fund",
+   "motion graphic"
+  ],
+  "source": "Jeffrey's download (source to confirm)",
+  "id": "",
+  "license": "to confirm",
+  "credit": "to confirm"
+ },
+ {
+  "name": "hooded-hacker-screens",
+  "file": "hooded-hacker-screens.mp4",
+  "orientation": "landscape",
+  "w": 1280,
+  "h": 720,
+  "seconds": 14.3,
+  "about": "a hooded figure typing at a desk of monitors with green code in a dark blue room (the stock 'hacker' look)",
+  "tags": [
+   "scam",
+   "scammer",
+   "fraud",
+   "hacker",
+   "cyber",
+   "phishing",
+   "security",
+   "identity theft"
+  ],
+  "source": "Jeffrey's download (source to confirm)",
+  "id": "1107905",
+  "license": "to confirm",
+  "credit": "to confirm"
  }
 ]
