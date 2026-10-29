@@ -85,10 +85,10 @@ Think about it from the boss's side. Why hire three juniors to write first draft
 [set room=office walk cards="ink:me: AI consultant for law firms@consulting; ink:sorting documents@sorting; ink:drafting statements@drafting"]
 And I see this up close, because it's literally my job. I work in AI consulting, {explain} helping law firms use AI properly. Every week, I watch tasks that used to take a person {shocked} hours get done, such as {count-fingers} sorting through a document and drafting up a statement. {but-finger} But here's what nobody tells you. The people getting left behind {explain} aren't the ones AI replaces. It's the ones who refuse to learn it. The people who use it well become faster, more valuable {thumbs-up} and harder to replace.
 
-[text board="Safest: people" art=hospital-desk]
+[broll search="nurse talking with patient hospital" caption="People" cards="green:people@people"]
 So which jobs are safest? The ones built on three things AI is still bad at. People: nursing, teaching, selling, leading a team.
 
-[broll search="electrician working on wiring" caption="Hands" cards="green:hands@hands" src="27-electrician-working-on-wiring.mp4" credit="Video 1046 by Coverr-Free-Footage via Pixabay"]
+[text board="Hands | AI can't rewire your kitchen" icon=hammer]
 Hands: electricians, plumbers, anything physical in a real building. AI can draft a contract, but it can't rewire your kitchen.
 
 [text board="Judgement | AI is creating jobs too" art=contract-signing]
