@@ -5,17 +5,23 @@ Topic: what our money buys now, how AI is cutting the jobs our generation starts
 | scene | query | result | licence | attribution |
 |---|---|---|---|---|
 | 3 |  | library uni-students-library |  |  |
-| 8 | uk supermarket shopping basket food prices | downloaded 08-uk-supermarket-shopping-basket-food-pric.mp4 | Pixabay Content License | Video 47600 by Engin_Akyurt via Pixabay |
+| 8 | uk supermarket shopping basket food prices | downloaded 08-uk-supermarket-shopping-basket-food-pric.mp4 | Pixabay Content License | Video 47601 by Engin_Akyurt via Pixabay |
 | 10 |  | library uk-flats-block-drone |  |  |
 | 15 |  | library uk-semis-street-pan |  |  |
 | 16 |  | library estate-agent-sold |  |  |
+| 21 | young man looking at job adverts on laptop | downloaded 21-young-man-looking-at-job-adverts-on-lapt.mp4 | Pixabay Content License | Video 268230 by isuruzampa via Pixabay |
 | 22 |  | library tower-bridge-office-window |  |  |
 | 23 | | already in media/: 23-office-worker-laptop-artificial-intellig.mp4 | | |
-| 27 | nurse talking with patient hospital | downloaded 27-nurse-talking-with-patient-hospital.mp4 | Pixabay Content License | Video 143376 by Amorn_mimi via Pixabay |
-| 33 | | already in media/: 33-stock-market-chart-falling-then-rising-o.mp4 | | |
-| 43 | business meeting people talking across table | downloaded 43-business-meeting-people-talking-across-t.mp4 | Pixabay Content License | Video 8252 by Coverr-Free-Footage via Pixabay |
-| 46 | | already in media/: watch-next-200-1000-10000.mp4 | | |
-| 47 | | already in media/: watch-next-200-1000-10000.mp4 | | |
+| 27 | | already in media/: 27-nurse-talking-with-patient-hospital.mp4 | | |
+| 28 |  | library tradesman-van-tools |  |  |
+| 29 |  | library drill-in-hand |  |  |
+| 30 | hand signing document with pen close up | downloaded 30-hand-signing-document-with-pen-close-up.mp4 | Pixabay Content License | Video 4952 by klimkin via Pixabay |
+| 36 | red stock prices falling on trading screen | downloaded 36-red-stock-prices-falling-on-trading-scre.mp4 | Pixabay Content License | Video 3758 by Joshua_Willson via Pixabay |
+| 43 | barista handing takeaway coffee to customer paying by card | downloaded 43-barista-handing-takeaway-coffee-to-custo.mp4 | Pixabay Content License | Video 1046 by Coverr-Free-Footage via Pixabay |
+| 46 | | already in media/: jeffrey-ai-everyday.mp4 | | |
+| 48 | | already in media/: 43-business-meeting-people-talking-across-t.mp4 | | |
+| 52 | | already in media/: watch-next-200-1000-10000.mp4 | | |
+| 53 | | already in media/: watch-next-200-1000-10000.mp4 | | |
 
 ## What counts as free use here
 

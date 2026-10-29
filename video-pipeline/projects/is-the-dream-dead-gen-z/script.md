@@ -31,7 +31,7 @@ Let's start with the thing you feel every time you tap your card.
 [shrink value="£100" to="£77" years=5 label="£100 of 2021 money, today" note="£100 today buys what £77 did in 2021" source="ONS CPI, July 2026"]
 Since the start of 2021, prices have gone up by about thirty percent. So a hundred pounds today buys what seventy-seven pounds bought then.
 
-[broll search="uk supermarket shopping basket food prices" caption="The weekly shop" cards="red:food +38% since before Covid@thirty-eight"]
+[broll search="uk supermarket shopping basket food prices" caption="The weekly shop" cards="red:food +38% since before Covid@thirty-eight" src="08-uk-supermarket-shopping-basket-food-pric.mp4" credit="Video 47601 by Engin_Akyurt via Pixabay"]
 Food is worse. The weekly shop costs about thirty-eight percent more than it did before Covid.
 
 [stat value="£1,406" label="Average UK private rent, a month" sub="up almost 4% in a year" source="ONS, October 2026"]
@@ -71,7 +71,7 @@ In July, there were about 8,400 graduate job adverts in the UK, down from over 1
 [stat value="−30%" label="Entry-level job ads since ChatGPT launched" sub="November 2022 to now" source="Adzuna, 2025"]
 Entry-level roles are down by more than thirty percent since ChatGPT launched.
 
-[broll search="young man looking at job adverts on laptop" caption="Out of work" cards="red:16 to 24s: 16% unemployed@percent; red:highest since 2015@highest"]
+[broll search="young man looking at job adverts on laptop" caption="Out of work" cards="red:16 to 24s: 16% unemployed@percent; red:highest since 2015@highest" src="21-young-man-looking-at-job-adverts-on-lapt.mp4" credit="Video 268230 by isuruzampa via Pixabay"]
 And unemployment for sixteen to twenty-four year olds has hit sixteen percent, the highest since 2015.
 
 [broll lib="tower-bridge-office-window" caption="Hiring costs more" cards="red:higher National Insurance@insurance; red:higher minimum wage@minimum"]
@@ -98,7 +98,7 @@ Hands: electricians, plumbers, anything physical in a real building.
 [broll lib="drill-in-hand" caption="AI can't do this" cards="red:AI can't rewire your kitchen@rewire"]
 AI can draft a contract, but it can't rewire your kitchen.
 
-[broll search="hand signing document with pen close up" caption="Judgement" cards="green:judgement@judgement; ink:signs off@signs; red:takes the blame@blame"]
+[broll search="hand signing document with pen close up" caption="Judgement" cards="green:judgement@judgement; ink:signs off@signs; red:takes the blame@blame" src="30-hand-signing-document-with-pen-close-up.mp4" credit="Video 4952 by klimkin via Pixabay"]
 And judgement: the person who signs off, owns the decision, and takes the blame if it goes wrong.
 
 [text board="AI is creating jobs too | Roles like mine" icon=sprout]
@@ -118,7 +118,7 @@ data: Start at 22 = 22:0, 27:14000, 32:35000, 37:63000, 42:104000, 47:162000, 52
 data: Start at 32 = 32:0, 37:14000, 42:35000, 47:63000, 52:104000, 57:162000, 60:208000
 And time does the heavy lifting. Two hundred pounds a month from age twenty-two, growing at about seven percent a year, could be worth around four hundred and fifty grand by the time you're sixty. Start at about thirty-two, and it's about two hundred and eight thousand. Same money. Less than half the result.
 
-[broll search="red stock prices falling on trading screen" caption="Bad years happen"]
+[broll search="red stock prices falling on trading screen" caption="Bad years happen" src="36-red-stock-prices-falling-on-trading-scre.mp4" credit="Video 3758 by Joshua_Willson via Pixabay"]
 And yes, markets fall. Some years your pot will go down, sometimes a lot. That's the price of the growth.
 
 [text board="Index fund: hundreds of companies | Keep paying in: buy cheaper" art=index-fund-basket]
@@ -139,7 +139,7 @@ And check your workplace pension. If you're twenty-two or over and earn more tha
 [text board="Not taking the match | = turning down a pay rise | Free money, every month" icon=hand-coins]
 Plenty will match more if you put in more. If you're not taking the full match, you're turning down a pay rise. Free money, every single month.
 
-[broll search="barista handing takeaway coffee to customer paying by card" caption="£3.50 a day" cards="red:£3.50 every working day@fifty; red:about £900 a year@nine"]
+[broll search="barista handing takeaway coffee to customer paying by card" caption="£3.50 a day" cards="red:£3.50 every working day@fifty; red:about £900 a year@nine" src="43-barista-handing-takeaway-coffee-to-custo.mp4" credit="Video 1046 by Coverr-Free-Footage via Pixabay"]
 And you'll hear people say, just stop buying coffee. A three pound fifty coffee every working day is about nine hundred pounds a year.
 
 [text board="£900 won't close an £83K gap | Two things do: time + your income | Biggest lever: your pay" icon=hourglass]
