@@ -716,6 +716,15 @@ with its in-betweens, and props pop in on their word. Rooms, cues, cards and how
 to measure a new room: docs/pose-library.md "Set pieces" and "Sizing him in a
 room". The demos the format was built from are in experiments/broll-character.
 
+Footage scenes get the same cards: every amount said over a `[broll]` lands on the
+picture as it is said (`cards=` to write them, `cards=off` for none). A clip a
+little shorter than its scene plays slower to fill it (down to half speed) rather
+than looping; a vertical clip in a landscape video is flagged (it is soft there).
+
+A Short cut from a video with set pieces opens on its picture (never a blank
+page), ends on its last picture, has each edge on a measured pause, a hook that is
+the slice's sharpest claim, and its captions high on a white pill.
+
 ### Real figures and news
 
 A finance video should show the real number, not a guess, with the publisher

@@ -117,6 +117,19 @@ one change at a time where possible, so a result can be read.
   this week after a near-flat start), £25K Short 338, £250K Short 143, house long video 18. The long video is
   where watch hours come from: find its traffic source, and point the Shorts at long videos (Related video link).
 
+### Set pieces built into the pipeline (2026-10-29)
+- First pipeline-made test (a 47 s slice of the house recording, two set pieces, three footage scenes, plus a Short
+  the planner cut): Review: editor 6, animator 8, retention 7 / Short 4 (round 1); editor 6, animator 7,
+  retention 7 / Short 7 (round 2). Round two's must-fixes were then fixed and checked by eye, not reviewed again.
+- Found by the reviewers and fixed in the pipeline: every chunked render had 20-40 ms of digital silence at each
+  15 s chunk join (the voice is now laid back over the joined picture in one piece); Shorts opened and closed on a
+  blank page; a Short's last word was cut (its edge on the transcript's early end time; edges now snap to measured
+  pauses); the planner ended a Short on a setup line and hooked on a bare salary; a clip shorter than its scene
+  looped (a freeze and a jump back; it now plays slower); numbers said over footage had no cards.
+- Rule: a character walking out of frame reads as "the end" on a phone: no exits inside a Short.
+- Open: the planner could lift the sharpest claim to the front as a cold open (retention's idea); the footage
+  library needs more landscape UK homes and a saving shot (the street pan had to carry two scenes).
+
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage?
 2. Thumbnail: a face (Jeffrey) vs no face, once Canva thumbnails are in use.

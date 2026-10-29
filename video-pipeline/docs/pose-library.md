@@ -292,6 +292,12 @@ walk in, react on the word, act it out, leave. In a script:
   every amount said gets a card; `cards=off` for none.
 - `walk`: he walks in from the room's clear side first (`walk=left|right` to choose).
 - With no `{pose}` written, poses are picked from the words by the pose tags (a pose every six words at most).
+- point-board and hand-over aim at the card column by themselves; a prop cued while he holds out the money pops
+  into his hand, otherwise into the column.
+- He walks off the nearer edge after the last word only when there is time to clear the frame; never in a Short
+  (on a phone an exit reads as the end). A Short that opens on a set piece opens with him in place, no walk-in.
+- A set piece over 9 seconds pushes in towards him (up to 14%), so the payoff reads on a phone.
+- Footage scenes get cards too: every amount said over a [broll] lands on the picture (or its `cards=`).
 
 The render (remotion/src/paper/setpiece.tsx) crops the room for the frame, lightens it and boils it on 12 drawings
 a second, keeps the push-in and a shake on a shock on the same clock, and pins the cards outside the push so they
