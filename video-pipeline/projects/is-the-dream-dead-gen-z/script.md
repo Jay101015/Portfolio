@@ -20,7 +20,7 @@ And now AI is cutting the jobs that were meant to fix it.
 [broll lib="uni-students-library" caption="Our generation" cards="ink:grad jobs: nearly halved@halved; red:a home: 7.6× your salary@seven"]
 Graduate jobs in the UK have nearly halved in a year, and a home now costs about seven point six times your salary. So honestly, is the dream dead for Gen Z?
 
-[text board="What your money buys | What AI is doing | How we stay ahead" art=jeffrey cards="ink:I work in AI, every day@every; green:my honest plan@honest"]
+[text board="What your money buys | What AI is doing | How we stay ahead" art=crossroads cards="ink:I work in AI, every day@every; green:my honest plan@honest"]
 I'll show you what your money actually buys now, what AI is actually doing to jobs, because I work in it every day, and at the end, my honest plan to still get ahead.
 
 [title dur=2.4 kicker="The Everyday Investor" title="Is the dream dead for Gen Z?" subtitle="How we still get ahead"]
