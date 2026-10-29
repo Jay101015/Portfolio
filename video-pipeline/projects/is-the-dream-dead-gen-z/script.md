@@ -121,7 +121,7 @@ And time does the heavy lifting. Two hundred pounds a month from age twenty-two,
 [text keep=arrow board="Same money. | Less than half the result."]
 Same money. Less than half the result.
 
-[news search="FTSE 100 biggest one day fall"]
+[news search="FTSE 100 biggest one day fall" board="Markets fall | Some years, a lot" icon=trending-down cards="red:your pot goes down@down; ink:the price of the growth@price"]
 And yes, markets fall. Some years your pot will go down, sometimes a lot. That's the price of the growth.
 
 [text board="Index fund: hundreds of companies | Keep paying in: buy cheaper" art=index-fund-basket cards="red:panic and sell = get hurt@panic"]

@@ -100,11 +100,13 @@ def test_dry_run_leaves_the_script(tmp_path):
 
 def test_unfilled_fact_and_headline_become_board_lines():
     from pipeline.build import degrade_unfilled
-    sb = parse_script("# F\ntheme: whiteboard\n\n[stat fact=\"base rate\"]\nRates.\n\n[news search=\"pension charge cap\"]\nNews.\n\n[stat fact=\"uk.cpi\" value=\"3.8%\"]\nKept.\n")
+    sb = parse_script("# F\ntheme: whiteboard\n\n[stat fact=\"base rate\"]\nRates.\n\n[news search=\"pension charge cap\"]\nThe charge cap is changing, again.\n\n[stat fact=\"uk.cpi\" value=\"3.8%\"]\nKept.\n\n[news search=\"isa allowance cut\" board=\"ISA allowance | could be cut\"]\nThe ISA allowance could be cut.\n")
     notes = degrade_unfilled(sb)
     assert sb["scenes"][0]["type"] == "text" and sb["scenes"][0]["props"]["board"] == "Bank of England base rate"
-    assert sb["scenes"][1]["type"] == "text" and sb["scenes"][1]["props"]["board"] == "Pension charge cap"
-    assert sb["scenes"][2]["type"] == "stat" and len(notes) == 2
+    # the search words are never shown as if they were a headline: the first thing said, or the tag's board=
+    assert sb["scenes"][1]["type"] == "text" and sb["scenes"][1]["props"]["board"] == "The charge cap is changing"
+    assert sb["scenes"][2]["type"] == "stat" and len(notes) == 3
+    assert sb["scenes"][3]["props"]["board"] == "ISA allowance | could be cut"
 
 
 def test_headline_search_widens_when_the_phrase_finds_nothing():

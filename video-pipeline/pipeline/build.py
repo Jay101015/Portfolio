@@ -404,9 +404,12 @@ def degrade_unfilled(sb: dict) -> list[str]:
             sc["props"] = {"board": board, **({"art": p["art"]} if p.get("art") else {})}
             notes.append(f"scene {sc['id']}: the real figure for '{p['fact']}' was not filled in; the board shows '{board}' without a number")
         elif sc["type"] == "news" and not p.get("headline"):
-            board = p.get("caption") or str(p.get("search", "in the news")).strip().capitalize()
+            # the search words are not a headline (a board once read "Ftse 100 biggest one day fall"): the tag's own
+            # board= if it has one, else the first thing said in the scene
+            first = re.split(r"(?<=[.!?,])\s+", (sc.get("narration") or "").strip())[0].rstrip(".,!?")
+            board = p.get("board") or p.get("caption") or " ".join(first.split()[:7]) or "In the news"
             sc["type"] = "text"
-            sc["props"] = {"board": board}
+            sc["props"] = {"board": board, **{k: p[k] for k in ("art", "icon", "cards") if p.get(k)}}
             notes.append(f"scene {sc['id']}: no headline was found for '{p.get('search', '')}'; the board shows '{board}' instead of a clipping")
     return notes
 

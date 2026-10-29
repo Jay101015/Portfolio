@@ -191,7 +191,7 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
             p["next"] = a["next"]
     elif b.type == "news":
         # a real headline: search= asks the render to find one (GDELT, reputable outlets), or give headline/outlet/date/url yourself
-        for k in ("search", "headline", "outlet", "date", "url", "caption", "source"):
+        for k in ("search", "headline", "outlet", "date", "url", "caption", "source", "board"):  # board=: the line shown if no headline is found
             if k in a:
                 p[k] = a[k]
     elif b.type == "poster":
