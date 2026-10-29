@@ -35,7 +35,7 @@ const dw = (b: Brand, w = 900) => (b.board ? 400 : w);
 /** Words that land one at a time, each with its own tiny settle so the rhythm is not mechanical. */
 const Words: React.FC<{text: string; frame: number; fps: number; start?: number; per?: number; style?: React.CSSProperties; seed?: number}> = ({text, frame, fps, start = 4, per = 3, style, seed = 0}) => (
   <span style={style}>
-    {text.split(/\s+/).filter(Boolean).map((w, i) => {
+    {text.split(/[ \t\n\r]+/).filter(Boolean).map((w, i) => {
       const s = pop(frame, fps, start + i * per + Math.round(rnd(seed + i) * 2), 12 + rnd(seed + 40 + i) * 6);
       return (
         <span key={i} style={{display: 'inline-block', marginRight: '0.26em', opacity: Math.min(1, s * 1.5), transform: `translateY(${(1 - s) * 18}px) rotate(${(1 - s) * (rnd(seed + 80 + i) - 0.5) * 4}deg)`}}>

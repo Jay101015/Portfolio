@@ -30,7 +30,7 @@ from . import align as al
 from .enhance import enhance, level_from_header
 from .preview import write_preview
 from .auto_script import script_from_words
-from .script_parser import pace_scenes, parse_script, time_cues
+from .script_parser import pace_scenes, parse_script, room_for_silent, time_cues
 from .voice import fill_gated, snap_cuts, snap_spans, take_words, tighten_pauses
 from .footage_library import use_library
 from .shorts import SHORT_SPEED, cut_short, cut_spans, plan_shorts, pose_track, speed_up
@@ -849,6 +849,14 @@ def main(argv: list[str] | None = None) -> int:
             print(f"cuts: {moved} moved onto the pause between words; captions: {changed} words follow the take, not the script")
             for line in long_scenes(sb):
                 print(line)
+            # a card with no words between spoken scenes (the title after the teasers) gets its own beat, in room tone
+            room = room_for_silent(sb)
+            if room:
+                roomed = os.path.join(project, ".cache", "voice-room.wav")
+                insert_silences(audio, roomed, room)
+                audio, _ = fill_gated(roomed, os.path.join(project, ".cache", "voice-room-tone.wav"), tone_from=audio)
+                wav = al.to_wav16k(audio, os.path.join(project, ".cache", "voice-room-16k.wav"))
+                print(f"silent cards: {len(room)} given their own beat ({sum(n for _, n in room):.1f}s added to the voice)")
         else:
             print("WARNING: voiceover present but not transcribed (--backend none, no cache): timings are estimates")
             sb["durationSec"] = round(total + 0.5, 3)

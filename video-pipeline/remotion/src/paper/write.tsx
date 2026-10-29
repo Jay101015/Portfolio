@@ -49,7 +49,7 @@ type WriteProps = {
 export const Write: React.FC<WriteProps> = ({text, frame, fps, start = 0, cps = CPS, style, wordGap = '0.28em', tint}) => {
   const per = fps / cps; // frames per character
   let k = 0;
-  const words = String(text).split(/\s+/).filter(Boolean);
+  const words = String(text).split(/[ \t\n\r]+/).filter(Boolean);
   const seed = Array.from(String(text)).reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 100003, 7);
   return (
     <span style={style}>

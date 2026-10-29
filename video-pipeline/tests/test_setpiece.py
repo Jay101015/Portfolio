@@ -151,3 +151,31 @@ class ShortCueTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SilentCardTests(unittest.TestCase):
+    def test_a_wordless_card_between_spoken_scenes_gets_its_own_beat(self):
+        from pipeline.script_parser import room_for_silent
+        w = lambda t, s, e: {"w": t, "s": s, "e": e}  # noqa: E731
+        sb = {"durationSec": 12.0, "scenes": [
+            {"id": 1, "start": 0.0, "end": 4.8, "words": [w("the", 0.2, 0.5), w("end.", 4.0, 4.5)], "props": {}, "cues": [{"t": 4.0, "do": "card"}]},
+            {"id": 2, "start": 2.0, "end": 5.0, "words": [], "props": {"dur": 3.0}},
+            {"id": 3, "start": 5.0, "end": 12.0, "words": [w("Next", 5.25, 5.6)], "props": {}, "cues": [{"t": 5.3, "do": "card"}]},
+        ]}
+        silences = room_for_silent(sb)
+        a, b, c = sb["scenes"]
+        self.assertEqual(a["end"], 4.65)              # the last line keeps the screen until it is said
+        self.assertEqual((b["start"], b["end"]), (4.65, 7.65))
+        self.assertEqual(silences, [(4.65, 2.65)])    # 4.65 + 3 + 0.25 lead - 5.25
+        self.assertEqual(c["start"], 7.65)
+        self.assertAlmostEqual(c["words"][0]["s"], 7.9)
+        self.assertAlmostEqual(c["cues"][0]["t"], 7.95)
+        self.assertEqual(a["cues"][0]["t"], 4.0)      # nothing before the card moves
+
+    def test_cards_after_the_last_word_are_left_alone(self):
+        from pipeline.script_parser import room_for_silent
+        sb = {"scenes": [
+            {"id": 1, "start": 0.0, "end": 3.0, "words": [{"w": "bye", "s": 1.0, "e": 1.4}], "props": {}},
+            {"id": 2, "start": 3.0, "end": 19.0, "words": [], "props": {"dur": 16}},
+        ]}
+        self.assertEqual(room_for_silent(sb), [])

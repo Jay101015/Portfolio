@@ -23,7 +23,7 @@ Graduate jobs in the UK have nearly halved in a year, and a home now costs about
 [text board="What your money buys | What AI is doing | How we stay ahead" art=crossroads]
 I'll show you what your money actually buys now, what AI is actually doing to jobs, because I work in it every day, and at the end, my honest plan to still get ahead.
 
-[title kicker="The Everyday Investor" title="Is the dream dead for Gen Z?" subtitle="How we still get ahead"]
+[title dur=3.5 kicker="The Everyday Investor" title="Is the dream dead for Gen Z?" subtitle="How we still get ahead"]
 
 [takeaway title="Your money buys less" n="1" of="3"]
 Let's start with the thing you feel every time you tap your card.
@@ -65,7 +65,7 @@ So the cost of living has squeezed us. But the bigger threat to our generation i
 Because the jobs we start our careers in are disappearing fast.
 
 [stat value="8,400" label="UK graduate job ads in July" sub="down from over 15,000 a year earlier" source="Adzuna, July 2026"]
-In July, there were about eight thousand four hundred graduate job adverts in the UK, down from over fifteen thousand a year earlier. The lowest since records began in 2016. Nearly half the doors, closed in a single year.
+In July, there were about 8,400 graduate job adverts in the UK, down from over 15,000 a year earlier. The lowest since records began in 2016. Nearly half the doors, closed in a single year.
 
 [stat value="−30%" label="Entry-level job ads since ChatGPT launched" sub="November 2022 to now" source="Adzuna, 2025"]
 Entry-level roles are down by more than thirty percent since ChatGPT launched.
@@ -94,10 +94,8 @@ Hands: electricians, plumbers, anything physical in a real building. AI can draf
 [text board="Judgement | AI is creating jobs too" art=contract-signing]
 And judgement: the person who signs off, owns the decision, and takes the blame if it goes wrong. And AI is creating jobs too. Roles like mine, helping firms use it properly, barely existed a few years ago.
 
-[text board="Now the good part" art=sam-pleased]
-So that's the bad news. Now the good part.
-
 [takeaway title="How we stay ahead" n="3" of="3"]
+So that's the bad news. Now the good part.
 So, is the dream dead? No. But you have to play it differently. Here's how we stay ahead, starting with an advantage nobody talks about.
 
 [text board="Stocks & shares ISA | On your phone, in 10 minutes | From a few pounds" art=investing-app]
@@ -109,7 +107,10 @@ right: Start at 32 | £208K | by 60
 And time does the heavy lifting. Two hundred pounds a month from age twenty-two, growing at about seven percent a year, could be worth around four hundred and fifty grand by the time you're sixty. Start at about thirty-two, and it's about two hundred and eight thousand. Same money. Less than half the result.
 
 [broll search="stock market chart falling then rising on screen" pick=2 caption="Bad years happen" src="33-stock-market-chart-falling-then-rising-o.mp4" credit="Video 349091 by MuhammadAhmad10 via Pixabay"]
-And yes, markets fall. Some years your pot will go down, sometimes a lot. That's the price of the growth. An index fund spreads your money across hundreds of companies, and if you keep paying in through the bad years, you're buying cheaper. The people who get hurt are usually the ones who panic and sell.
+And yes, markets fall. Some years your pot will go down, sometimes a lot. That's the price of the growth.
+
+[text board="Index fund: hundreds of companies | Keep paying in: buy cheaper" art=index-fund-basket]
+An index fund spreads your money across hundreds of companies, and if you keep paying in through the bad years, you're buying cheaper. The people who get hurt are usually the ones who panic and sell.
 
 [text board="3 months of essentials first" art=emergency-jar]
 That's also why I'd keep three months of essentials in easy-access savings first, so a broken boiler never forces you to sell at the bottom.
@@ -118,19 +119,25 @@ That's also why I'd keep three months of essentials in easy-access savings first
 And if a home is the goal, a Lifetime ISA adds a twenty-five percent bonus to what you save, up to a thousand pounds a year, if you're eighteen to thirty-nine and buying a first home up to four hundred and fifty thousand. Our parents never had it. Use it.
 
 [stat value="3%" label="The least your employer must add to your pension" sub="if you're 22+ and earn over £10,000" source="GOV.UK, 2026"]
-And check your workplace pension. If you're twenty-two or over and earn more than ten thousand pounds, your employer has to pay in at least three percent of your qualifying earnings. Plenty will match more if you put in more. If you're not taking the full match, you're turning down a pay rise. Free money, every single month.
+And check your workplace pension. If you're twenty-two or over and earn more than ten thousand pounds, your employer has to pay in at least three percent of your qualifying earnings.
 
-[text board="Skip the coffee? | £3.50 a day ≈ £900 a year" art=coffee-shop]
+[text board="Not taking the match = turning down a pay rise" art=pension-match]
+Plenty will match more if you put in more. If you're not taking the full match, you're turning down a pay rise. Free money, every single month.
+
+[stat value="£900 a year" label="A £3.50 coffee every working day" sub="worth knowing, but it won't close an £83K gap"]
 And you'll hear people say, just stop buying coffee. A three pound fifty coffee every working day is about nine hundred pounds a year. Worth knowing, but it won't close an eighty-three grand gap. Two things close that gap: time, and your income.
 
-[text board="Your pay: the biggest lever | £5,000 rise > years of growth" art=pay-rise-ask]
+[stat value="£5,000" label="A pay rise does more for you this year" sub="than years of growth on a small pot"]
 Because in your twenties, the biggest lever on your money isn't your investments. It's your pay. A five thousand pound pay rise does more for you this year than years of growth on a small pot. And right now, the fastest way to raise your pay is to get good at AI.
 
-[list title="My plan: AI habits"]
-- Use it every day
-- Ask it well, check its work
-- Do what it can't
-Here's what I'd do. One: use AI every day, for real work, not for fun. Two: learn to ask it well. Give it the context, show it an example, tell it what good looks like. And check its work, because AI does get things wrong very confidently. It's known to hallucinate. Three: get good at what it can't do. Judgement, people, ownership, decisions. AI can draft an email, but it can't sit across the table from them.
+[text board="My plan, 1: use AI every day | For real work, not for fun" art=laptop-standing-order]
+Here's what I'd do. One: use AI every day, for real work, not for fun.
+
+[text board="2: ask it well | Context · an example · what good looks like | Check it: it hallucinates" art=maya-thinking]
+Two: learn to ask it well. Give it the context, show it an example, tell it what good looks like. And check its work, because AI does get things wrong very confidently. It's known to hallucinate.
+
+[broll search="business meeting people talking across table" caption="3: what AI can't do" cards="green:judgement@judgement; green:people@people; green:sitting across the table@table"]
+Three: get good at what it can't do. Judgement, people, ownership, decisions. AI can draft an email, but it can't sit across the table from them.
 
 [set room=office cards="ink:build one useful thing@build; green:this week: one weekly task, with AI@week"]
 And four: {explain} build one thing with it. A tool that saves you an hour, a spreadsheet that tracks your money. The moment you've built one useful thing, you stop being {thumbs-up} scared of it. Start this week. Pick one thing you do every week and do it with AI. That's how I got started.
@@ -142,9 +149,9 @@ And four: {explain} build one thing with it. A tool that saves you an hour, a sp
 - Learn AI before it learns your job
 So, is the dream dead? No. But it's a different dream. Things cost more, our pay has barely moved, and AI is changing how careers start. But we have access to investing our parents never had, time on our side, and tools that make us more valuable, if we learn them.
 
-[text board="Is the dream dead? Tell me below | Not financial advice. Capital at risk." art=sam-thinking]
+[broll src="watch-next-200-1000-10000.mp4" caption="Watch next: £200, £1,000 or £10,000 after payday" credit="The Everyday Investor" vol=0 next=on cards="ink:Is the dream dead? Tell me below@thank; ink:Not financial advice. Capital at risk.@enjoyed"]
 Thank you for watching this video. If you enjoyed it, please like and subscribe and make sure to watch my other ones.
 
-[broll src="watch-next-200-1000-10000.mp4" caption="Watch next: £200, £1,000 or £10,000 after payday" credit="The Everyday Investor" vol=1 dur=16 next=on]
+[broll src="watch-next-200-1000-10000.mp4" caption="Watch next: £200, £1,000 or £10,000 after payday" credit="The Everyday Investor" from=6 vol=1 dur=12 next=on]
 
 [outro title="The Everyday Investor" cta="Subscribe for the next one" dur=5]

@@ -388,6 +388,51 @@ def pace_scenes(sb: dict[str, Any], lead: float, hold: float) -> list[tuple[floa
     return silences
 
 
+def room_for_silent(sb: dict[str, Any], after: float = 0.15, lead: float = 0.25) -> list[tuple[float, float]]:
+    """A card with no words between two spoken scenes (the title after the teasers) was given its `dur` out of the end
+    of the scene before it, so it covered the last line said there. Each one now gets its own stretch: it starts just
+    after the last word before it and runs its `dur`, and the voice after it moves later to make the room. Returns the
+    (at, length) silences to put into the voiceover, in its own clock, as pace_scenes does."""
+    scenes = sb["scenes"]
+    spoken = [i for i, sc in enumerate(scenes) if sc.get("words")]
+    if len(spoken) < 2:
+        return []
+    silences: list[tuple[float, float]] = []
+    shift = 0.0
+
+    def move(sc: dict[str, Any], by: float) -> None:
+        for w in sc.get("words", []) or []:
+            w["s"] = round(w["s"] + by, 3)
+            w["e"] = round(w["e"] + by, 3)
+        for c in sc.get("cues", []) or []:
+            if "t" in c:
+                c["t"] = round(c["t"] + by, 3)
+        sc["start"] = round(sc["start"] + by, 3)
+        sc["end"] = round(sc["end"] + by, 3)
+
+    for i, sc in enumerate(scenes):
+        if shift:
+            move(sc, shift)
+        if sc.get("words") or not (spoken[0] < i < spoken[-1]):
+            continue
+        prev = max(j for j in spoken if j < i)
+        nxt = min(j for j in spoken if j > i)
+        dur = float(sc["props"].get("dur", 3.0))
+        start = scenes[prev]["words"][-1]["e"] + after
+        first_next = scenes[nxt]["words"][0]["s"] + shift  # not moved yet
+        need = round(start + dur + lead - first_next, 3)
+        if need > 0.05:
+            silences.append((round(start - shift, 3), need))
+            shift += need
+        scenes[i - 1]["end"] = round(start, 3)
+        sc["start"], sc["end"] = round(start, 3), round(start + dur, 3)
+        if i + 1 < len(scenes):
+            scenes[i + 1]["start"] = round(start + dur, 3) - shift  # moved by `shift` when its turn comes
+    if shift:
+        sb["durationSec"] = round(sb.get("durationSec", scenes[-1]["end"]) + shift, 3)
+    return silences
+
+
 def _auto_blocks(paragraphs: list[str]) -> list[Block]:
     """Untagged script: make reasonable scenes from plain paragraphs."""
     blocks: list[Block] = []
