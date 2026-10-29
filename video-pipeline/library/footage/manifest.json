@@ -223,5 +223,62 @@
   "page": "https://www.pexels.com/video/3679680/",
   "license": "Pexels licence",
   "credit": "Video via Pexels"
+ },
+ {
+  "name": "drill-in-hand",
+  "file": "drill-in-hand.mp4",
+  "orientation": "landscape",
+  "w": 1920,
+  "h": 1080,
+  "seconds": 6.2,
+  "about": "a hand holding up a green cordless drill against a plain pale wall, the drill turning slightly",
+  "tags": [
+   "drill",
+   "tools",
+   "diy",
+   "trades",
+   "tradesman",
+   "electrician",
+   "plumber",
+   "builder",
+   "hands",
+   "manual work",
+   "fix",
+   "repair",
+   "physical job"
+  ],
+  "source": "Pexels",
+  "id": "12281949",
+  "page": "https://www.pexels.com/video/12281949/",
+  "license": "Pexels licence",
+  "credit": "Video via Pexels"
+ },
+ {
+  "name": "tradesman-van-tools",
+  "file": "tradesman-van-tools.mp4",
+  "orientation": "vertical",
+  "w": 1920,
+  "h": 3414,
+  "seconds": 13.4,
+  "about": "a tradesman in orange overalls and a hard hat standing by his open van full of tools, a cable reel in his hand (kept 1920 wide so a landscape crop of him, focus=\"50 45\", stays sharp)",
+  "tags": [
+   "tradesman",
+   "electrician",
+   "plumber",
+   "builder",
+   "trades",
+   "van",
+   "tools",
+   "manual work",
+   "physical job",
+   "self-employed",
+   "work",
+   "job"
+  ],
+  "source": "Pexels",
+  "id": "6195154",
+  "page": "https://www.pexels.com/video/6195154/",
+  "license": "Pexels licence",
+  "credit": "Video via Pexels"
  }
 ]

@@ -25,6 +25,8 @@ numbers are turned into stat callouts where it is obvious.
 """
 from __future__ import annotations
 
+import json
+import os
 import re
 from dataclasses import dataclass, field
 from typing import Any
@@ -173,7 +175,8 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
                 p[k] = a[k]
     elif b.type in ("clip", "broll"):
         # broll: the footage fills the whole frame, a short caption and the credit over it; clip: the framed card
-        for k in ("src", "caption", "credit", "fallback", "search", "want", "zoom", "focus", "mag", "rotate", "flip", "bright", "contrast", "sat", "bw", "look", "lib"):
+        # phone=on: a vertical screen recording shown in a drawn phone on the board, the cards beside it
+        for k in ("src", "caption", "credit", "fallback", "search", "want", "zoom", "focus", "mag", "rotate", "flip", "bright", "contrast", "sat", "bw", "look", "lib", "phone"):
             if k in a:
                 p[k] = a[k]
         if "pick" in a:  # pick=2: the second of the finder's candidates (footage-candidates.png shows three)
@@ -433,6 +436,40 @@ def room_for_silent(sb: dict[str, Any], after: float = 0.15, lead: float = 0.25)
     return silences
 
 
+_DRAWINGS: tuple[set[str], set[str]] | None = None
+
+
+def _drawing_names() -> tuple[set[str], set[str]]:
+    """(drawings art= can name, doodles icon= can name), read from the renderer's own lists: art.tsx's catalogue,
+    the traced illustrations and stop-motion strips (library manifests) and doodles.ts."""
+    global _DRAWINGS
+    if _DRAWINGS is None:
+        here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        paper = os.path.join(here, "remotion", "src", "paper")
+        art, icons = set(), set()
+        try:
+            art |= set(re.findall(r"^  '?([a-z0-9-]+)'?: \{$", open(os.path.join(paper, "art.tsx"), encoding="utf-8").read(), re.M))
+            icons |= set(re.findall(r'"([a-z0-9-]+)":\[\[', open(os.path.join(paper, "doodles.ts"), encoding="utf-8").read()))
+            for lib in ("illus", "flipbook"):
+                art |= {e["name"] for e in json.load(open(os.path.join(here, "library", lib, "manifest.json"), encoding="utf-8"))}
+        except (OSError, ValueError):
+            pass
+        _DRAWINGS = (art, icons)
+    return _DRAWINGS
+
+
+def _unknown_drawings(i: int, props: dict[str, Any]) -> list[str]:
+    """A name the renderer does not have draws nothing, silently (icon=warning on a board: the doodle is
+    triangle-alert): say so at build time."""
+    art, icons = _drawing_names()
+    out = []
+    if art and props.get("art") and props["art"] not in art | {"off", "none"}:
+        out.append(f"scene {i}: art={props['art']} is not a drawing in the library; nothing will be drawn")
+    if icons and props.get("icon") and props["icon"] not in icons:
+        out.append(f"scene {i}: icon={props['icon']} is not a doodle (icon= takes a doodle name from doodles.ts); nothing will be drawn")
+    return out
+
+
 def _auto_blocks(paragraphs: list[str]) -> list[Block]:
     """Untagged script: make reasonable scenes from plain paragraphs."""
     blocks: list[Block] = []
@@ -528,6 +565,7 @@ def parse_script(md: str) -> dict[str, Any]:
             "cues": [],
             "props": _block_to_props(b, title),
         }
+        problems += _unknown_drawings(i, sc["props"])
         if b.type == "set":
             problems += setpiece.plan(sc, b.attrs)
         elif b.type == "broll":

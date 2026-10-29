@@ -2,6 +2,7 @@
 """Cut a generated sheet of boxed poses (a grid, usually 4 x 2) into the pose library.
 
     python3 scripts/pose-cut.py library/poses/source/batch-1-talking.png explain point-board count-fingers ...
+    python3 scripts/pose-cut.py --seated library/poses/source/batch-6-desk.png desk-type desk-type-b ...
 
 Names are given in reading order (left to right, top row first); `-` skips a panel. Each pose becomes
 remotion/public/poses/<name>.png: ink on a transparent ground (and poses/solid/<name>.png, filled with white paper), the panel's floor line removed, cropped to the figure
@@ -20,6 +21,7 @@ ROOT = os.path.join(os.path.dirname(__file__), "..")
 OUT = os.path.join(ROOT, "remotion", "public", "poses")
 MANIFEST = os.path.join(ROOT, "library", "poses", "manifest.json")
 STAND_H = 800  # a standing figure, head to toe, in the saved pose
+SEATED = 0.76  # a seated figure's head above the floor, as a share of his standing height (1.33 m of 1.75 m)
 
 
 def runs(mask: np.ndarray) -> list[tuple[int, int]]:
@@ -117,6 +119,9 @@ def ink(c: np.ndarray) -> Image.Image:
 
 
 def main(argv: list[str]) -> None:
+    # --seated: a batch with nobody standing (at a desk, on a sofa) is sized by the seated head height instead
+    seated = "--seated" in argv
+    argv = [x for x in argv if x != "--seated"]
     sheet, names = argv[0], argv[1:]
     src = Image.open(sheet).convert("L")
     a = np.array(src)
@@ -130,8 +135,12 @@ def main(argv: list[str]) -> None:
         d = c < 140
         ys, xs = np.nonzero(d)
         cuts.append((c, g, ys.min(), ys.max(), xs.min(), xs.max()))
-    standing = sorted(g - top for c, g, top, bottom, *_ in cuts if g - bottom < 12)
-    scale = STAND_H / standing[len(standing) // 2]
+    if seated:
+        heights = sorted(g - top for c, g, top, bottom, *_ in cuts)
+        scale = STAND_H * SEATED / heights[len(heights) // 2]
+    else:
+        standing = sorted(g - top for c, g, top, bottom, *_ in cuts if g - bottom < 12)
+        scale = STAND_H / standing[len(standing) // 2]
     os.makedirs(OUT, exist_ok=True)
     try:
         with open(MANIFEST, encoding="utf-8") as f:

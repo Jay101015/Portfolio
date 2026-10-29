@@ -192,7 +192,7 @@ def auto_poses(narration: str, every: int = 6) -> list[dict[str, Any]]:
     words = [_norm(w) for w in narration.split()]
     tagged = []
     for name, e in lib.items():
-        if e.get("into") or name in ("stand", "stand-3q", "stand-side", "sit", "jump-crouch-side"):
+        if e.get("into") or e.get("seated") or name in ("stand", "stand-3q", "stand-side", "sit", "jump-crouch-side"):
             continue
         for tag in e.get("tags") or []:
             tag_words = [_norm(t) for t in tag.split()]

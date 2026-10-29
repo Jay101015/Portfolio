@@ -968,6 +968,28 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
       <Media src={src} props={{zoom: 'in', ...scene.props}} durationFrames={total} width={width} height={height} />
     )
   ) : null;
+  if (src && String(scene.props.phone ?? '') === 'on' && !isVertical) {
+    // a phone's screen recording: the phone stands on the board left of centre, upright, the cards in the column on the right
+    const ph = height * 0.86;
+    const pw = ph * 0.47;
+    const bez = 16 * u;
+    const tilt = -2 + 0.6 * Math.sin(frame / fps);
+    return (
+      <AbsoluteFill style={{background: brand.bg, overflow: 'hidden'}}>
+        <div style={{position: 'absolute', left: width * 0.36 - pw / 2, top: (height - ph) / 2, width: pw, height: ph, transform: `rotate(${tilt}deg) translateY(${(1 - s) * 60 * u}px)`, opacity: Math.min(1, s * 1.5),
+          background: '#1d1d1f', borderRadius: 54 * u, padding: bez, boxShadow: `0 ${18 * u}px ${48 * u}px rgba(40,30,10,0.3)`}}>
+          <div style={{position: 'relative', width: '100%', height: '100%', borderRadius: 40 * u, overflow: 'hidden', background: '#000'}}>
+            <Media src={src} props={{...scene.props, zoom: 'none'}} durationFrames={total} width={pw - bez * 2} height={ph - bez * 2} />
+          </div>
+        </div>
+        {caption ? (
+          <div style={{position: 'absolute', left: pad * 0.8, bottom: pad * 0.9, transform: `rotate(-1deg) scale(${0.9 + 0.1 * s})`, transformOrigin: 'left bottom', opacity: Math.min(1, s * 1.5), background: '#fff', color: brand.ink, fontFamily: hand(brand), fontSize: labelSize, lineHeight: 1.15, padding: `${10 * u}px ${26 * u}px`, boxShadow: `0 ${8 * u}px ${24 * u}px rgba(0,0,0,0.2)`, border: `${3 * u}px solid ${brand.ink}`}}>
+            <Write text={caption} frame={frame} fps={fps} start={Math.round(fps * 0.4)} cps={30} />
+          </div>
+        ) : null}
+      </AbsoluteFill>
+    );
+  }
   return (
     <AbsoluteFill style={{background: src ? '#111' : brand.bg, overflow: 'hidden'}}>
       {src ? (

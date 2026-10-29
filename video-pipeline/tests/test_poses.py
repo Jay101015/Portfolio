@@ -22,6 +22,9 @@ def test_each_sheet_cuts_into_as_many_panels_as_it_has_poses():
             from_sheet[e["source"]] = from_sheet.get(e["source"], 0) + 1
     src = os.path.join(ROOT, "library", "poses", "source")
     for f in sorted(os.listdir(src)):
+        if f.endswith("-single.png"):  # one unboxed drawing, cut whole
+            assert from_sheet.get(f, 0) <= 1, f
+            continue
         a = np.array(Image.open(os.path.join(src, f)).convert("L"))
         n = len(pc.grid(a))
         # a sheet is a 4 x 2 grid, a short redo row or a single redone panel, and holds at least the poses taken from it

@@ -201,6 +201,164 @@
   "core": true
  },
  {
+  "name": "desk",
+  "tags": [
+   "work",
+   "job",
+   "office",
+   "my job",
+   "laptop",
+   "typing",
+   "9 to 5",
+   "consulting"
+  ],
+  "about": "at his own desk, typing on a laptop, focused (the clean single drawing)",
+  "file": "poses/desk.png",
+  "w": 560,
+  "h": 684,
+  "foot_x": 272,
+  "floor_y": 616,
+  "source": "desk-single.png",
+  "seated": true
+ },
+ {
+  "name": "desk-facepalm",
+  "tags": [
+   "mistake",
+   "wrong",
+   "hallucinate",
+   "oops"
+  ],
+  "about": "at the desk, elbow down, hand over his face",
+  "file": "poses/desk-facepalm.png",
+  "w": 569,
+  "h": 696,
+  "foot_x": 278,
+  "floor_y": 606,
+  "source": "batch-6-desk.png",
+  "seated": true
+ },
+ {
+  "name": "desk-lean-back",
+  "tags": [
+   "done",
+   "easy",
+   "minutes",
+   "relax",
+   "finished"
+  ],
+  "about": "leaning back in the desk chair, hands behind his head, pleased",
+  "file": "poses/desk-lean-back.png",
+  "w": 590,
+  "h": 701,
+  "foot_x": 325,
+  "floor_y": 613,
+  "source": "batch-6-desk.png",
+  "seated": true
+ },
+ {
+  "name": "desk-point",
+  "tags": [
+   "look",
+   "this",
+   "on screen",
+   "here"
+  ],
+  "about": "at the desk, turned to us, pointing at the laptop screen",
+  "file": "poses/desk-point.png",
+  "w": 565,
+  "h": 718,
+  "foot_x": 282,
+  "floor_y": 628,
+  "source": "batch-6-desk.png",
+  "seated": true
+ },
+ {
+  "name": "desk-reading",
+  "tags": [
+   "document",
+   "contract",
+   "report",
+   "reading",
+   "statement"
+  ],
+  "about": "at the desk reading a printed document, laptop open",
+  "file": "poses/desk-reading.png",
+  "w": 582,
+  "h": 718,
+  "foot_x": 292,
+  "floor_y": 626,
+  "source": "batch-6-desk.png",
+  "seated": true
+ },
+ {
+  "name": "desk-shocked",
+  "tags": [
+   "shocked",
+   "what",
+   "can't believe",
+   "hours"
+  ],
+  "about": "at the desk, jaw dropped, hands by his face, staring at the screen",
+  "file": "poses/desk-shocked.png",
+  "w": 572,
+  "h": 710,
+  "foot_x": 283,
+  "floor_y": 618,
+  "source": "batch-6-desk.png",
+  "seated": true
+ },
+ {
+  "name": "desk-thumbs-up",
+  "tags": [
+   "good",
+   "works",
+   "yes",
+   "recommend"
+  ],
+  "about": "at the desk, turned to us, thumbs up, a hand on the laptop",
+  "file": "poses/desk-thumbs-up.png",
+  "w": 570,
+  "h": 724,
+  "foot_x": 288,
+  "floor_y": 633,
+  "source": "batch-6-desk.png",
+  "seated": true
+ },
+ {
+  "name": "desk-type",
+  "tags": [
+   "typing",
+   "work",
+   "laptop",
+   "using ai",
+   "prompt"
+  ],
+  "about": "at a desk typing on a laptop; loops with desk-type-b",
+  "file": "poses/desk-type.png",
+  "w": 557,
+  "h": 718,
+  "foot_x": 271,
+  "floor_y": 628,
+  "source": "batch-6-desk.png",
+  "seated": true,
+  "loop": "desk-type-b"
+ },
+ {
+  "name": "desk-type-b",
+  "tags": [
+   "typing"
+  ],
+  "about": "at a desk typing, fingers moved: the second drawing of the typing loop",
+  "file": "poses/desk-type-b.png",
+  "w": 557,
+  "h": 718,
+  "foot_x": 271,
+  "floor_y": 628,
+  "source": "batch-6-desk.png",
+  "seated": true
+ },
+ {
   "name": "empty-pockets",
   "tags": [
    "broke",

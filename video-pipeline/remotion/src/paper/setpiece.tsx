@@ -124,6 +124,9 @@ const figureAt = (scene: Scene, cues: SetCue[], st: Stage, W: number, H: number,
   // the dip before the next key pose (anticipation), unless an in-between is about to do that job
   const next = poses.find((c) => c.t > tq + 1e-6);
   if (next && !next.ib && (!cue || !cue.ib) && (next.t - tq) * STOP <= 1) [sx, sy] = [1.03, 0.96];
+  // a pose with a loop partner (typing: desk-type and desk-type-b) swaps between the two while it is held, on threes
+  const partner = (POSE[name] as {loop?: string} | undefined)?.loop;
+  if (partner && POSE[partner] && cue && Math.floor(((tq - at) * STOP) / 3) % 2 === 1) name = partner;
   const e = POSE[name] ?? POSE.stand;
   return {kind: 'pose' as const, src: `poses/solid/${e.name}.png`, e, x: X, lift, flip, sx, sy, age: (tq - at) * STOP, name: e.name};
 };

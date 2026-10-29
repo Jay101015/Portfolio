@@ -118,7 +118,7 @@ Status: `have` = cut and in the library, blank = still to make.
 
 | pose | shows | tags | status |
 |---|---|---|---|
-| ★ desk | working at a desk with a laptop | work, job, office, 9 to 5 | |
+| ★ desk | working at a desk with a laptop (batch 6: desk, desk-type + desk-type-b typing loop, desk-point, desk-lean-back, desk-shocked, desk-facepalm, desk-reading, desk-thumbs-up; each drawn with its own desk and chair, cut with `pose-cut.py --seated`; never picked by the words, so name them as cues and use no walk-in) | work, job, office, 9 to 5 | have |
 | ★ payslip | reading a payslip, frowning | payslip, salary, tax, take-home | |
 | commute | standing on a train holding a rail | commute, train, travel to work | have (train-b, near enough) |
 | side-hustle | at a laptop at night, lamp on | side hustle, extra income, evenings | |
