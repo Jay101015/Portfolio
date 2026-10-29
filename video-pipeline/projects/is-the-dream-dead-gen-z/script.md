@@ -28,7 +28,7 @@ I'll show you what your money actually buys now, what AI is actually doing to jo
 [takeaway title="Your money buys less" n="1" of="3"]
 Let's start with the thing you feel every time you tap your card.
 
-[shrink value="£100" to="£77" years=5 label="£100 of 2021 money, today" note="what £100 from 2021 buys today" source="ONS CPI, July 2026"]
+[shrink value="£100" to="£77" years=5 label="£100 of 2021 money, today" note="£100 today buys what £77 did in 2021" source="ONS CPI, July 2026"]
 Since the start of 2021, prices have gone up by about thirty percent. So a hundred pounds today buys what seventy-seven pounds bought then.
 
 [broll search="uk supermarket shopping basket food prices" caption="The weekly shop" cards="red:food +38% since before Covid@thirty-eight" src="08-uk-supermarket-shopping-basket-food-pric.mp4" credit="Video 47601 by Engin_Akyurt via Pixabay"]
@@ -43,7 +43,7 @@ For a lot of us, that's over a third of our pay, gone before we've even bought a
 [stat value="9%" label="Student loan, on pay over £25,000" sub="Plan 5 graduates, England" source="Department for Education, August 2025"]
 Then there's one our parents never paid at all. If you went to uni in England recently, nine percent of everything you earn over twenty-five thousand goes on your student loan, on top of tax and National Insurance.
 
-[stat value="£1,300 a year" label="Student loan on the typical £39,300 salary" sub="a second tax, for decades" source="9% over £25,000: Department for Education, August 2025"]
+[stat value="£1,300 a year" label="Student loan on the typical £39K salary" sub="a second tax, for decades" source="9% over £25,000: Department for Education, August 2025"]
 On the typical salary of thirty-nine thousand three hundred, that's about thirteen hundred pounds a year. A second tax most of us will pay for decades.
 
 [text board="Real pay: barely past 2008" art=payslip]
@@ -55,7 +55,7 @@ And the {thinking} biggest thing most of us are saving for shows it best. In 199
 [broll lib="uk-semis-street-pan" caption="Homes like these" cards="green:7.6×: the best since 2015@best"]
 To be fair, there's a little good news. Pay has been rising faster than house prices for a few years, so that seven point six is actually the best it's been since 2015.
 
-[broll lib="estate-agent-sold" caption="First-time buyers" cards="ink:first-time buyers: 34@thirty-four"]
+[broll lib="estate-agent-sold" caption="First-time buyers" cards="ink:first-time buyers: 34@average"]
 But the average first-time buyer is still thirty-four.
 
 [text board="The bigger threat: the jobs" art=job-interview]
@@ -83,7 +83,10 @@ But AI is doing the exact tasks junior people used to learn on. Writing first dr
 Think about it from the boss's side. Why hire three juniors to write first drafts when one person with AI can do it in an afternoon? The hiring doesn't stop. It just shrinks.
 
 [set room=office walk cards="ink:me: AI consultant for law firms@consulting; ink:sorting documents@sorting; ink:drafting statements@drafting"]
-And I see this up close, because it's literally my job. I work in AI consulting, {explain} helping law firms use AI properly. Every week, I watch tasks that used to take a person {shocked} hours get done, such as {count-fingers} sorting through a document and drafting up a statement. {but-finger} But here's what nobody tells you. The people getting left behind {explain} aren't the ones AI replaces. It's the ones who refuse to learn it. The people who use it well become faster, more valuable {thumbs-up} and harder to replace.
+And I see this up close, because it's literally my job. I work in AI consulting, {explain} helping law firms use AI properly. Every week, I watch tasks that used to take a person {shocked} hours get done, such as {count-fingers} sorting through a document and drafting up a statement. 
+
+[text board="Left behind: the ones who won't learn it | Use it well: harder to replace" art=sam-worried]
+But here's what nobody tells you. The people getting left behind aren't the ones AI replaces. It's the ones who refuse to learn it. The people who use it well become faster, more valuable and harder to replace.
 
 [broll search="nurse talking with patient hospital" caption="People" cards="green:people@people"]
 So which jobs are safest? The ones built on three things AI is still bad at. People: nursing, teaching, selling, leading a team.
@@ -112,10 +115,10 @@ And yes, markets fall. Some years your pot will go down, sometimes a lot. That's
 [text board="Index fund: hundreds of companies | Keep paying in: buy cheaper" art=index-fund-basket]
 An index fund spreads your money across hundreds of companies, and if you keep paying in through the bad years, you're buying cheaper. The people who get hurt are usually the ones who panic and sell.
 
-[text board="3 months of essentials first" art=emergency-jar]
+[text board="3 months of essentials first" art=rainy-day-umbrella]
 That's also why I'd keep three months of essentials in easy-access savings first, so a broken boiler never forces you to sell at the bottom.
 
-[stat value="£1,000" label="Lifetime ISA bonus, a year" sub="25% bonus, ages 18 to 39, first home up to £450K" source="GOV.UK, 2026"]
+[stat value="£1,000" label="Lifetime ISA bonus, at most, a year" sub="25% bonus, ages 18 to 39, first home up to £450K" source="GOV.UK, 2026"]
 And if a home is the goal, a Lifetime ISA adds a twenty-five percent bonus to what you save, up to a thousand pounds a year, if you're eighteen to thirty-nine and buying a first home up to four hundred and fifty thousand. Our parents never had it. Use it.
 
 [stat value="3%" label="The least your employer must add to your pension" sub="if you're 22+ and earn over £10,000" source="GOV.UK, 2026"]
@@ -124,7 +127,7 @@ And check your workplace pension. If you're twenty-two or over and earn more tha
 [text board="Not taking the match = turning down a pay rise" art=pension-match]
 Plenty will match more if you put in more. If you're not taking the full match, you're turning down a pay rise. Free money, every single month.
 
-[stat value="£900 a year" label="A £3.50 coffee every working day" sub="worth knowing, but it won't close an £83K gap"]
+[stat value="£900" label="a year: a £3.50 coffee every working day" sub="worth knowing, but it won't close an £83K gap"]
 And you'll hear people say, just stop buying coffee. A three pound fifty coffee every working day is about nine hundred pounds a year. Worth knowing, but it won't close an eighty-three grand gap. Two things close that gap: time, and your income.
 
 [stat value="£5,000" label="A pay rise does more for you this year" sub="than years of growth on a small pot"]
@@ -149,7 +152,7 @@ And four: {explain} build one thing with it. A tool that saves you an hour, a sp
 - Learn AI before it learns your job
 So, is the dream dead? No. But it's a different dream. Things cost more, our pay has barely moved, and AI is changing how careers start. But we have access to investing our parents never had, time on our side, and tools that make us more valuable, if we learn them.
 
-[broll src="watch-next-200-1000-10000.mp4" caption="Watch next: £200, £1,000 or £10,000 after payday" credit="The Everyday Investor" vol=0 next=on cards="ink:Is the dream dead? Tell me below@thank; ink:Not financial advice. Capital at risk.@enjoyed"]
+[broll src="watch-next-200-1000-10000.mp4" caption="Watch next: £200, £1,000 or £10,000 after payday" credit="The Everyday Investor" vol=0 next=on cards="ink:Not financial advice. Capital at risk.@thank; green:Like & subscribe@subscribe"]
 Thank you for watching this video. If you enjoyed it, please like and subscribe and make sure to watch my other ones.
 
 [broll src="watch-next-200-1000-10000.mp4" caption="Watch next: £200, £1,000 or £10,000 after payday" credit="The Everyday Investor" from=6 vol=1 dur=12 next=on]
