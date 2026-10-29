@@ -11,7 +11,8 @@ Writes into <out dir>:
 - opening.png: the first 6 seconds, a frame every half second (the scroll-in moment)
 - cuts.png: the first frame after every cut, stamped, so each scene can be checked against its words
 - facts.md "Eyes": every stretch of 4 seconds or more where nothing new happens on screen (no cut, no writing, no
-  pose, no footage moving; the slow push-in alone does not count), and how many times a minute something does
+  pose, no footage moving; the slow push-in alone does not count), how many times a minute something does, and every
+  stretch of 3 seconds or more where the page is mostly empty paper (white space the eye has nothing to do in)
 """
 import argparse
 import json
@@ -65,6 +66,27 @@ def idle_stretches(path: str, fps: int = 5, event: float = 0.45, longest: float 
     starts = int(np.sum(busy[1:] & ~busy[:-1])) + int(busy[0])
     return out, round(starts / (len(busy) / fps / 60), 1)
 
+
+def blank_stretches(path: str, fps: int = 2, longest: float = 3.0) -> list[tuple[float, float, int]]:
+    """Stretches of `longest` seconds or more where the page is mostly empty: at 192x108, at least 90% of the frame is
+    plain paper (grey 228 and up) and under 3.5% is ink (under 170). Measured on the Gen Z cut: a hook line or a lone
+    doodle 0.5-1% ink, three written lines 2-3%, a board with a traced drawing 5-7%, a set piece 11%, footage 65% and
+    up with almost no plain paper. Returns (start, end, the least ink in tenths of a percent)."""
+    import numpy as np
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", path, "-vf", f"fps={fps},scale=192:108,format=gray", "-f", "rawvideo", "-"], capture_output=True, check=True).stdout
+    x = np.frombuffer(raw, np.uint8).reshape(-1, 108, 192)
+    ink = (x < 170).mean(axis=(1, 2))
+    paper = (x >= 228).mean(axis=(1, 2))
+    empty = (paper >= 0.9) & (ink < 0.035)
+    out, start = [], None
+    for i, e in enumerate(list(empty) + [False]):
+        if e and start is None:
+            start = i
+        elif not e and start is not None:
+            if (i - start) / fps >= longest:
+                out.append((round(start / fps, 1), round(i / fps, 1), int(round(1000 * float(ink[start:i].min())))))
+            start = None
+    return out
 
 def frame_at(path: str, t: float, w: int) -> Image.Image:
     raw = subprocess.run(["ffmpeg", "-v", "error", "-ss", f"{t:.3f}", "-i", path, "-frames:v", "1", "-vf", f"scale={w}:-2", "-f", "image2pipe", "-vcodec", "png", "-"], capture_output=True, check=True).stdout
@@ -145,6 +167,9 @@ def main() -> None:
     idle, per_min = idle_stretches(args.video)
     lines += ["", "## Eyes", "", f"- something new on screen {per_min} times a minute; still for 4 s or more: {len(idle)} times, {sum(b - a for a, b in idle):.0f}s in all"]
     lines += [f"- still {int(a // 60)}:{a % 60:04.1f} to {int(b // 60)}:{b % 60:04.1f} ({b - a:.1f}s)" for a, b in idle]
+    blank = blank_stretches(args.video)
+    lines += [f"- mostly empty page (3 s or more of plain paper with under 3.5% ink): {len(blank)} times, {sum(b - a for a, b, _ in blank):.0f}s in all"]
+    lines += [f"- empty {int(a // 60)}:{a % 60:04.1f} to {int(b // 60)}:{b % 60:04.1f} ({b - a:.1f}s, as little as {pc / 10:.1f}% ink)" for a, b, pc in blank]
     if words:
         lines += ["", "## Words (start time, word)", ""]
         line, t0 = [], None

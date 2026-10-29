@@ -254,8 +254,9 @@ const Column: React.FC<{items: SetCue[]; colX: number; y0: number; step: number;
   </>
 );
 
-/** Cards over footage: the amounts said land on the picture as they are said, in a column on the right (landscape)
- * or under the captions (a Short), on the same stop-motion clock as the set pieces. */
+/** Cards over footage (and over any board, stat or chart given cards=): the amounts said land on the picture as they are
+ * said, in a column on the right (landscape) or under the captions (a Short), on the same stop-motion clock as the set
+ * pieces. */
 export const FootageCards: React.FC<{scene: Scene}> = ({scene}) => {
   const frame = useCurrentFrame();
   const {fps, width: W, height: H} = useVideoConfig();
@@ -265,10 +266,13 @@ export const FootageCards: React.FC<{scene: Scene}> = ({scene}) => {
   const tq = k / STOP;
   const cues = ((scene.cues ?? []) as unknown as SetCue[]).filter((c) => c.do === 'card' && c.t <= tq + 1e-6);
   if (!cues.length) return null;
+  // on footage the column is on the right; on a board with a drawing on its right half they go under the written
+  // lines on the left, so the page fills up instead of sitting white
+  const underLines = !vertical && scene.type !== 'broll' && !!scene.props.art && scene.props.art !== 'off';
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
-      <Column items={cues.slice(-(vertical ? 3 : 4))} colX={(vertical ? 0.5 : 0.74) * W} y0={(vertical ? 0.3 : 0.2) * H} step={(vertical ? 0.09 : 0.118) * H}
-        maxw={(vertical ? 0.8 : 0.44) * W} tq={tq} k={k} left={false} vertical={vertical} W={W} H={H} />
+      <Column items={cues.slice(-(vertical ? 3 : underLines ? 3 : 4))} colX={(vertical ? 0.5 : underLines ? 0.25 : 0.74) * W} y0={(vertical ? 0.3 : underLines ? 0.56 : 0.2) * H} step={(vertical ? 0.09 : 0.118) * H}
+        maxw={(vertical ? 0.8 : underLines ? 0.42 : 0.44) * W} tq={tq} k={k} left={underLines} vertical={vertical} W={W} H={H} />
     </AbsoluteFill>
   );
 };

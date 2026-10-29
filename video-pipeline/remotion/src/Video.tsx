@@ -375,7 +375,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
                 {tr === 'slide' && prev ? <SlideOut prev={prev} brand={brand} /> : null}
                 {board}
                 {sb.host === 'none' ? null : <HostLayer sb={sb} scene={scene} avatar={avatar} toon={brand.toon} />}
-                {scene.type === 'broll' ? <FootageCards scene={scene} /> : null}
+                {scene.type !== 'set' && (scene.cues ?? []).some((c) => (c as {do?: string}).do === 'card') ? <FootageCards scene={scene} /> : null}
               </Camera>
             </SceneFade>
           </Sequence>

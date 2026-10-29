@@ -41,6 +41,14 @@ figure, a turn such as "the catch", "what not to do", "what I actually do") and 
 15 to 45 words a scene, a short one for a punchline. The headline must be true of every sentence in its scene: if it
 is not, the scene is cut in the wrong place.
 
+## No empty white space (Jeffrey's direction)
+
+A board with one line on plain paper is a page the eye has nothing to do on. Every text board, stat and chart gets
+something beside its words: a traced drawing (`art=`), a doodle that draws and moves (`icon=`), or text pop-ups
+(`cards="..."` on any scene, each landing on its word). Two things on the page by the halfway point of its words,
+and something still landing after that. The review kit lists every stretch of mostly empty page; the director
+(.claude/agents/director.md) treats each as a note.
+
 ## The shape
 
 1. `[hook board="..." art="..."]` as the first scene, holding the first sentence or two. The hook is the attention

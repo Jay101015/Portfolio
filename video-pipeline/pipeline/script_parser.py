@@ -570,6 +570,8 @@ def parse_script(md: str) -> dict[str, Any]:
             problems += setpiece.plan(sc, b.attrs)
         elif b.type == "broll":
             setpiece.plan_cards(sc, b.attrs)  # the amounts said over footage land on it as cards
+        elif b.attrs.get("cards"):
+            setpiece.plan_cards(sc, b.attrs)  # cards= on a board, stat or chart: text pops up on its word there too
         scenes.append(sc)
     if scenes and header.get("kicker") and scenes[0]["type"] == "title":
         scenes[0]["props"].setdefault("kicker", header["kicker"])
