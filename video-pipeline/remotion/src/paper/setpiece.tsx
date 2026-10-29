@@ -129,7 +129,8 @@ const Card: React.FC<{c: SetCue; x: number; y: number; age: number; tilt: number
   const text = String(c.text ?? '');
   const big = !c.old && isFigure(text);
   let size = (big ? (vertical ? 104 : 104) : vertical ? 72 : 70) * u;
-  const chars = text.length + (c.old ? c.old.length + 3 : 0);
+  const stack = !!c.old && vertical; // a Short's column is narrow: the old figure struck through above the new one
+  const chars = stack ? Math.max(text.length, (c.old ?? '').length) : text.length + (c.old ? c.old.length + 3 : 0);
   const room = maxw - 70 * u;
   if (chars * 0.47 * size > room) size = room / (chars * 0.47);
   const [sx, sy] = age < 0 ? [1, 1] : squashAt(age);
@@ -137,8 +138,9 @@ const Card: React.FC<{c: SetCue; x: number; y: number; age: number; tilt: number
   return (
     <div style={{position: 'absolute', left: x, top: y, transform: `translate(-50%, -50%) rotate(${tilt}deg) scale(${sx}, ${sy})`, transformOrigin: '50% 100%',
       background: '#fff', border: `${4 * u}px solid ${COLORS.ink}`, borderRadius: 18 * u, padding: `${8 * u}px ${26 * u}px ${12 * u}px`,
-      boxShadow: `${6 * u}px ${8 * u}px 0 rgba(0,0,0,0.18)`, fontFamily: 'Caveat Brush', fontSize: size, lineHeight: 1.1, whiteSpace: 'nowrap', color, display: 'flex', alignItems: 'center', gap: 14 * u}}>
-      {c.old ? (
+      boxShadow: `${6 * u}px ${8 * u}px 0 rgba(0,0,0,0.18)`, fontFamily: 'Caveat Brush', fontSize: size, lineHeight: 1.1, whiteSpace: 'nowrap', color, display: 'flex', flexDirection: stack ? 'column' : 'row', alignItems: 'center', gap: (stack ? 2 : 14) * u}}>
+      {stack ? <span style={{color: COLORS.red, textDecoration: 'line-through', textDecorationThickness: 5 * u, fontSize: size * 0.8}}>{c.old}</span> : null}
+      {c.old && !stack ? (
         <>
           <span style={{color: COLORS.red, textDecoration: 'line-through', textDecorationThickness: 5 * u}}>{c.old}</span>
           <svg width={size * 1.1} height={size * 0.6} viewBox="0 0 44 24">

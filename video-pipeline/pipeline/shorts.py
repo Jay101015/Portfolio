@@ -399,7 +399,12 @@ def sentence_hook(parts: list[list[dict[str, Any]]], by_id: dict[int, dict[str, 
 
     best = max(sents[1:], key=claim, default=None)
     pick = best if best is not None and claim(best) >= 3 else sents[0]
-    line = caption_line(re.sub(r"^(?:but|and|so)\s+", "", pick["text"], flags=re.I), 9)
+    text = pick["text"]
+    if pick is best:
+        # the clause that makes the claim ("the real wall isn't the mortgage"), not the one before it ("For most people")
+        clauses = [c.strip() for c in re.split(r",(?!\d{3})|;|:", text) if c.strip()]
+        text = next((c for c in clauses if CLAIM_RE.search(c) and len(c.split()) >= 3), text)
+    line = caption_line(re.sub(r"^(?:but|and|so|though)\s+", "", text, flags=re.I), 9)
     return line[:1].upper() + line[1:] if line else "Watch this"
 
 
