@@ -123,10 +123,10 @@
   "standin": true,
   "note": "enlarged 4x from a grid; replace with a full-size single image; the New York tower in the window painted out 2026-10-29",
   "spot": {
-   "x": 0.441,
+   "x": 0.53,
    "floor": 0.72,
    "h": 0.41,
-   "by": "both desk rows (0.75 m), horizon 0.395; reviewed 2026-10-29",
+   "by": "both desk rows (0.75 m), horizon 0.395; reviewed 2026-10-29; seated at his own desk he sits in the open aisle (x 0.53), clear of the near desk on the left: reviewed 2026-10-29",
    "walk_from": "right",
    "walk_dx": 0.25
   }
@@ -155,8 +155,8 @@
   "spot": {
    "x": 0.53,
    "floor": 0.8,
-   "h": 0.36,
-   "by": "garden wall at his hip, for-sale post above him, horizon 0.624; reviewed 2026-10-29",
+   "h": 0.31,
+   "by": "garden wall at his hip, for-sale post above him, horizon 0.624; reviewed 2026-10-29; h 0.31 so his head sits under the sale board (was 0.36): reviewed 2026-10-29",
    "walk_from": "left",
    "walk_dx": 0.28
   }

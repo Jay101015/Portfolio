@@ -557,12 +557,45 @@ def render(props_path: str, out_path: str, composition: str, concurrency: str | 
         print(note, flush=True)
 
 
+WATCH_NEXT_DELAY = 0.8  # the "watch next" card pops in, then its preview starts (WatchNext in paper/scenes.tsx)
+
+
+def chain_watch_next(sb: dict) -> None:
+    """A "watch next" preview split over two scenes (muted under the sign-off, then with its own sound) is one preview:
+    the second carries on where the first left off (`from`), with no second entrance (`cont`)."""
+    scenes = sb.get("scenes", [])
+    for prev, sc in zip(scenes, scenes[1:]):
+        p, q = prev.get("props", {}), sc.get("props", {})
+        if p.get("next") == "on" and q.get("next") == "on" and p.get("src") and p.get("src") == q.get("src"):
+            lead = 0.0 if p.get("cont") == "on" else WATCH_NEXT_DELAY
+            q["from"] = round(float(p.get("from") or 0) + max(0.0, float(prev["end"]) - float(prev["start"]) - lead), 3)
+            q["cont"] = "on"
+
+
+def footage_sound(sb: dict) -> list[tuple[str, float, float, float, float]]:
+    """The footage that plays its own sound (vol= over 0): (file, at in the video, from in the file, seconds, volume)."""
+    out = []
+    for sc in sb.get("scenes", []):
+        p = sc.get("props", {})
+        vol = float(p.get("vol") or 0)
+        src = p.get("src")
+        if vol <= 0 or not src:
+            continue
+        path = os.path.join(REMOTION, "public", src)
+        if not os.path.exists(path):
+            continue
+        lead = WATCH_NEXT_DELAY if p.get("next") == "on" and p.get("cont") != "on" else 0.0
+        at = float(sc["start"]) + lead
+        out.append((path, round(at, 3), float(p.get("from") or 0), round(float(sc["end"]) - at, 3), vol))
+    return out
+
+
 def voice_over_whole(video: str, sb: dict) -> bool:
     """Each render chunk's audio is encoded on its own, and joining them leaves 20 to 40 ms of digital silence at
-    every join (every 15 seconds). When the voice is the only sound (footage is muted unless a scene asks for its
-    sound with vol=), the joined picture gets the voice file itself as its sound, in one piece, the room's tone carrying
-    on under the end card. Returns whether it did."""
-    if not sb.get("audio") or any(float(sc.get("props", {}).get(k) or 0) > 0 for sc in sb.get("scenes", []) for k in ("vol", "clip_vol", "sticker_vol")):
+    every join (every 15 seconds). So the joined picture gets one sound track built here in one piece: the voice
+    file itself (the room's tone carrying on under the end card), with any footage that plays its own sound (a
+    "watch next" preview, vol=) mixed in at its place. Returns whether it did."""
+    if not sb.get("audio") or any(float(sc.get("props", {}).get(k) or 0) > 0 for sc in sb.get("scenes", []) for k in ("clip_vol", "sticker_vol")):
         return False
     src = os.path.join(REMOTION, "public", sb["audio"])
     if not os.path.exists(src):
@@ -570,12 +603,24 @@ def voice_over_whole(video: str, sb: dict) -> bool:
     dur = al.audio_duration(video)
     padded = video + ".voice.wav"
     filled = video + ".voice-room.wav"
+    mixed = video + ".voice-mix.wav"
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-af", f"apad=whole_dur={dur:.3f}", "-t", f"{dur:.3f}", "-ac", "1", "-ar", "48000", padded], check=True)
     track, _ = fill_gated(padded, filled, tone_from=src)
+    extra = footage_sound(sb)
+    if extra:
+        inputs, parts, labels = ["-i", track], [], ["[0:a]"]
+        for k, (path, at, start, secs, vol) in enumerate(extra, 1):
+            inputs += ["-ss", f"{start:.3f}", "-t", f"{secs:.3f}", "-i", path]
+            ms = int(round(at * 1000))
+            parts.append(f"[{k}:a]aresample=48000,aformat=channel_layouts=mono,volume={vol:.3f},afade=t=in:d=0.15,afade=t=out:st={max(0.0, secs - 0.4):.3f}:d=0.4,adelay={ms}|{ms}[f{k}]")
+            labels.append(f"[f{k}]")
+        graph = ";".join(parts) + ";" + "".join(labels) + f"amix=inputs={len(labels)}:normalize=0:duration=first[out]"
+        subprocess.run(["ffmpeg", "-v", "error", "-y", *inputs, "-filter_complex", graph, "-map", "[out]", "-ac", "1", "-ar", "48000", mixed], check=True)
+        track = mixed
     tmp = video + ".remux.mp4"
     subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", video, "-i", track, "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-ac", "1", "-b:a", "160k", "-movflags", "+faststart", tmp], check=True, stdin=subprocess.DEVNULL, timeout=900)
     os.replace(tmp, video)
-    for p in (padded, filled):
+    for p in (padded, filled, mixed):
         if os.path.exists(p):
             os.remove(p)
     return True
@@ -849,6 +894,11 @@ def main(argv: list[str] | None = None) -> int:
             print(f"cuts: {moved} moved onto the pause between words; captions: {changed} words follow the take, not the script")
             for line in long_scenes(sb):
                 print(line)
+            # a scene the recogniser barely heard was placed by guesswork: its pictures land on the wrong words
+            from .sync import matched_share
+            for sc, share in zip(sb["scenes"], matched_share(sb)):
+                if share < 0.4 and len(sc.get("narration", "").split()) >= 6:
+                    print(f"WARNING: scene {sc['id']} ({sc['type']}): only {share:.0%} of its words were heard in the recording, so its timing is a guess; patch transcript.json with the missing words or transcribe again")
             # a card with no words between spoken scenes (the title after the teasers) gets its own beat, in room tone
             room = room_for_silent(sb)
             if room:
@@ -904,6 +954,7 @@ def main(argv: list[str] | None = None) -> int:
         print(note)
     for note in resolve_media(sb, project, slug):
         print(note)
+    chain_watch_next(sb)
     for folder in ("media", "images"):
         src_dir = os.path.join(project, folder)
         if os.path.isdir(src_dir):

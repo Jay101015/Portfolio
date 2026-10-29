@@ -9,7 +9,7 @@ import {Doodle, Write, WriteSpoken, fitCps, fitStart, pickDoodle, writeFrames} f
 import {Art, PaperArt, isTraced, pickArt, pickArtAmong} from './art';
 import {PaperBite, PaperGrow, PaperPie, PaperShrink} from './money';
 import {Erase} from './erase';
-import {captionLine, keyWords, moneyTint} from './phrase';
+import {captionLine, isLoss, keyWords, moneyTint} from './phrase';
 import {Media} from './media';
 import {Loop, Sequence} from 'remotion';
 import {CharacterOn, isPersonArt} from './character';
@@ -199,7 +199,7 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
           <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: size, lineHeight: 1, letterSpacing: brand.board ? 0 : -5 * u, color: brand.ink, fontVariantNumeric: 'tabular-nums', transform: brand.board ? undefined : `scale(${0.85 + 0.15 * s})`, transformOrigin: 'left bottom', opacity: brand.board ? 1 : Math.min(1, s * 1.5)}}>
             {brand.board ? <Write text={display} frame={frame} fps={fps} start={numStart} cps={numCps} wordGap="0.2em" /> : display}
           </div>
-          <Underline width={Math.min(size * 2.4, width * 0.5)} stroke={brand.accent} thickness={8 * u} win={[numDone, numDone + fps * 0.5]} easeOut seed={7} style={{marginTop: 8 * u}} />
+          <Underline width={Math.min(size * 2.4, width * 0.5)} stroke={isLoss(`${raw} ${label ?? ''} ${scene.props.sub ?? ''}`) ? brand.accent2 : brand.accent} thickness={8 * u} win={[numDone, numDone + fps * 0.5]} easeOut seed={7} style={{marginTop: 8 * u}} />
         </div>
         {sub ? (
           <div style={{display: 'flex', alignItems: 'center', gap: 16 * u, marginBottom: 40 * u, opacity: brand.board ? 1 : note, maxWidth: isVertical ? '100%' : width * 0.34}}>
@@ -429,8 +429,9 @@ export const PaperHook: React.FC<P> = ({scene, brand}) => {
   // a drawing beside the hook (`art=payday`): the picture has the right (or, vertical, the band under the words)
   const art = scene.props.art && isTraced(String(scene.props.art)) ? String(scene.props.art) : undefined;
   const total = Math.max(1, Math.round((scene.end - scene.start) * fps));
-  const at = fitStart(Math.max(2, Math.round(((scene.words?.[0]?.s ?? scene.start) - scene.start) * fps) - 2), total);
-  const cps = fitCps(line, fps, at, 20, total);
+  // the line is already being written on the first frame: an autoplay preview never opens on blank paper
+  const at = fitStart(Math.max(2, Math.round(((scene.words?.[0]?.s ?? scene.start) - scene.start) * fps) - 2), total) - Math.round(fps * 0.35);
+  const cps = fitCps(line, fps, Math.max(0, at), 20, total);
   const done = at + writeFrames(line, fps, cps) + 4;
   const colW = art && !isVertical ? width * 0.46 - pad : width - pad * 2;
   const w = Math.min(colW, Math.max(360 * u, line.length * (art ? 36 : 44) * u));
@@ -914,8 +915,10 @@ const WatchNext: React.FC<P> = ({scene, brand}) => {
   const total = Math.max(1, Math.round((scene.end - scene.start) * fps));
   const src: string | undefined = scene.props.src;
   const caption = String(scene.props.caption ?? '').replace(/^watch next:\s*/i, '');
-  const delay = Math.round(fps * 0.8);
-  const s = pop(frame, fps, delay, 14);
+  // `cont`: the same preview carrying on from the scene before (the sign-off, then its sound): no second entrance
+  const cont = String(scene.props.cont ?? '') === 'on';
+  const delay = cont ? 0 : Math.round(fps * 0.8);
+  const s = cont ? 1 : pop(frame, fps, delay, 14);
   const w = isVertical ? width - pad * 1.2 : width * 0.64;
   const h = (w * 9) / 16;
   const top = isVertical ? height * 0.3 : height * 0.22;
@@ -924,14 +927,14 @@ const WatchNext: React.FC<P> = ({scene, brand}) => {
   return (
     <AbsoluteFill style={{background: `radial-gradient(ellipse at 50% 45%, #2d3236 0%, ${dark} 70%)`}}>
       <div style={{position: 'absolute', left: 0, right: 0, top: top - head * 1.5, textAlign: 'center', fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: head, lineHeight: 1, color: '#fff'}}>
-        {brand.board ? <Write text="Watch next" frame={frame} fps={fps} start={0} cps={22} color="#fff" /> : 'Watch next'}
+        {brand.board && !cont ? <Write text="Watch next" frame={frame} fps={fps} start={0} cps={22} color="#fff" /> : 'Watch next'}
       </div>
       <div style={{position: 'absolute', left: (width - w) / 2, top, width: w, height: h, transform: `rotate(-1deg) scale(${0.85 + 0.15 * s})`, opacity: Math.min(1, s * 1.5)}}>
         <div style={{width: '100%', height: '100%', background: '#fff', padding: 16 * u, boxSizing: 'border-box', boxShadow: `0 ${18 * u}px ${60 * u}px rgba(0,0,0,0.55)`}}>
           <div style={{position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: '#111'}}>
             {src ? (
               <Sequence from={delay} layout="none">
-                <Media src={src} props={{zoom: 'none', vol: scene.props.vol}} durationFrames={total - delay} width={w - 40 * u} height={h - 40 * u} />
+                <Media src={src} props={{zoom: 'none', vol: scene.props.vol, from: scene.props.from}} durationFrames={total - delay} width={w - 40 * u} height={h - 40 * u} />
               </Sequence>
             ) : null}
           </div>
@@ -942,7 +945,7 @@ const WatchNext: React.FC<P> = ({scene, brand}) => {
       </div>
       {caption ? (
         <div style={{position: 'absolute', left: pad, right: pad, top: top + h + 40 * u, textAlign: 'center', fontFamily: hand(brand), fontSize: (isVertical ? 64 : 56) * u, lineHeight: 1.15, color: '#fff'}}>
-          {brand.board ? <Write text={caption} frame={frame} fps={fps} start={delay + 6} cps={30} color="#fff" /> : caption}
+          {brand.board && !cont ? <Write text={caption} frame={frame} fps={fps} start={delay + 6} cps={30} color="#fff" /> : caption}
         </div>
       ) : null}
     </AbsoluteFill>

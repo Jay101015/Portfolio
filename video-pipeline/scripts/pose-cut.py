@@ -85,8 +85,14 @@ def cut_panel(a: np.ndarray) -> tuple[np.ndarray, int]:
     d = c < 140
     rf = d.mean(axis=1)
     floor = [y for y in range(len(rf)) if rf[y] > 0.3 and y > c.shape[0] * 0.7]
+    # the floor line goes, but not where something stands on it: a column with ink just above the line (a sole, a
+    # chair caster, a desk leg) keeps its pixels, else every pose had a white strip cut through its trainers
+    above = d[max(0, min(floor) - 9):max(1, min(floor) - 1)].any(axis=0) if floor else None
+    if above is not None:
+        above = np.convolve(above.astype(np.uint8), np.ones(5, np.uint8), mode="same") > 0
     for y in floor:
-        c[max(0, y - 1):y + 2, :] = 255
+        rows = c[max(0, y - 1):y + 2, :]
+        rows[:, ~above] = 255
     ys = np.nonzero((c < 140).any(axis=1))[0]
     g = floor[-1] if floor else int(ys.max())
     return c, g

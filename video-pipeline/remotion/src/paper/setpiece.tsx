@@ -111,7 +111,8 @@ const figureAt = (scene: Scene, cues: SetCue[], st: Stage, W: number, H: number,
     // point-board points to the right as drawn: it points at the cards unless the script says which way
     flip = cue.flip ?? (name.startsWith('point-board') || name.startsWith('hand-over') ? cardsLeft : false); // both drawn reaching right: towards the cards
     const age = (tq - at) * STOP;
-    if (!cue.ib) [sx, sy] = squashAt(age);
+    // a seated pose is drawn with its desk and chair: the furniture does not squash or hop with him
+    if (!cue.ib && !(POSE[name] as {seated?: boolean} | undefined)?.seated) [sx, sy] = squashAt(age);
     if (cue.hop && age < 8) lift = (H > W ? 0.04 : 0.06) * hpx * Math.sin((Math.PI * age) / 8); // lower on a Short: clear of the captions
     if (cue.arc) {
       const p = Math.min(1, (tq - cue.t + 1 / STOP) / cue.arc);
@@ -123,7 +124,7 @@ const figureAt = (scene: Scene, cues: SetCue[], st: Stage, W: number, H: number,
   }
   // the dip before the next key pose (anticipation), unless an in-between is about to do that job
   const next = poses.find((c) => c.t > tq + 1e-6);
-  if (next && !next.ib && (!cue || !cue.ib) && (next.t - tq) * STOP <= 1) [sx, sy] = [1.03, 0.96];
+  if (next && !next.ib && (!cue || !cue.ib) && (next.t - tq) * STOP <= 1 && !(POSE[name] as {seated?: boolean} | undefined)?.seated) [sx, sy] = [1.03, 0.96];
   // a pose with a loop partner (typing: desk-type and desk-type-b) swaps between the two while it is held, on threes
   const partner = (POSE[name] as {loop?: string} | undefined)?.loop;
   if (partner && POSE[partner] && cue && Math.floor(((tq - at) * STOP) / 3) % 2 === 1) name = partner;
@@ -269,10 +270,13 @@ export const FootageCards: React.FC<{scene: Scene}> = ({scene}) => {
   // on footage the column is on the right; on a board with a drawing on its right half they go under the written
   // lines on the left, so the page fills up instead of sitting white
   const underLines = !vertical && scene.type !== 'broll' && !!scene.props.art && scene.props.art !== 'off';
+  // a chart's lines and bars start low on the left: its cards go top-left, under the title, where the page is empty
+  const chart = !vertical && scene.type === 'chart';
+  const left = underLines || chart;
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
-      <Column items={cues.slice(-(vertical ? 3 : underLines ? 3 : 4))} colX={(vertical ? 0.5 : underLines ? 0.25 : 0.74) * W} y0={(vertical ? 0.3 : underLines ? 0.56 : 0.2) * H} step={(vertical ? 0.09 : 0.118) * H}
-        maxw={(vertical ? 0.8 : underLines ? 0.42 : 0.44) * W} tq={tq} k={k} left={underLines} vertical={vertical} W={W} H={H} />
+      <Column items={cues.slice(-(vertical ? 3 : left ? 3 : 4))} colX={(vertical ? 0.5 : chart ? 0.3 : underLines ? 0.25 : 0.74) * W} y0={(vertical ? 0.3 : chart ? 0.42 : underLines ? 0.56 : 0.2) * H} step={(vertical ? 0.09 : 0.118) * H}
+        maxw={(vertical ? 0.8 : left ? 0.42 : 0.44) * W} tq={tq} k={k} left={left} vertical={vertical} W={W} H={H} />
     </AbsoluteFill>
   );
 };
