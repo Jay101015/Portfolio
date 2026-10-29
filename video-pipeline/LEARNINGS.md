@@ -110,9 +110,12 @@ one change at a time where possible, so a result can be read.
   body left of the button column (right 15%). Cards go beside him, captions high (about 19% down).
 - Retention's ceiling here is the script, not the edit: open on a claim, not a bare salary; give each number its
   stake out loud; put Jeffrey's own numbers in.
-- Posted (suggested title "Can You Buy a House on £25K a Year? (UK)"; confirm what was used). 30 views 8 minutes after upload, the
+- Posted as "£25K Salary? Here's the House You Can Afford". 30 views 8 minutes after upload, the
   fastest start yet (the earlier Shorts had 5 to 6 views on day one; the salary-ladder Short about 20 soon after
   posting). Check at 48 hours and 7 days: views, "viewed vs swiped away", average percentage viewed.
+- Channel, 48 hours to 2026-10-29 (Studio real time): 1,085 views. £200/£1,000/£10,000 long video 569 (woke up
+  this week after a near-flat start), £25K Short 338, £250K Short 143, house long video 18. The long video is
+  where watch hours come from: find its traffic source, and point the Shorts at long videos (Related video link).
 
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage?
