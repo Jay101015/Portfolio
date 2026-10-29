@@ -72,7 +72,7 @@ const Room: React.FC<{file: string; room: RoomEntry; st: Stage; vertical: boolea
 const figureAt = (scene: Scene, cues: SetCue[], st: Stage, W: number, H: number, tq: number, cardsLeft: boolean) => {
   const hpx = st.h * H;
   const X = st.x * W;
-  const local = tq - scene.start;
+  const local = Math.max(0, tq - scene.start); // the stop-motion clock can round to just before the scene's first frame
   const walk = scene.props.walk as 'left' | 'right' | undefined;
   let walkEnd = scene.start;
   if (walk) {
