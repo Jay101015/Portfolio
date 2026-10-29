@@ -155,6 +155,7 @@ const boardTransition = (scene: Scene, prev: Scene | null, brand: Brand): Transi
   const asked = scene.props.transition;
   // a set piece turns in like a page, and the page after it turns over it (on the board look; elsewhere a cut)
   if (prev && !asked && (scene.type === 'set' || prev.type === 'set')) return brand.board ? 'slide' : 'cut';
+  if (!prev && scene.type === 'set') return 'cut'; // a set piece that opens the video is there on the first frame, not faded up from blank
   if (asked === 'wipe' || asked === 'slide') return brand.board && prev ? asked : 'cut';
   if (!brand.board || !brand.illustrated || !prev || asked || keepMode(scene)) return transitionFor(scene, brand.toon);
   if (scene.type === 'outro') return 'cut';

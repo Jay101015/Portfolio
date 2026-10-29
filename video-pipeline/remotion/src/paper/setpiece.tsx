@@ -119,7 +119,7 @@ const Card: React.FC<{c: SetCue; x: number; y: number; age: number; tilt: number
   const u = vertical ? W / 1080 : W / 1920;
   const text = String(c.text ?? '');
   const big = !c.old && isFigure(text);
-  let size = (big ? (vertical ? 104 : 92) : vertical ? 72 : 62) * u;
+  let size = (big ? (vertical ? 104 : 104) : vertical ? 72 : 70) * u;
   const chars = text.length + (c.old ? c.old.length + 3 : 0);
   const room = maxw - 70 * u;
   if (chars * 0.47 * size > room) size = room / (chars * 0.47);

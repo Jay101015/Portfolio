@@ -79,13 +79,14 @@ def _bed(tone: np.ndarray, n: int, xf: int) -> np.ndarray:
     return out
 
 
-def fill_gated(src: str, dst: str, sr: int = SR) -> tuple[str, int]:
-    """`src` with every run of digital silence over 5 ms filled with room tone; returns (path, runs filled)."""
+def fill_gated(src: str, dst: str, sr: int = SR, tone_from: str | None = None) -> tuple[str, int]:
+    """`src` with every run of digital silence over 5 ms filled with room tone (from `tone_from`, the whole recording,
+    when `src` is a cut too short to have a quiet half second of its own); returns (path, runs filled)."""
     x = read(src, sr)
     runs = zero_runs(x, int(0.005 * sr))
     if not runs:
         return src, 0
-    tone = room_tone(x, sr)
+    tone = room_tone(read(tone_from, sr) if tone_from else x, sr)
     if tone is None:
         return src, 0
     xf = int(0.015 * sr)

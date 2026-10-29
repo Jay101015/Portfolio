@@ -545,18 +545,27 @@ def render(props_path: str, out_path: str, composition: str, concurrency: str | 
 
 
 def keep_spans(src: str, dst: str, spans: list[tuple[float, float]], lead: float, tail: float, speed: float = 1.0) -> None:
-    """Write `dst`: silence of `lead`, then the `spans` of `src` (start, end) back to back, then `tail` of silence, the
-    whole thing played `speed` times faster with the pitch kept (atempo)."""
+    """Write `dst`: `lead` seconds of the room, then the `spans` of `src` (start, end) back to back, each faded in and
+    out over 10 ms so a join never clicks, then `tail` of the room, the whole thing played `speed` times faster with
+    the pitch kept (atempo). The lead, the tail and any gated silence are the recording's own room tone, never
+    digital silence (pipeline/voice.py)."""
     parts = [f"anullsrc=r=48000:cl=mono,atrim=0:{lead:.3f}[l]"]
     labels = ["[l]"]
     for i, (a, b) in enumerate(spans):
-        parts.append(f"[0:a]atrim=start={a:.3f}:end={b:.3f},asetpts=PTS-STARTPTS[s{i}]")
+        d = max(0.0, b - a)
+        parts.append(f"[0:a]atrim=start={a:.3f}:end={b:.3f},asetpts=PTS-STARTPTS,afade=t=in:d=0.01,afade=t=out:st={max(0.0, d - 0.01):.3f}:d=0.01[s{i}]")
         labels.append(f"[s{i}]")
     parts.append(f"anullsrc=r=48000:cl=mono,atrim=0:{tail:.3f}[t]")
     labels.append("[t]")
     tempo = f",atempo={speed:.4f}" if abs(speed - 1.0) > 1e-6 else ""
     graph = ";".join(parts) + ";" + "".join(labels) + f"concat=n={len(labels)}:v=0:a=1{tempo}[out]"
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-filter_complex", graph, "-map", "[out]", "-ac", "1", "-ar", "48000", "-codec:a", "libmp3lame", "-q:a", "2", dst], check=True)
+    raw = dst + ".raw.wav"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-filter_complex", graph, "-map", "[out]", "-ac", "1", "-ar", "48000", raw], check=True)
+    filled, _ = fill_gated(raw, dst + ".room.wav", tone_from=src)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", filled, "-codec:a", "libmp3lame", "-q:a", "2", dst], check=True)
+    for p in {raw, dst + ".room.wav"}:
+        if os.path.exists(p):
+            os.remove(p)
 
 
 def tidy_voice(project: str, audio: str, header: dict[str, str]) -> str:
