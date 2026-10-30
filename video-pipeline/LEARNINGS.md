@@ -203,6 +203,9 @@ one change at a time where possible, so a result can be read.
   ring round the key number on the word that says it (instead of the camera punch; the slow push-in on every board
   is off), a progress line along the top, a paper grain tile. The ring's size comes from the font (0.38 em a
   character in Caveat Brush): the first guess of 0.5 em drew a ring over the label and the underline.
+- Rendering here (not on the runner): a 48 s cut stalled three times on a delayRender timeout at the default two
+  browsers and 120 s. Chunks of 300 frames, one browser (`--concurrency=1`) and a 240 s timeout rendered it first
+  time with no retries. The runner's own chunked render with retries is the same idea.
 - What he does not want, in one list, so it is not tried again: sound effects, icon doodles, GIFs, a stop-motion or
   paper-doll character, a navy title card. What he likes: little animations, text pop-ups, a clean editorial page.
 
