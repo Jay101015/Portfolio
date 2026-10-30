@@ -193,6 +193,19 @@ one change at a time where possible, so a result can be read.
 - Ink on frame 0: the hook was already writing before frame 0 in its own clock, but the first scene faded up from
   blank paper, so the first frame was empty anyway. Two rules have to agree for an opening to work.
 
+### The look, from the logo (2026-10-30)
+- Jeffrey sent the channel logo (navy, white, a green arrow) and signed off a palette built from it
+  (library/brand/palette.md): navy ink, the logo green for fills, a deeper green for gains in words, one red that
+  only means a loss, slate for labels and notes. He did not want a navy title card or outro: every page stays on
+  the white board. Rule: red was the default colour of every handwritten label; now a red word is always a loss.
+- Built on it: footage taped to the board in a navy frame (landscape only; the Shorts cut stays full-bleed), living
+  lines (every sketched shape re-wobbles about 7 times a second, the traced drawings shift a pixel with it), a marker
+  ring round the key number on the word that says it (instead of the camera punch; the slow push-in on every board
+  is off), a progress line along the top, a paper grain tile. The ring's size comes from the font (0.38 em a
+  character in Caveat Brush): the first guess of 0.5 em drew a ring over the label and the underline.
+- What he does not want, in one list, so it is not tried again: sound effects, icon doodles, GIFs, a stop-motion or
+  paper-doll character, a navy title card. What he likes: little animations, text pop-ups, a clean editorial page.
+
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage?
 2. Thumbnail: a face (Jeffrey) vs no face, once Canva thumbnails are in use.

@@ -28,7 +28,7 @@ import {ArtLayer} from './paper/art';
 import {PoseLayer} from './paper/poses';
 import {CharacterOn} from './paper/character';
 import {FootageCards, SetScene} from './paper/setpiece';
-import {Arrow, SketchPath} from './paper/sketch';
+import {Arrow, BoilContext, SketchPath} from './paper/sketch';
 import {FACES, POSES, defaultAvatar, defaultFaceFor, type AvatarConfig, type Face, type Pose} from './avatar/Avatar';
 
 const SceneSwitch: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}) => {
@@ -171,6 +171,18 @@ const boardTransition = (scene: Scene, prev: Scene | null, brand: Brand): Transi
   const had = sceneArt(prev, brand);
   return had && isTraced(had) ? 'wipe' : 'slide';
 };
+
+/** A thin line along the top that fills as the video runs: a viewer who can see they are two-thirds through stays
+ * for the end. Never on a Short (YouTube draws its own). */
+const ProgressLine: React.FC<{color: string}> = ({color}) => {
+  const frame = useCurrentFrame();
+  const {width, height, durationInFrames} = useVideoConfig();
+  if (height > width) return null;
+  const u = width / 1920;
+  return <div style={{position: 'absolute', left: 0, top: 0, height: 6 * u, width: width * Math.min(1, frame / Math.max(1, durationInFrames - 1)), background: color, opacity: 0.9, pointerEvents: 'none'}} />;
+};
+/** A faint paper grain over everything: a tile, not a filter, so it costs nothing to draw. */
+const Grain: React.FC = () => <AbsoluteFill style={{backgroundImage: `url(${staticFile('paper/grain.png')})`, backgroundRepeat: 'repeat', opacity: 0.045, pointerEvents: 'none', mixBlendMode: 'multiply'}} />;
 
 /** The last board, finished, sliding off to the left as the new one comes in (outside the pen's scene wrapper). */
 const SlideOut: React.FC<{prev: Scene; brand: Brand}> = ({prev, brand}) => {
@@ -353,6 +365,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
   const avatar: AvatarConfig = {...defaultAvatar, ...(sb.avatar ?? {})};
   return (
     <CharacterOn.Provider value={!!sb.poses?.length}>
+    <BoilContext.Provider value={!!brand.board && brand.boil !== false && String(flags.boil ?? 'on').toLowerCase() !== 'off'}>
     <AbsoluteFill style={{backgroundColor: brand.bg, fontFamily: brand.font, color: brand.text}}>
       <Background brand={brand} />
       <SketchFilterDefs />
@@ -387,7 +400,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
         return (
           <Sequence key={scene.id} from={from} durationInFrames={dur} name={`${scene.id} ${scene.type}`}>
             <SceneFade durationInFrames={dur} toon={brand.toon} transition={tr} dir={scene.id % 2 ? 1 : -1}>
-              <Camera scene={scene} toon={brand.toon} push={!!brand.board && !['broll', 'clip', 'still', 'image', 'outro', 'set'].includes(scene.type) && String(flags.motion ?? 'on').toLowerCase() !== 'off'}>
+              <Camera scene={scene} toon={brand.toon} push={!!brand.board && !['broll', 'clip', 'still', 'image', 'outro', 'set'].includes(scene.type) && String(flags.motion ?? 'off').toLowerCase() === 'on'}>
                 {keep && prev ? <KeptBoard prev={prev} brand={brand} mode={keep} /> : null}
                 {tr === 'slide' && prev ? <SlideOut prev={prev} brand={brand} /> : null}
                 {board}
@@ -403,7 +416,10 @@ export const Video: React.FC<Storyboard> = (sb) => {
       <Chrome brand={brand} durationSec={sb.durationSec} />
       {sb.captions ? <Captions scenes={sb.scenes} brand={brand} host={sb.host} always={!!sb.short} /> : null}
       {brand.board && sb.hand ? <PenHand brand={brand} /> : null}
+      {brand.board ? <Grain /> : null}
+      {brand.board && brand.progress !== false && String(flags.progress ?? 'on').toLowerCase() !== 'off' ? <ProgressLine color={brand.fill ?? brand.accent} /> : null}
     </AbsoluteFill>
+    </BoilContext.Provider>
     </CharacterOn.Provider>
   );
 };

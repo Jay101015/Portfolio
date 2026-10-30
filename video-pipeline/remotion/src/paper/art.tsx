@@ -3,7 +3,7 @@ import {AbsoluteFill, Easing, Img, interpolate, staticFile, useCurrentFrame, use
 import type {Brand, Scene} from '../types';
 import {useLayout} from '../components/layout';
 import {pop, rnd} from '../components/motion';
-import {SketchEllipse, SketchLine, SketchPath} from './sketch';
+import {SketchEllipse, SketchLine, SketchPath, useBoil} from './sketch';
 import {ILLUS} from './illus';
 import {FLIPS} from './flipbook';
 import {Doodle, Write, writeFrames} from './write';
@@ -1205,9 +1205,14 @@ const Traced: React.FC<{def: NonNullable<ArtDef['svg']>; size: number; brand: Br
   const d = Math.max(0, Math.min(1, (frame - win[0]) / Math.max(1e-6, win[1] - win[0])));
   const tilt = (rnd(seed) - 0.5) * 3;
   const scale = size / Math.max(def.w, def.h);
+  // living lines: the whole drawing shifts a pixel or two and a fraction of a degree with the board's boil
+  const boil = useBoil();
+  const jx = boil ? (rnd(seed * 3 + boil) - 0.5) * 2.4 * (size / 700) : 0;
+  const jy = boil ? (rnd(seed * 5 + boil) - 0.5) * 2.4 * (size / 700) : 0;
+  const jr = boil ? (rnd(seed * 7 + boil) - 0.5) * 0.5 : 0;
   let acc = 0;
   return (
-    <div style={{position: 'relative', width: size, height: size, display: 'flex', alignItems: 'center', justifyContent: 'center', transform: `rotate(${tilt}deg)`, ...style}}>
+    <div style={{position: 'relative', width: size, height: size, display: 'flex', alignItems: 'center', justifyContent: 'center', transform: `translate(${jx}px, ${jy}px) rotate(${tilt + jr}deg)`, ...style}}>
       <svg width={def.w * scale} height={def.h * scale} viewBox={`0 0 ${def.w} ${def.h}`} fill="none" stroke={brand.ink} strokeWidth={def.width} strokeLinecap="round" strokeLinejoin="round" style={{overflow: 'visible', display: 'block'}}>
         {def.paths.map((p, i) => {
           const from = acc / total;

@@ -51,10 +51,26 @@ and something still landing after that. The review kit lists every stretch of mo
 Fill with traced drawings, footage and cards first: Jeffrey was not keen on the cartoon icon doodles (a rabbit, a
 sun, a rocket) beside the Gen Z boards. A doodle only where nothing else fits.
 
+## The look (library/brand/palette.md)
+
+The colours are the channel's, from the logo: navy ink for every word and line, the logo's green for fills and the
+progress line, a deeper green for gains written in words, one red that only ever means a loss, slate for labels,
+notes and source lines. So a handwritten label is never red; red on the page is always a fee, a debt or a fall.
+- Footage is taped to the board: a navy frame with an offset shadow, a degree or two of tilt, a lighter grade, the
+  caption on the frame's bottom edge (landscape; a Short keeps its full-bleed cut). Jeffrey's own clips first.
+- Living lines: every sketched shape re-wobbles about seven times a second and the traced drawings shift a pixel
+  with it, so a finished board is never dead still (`brand.boil: off` in a header turns it off).
+- The key number gets a marker ring as it is said (red for a loss, green for a gain) instead of a camera punch; the
+  slow push-in on every board is off (`brand.motion: on` brings it back).
+- A thin green progress line fills along the top of a long video (`brand.progress: off` hides it); never on a Short.
+- Drawings on boards show objects, hands and places. People only when it is the character: a traced person beside
+  his set pieces reads as a second host.
+
 ## Punch-ins (automatic) and sound effects (off)
 
 On the key number of a hook, stat, bite, grow, shrink, pie or compare scene (the spoken number that matches the
-figure on screen, at most one every 6 seconds) the picture punches in 6% and eases back out. The sound effects in
+figure on screen, at most one every 6 seconds) a marker ring is drawn round the figure (the camera punch-in only
+plays with `brand.motion: on`). The sound effects in
 pipeline/sfx.py (a whoosh on cuts, a pop on cards, a scribble on writing, a ding on the number) are off: Jeffrey
 did not like them on the first cut. `sfx: on` in a script's header is the only thing that turns them on.
 

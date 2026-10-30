@@ -67,22 +67,28 @@ presets.whiteboard = {
   // The whiteboard look: the same page layouts as paper, but a clean white board, marker handwriting for everything,
   // every line written on left to right at a marker's pace, doodles drawn stroke by stroke, and a hand holding the
   // marker that follows whatever is being written. Three markers: black, green, red (and a blue for charts).
+  // The colours are the channel's (library/brand/palette.md): the logo's navy for every line and word, its green for
+  // fills, a deeper green for gains written in words, one red that only ever means a loss, slate for the notes.
   name: 'The Everyday Investor',
-  bg: '#fbfbf9',
-  panel: '#ffffff',
-  text: '#1d1d1f',
-  muted: '#767a82',
-  accent: '#1b8a4c',
-  accent2: '#d93025',
+  bg: '#F8F9F8',
+  panel: '#FFFFFF',
+  text: '#041B3C',
+  muted: '#6B7A99',
+  accent: '#0B8F58',
+  accent2: '#D7263D',
   font: "'Patrick Hand', 'Comic Sans MS', cursive",
   display: "'Caveat Brush', 'Patrick Hand', cursive",
-  ink: '#1d1d1f',
+  ink: '#041B3C',
   toon: false,
   paper: true,
   board: true,
   hand: "Caveat, 'Patrick Hand', cursive",
-  marker: '#fff176',
-  blue: '#1a56db',
+  marker: '#FFE86B',
+  blue: '#2E6FE8',
+  note: '#6B7A99',
+  fill: '#01C77B',
+  boil: true,
+  progress: true,
 };
 
 // The board look in other skins, so videos do not all look the same: the same writing, hand and drawings on a
@@ -98,6 +104,8 @@ presets.chalkboard = {
   ink: '#f3f1e6',
   marker: '#5fb4a2',
   blue: '#8ecae6',
+  note: '#b9c3b6',
+  fill: '#ffd166',
   surface: 'chalk',
 };
 presets.notebook = {

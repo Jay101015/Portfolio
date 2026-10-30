@@ -2,7 +2,7 @@ import React from 'react';
 import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {Brand, Scene} from '../types';
 import {formatNum, parseValue, useLayout} from '../components/layout';
-import {Arrow, SketchEllipse, SketchPath, SketchRect, Underline} from './sketch';
+import {Arrow, Ring, SketchEllipse, SketchPath, SketchRect, Underline, figureHeight, figureWidth} from './sketch';
 import {Write, writeFrames} from './write';
 import {Erase} from './erase';
 
@@ -18,6 +18,13 @@ import {Erase} from './erase';
  */
 type P = {scene: Scene; brand: Brand};
 const hand = (b: Brand) => b.hand ?? 'cursive';
+const noteColor = (b: Brand) => b.note ?? b.accent2;
+/** the ring's draw window round a figure: on the word that says it (scene.punch), once the figure is written */
+const ringWin = (scene: Scene, fps: number, writtenAt: number): [number, number] | null => {
+  if (scene.punch === undefined) return null;
+  const at = Math.max(writtenAt, Math.round((scene.punch - scene.start) * fps));
+  return [at, at + Math.round(fps * 0.35)];
+};
 const pct = (v: unknown): number | null => {
   if (v === undefined || v === null || v === '') return null;
   const n = parseFloat(String(v).replace(/[^0-9.\-]/g, ''));
@@ -30,8 +37,8 @@ const Label: React.FC<{brand: Brand; text?: string; frame: number; fps: number}>
   const {u} = useLayout();
   if (!text) return null;
   return (
-    <div style={{fontFamily: hand(brand), fontSize: 62 * u, color: brand.accent2, transform: 'rotate(-1.5deg)', transformOrigin: 'left', marginBottom: 18 * u}}>
-      <Write text={text} frame={frame} fps={fps} start={2} cps={34} color={brand.accent2} />
+    <div style={{fontFamily: hand(brand), fontSize: 62 * u, color: noteColor(brand), transform: 'rotate(-1.5deg)', transformOrigin: 'left', marginBottom: 18 * u}}>
+      <Write text={text} frame={frame} fps={fps} start={2} cps={34} color={noteColor(brand)} />
     </div>
   );
 };
@@ -81,8 +88,9 @@ export const PaperBite: React.FC<P> = ({scene, brand}) => {
       </div>
       <div style={{display: 'flex', alignItems: 'center', gap: 18 * u, marginTop: 18 * u, marginLeft: Math.max(0, barW - sliceW - 60 * u), visibility: frame >= loseAt ? undefined : 'hidden'}}>
         <Arrow length={100 * u} stroke={brand.accent2} win={[loseAt, loseAt + 8]} angle={-60} seed={9} thickness={4 * u} />
-        <div style={{fontFamily: brand.display, fontSize: (isVertical ? 64 : 76) * u, color: brand.accent2}}>
+        <div style={{position: 'relative', fontFamily: brand.display, fontSize: (isVertical ? 64 : 76) * u, color: brand.accent2}}>
           <Write text={loseText} frame={frame} fps={fps} start={loseAt + 6} cps={12} wordGap="0.2em" />
+          {(() => { const w = ringWin(scene, fps, loseAt + 6 + writeFrames(loseText, fps, 12)); return w ? <Ring width={figureWidth(loseText, (isVertical ? 64 : 76) * u)} height={figureHeight((isVertical ? 64 : 76) * u)} stroke={brand.accent2} win={w} thickness={6 * u} seed={scene.id * 3 + 2} /> : null; })()}
         </div>
       </div>
       {sub ? (
@@ -142,10 +150,11 @@ export const PaperGrow: React.FC<P> = ({scene, brand}) => {
         <div style={{position: 'absolute', right: 0, top: -(isVertical ? 90 : 110) * u, fontFamily: brand.display, fontSize: (isVertical ? 72 : 92) * u, color: brand.ink, whiteSpace: 'nowrap', visibility: frame >= lastAt ? undefined : 'hidden'}}>
           <Write text={finalText} frame={frame} fps={fps} start={lastAt + 4} cps={12} wordGap="0.2em" />
           <Underline width={Math.min(areaW * 0.5, 520 * u)} stroke={brand.accent} thickness={7 * u} win={[finalDone, finalDone + Math.round(fps * 0.5)]} easeOut seed={13} style={{marginLeft: 'auto'}} />
+          {(() => { const w = ringWin(scene, fps, finalDone); return w ? <Ring width={figureWidth(finalText, (isVertical ? 72 : 92) * u)} height={figureHeight((isVertical ? 72 : 92) * u)} stroke={brand.accent} win={w} thickness={6 * u} seed={scene.id * 3 + 2} /> : null; })()}
         </div>
       </div>
-      <div style={{fontFamily: hand(brand), fontSize: 50 * u, color: brand.accent2, marginTop: 36 * u, transform: 'rotate(-1deg)', transformOrigin: 'left'}}>
-        <Write text={`${money(from.prefix, from.num, from.suffix)}${monthly ? ' a month' : ' once'} · ${(rate * 100).toFixed(rate * 100 >= 10 ? 0 : 1)}% a year · ${years} years`} frame={frame} fps={fps} start={finalDone + Math.round(fps * 0.5)} cps={34} color={brand.accent2} />
+      <div style={{fontFamily: hand(brand), fontSize: 50 * u, color: noteColor(brand), marginTop: 36 * u, transform: 'rotate(-1deg)', transformOrigin: 'left'}}>
+        <Write text={`${money(from.prefix, from.num, from.suffix)}${monthly ? ' a month' : ' once'} · ${(rate * 100).toFixed(rate * 100 >= 10 ? 0 : 1)}% a year · ${years} years`} frame={frame} fps={fps} start={finalDone + Math.round(fps * 0.5)} cps={34} color={noteColor(brand)} />
       </div>
       <SourceLine brand={brand} source={scene.props.source} frame={frame} fps={fps} start={finalDone + fps} />
     </AbsoluteFill>
@@ -190,8 +199,8 @@ export const PaperPie: React.FC<P> = ({scene, brand}) => {
           </div>
         </div>
         {sub ? (
-          <div style={{fontFamily: hand(brand), fontSize: 56 * u, lineHeight: 1.15, color: brand.accent2, transform: 'rotate(-2deg)', maxWidth: isVertical ? '100%' : width * 0.34}}>
-            <Write text={sub} frame={frame} fps={fps} start={numDone + 6} cps={30} color={brand.accent2} />
+          <div style={{fontFamily: hand(brand), fontSize: 56 * u, lineHeight: 1.15, color: noteColor(brand), transform: 'rotate(-2deg)', maxWidth: isVertical ? '100%' : width * 0.34}}>
+            <Write text={sub} frame={frame} fps={fps} start={numDone + 6} cps={30} color={noteColor(brand)} />
           </div>
         ) : null}
       </div>
@@ -249,6 +258,7 @@ export const PaperShrink: React.FC<P> = ({scene, brand}) => {
         </div>
         <div style={{position: 'absolute', left: x0 + 30 * u, top: noteH * 0.5 - 60 * u, fontFamily: brand.display, fontSize: (isVertical ? 72 : 100) * u, color: brand.accent2, whiteSpace: 'nowrap', visibility: frame >= toAt ? undefined : 'hidden'}}>
           <Write text={toText} frame={frame} fps={fps} start={toAt} cps={12} wordGap="0.2em" />
+          {(() => { const w = ringWin(scene, fps, toDone); return w ? <Ring width={figureWidth(toText, (isVertical ? 72 : 100) * u)} height={figureHeight((isVertical ? 72 : 100) * u)} stroke={brand.accent2} win={w} thickness={6 * u} seed={scene.id * 3 + 2} /> : null; })()}
         </div>
       </div>
       <div style={{fontFamily: hand(brand), fontSize: 54 * u, color: brand.accent2, marginTop: 30 * u, transform: 'rotate(-1deg)', transformOrigin: 'left'}}>

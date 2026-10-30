@@ -4,7 +4,7 @@ import {Check, X} from 'lucide-react';
 import type {Brand, Scene, Word} from '../types';
 import {compactNum, findPhraseTime, formatNum, parseValue, useLayout} from '../components/layout';
 import {fadeIn, pop, rnd} from '../components/motion';
-import {Arrow, Marker, SketchEllipse, SketchLine, SketchPath, SketchRect, Underline, roughGen} from './sketch';
+import {Arrow, Marker, Ring, SketchEllipse, SketchLine, SketchPath, SketchRect, Underline, figureHeight, figureWidth, roughGen} from './sketch';
 import {Doodle, Write, WriteSpoken, fitCps, fitStart, pickDoodle, writeFrames} from './write';
 import {Art, PaperArt, isTraced, pickArt, pickArtAmong} from './art';
 import {PaperBite, PaperGrow, PaperPie, PaperShrink} from './money';
@@ -24,6 +24,8 @@ import {CharacterOn, isPersonArt} from './character';
  * in Video.tsx follows whatever is mid-stroke. Nothing fades in on a board; it gets written or it is not there.
  */
 
+/** the colour of a handwritten label, note or source line: slate on the brand board (red is only ever a loss) */
+const noteColor = (b: Brand) => b.note ?? b.accent2;
 type P = {scene: Scene; brand: Brand};
 const hand = (b: Brand) => b.hand ?? 'cursive';
 const marker = (b: Brand) => b.marker ?? '#ffe66d';
@@ -143,8 +145,8 @@ export const PaperTitle: React.FC<P> = ({scene, brand}) => {
   return (
     <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.2}}>
       {kicker ? (
-        <div style={{fontFamily: hand(brand), fontSize: 56 * u, color: brand.accent2, marginBottom: 10 * u, transform: 'rotate(-2deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8)}}>
-          {brand.board ? <Write text={kicker} frame={frame} fps={fps} start={0} cps={60} color={brand.accent2} /> : kicker}
+        <div style={{fontFamily: hand(brand), fontSize: 56 * u, color: noteColor(brand), marginBottom: 10 * u, transform: 'rotate(-2deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8)}}>
+          {brand.board ? <Write text={kicker} frame={frame} fps={fps} start={0} cps={60} color={noteColor(brand)} /> : kicker}
         </div>
       ) : null}
       <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: (isVertical ? 96 : 124) * u * (brand.board ? 1.08 : 1), lineHeight: 1.02, letterSpacing: brand.board ? 0 : -2 * u, color: brand.ink, maxWidth: isVertical ? '100%' : '82%'}}>
@@ -187,25 +189,32 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
   const ul = ease(frame, numDone, numDone + fps * 0.5);
   const noteStart = brand.board ? numDone + Math.round(fps * 0.3) : 20;
   const note = brand.board ? lin(frame, noteStart, noteStart + 8) : fadeIn(frame, 20, 10);
+  const loss = isLoss(`${raw} ${label ?? ''} ${sub ?? ''}`);
+  const subColor = sub && isLoss(sub) ? brand.accent2 : noteColor(brand);
+  // the ring round the figure lands on the word that says it (scene.punch, from the build), once it is written
+  const ringAt = scene.punch !== undefined ? Math.max(numDone, Math.round((scene.punch - scene.start) * fps)) : null;
   return (
     <AbsoluteFill style={{justifyContent: isVertical ? 'flex-start' : 'center', padding: pad, paddingLeft: pad * 1.2, paddingTop: isVertical ? height * 0.24 : pad}}>
       {label ? (
-        <div style={{fontFamily: hand(brand), fontSize: 60 * u, color: brand.accent2, transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8), marginBottom: 4 * u}}>
-          {brand.board ? <Write text={label} frame={frame} fps={fps} start={0} cps={labelCps} color={brand.accent2} /> : label}
+        <div style={{fontFamily: hand(brand), fontSize: 60 * u, color: noteColor(brand), transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8), marginBottom: 4 * u}}>
+          {brand.board ? <Write text={label} frame={frame} fps={fps} start={0} cps={labelCps} color={noteColor(brand)} /> : label}
         </div>
       ) : null}
       <div style={{display: 'flex', flexDirection: isVertical ? 'column' : 'row', alignItems: isVertical ? 'flex-start' : 'flex-end', gap: (isVertical ? 10 : 50) * u}}>
         <div>
-          <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: size, lineHeight: 1, letterSpacing: brand.board ? 0 : -5 * u, color: brand.ink, fontVariantNumeric: 'tabular-nums', transform: brand.board ? undefined : `scale(${0.85 + 0.15 * s})`, transformOrigin: 'left bottom', opacity: brand.board ? 1 : Math.min(1, s * 1.5)}}>
-            {brand.board ? <Write text={display} frame={frame} fps={fps} start={numStart} cps={numCps} wordGap="0.2em" /> : display}
+          <div style={{position: 'relative', display: 'inline-block'}}>
+            <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: size, lineHeight: 1, letterSpacing: brand.board ? 0 : -5 * u, color: brand.ink, fontVariantNumeric: 'tabular-nums', transform: brand.board ? undefined : `scale(${0.85 + 0.15 * s})`, transformOrigin: 'left bottom', opacity: brand.board ? 1 : Math.min(1, s * 1.5)}}>
+              {brand.board ? <Write text={display} frame={frame} fps={fps} start={numStart} cps={numCps} wordGap="0.2em" /> : display}
+            </div>
+            {ringAt !== null && brand.board ? <Ring width={figureWidth(display, size)} height={figureHeight(size)} stroke={loss ? brand.accent2 : brand.accent} win={[ringAt, ringAt + Math.round(fps * 0.35)]} thickness={7 * u} seed={scene.id * 3 + 1} /> : null}
           </div>
-          <Underline width={Math.min(size * 2.4, width * 0.5)} stroke={isLoss(`${raw} ${label ?? ''} ${scene.props.sub ?? ''}`) ? brand.accent2 : brand.accent} thickness={8 * u} win={[numDone, numDone + fps * 0.5]} easeOut seed={7} style={{marginTop: 8 * u}} />
+          <Underline width={Math.min(size * 2.4, width * 0.5)} stroke={loss ? brand.accent2 : brand.accent} thickness={8 * u} win={[numDone, numDone + fps * 0.5]} easeOut seed={7} style={{marginTop: 8 * u}} />
         </div>
         {sub ? (
           <div style={{display: 'flex', alignItems: 'center', gap: 16 * u, marginBottom: (isVertical ? 0 : 40) * u, opacity: brand.board ? 1 : note, maxWidth: isVertical ? '100%' : width * 0.34}}>
-            {!isVertical ? <Arrow length={120 * u} stroke={brand.accent2} win={brand.board ? [noteStart, noteStart + 8] : [20, 30]} angle={-8} seed={9} thickness={4 * u} /> : null}
-            <div style={{fontFamily: hand(brand), fontSize: 54 * u, lineHeight: 1.15, color: brand.accent2, transform: 'rotate(-2deg)'}}>
-              {brand.board ? <Write text={sub} frame={frame} fps={fps} start={noteStart + 8} cps={30} color={brand.accent2} /> : sub}
+            {!isVertical ? <Arrow length={120 * u} stroke={subColor} win={brand.board ? [noteStart, noteStart + 8] : [20, 30]} angle={-8} seed={9} thickness={4 * u} /> : null}
+            <div style={{fontFamily: hand(brand), fontSize: 54 * u, lineHeight: 1.15, color: subColor, transform: 'rotate(-2deg)'}}>
+              {brand.board ? <Write text={sub} frame={frame} fps={fps} start={noteStart + 8} cps={30} color={subColor} /> : sub}
             </div>
           </div>
         ) : null}
@@ -248,8 +257,8 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   const total = Math.max(1, Math.round((scene.end - scene.start) * fps)); // a quick cut writes and draws faster than a long scene
   const corner = <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, headline, scene.narration)} art={artName} frame={frame} fps={fps} start={brand.board ? 6 : 0} seed={scene.id} by={Math.round(total * 0.7)} />;
   const head = headline ? (
-    <div style={{fontFamily: hand(brand), fontSize: 54 * u, color: brand.accent2, marginBottom: 24 * u, transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8)}}>
-      {brand.board ? <Write text={headline} frame={frame} fps={fps} start={0} cps={34} color={brand.accent2} /> : headline}
+    <div style={{fontFamily: hand(brand), fontSize: 54 * u, color: noteColor(brand), marginBottom: 24 * u, transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8)}}>
+      {brand.board ? <Write text={headline} frame={frame} fps={fps} start={0} cps={34} color={noteColor(brand)} /> : headline}
     </div>
   ) : null;
   if (!brand.board || brand.fullText) {
@@ -475,8 +484,8 @@ export const PaperRecap: React.FC<P> = ({scene, brand}) => {
   return (
     <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.2}}>
       <div style={{marginBottom: 30 * u, display: 'inline-block'}}>
-        <div style={{fontFamily: hand(brand), fontSize: (isVertical ? 54 : 62) * u, color: brand.accent2, transform: 'rotate(-1.5deg)', transformOrigin: 'left'}}>
-          <Write text={title} frame={frame} fps={fps} start={2} cps={22} color={brand.accent2} />
+        <div style={{fontFamily: hand(brand), fontSize: (isVertical ? 54 : 62) * u, color: noteColor(brand), transform: 'rotate(-1.5deg)', transformOrigin: 'left'}}>
+          <Write text={title} frame={frame} fps={fps} start={2} cps={22} color={noteColor(brand)} />
         </div>
       </div>
       {items.map((item, i) => {
@@ -969,15 +978,16 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
   const s = pop(frame, fps, Math.round(fps * 0.35), 12);
   const labelSize = (isVertical ? 60 : 54) * u;
   const bottom = isVertical ? height * 0.2 : pad * 0.9;
-  const media = src ? (
+  const mediaAt = (w: number, h: number) => (src ? (
     scene.props.loop && scene.props.clipDur ? (
       <Loop durationInFrames={Math.max(1, Math.round(Number(scene.props.clipDur) * fps))}>
-        <Media src={src} props={{zoom: 'in', ...scene.props}} durationFrames={total} width={width} height={height} />
+        <Media src={src} props={{zoom: 'in', ...scene.props}} durationFrames={total} width={w} height={h} />
       </Loop>
     ) : (
-      <Media src={src} props={{zoom: 'in', ...scene.props}} durationFrames={total} width={width} height={height} />
+      <Media src={src} props={{zoom: 'in', ...scene.props}} durationFrames={total} width={w} height={h} />
     )
-  ) : null;
+  ) : null);
+  const media = mediaAt(width, height);
   if (src && String(scene.props.phone ?? '') === 'on' && !isVertical) {
     // a phone's screen recording: the phone stands on the board left of centre, upright, the cards in the column on the right
     const ph = height * 0.86;
@@ -997,6 +1007,30 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
             <Write text={caption} frame={frame} fps={fps} start={Math.round(fps * 0.4)} cps={30} />
           </div>
         ) : null}
+      </AbsoluteFill>
+    );
+  }
+  if (src && brand.board && !isVertical) {
+    // footage taped to the board: a navy frame with an offset shadow, a degree or two of tilt, a lighter grade so the
+    // photo sits with the ink rather than cutting hard against it, the caption on the frame's bottom edge
+    const bord = 6 * u;
+    const fw = width * 0.84;
+    const fh = (fw * 9) / 16;
+    const fx = (width - fw) / 2;
+    const fy = (height - fh) / 2 - height * 0.015;
+    const tilt = -1.6 + 0.35 * Math.sin(frame / (fps * 1.9));
+    return (
+      <AbsoluteFill style={{background: brand.bg, overflow: 'hidden'}}>
+        <div style={{position: 'absolute', left: fx, top: fy, width: fw, height: fh, transform: `rotate(${tilt}deg) translateY(${(1 - s) * 40 * u}px)`, opacity: Math.min(1, s * 1.5), background: brand.ink, padding: bord, boxSizing: 'border-box', boxShadow: `${12 * u}px ${12 * u}px 0 ${brand.ink}`}}>
+          <div style={{position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: '#111', filter: 'saturate(0.88) contrast(1.04) sepia(0.06)'}}>{mediaAt(fw - bord * 2, fh - bord * 2)}</div>
+          <div style={{position: 'absolute', left: '50%', top: -12 * u, width: 150 * u, height: 28 * u, background: brand.marker, opacity: 0.85, transform: 'translateX(-50%) rotate(1.5deg)'}} />
+        </div>
+        {caption ? (
+          <div style={{position: 'absolute', left: fx + pad * 0.25, top: fy + fh - labelSize * 0.9, transform: `rotate(-1deg) scale(${0.9 + 0.1 * s})`, transformOrigin: 'left bottom', opacity: Math.min(1, s * 1.5), background: '#fff', color: brand.ink, fontFamily: hand(brand), fontSize: labelSize, lineHeight: 1.15, padding: `${8 * u}px ${24 * u}px`, border: `${3 * u}px solid ${brand.ink}`, boxShadow: `${6 * u}px ${6 * u}px 0 ${brand.ink}`, maxWidth: width * 0.6}}>
+            <Write text={caption} frame={frame} fps={fps} start={Math.round(fps * 0.4)} cps={30} />
+          </div>
+        ) : null}
+        {credit ? <div style={{position: 'absolute', right: fx, top: fy + fh + 26 * u, fontFamily: hand(brand), fontSize: 26 * u, color: brand.muted, opacity: fadeIn(frame, 14, 10)}}>{credit}</div> : null}
       </AbsoluteFill>
     );
   }
@@ -1058,8 +1092,8 @@ export const PaperNews: React.FC<P> = ({scene, brand}) => {
           <div style={{position: 'absolute', left: '50%', top: -22 * u, width: 56 * u, height: 56 * u, borderRadius: '50%', background: `radial-gradient(circle at 35% 30%, #ff8a80, ${brand.accent2} 70%)`, boxShadow: `0 ${4 * u}px ${8 * u}px rgba(0,0,0,0.3)`, transform: 'translateX(-50%)'}} />
         ) : null}
         {caption ? (
-          <div style={{position: 'absolute', left: 30 * u, bottom: -74 * u, fontFamily: hand(brand), fontSize: 48 * u, color: brand.accent2, transform: 'rotate(1deg)'}}>
-            <Write text={caption} frame={frame} fps={fps} start={lineAt + 16} cps={30} color={brand.accent2} />
+          <div style={{position: 'absolute', left: 30 * u, bottom: -74 * u, fontFamily: hand(brand), fontSize: 48 * u, color: noteColor(brand), transform: 'rotate(1deg)'}}>
+            <Write text={caption} frame={frame} fps={fps} start={lineAt + 16} cps={30} color={noteColor(brand)} />
           </div>
         ) : null}
       </div>

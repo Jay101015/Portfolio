@@ -1,5 +1,17 @@
 import React from 'react';
 import {useCurrentFrame} from 'remotion';
+
+/** Living lines: on, every sketched shape is regenerated with a fresh wobble every few frames (drawn animation's
+ * "boil"), so a finished board never sits dead still. Video.tsx provides it from brand.boil. */
+export const BoilContext = React.createContext<boolean>(false);
+const BOIL_EVERY = 4; // frames per wobble: about 7 a second at 30 fps, the pace of animation drawn on threes
+const BOIL_VARIANTS = 3;
+export const useBoil = () => {
+  const on = React.useContext(BoilContext);
+  const frame = useCurrentFrame();
+  return on ? Math.floor(frame / BOIL_EVERY) % BOIL_VARIANTS : 0;
+};
+const boiled = (options: Options | undefined, boil: number): Options => (boil ? {...options, seed: ((options?.seed ?? 1) + boil * 7919) % 2147483647} : {...options, seed: options?.seed ?? 1});
 import rough from 'roughjs';
 import type {Options} from 'roughjs/bin/core';
 
@@ -91,22 +103,26 @@ const Paths: React.FC<{paths: PathInfo; draw?: number; win?: Win; easeOut?: bool
 };
 
 export const SketchPath: React.FC<Props & {d: string; options?: Options}> = ({d, options, draw, win, easeOut, opacity}) => {
-  const paths = React.useMemo(() => gen.toPaths(gen.path(d, {roughness: 1.3, bowing: 1, strokeWidth: 4, ...options})), [d, options]);
+  const boil = useBoil();
+  const paths = React.useMemo(() => gen.toPaths(gen.path(d, {roughness: 1.3, bowing: 1, strokeWidth: 4, ...boiled(options, boil)})), [d, options, boil]);
   return <Paths paths={paths} draw={draw} win={win} easeOut={easeOut} opacity={opacity} />;
 };
 
 export const SketchLine: React.FC<Props & {x1: number; y1: number; x2: number; y2: number; options?: Options}> = ({x1, y1, x2, y2, options, draw, win, easeOut, opacity}) => {
-  const paths = React.useMemo(() => gen.toPaths(gen.line(x1, y1, x2, y2, {roughness: 1.2, strokeWidth: 4, ...options})), [x1, y1, x2, y2, options]);
+  const boil = useBoil();
+  const paths = React.useMemo(() => gen.toPaths(gen.line(x1, y1, x2, y2, {roughness: 1.2, strokeWidth: 4, ...boiled(options, boil)})), [x1, y1, x2, y2, options, boil]);
   return <Paths paths={paths} draw={draw} win={win} easeOut={easeOut} opacity={opacity} />;
 };
 
 export const SketchRect: React.FC<Props & {x: number; y: number; w: number; h: number; options?: Options}> = ({x, y, w, h, options, draw, win, easeOut, opacity}) => {
-  const paths = React.useMemo(() => gen.toPaths(gen.rectangle(x, y, w, h, {roughness: 1.1, strokeWidth: 4, ...options})), [x, y, w, h, options]);
+  const boil = useBoil();
+  const paths = React.useMemo(() => gen.toPaths(gen.rectangle(x, y, w, h, {roughness: 1.1, strokeWidth: 4, ...boiled(options, boil)})), [x, y, w, h, options, boil]);
   return <Paths paths={paths} draw={draw} win={win} easeOut={easeOut} opacity={opacity} />;
 };
 
 export const SketchEllipse: React.FC<Props & {cx: number; cy: number; w: number; h: number; options?: Options}> = ({cx, cy, w, h, options, draw, win, easeOut, opacity}) => {
-  const paths = React.useMemo(() => gen.toPaths(gen.ellipse(cx, cy, w, h, {roughness: 1.4, strokeWidth: 4, ...options})), [cx, cy, w, h, options]);
+  const boil = useBoil();
+  const paths = React.useMemo(() => gen.toPaths(gen.ellipse(cx, cy, w, h, {roughness: 1.4, strokeWidth: 4, ...boiled(options, boil)})), [cx, cy, w, h, options, boil]);
   return <Paths paths={paths} draw={draw} win={win} easeOut={easeOut} opacity={opacity} />;
 };
 
@@ -121,6 +137,25 @@ export const Underline: React.FC<{width: number; stroke: string; thickness?: num
     </svg>
   );
 };
+
+/** A marker ring drawn round a figure as it is said: one pass of the pen, a little tilted, over `win`. Put it inside
+ * a `position: relative` box the size of the figure (give it that width and height); it draws outside the box. */
+export const Ring: React.FC<{width: number; height: number; stroke: string; win: Win; thickness?: number; seed?: number}> = ({width, height, stroke, win, thickness = 6, seed = 4}) => {
+  const px = width * 0.07 + thickness * 2;
+  const py = height * 0.1 + thickness * 2;
+  const w = width + px * 2;
+  const h = height + py * 2;
+  const options = React.useMemo(() => ({stroke, strokeWidth: thickness, roughness: 1.6, bowing: 1.8, seed, curveStepCount: 14}), [stroke, thickness, seed]);
+  return (
+    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{position: 'absolute', left: -px, top: -py, overflow: 'visible', pointerEvents: 'none', transform: 'rotate(-3deg)'}}>
+      <SketchEllipse cx={w / 2} cy={h / 2} w={w - thickness * 2} h={h - thickness * 2} win={win} easeOut options={options} />
+    </svg>
+  );
+};
+
+/** about how wide a figure is in the display face (Caveat Brush: narrow digits), for the ring round it */
+export const figureWidth = (text: string, fontSize: number) => text.length * fontSize * 0.38;
+export const figureHeight = (fontSize: number) => fontSize * 0.82;
 
 /** A highlighter swipe behind text: a slightly skewed, uneven bar that wipes in. */
 export const Marker: React.FC<{progress: number; color: string; children: React.ReactNode; pad?: number}> = ({progress, color, children, pad = 6}) => (

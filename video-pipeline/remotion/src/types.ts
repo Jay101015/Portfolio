@@ -24,6 +24,10 @@ export type Brand = {
   corner?: boolean; // the channel name in the page corner (`brand.corner: off` hides it)
   fullText?: boolean; // text scenes write every word said (`brand.text: full`); off: the few words that carry it
   creditsOnScreen?: boolean; // footage credits drawn on the picture (`credits: screen`); off: they go to credits.txt for the description
+  note?: string; // handwritten labels, notes and source lines (slate on the board: red is only ever a loss)
+  fill?: string; // the brand's fill colour: ticks, arrows, the progress line, the solid payoff card
+  boil?: boolean; // living lines: every sketched shape re-wobbles a few times a second, the way drawn animation does (on for the board)
+  progress?: boolean; // a thin line along the top that fills as the video runs (on for the board, never on a Short)
   illustrated?: boolean; // the illustrated style (`brand.style: illustrated`): traced people-and-scene drawings, large, on every scene whose words call one up
 };
 

@@ -27,6 +27,10 @@ Your three rules:
    (`icon=`, or `art=` naming an icon such as rabbit, plant, sun, rocket, hourglass) only where no drawing, clip or
    card fits, and never as the main picture of a beat.
 
+The look is the channel's (video-pipeline/library/brand/palette.md, EDITOR.md "The look"): navy ink, red only for a
+loss, footage taped to the board in a navy frame, living lines, a ring round the key number. Judge a render against
+it: a red label, a full-bleed clip on a long video, a person drawn beside a set piece, are notes.
+
 Every note you give is a picture, not a principle: say what goes on screen, at what second, made with which tool.
 
 ## Read first (both jobs)

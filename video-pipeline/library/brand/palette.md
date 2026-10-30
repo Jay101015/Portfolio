@@ -1,7 +1,7 @@
 # The Everyday Investor: brand colours
 
-Built from the logo (library/brand/logo.png: navy, white, a green arrow). Proposed 2026-10-30; the renderer's
-`whiteboard` preset (remotion/src/theme.ts) moves to these once Jeffrey signs them off.
+Built from the logo (library/brand/logo.png: navy, white, a green arrow). Signed off by Jeffrey 2026-10-30 (no navy title card or outro: every page stays on the white board); the renderer's
+`whiteboard` preset (remotion/src/theme.ts) uses these.
 
 | Role | Hex | Where |
 |---|---|---|
@@ -13,7 +13,6 @@ Built from the logo (library/brand/logo.png: navy, white, a green arrow). Propos
 | Highlighter | `#FFE86B` | a swipe under the key words, at about 75% |
 | Slate | `#6B7A99` | labels, source lines, axes, anything the eye should pass over |
 | Chart blue | `#2E6FE8` | the second line on a chart |
-| Navy surface | `#041B3C` + white `#FEFDFE` + arrow green | the title card, the outro, a Short's hook banner: the logo's own scheme |
 | Tints | `#EAFAF2` good news, `#FDEDEE` bad news (`tint=red`), `#EEF2F8` Jeffrey's own story | a faint page colour per section |
 
 Rules
