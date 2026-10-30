@@ -5,7 +5,7 @@ Topic: what our money buys now, how AI is cutting the jobs our generation starts
 | scene | query | result | licence | attribution |
 |---|---|---|---|---|
 | 3 |  | library uni-students-library |  |  |
-| 8 | uk supermarket shopping basket food prices | downloaded 08-uk-supermarket-shopping-basket-food-pric.mp4 | Pixabay Content License | Video 47600 by Engin_Akyurt via Pixabay |
+| 8 | uk supermarket shopping basket food prices | downloaded 08-uk-supermarket-shopping-basket-food-pric.mp4 | Pixabay Content License | Video 47601 by Engin_Akyurt via Pixabay |
 | 10 |  | library uk-flats-block-drone |  |  |
 | 15 |  | library uk-semis-street-pan |  |  |
 | 16 |  | library estate-agent-sold |  |  |
@@ -15,10 +15,11 @@ Topic: what our money buys now, how AI is cutting the jobs our generation starts
 | 27 | | already in media/: 27-nurse-talking-with-patient-hospital.mp4 | | |
 | 28 |  | library tradesman-van-tools |  |  |
 | 29 |  | library drill-in-hand |  |  |
-| 30 | hand signing document with pen close up | downloaded 30-hand-signing-document-with-pen-close-up.mp4 | Pixabay Content License | Video 131993 by Dx21 via Pixabay |
-| 44 | barista handing takeaway coffee to customer paying by card | downloaded 44-barista-handing-takeaway-coffee-to-custo.mp4 | Pixabay Content License | Video 15484 by ThorstenF via Pixabay |
+| 30 | | already in media/: 30-hand-signing-document-with-pen-close-up.mp4 | | |
+| 38 | | already in media/: jeffrey-index-holdings.mp4 | | |
+| 44 | | already in media/: 44-barista-handing-takeaway-coffee-to-custo.mp4 | | |
 | 47 | | already in media/: jeffrey-ai-everyday.mp4 | | |
-| 49 | | already in media/: 43-business-meeting-people-talking-across-t.mp4 | | |
+| 49 |  | library office-interview-handshake |  |  |
 | 53 | | already in media/: watch-next-200-1000-10000.mp4 | | |
 | 54 | | already in media/: watch-next-200-1000-10000.mp4 | | |
 
