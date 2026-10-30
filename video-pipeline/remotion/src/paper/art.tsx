@@ -1313,8 +1313,10 @@ export const ArtLayer: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand})
   if (scene.type === 'broll' || scene.type === 'news') return null; // the footage and the clipping carry no drawing
   // on a text scene in the illustrated style a named traced drawing is the scene's big picture (PaperText draws it), unless it was dragged somewhere
   if (brand.illustrated && (scene.type === 'text' || scene.type === 'hook') && isTraced(name) && scene.props.art_x === undefined) return null;
-  const at = String(scene.props.art_at ?? (isVertical ? 'br' : 'tr'));
-  const size = height * Math.max(0.12, Math.min(0.8, Number(scene.props.art_size ?? (isVertical ? 0.22 : 0.3))));
+  // a Short has its lines across the top, the character lower right and the captions in between: a placed drawing
+  // goes lower left, no bigger than a fifth of the height, whatever the long video's art_at and art_size say
+  const at = isVertical ? 'bl' : String(scene.props.art_at ?? 'tr');
+  const size = height * (isVertical ? Math.min(0.2, Number(scene.props.art_size ?? 0.2)) : Math.max(0.12, Math.min(0.8, Number(scene.props.art_size ?? 0.3))));
   const start = Math.round(Number(scene.props.art_start ?? 0.8) * fps);
   // `art_x` / `art_y`: where its centre sits, as a share of the width and height (dragged into place in the studio)
   const free = scene.props.art_x !== undefined && scene.props.art_y !== undefined;

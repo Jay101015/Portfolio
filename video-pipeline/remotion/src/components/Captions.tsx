@@ -65,8 +65,10 @@ export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string; a
     // white pill (as the £25K Short did): under the hook, over his head, clear of the Shorts title and buttons.
     // on a board in a Short the board's own lines take the top: the caption goes in the middle, under them and over
     // the character's head (he stands lower right), clear of the title band and the buttons
-    const onBoard = isVertical && !!current && !['set', 'broll', 'clip', 'still', 'image', 'outro'].includes(current.type);
-    const high = isVertical && (onBoard || setCaptionsHigh(scenes));
+    // ...except on a stat, chart or other figure scene, whose figure sits in the middle: there the caption goes high,
+    // under the hook banner and over the figure's label
+    const onBoard = isVertical && !!current && ['text', 'hook', 'takeaway', 'recap', 'list'].includes(current.type);
+    const high = isVertical && (onBoard || setCaptionsHigh(scenes) || (!!current && !['broll', 'clip', 'still', 'image', 'outro'].includes(current.type)));
     const topAt = onBoard ? 0.44 : 0.155;
     return (
       <AbsoluteFill style={high ? {justifyContent: 'flex-start', alignItems: 'center', paddingTop: height * topAt} : {justifyContent: 'flex-end', alignItems: 'center', paddingBottom: isVertical ? height * 0.3 : 52 * u, ...sideStyle}}>
