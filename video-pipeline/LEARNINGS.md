@@ -134,6 +134,19 @@ one change at a time where possible, so a result can be read.
 ### Is the Dream Dead for Gen Z? (built 2026-10-29)
 - Review: editor 4, animator 6, retention 6 (round 1); editor 6, animator 8, retention 7 (round 2). Round two's
   must-fixes were then fixed in a final render and checked by eye, not reviewed again.
+- Then rebuilt with a director (a fourth reviewer for the picture) and Jeffrey's own material (desk poses, his AI
+  chat and fund-holdings screen recordings, trades clips): Review: editor 5, animator 7, retention 7, director 6
+  (round 1); editor 6, animator 7, retention 7.5, director 7 (round 2). Still picture 178 s -> 29 s; mostly empty
+  page 195 s -> about 115 s. Shorts (round 2): 5-7 out of 10 each, then their layout fixed and checked by eye.
+- Found on the way and fixed in the pipeline: the picture drifted 1.5 s behind the voice over 7 minutes (each render
+  chunk's sound ran past its picture and the join pushed the next chunk later; chunks are now joined as picture only
+  under a one-piece sound track); the chunk-join dropouts came back whenever footage had its own sound (the preview's
+  sound is now mixed into the one-piece track); a wordless card covered the line before it (it now gets its own beat
+  in room tone); the transcriber dropped 7 s (a build warning now names a scene whose words were barely heard);
+  captions took the transcriber's mishearings of short content words ('bulls' for 'doors'); a news lookup refused
+  (HTTP 429) put its search words on screen; every pose had a white strip cut through his soles.
+- Rule: Jeffrey's direction, no empty white space: every board gets a drawing, a moving doodle or text pop-ups, two
+  things on the page by the halfway point of its words (EDITOR.md, the director's third rule).
 - Jeffrey reads at about 175 words a minute, not 159: a 1,540-word script came out at 7:49. Rule: 10 minutes is about
   1,750 spoken words at his pace. He also left out the personal-plan section, so the two lines that promised it were
   cut from the take at measured pauses (an open loop costs more than a shorter video).
