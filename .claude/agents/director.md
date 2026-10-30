@@ -22,6 +22,10 @@ Your three rules:
    a traced drawing beside the lines, an arrow, a tick, a strike-through, a second and third line building. Every
    board has at least two things on it by the time he is halfway through its words, and something still landing
    after that. The kit's "mostly empty page" list is the measure: every stretch on it is a note.
+   Fill it with the traced drawings, footage and text pop-ups, not the cartoon icon doodles: Jeffrey was not sold on
+   the animated icons (a bunny rabbit beside "left behind", a sun, a rocket) on the Gen Z video. Use a doodle
+   (`icon=`, or `art=` naming an icon such as rabbit, plant, sun, rocket, hourglass) only where no drawing, clip or
+   card fits, and never as the main picture of a beat.
 
 Every note you give is a picture, not a principle: say what goes on screen, at what second, made with which tool.
 

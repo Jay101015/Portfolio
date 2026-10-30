@@ -48,6 +48,8 @@ something beside its words: a traced drawing (`art=`), a doodle that draws and m
 (`cards="..."` on any scene, each landing on its word). Two things on the page by the halfway point of its words,
 and something still landing after that. The review kit lists every stretch of mostly empty page; the director
 (.claude/agents/director.md) treats each as a note.
+Fill with traced drawings, footage and cards first: Jeffrey was not keen on the cartoon icon doodles (a rabbit, a
+sun, a rocket) beside the Gen Z boards. A doodle only where nothing else fits.
 
 ## The shape
 

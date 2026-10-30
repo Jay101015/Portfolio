@@ -25,7 +25,7 @@ one change at a time where possible, so a result can be read.
 | Short: What to do with £200 | 0:48 | 2026-10-27 | 6 (day 1) | | |
 | Short: Looking to purchase your first home? | 0:44 | 2026-10-27 | 5 (day 1) | | |
 | Can You Afford a Home? (London and the UK) | 10:04 | not yet | | | first 10-minute build; levelled to -14 LUFS; ad breaks ~2:55, ~5:46, 8:10 |
-| Is the Dream Dead for Gen Z? | 7:43 | not yet | | | cost of living, AI and entry-level jobs, how to stay ahead; shipped under 8 min by choice (not monetised yet) |
+| Is the Dream Dead for Gen Z? | 7:38 | not yet | | | Jeffrey: 8/10 (not sold on the icon doodles, the rabbit especially); cost of living, AI and entry-level jobs, how to stay ahead; under 8 min by choice |
 
 ## Lessons so far
 
