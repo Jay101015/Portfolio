@@ -151,6 +151,13 @@ const sceneArt = (scene: Scene, brand: Brand): string | undefined => {
   if (p.art) return p.art;
   return brand.illustrated ? pickArtAmong(isTraced, p.title, p.headline, p.subtitle, p.label, p.sub, scene.narration) : undefined;
 };
+// a Short is narrow: a board sliding sideways pushes its lines off the edge for half a second, so on a phone the
+// board clears with a wipe instead (and a set piece cuts in)
+const boardTransitionFor = (scene: Scene, prev: Scene | null, brand: Brand, vertical: boolean): Transition => {
+  const tr = boardTransition(scene, prev, brand);
+  if (!vertical || tr !== 'slide') return tr;
+  return scene.type === 'set' || prev?.type === 'set' ? 'cut' : 'wipe';
+};
 const boardTransition = (scene: Scene, prev: Scene | null, brand: Brand): Transition => {
   const asked = scene.props.transition;
   // a set piece turns in like a page, and the page after it turns over it (on the board look; elsewhere a cut)
@@ -346,8 +353,8 @@ export const Video: React.FC<Storyboard> = (sb) => {
         const prev = idx > 0 ? sb.scenes[idx - 1] : null;
         const next = idx + 1 < sb.scenes.length ? sb.scenes[idx + 1] : null;
         const keep = prev ? keepMode(scene) : '';
-        const tr = boardTransition(scene, prev, brand);
-        const wipeOut = next ? boardTransition(next, scene, brand) === 'wipe' : false; // this board clears at the end
+        const tr = boardTransitionFor(scene, prev, brand, height > width);
+        const wipeOut = next ? boardTransitionFor(next, scene, brand, height > width) === 'wipe' : false; // this board clears at the end
         const wipeFrames = Math.min(WIPE_FRAMES(fps), Math.floor(dur / 2));
         let board = (
           <AbsoluteFill data-pen-scene={scene.id} data-pen-from={from} style={keep ? {left: NEW.x * width, top: NEW.y * height, transform: `scale(${NEW.scale})`, transformOrigin: '0 0'} : undefined}>

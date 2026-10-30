@@ -165,7 +165,7 @@ export const PaperTitle: React.FC<P> = ({scene, brand}) => {
 export const PaperStat: React.FC<P> = ({scene, brand}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const {u, pad, isVertical, width} = useLayout();
+  const {u, pad, isVertical, width, height} = useLayout();
   const raw = String(scene.props.value ?? '');
   const parsed = parseValue(raw);
   const from = scene.props.from !== undefined ? parseValue(String(scene.props.from))?.num ?? 0 : 0;
@@ -188,13 +188,13 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
   const noteStart = brand.board ? numDone + Math.round(fps * 0.3) : 20;
   const note = brand.board ? lin(frame, noteStart, noteStart + 8) : fadeIn(frame, 20, 10);
   return (
-    <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.2}}>
+    <AbsoluteFill style={{justifyContent: isVertical ? 'flex-start' : 'center', padding: pad, paddingLeft: pad * 1.2, paddingTop: isVertical ? height * 0.24 : pad}}>
       {label ? (
         <div style={{fontFamily: hand(brand), fontSize: 50 * u, color: brand.accent2, transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8), marginBottom: 4 * u}}>
           {brand.board ? <Write text={label} frame={frame} fps={fps} start={0} cps={labelCps} color={brand.accent2} /> : label}
         </div>
       ) : null}
-      <div style={{display: 'flex', alignItems: 'flex-end', gap: 50 * u, flexWrap: isVertical ? 'wrap' : 'nowrap'}}>
+      <div style={{display: 'flex', flexDirection: isVertical ? 'column' : 'row', alignItems: isVertical ? 'flex-start' : 'flex-end', gap: (isVertical ? 10 : 50) * u}}>
         <div>
           <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: size, lineHeight: 1, letterSpacing: brand.board ? 0 : -5 * u, color: brand.ink, fontVariantNumeric: 'tabular-nums', transform: brand.board ? undefined : `scale(${0.85 + 0.15 * s})`, transformOrigin: 'left bottom', opacity: brand.board ? 1 : Math.min(1, s * 1.5)}}>
             {brand.board ? <Write text={display} frame={frame} fps={fps} start={numStart} cps={numCps} wordGap="0.2em" /> : display}
@@ -202,7 +202,7 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
           <Underline width={Math.min(size * 2.4, width * 0.5)} stroke={isLoss(`${raw} ${label ?? ''} ${scene.props.sub ?? ''}`) ? brand.accent2 : brand.accent} thickness={8 * u} win={[numDone, numDone + fps * 0.5]} easeOut seed={7} style={{marginTop: 8 * u}} />
         </div>
         {sub ? (
-          <div style={{display: 'flex', alignItems: 'center', gap: 16 * u, marginBottom: 40 * u, opacity: brand.board ? 1 : note, maxWidth: isVertical ? '100%' : width * 0.34}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: 16 * u, marginBottom: (isVertical ? 0 : 40) * u, opacity: brand.board ? 1 : note, maxWidth: isVertical ? '100%' : width * 0.34}}>
             {!isVertical ? <Arrow length={120 * u} stroke={brand.accent2} win={brand.board ? [noteStart, noteStart + 8] : [20, 30]} angle={-8} seed={9} thickness={4 * u} /> : null}
             <div style={{fontFamily: hand(brand), fontSize: 44 * u, lineHeight: 1.15, color: brand.accent2, transform: 'rotate(-2deg)'}}>
               {brand.board ? <Write text={sub} frame={frame} fps={fps} start={noteStart + 8} cps={30} color={brand.accent2} /> : sub}
@@ -649,7 +649,7 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
   const yFormat: string | undefined = scene.props.yFormat;
   const xLabel: string | undefined = scene.props.xLabel;
   const W = width - pad * 2;
-  const H = Math.min(height * (isVertical ? 0.42 : 0.56), 640 * u);
+  const H = Math.min(height * (isVertical ? 0.3 : 0.56), 640 * u); // a Short: the band above the character, who stands below it
   const left = 150 * u;
   const bottom = 70 * u;
   const top = 60 * u;
@@ -747,7 +747,7 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
     );
   }
   return (
-    <AbsoluteFill style={{justifyContent: 'center', padding: pad}}>
+    <AbsoluteFill style={{justifyContent: isVertical ? 'flex-start' : 'center', padding: pad, paddingTop: isVertical ? height * 0.24 : pad}}>
       {title ? (
         <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 54 : 64) * u * (brand.board ? 1.1 : 1), color: brand.ink, marginBottom: 14 * u, letterSpacing: brand.board ? 0 : -1 * u}}>
           <Txt brand={brand} text={title} frame={frame} fps={fps} seed={31} per={2} cps={24} />
