@@ -52,3 +52,67 @@ Miami at night (GTA 6 is set in a Miami-like state), a trading screen, a streame
 luxury-cars-parked, hooded-hacker-screens (scams), the living-room room, the index-fund-basket, scam-call, side-hustle
 and phone-balance-up drawings. Ask Jeffrey for: a phone clip searching "Take-Two" in his fund's holdings; a pose of the
 character gaming on a sofa with a controller.
+
+## Thinking ahead (2026-10-30)
+
+The aim: when a moment comes (a Budget, a rate cut, a launch, a crash), the video is a day's work, not a week's,
+because the script shape, the figures and the pictures were ready. Unused drawings that fit are named in brackets.
+
+### The calendar (next six months)
+- **November.** GTA 6, 19 Nov (above, researched). Black Friday, 27 Nov: "I tracked 5 Black Friday 'deals' for a
+  month" needs the prices logged from early November, so it starts now or not at all. The Autumn Budget, when the
+  date is announced: a reaction script pre-written with blanks for the measures ("what it means if you earn £30K").
+- **December.** "Christmas on credit: what BNPL really costs" [bnpl-boxes, christmas-bags]. "Everything I learned
+  about money this year" (his own numbers, his call).
+- **January.** "The January money reset: five moves in a weekend" [budget-jars, subscriptions-phone, card-scissors].
+  "I asked ChatGPT to fix my finances" (the AI angle he owns).
+- **February to 5 April.** The ISA deadline countdown: "£20,000 by 5 April: what the allowance actually means"
+  [isa-shield, cash-vs-stocks-isa]; the Lifetime ISA bonus [lisa-bonus]; "use it or lose it" Shorts in the last
+  fortnight.
+- **April.** New tax year: "Your April payslip: what changed" [payslip, tax-return]; student loan thresholds
+  [student-loan-letter]; the pension match again for new starters [pension-match, pension-letter].
+- **Any week.** The eight Bank of England rate days a year (dates published in advance): a 45-second Short the same
+  day, "what today's rate means for your savings, your mortgage, your ISA". Market falls: the "don't sell" Short.
+
+### Series that compound (a reason to come back)
+1. **The £200.** £200 a month into a real index fund, a 60-second update each month with the real balance. The
+   channel's edge is his own numbers; this makes them a habit, not a one-off.
+2. **What X teaches about money.** GTA first; then whatever Gen Z is watching that month. The lesson repeats, the
+   way in never does.
+3. **TikTok money advice, fact-checked.** A clip of bad advice (described, not shown), the real figure, the fix
+   [scam-call, hooded-hacker-screens]. Shorts-first; the most shareable format the channel has.
+4. **Ask the comments.** The best question under the last video, answered in a Short, with the asker's name. Cheap
+   to make and it trains viewers to comment.
+5. **My number this month.** One personal figure (savings rate, the pot, the hours AI saved him): his choice what to
+   share, but one a month.
+
+### Scripts: ready to fill
+- A hook bank: twenty hooks by pattern (shocking number, before and after, myth flip, question, admission,
+  comparison), filled from figures already researched (7.6×, £83K, £1,406, 30%, graduate jobs halved, Take-Two 11×),
+  refreshed when the fact sheet is.
+- Two templates with blanks: the news Short (the number, what it means for you, one thing to do today) and the
+  Budget reaction (five measures, who wins, who pays, what to do before 5 April).
+- The ending, fixed for every script: a bridge line naming the next video, then one comment question. Never
+  "thanks for watching".
+- A comment-question bank, one per topic, so the recap never ends flat.
+
+### Pipeline to build before it is needed
+- **A monthly fact sheet** refreshed by find_facts.py: CPI, average rent, the house-price-to-earnings ratio, the base
+  rate, ISA and LISA limits, the student loan threshold, with publisher and month. Scripts cite it; nothing is
+  looked up twice.
+- **A Shorts-first lane:** a `[short]` script shape rendered vertical from the start, the number on frame 0, the hook
+  pinned, an ending that loops to the start. Today's Shorts are cuts of the long video and start mid-thought.
+- **The description pack on every render:** chapters, sources, the pinned comment, the Short titles, the end-screen
+  pointer. He asked for chapters by hand on the Gen Z video.
+- **Brand thumbnails from the hook:** three flat editorial variants per video in the palette, for Test & Compare,
+  instead of a prompt to an image tool each time.
+- **Count-up numbers, chapter tints and drawn-on-photo** (for the photos he will send).
+- **The Kling clips in the library** and a prompt sheet that keeps him on-model, for when credits return.
+- **The retention loop** when vidIQ credits return (27 Nov): the 48-hour and 7-day pull for every video, matched to
+  timing.json, logged to LEARNINGS.md, with a rule changed each time.
+
+### What Jeffrey can bank in one afternoon
+Twenty phone clips, 6 to 10 seconds each, landscape: tapping a card, the banking app, a payslip (numbers blanked),
+the ISA app's fund page, a jobs site scrolling, coins into a jar, the desk, a meeting from his seat, a supermarket
+shelf, a rent reminder on the phone, a coffee bought, a train ticket, the Rightmove map, a pension letter, keys.
+These replace stock in every video for a year, and the reviewers rate his own clips above everything else.
