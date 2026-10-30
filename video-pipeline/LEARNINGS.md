@@ -165,6 +165,32 @@ one change at a time where possible, so a result can be read.
   bridge to the next video, not "thank you for watching, like and subscribe"; say "ISA", "uni" and "ChatGPT" clearly
   (Shorts cut from the take carry captions).
 
+### Animation: what moves and what does not (2026-10-30)
+- Jeffrey's verdict on the stop-motion character: "very choppy, not 5 seconds of legit animation". Pose swaps on twos
+  with a hold jiggle read as slides, not motion. A rig test (the standing drawing cut into head, torso, arms and
+  legs, moved smoothly) was "so much worse": a detailed drawing cut into parts reads as a paper doll. Both routes are
+  closed for this character (experiments/rig/ is kept as the record, not for use).
+- Kling (image-to-video, about 50 credits a 5 s clip) is the route that works. Two of the first six clips were
+  usable, both from a seated front-facing desk drawing: a typing-then-shock reaction and a typing-then-lean-back.
+  Rules from the test: start from a front or three-quarter drawing that shows the whole outfit (the side view came
+  back as a different person); one clear action per 5 s clip, never a walk plus a turn; put the style lines ("clean
+  black ink line art on white, no shading, no colour, including inside the mouth") at the very front of the prompt
+  (the first clip shouted with a red mouth, the second, prompted that way, has no colour in any frame); name his
+  face, hair, jumper with pushed-up sleeves and rolled jeans in every prompt. The library entries are still to make.
+- The retention reviewer and the director both measured the same thing on the money graphics: a single shape on
+  plain paper for 30 s (0:35-1:07 of the animation demo). Rule: every money graphic carries cards (the demo's fixes).
+
+### Quick wins in the pipeline (2026-10-30)
+- Sound effects under the voice (pipeline/sfx.py) and a punch-in on the key number: the first cut (the Gen Z
+  opening, before and after) has not been heard by anyone yet; the effects measure 21.5 dB under the voice, 175
+  events in 7.6 minutes (91 card pops, 53 cut whooshes). Jeffrey's ears decide the density; `sfx: off` turns them off.
+- The punch-in must land on the figure that is on screen, not the first number said: "2021" is a year, "one" in
+  "there's one our parents never paid" is a pronoun, and "thirty-nine thousand" is the salary before the £1,300 the
+  stat shows. It now matches the spoken number to the figure in the scene's value/to/lose/board and only then falls
+  back to the longest run of number words (tests in tests/test_sfx.py).
+- Ink on frame 0: the hook was already writing before frame 0 in its own clock, but the first scene faded up from
+  blank paper, so the first frame was empty anyway. Two rules have to agree for an opening to work.
+
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage?
 2. Thumbnail: a face (Jeffrey) vs no face, once Canva thumbnails are in use.

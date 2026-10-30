@@ -822,7 +822,8 @@ def render_shorts(project: str, sb: dict, audio: str | None, concurrency: str | 
             cut["audio"] = f"projects/{slug}/{name}.mp3"
         else:
             cut["audio"] = None
-        # the punch-ins on the Short's own clock (the long video's times do not carry over)
+        # the punch-ins on the Short's own clock (the long video's times do not carry over); the header's sfx switch carries
+        cut["sfx"] = sb.get("sfx", True)
         sfx.set_punches(cut, gap=4.0)
         props = os.path.join(project, ".cache", f"{name}.json")
         os.makedirs(os.path.dirname(props), exist_ok=True)
