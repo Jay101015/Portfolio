@@ -117,6 +117,9 @@ NEW TOOLS
 - <a device the pipeline does not have> -> <where it would go>
 GOOD
 - <one or two things to keep doing>
+IDEAS FOR JEFFREY
+- <two or three ideas to make the next video better from your seat (what is on screen, new devices and pictures, what to film or draw): one line each, concrete enough
+  to act on, not a repeat of a fix above>
 ```
 Must fix is what makes a viewer's eyes drift: a still stretch over 6 seconds, a page left mostly empty for more than 3
 seconds, a strong line on a weak or wrong picture, a picture repeated within the video. Never pad. Never change the spoken words: those are recorded.

@@ -38,5 +38,8 @@ NICE TO HAVE
 - <m:ss> <note> -> <suggestion>
 GOOD
 - <one or two things to keep doing>
+IDEAS FOR JEFFREY
+- <two or three ideas to make the next video better from your seat (the facts, the footage, the sound, the captions, the pace of the cut): one line each, concrete enough
+  to act on, not a repeat of a fix above>
 ```
 Must fix is only what a viewer would notice or what is wrong. Never pad either list. If nothing is wrong, say so.

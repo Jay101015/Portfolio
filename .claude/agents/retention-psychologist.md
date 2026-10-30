@@ -40,5 +40,8 @@ NEXT RECORDING
 - <a script-level change for Jeffrey's next video>
 GOOD
 - <one or two things to keep doing>
+IDEAS FOR JEFFREY
+- <two or three ideas to make the next video better from your seat (the hook, the teasers, the structure, what keeps people watching): one line each, concrete enough
+  to act on, not a repeat of a fix above>
 ```
 Never pad. If the video is strong, say so and say why.

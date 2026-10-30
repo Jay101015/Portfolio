@@ -41,7 +41,9 @@ round's findings and what was changed. Never tell a reviewer what you think is w
 
 ## 4. Send and log
 Send the video with a short report: the four scores (round one, then round two), what was fixed, what was
-overruled and why, and the NEXT RECORDING notes. Then add a line to video-pipeline/LEARNINGS.md under the video:
+overruled and why, and the NEXT RECORDING notes. Then, under each reviewer's name (Editor, Animator, Retention,
+Director), that reviewer's IDEAS FOR JEFFREY from the last round, in its own words: Jeffrey wants to hear each
+persona's improvement ideas, so never merge them into one list or drop one as a duplicate. Then add a line to video-pipeline/LEARNINGS.md under the video:
 `Review: editor X, animator Y, retention Z, director W (round 2)`, so the predicted scores can be read against the real
 retention graph later. Do not send a video whose round-two must-fix list still has an item a viewer would notice
 without telling Jeffrey exactly what it is.
