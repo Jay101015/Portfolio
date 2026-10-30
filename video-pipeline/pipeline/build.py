@@ -1007,7 +1007,8 @@ def main(argv: list[str] | None = None) -> int:
             shutil.rmtree(dst, ignore_errors=True)
             shutil.copytree(src_dir, dst)
 
-    sb["sfx"] = _header_lines(md).get("sfx", "on").strip().lower() not in ("off", "no", "none")
+    # Jeffrey did not like the effects on the first cut, so they are off unless a script's header says `sfx: on`
+    sb["sfx"] = _header_lines(md).get("sfx", "off").strip().lower() in ("on", "yes")
     print(f"punch-ins: {sfx.set_punches(sb)} on key numbers; sound effects: {'on' if sb['sfx'] else 'off'}")
     sb_path = os.path.join(project, "storyboard.json")
     with open(sb_path, "w", encoding="utf-8") as f:

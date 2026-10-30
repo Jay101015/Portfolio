@@ -183,7 +183,9 @@ one change at a time where possible, so a result can be read.
 ### Quick wins in the pipeline (2026-10-30)
 - Sound effects under the voice (pipeline/sfx.py) and a punch-in on the key number: the first cut (the Gen Z
   opening, before and after) has not been heard by anyone yet; the effects measure 21.5 dB under the voice, 175
-  events in 7.6 minutes (91 card pops, 53 cut whooshes). Jeffrey's ears decide the density; `sfx: off` turns them off.
+  events in 7.6 minutes (91 card pops, 53 cut whooshes). Jeffrey listened and did not like them: off by default now
+  (`sfx: on` to try again). Rule: his taste is editorial and clean (the flat thumbnail, no icon doodles, no GIFs, no
+  effects); add polish, not gimmicks.
 - The punch-in must land on the figure that is on screen, not the first number said: "2021" is a year, "one" in
   "there's one our parents never paid" is a pronoun, and "thirty-nine thousand" is the salary before the £1,300 the
   stat shows. It now matches the spoken number to the figure in the scene's value/to/lose/board and only then falls

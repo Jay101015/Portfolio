@@ -51,13 +51,12 @@ and something still landing after that. The review kit lists every stretch of mo
 Fill with traced drawings, footage and cards first: Jeffrey was not keen on the cartoon icon doodles (a rabbit, a
 sun, a rocket) beside the Gen Z boards. A doodle only where nothing else fits.
 
-## Sound effects and punch-ins (automatic)
+## Punch-ins (automatic) and sound effects (off)
 
-Every render lays small sounds under the voice (pipeline/sfx.py): a soft whoosh on each cut, a pop as each card
-lands, a marker scribble as a board starts writing, and a light ding on the key number. On that same number (the
-first one said in a hook, stat, bite, grow, shrink, pie or compare scene, at most one every 6 seconds) the picture
-punches in 6% and eases back out. It is not music: the loudest effect sits about 22 dB under the voice. `sfx: off`
-in the script's header turns the sounds off for one video; the punch-ins stay.
+On the key number of a hook, stat, bite, grow, shrink, pie or compare scene (the spoken number that matches the
+figure on screen, at most one every 6 seconds) the picture punches in 6% and eases back out. The sound effects in
+pipeline/sfx.py (a whoosh on cuts, a pop on cards, a scribble on writing, a ding on the number) are off: Jeffrey
+did not like them on the first cut. `sfx: on` in a script's header is the only thing that turns them on.
 
 ## The shape
 
