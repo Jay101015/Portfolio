@@ -65,7 +65,7 @@ const Source: React.FC<{brand: Brand; source?: string; delay?: number}> = ({bran
   const {fps} = useVideoConfig();
   const {u} = useLayout();
   if (!source) return null;
-  const style = {fontFamily: hand(brand), fontSize: 30 * u, color: brand.muted};
+  const style = {fontFamily: hand(brand), fontSize: 38 * u, color: brand.muted};
   if (brand.board) return <div style={style}><Write text={`source: ${source}`} frame={frame} fps={fps} start={delay} cps={40} color={brand.muted} /></div>;
   return <div style={{...style, opacity: fadeIn(frame, delay, 8)}}>source: {source}</div>;
 };
@@ -143,7 +143,7 @@ export const PaperTitle: React.FC<P> = ({scene, brand}) => {
   return (
     <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.2}}>
       {kicker ? (
-        <div style={{fontFamily: hand(brand), fontSize: 46 * u, color: brand.accent2, marginBottom: 10 * u, transform: 'rotate(-2deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8)}}>
+        <div style={{fontFamily: hand(brand), fontSize: 56 * u, color: brand.accent2, marginBottom: 10 * u, transform: 'rotate(-2deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8)}}>
           {brand.board ? <Write text={kicker} frame={frame} fps={fps} start={0} cps={60} color={brand.accent2} /> : kicker}
         </div>
       ) : null}
@@ -190,7 +190,7 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
   return (
     <AbsoluteFill style={{justifyContent: isVertical ? 'flex-start' : 'center', padding: pad, paddingLeft: pad * 1.2, paddingTop: isVertical ? height * 0.24 : pad}}>
       {label ? (
-        <div style={{fontFamily: hand(brand), fontSize: 50 * u, color: brand.accent2, transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8), marginBottom: 4 * u}}>
+        <div style={{fontFamily: hand(brand), fontSize: 60 * u, color: brand.accent2, transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8), marginBottom: 4 * u}}>
           {brand.board ? <Write text={label} frame={frame} fps={fps} start={0} cps={labelCps} color={brand.accent2} /> : label}
         </div>
       ) : null}
@@ -204,7 +204,7 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
         {sub ? (
           <div style={{display: 'flex', alignItems: 'center', gap: 16 * u, marginBottom: (isVertical ? 0 : 40) * u, opacity: brand.board ? 1 : note, maxWidth: isVertical ? '100%' : width * 0.34}}>
             {!isVertical ? <Arrow length={120 * u} stroke={brand.accent2} win={brand.board ? [noteStart, noteStart + 8] : [20, 30]} angle={-8} seed={9} thickness={4 * u} /> : null}
-            <div style={{fontFamily: hand(brand), fontSize: 44 * u, lineHeight: 1.15, color: brand.accent2, transform: 'rotate(-2deg)'}}>
+            <div style={{fontFamily: hand(brand), fontSize: 54 * u, lineHeight: 1.15, color: brand.accent2, transform: 'rotate(-2deg)'}}>
               {brand.board ? <Write text={sub} frame={frame} fps={fps} start={noteStart + 8} cps={30} color={brand.accent2} /> : sub}
             </div>
           </div>
@@ -248,7 +248,7 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   const total = Math.max(1, Math.round((scene.end - scene.start) * fps)); // a quick cut writes and draws faster than a long scene
   const corner = <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, headline, scene.narration)} art={artName} frame={frame} fps={fps} start={brand.board ? 6 : 0} seed={scene.id} by={Math.round(total * 0.7)} />;
   const head = headline ? (
-    <div style={{fontFamily: hand(brand), fontSize: 44 * u, color: brand.accent2, marginBottom: 24 * u, transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8)}}>
+    <div style={{fontFamily: hand(brand), fontSize: 54 * u, color: brand.accent2, marginBottom: 24 * u, transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8)}}>
       {brand.board ? <Write text={headline} frame={frame} fps={fps} start={0} cps={34} color={brand.accent2} /> : headline}
     </div>
   ) : null;
@@ -430,7 +430,8 @@ export const PaperHook: React.FC<P> = ({scene, brand}) => {
   const art = scene.props.art && isTraced(String(scene.props.art)) ? String(scene.props.art) : undefined;
   const total = Math.max(1, Math.round((scene.end - scene.start) * fps));
   // the line is already being written on the first frame: an autoplay preview never opens on blank paper
-  const at = fitStart(Math.max(2, Math.round(((scene.words?.[0]?.s ?? scene.start) - scene.start) * fps) - 2), total) - Math.round(fps * 0.35);
+  // (at most a third of a second in, whenever the first word comes: there is ink on frame 0, a few letters already down)
+  const at = Math.min(fitStart(Math.max(2, Math.round(((scene.words?.[0]?.s ?? scene.start) - scene.start) * fps) - 2), total) - Math.round(fps * 0.35), -Math.round(fps * 0.25));
   const cps = fitCps(line, fps, Math.max(0, at), 20, total);
   const done = at + writeFrames(line, fps, cps) + 4;
   const colW = art && !isVertical ? width * 0.46 - pad : width - pad * 2;
@@ -577,7 +578,7 @@ export const PaperCompare: React.FC<P> = ({scene, brand}) => {
           <SketchRect x={6} y={6} w={cardW - 12} h={cardH - 12} draw={box} win={brand.board ? [delay, delay + Math.round(fps * 0.6)] : undefined} options={{stroke: brand.ink, strokeWidth: 3.5 * u, seed, fill: brand.board ? undefined : brand.panel, fillStyle: 'solid', roughness: 1.2}} />
         </svg>
         <div style={{position: 'relative', padding: 40 * u, display: 'flex', flexDirection: 'column', gap: 14 * u, height: '100%'}}>
-          <div style={{fontFamily: hand(brand), fontSize: 46 * u, color, lineHeight: 1}}>{brand.board ? <Write text={side.title} frame={frame} fps={fps} start={textAt} cps={30} color={color} /> : side.title}</div>
+          <div style={{fontFamily: hand(brand), fontSize: 56 * u, color, lineHeight: 1}}>{brand.board ? <Write text={side.title} frame={frame} fps={fps} start={textAt} cps={30} color={color} /> : side.title}</div>
           {side.value ? (
             <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: 120 * u, lineHeight: 1, letterSpacing: brand.board ? 0 : -4 * u, color: brand.ink, fontVariantNumeric: 'tabular-nums'}}>
               {brand.board ? <Write text={side.value} frame={frame} fps={fps} start={valueAt} cps={12} /> : side.value}
@@ -586,7 +587,7 @@ export const PaperCompare: React.FC<P> = ({scene, brand}) => {
           {(side.items ?? []).map((it, i) => {
             const at = itemsAt + i * (brand.board ? writeFrames(it, fps, 34) + 6 : 5);
             return (
-              <div key={i} style={{fontSize: 34 * u, color: brand.ink, display: 'flex', gap: 14 * u, alignItems: 'flex-start', opacity: brand.board ? 1 : fadeIn(frame, at, 8)}}>
+              <div key={i} style={{fontSize: 40 * u, color: brand.ink, display: 'flex', gap: 14 * u, alignItems: 'flex-start', opacity: brand.board ? 1 : fadeIn(frame, at, 8)}}>
                 {brand.board ? (
                   <svg width={34 * u} height={34 * u} viewBox="0 0 24 24" style={{flexShrink: 0, marginTop: 4 * u, overflow: 'visible', visibility: frame < at ? 'hidden' : undefined}}>
                     <SketchPath d={bad ? 'M5,5 L19,19 M19,5 L5,19' : 'M4,13 L10,19 L20,6'} win={[at, at + 5]} options={{stroke: color, strokeWidth: 3.5, seed: seed + i, roughness: 0.8}} />
@@ -795,7 +796,7 @@ export const PaperQuote: React.FC<P> = ({scene, brand}) => {
         <Txt brand={brand} text={quote} frame={frame} fps={fps} start={start} per={per} cps={cps} seed={51} />
       </div>
       {attribution ? (
-        <div style={{fontFamily: hand(brand), fontSize: 44 * u, color: brand.muted, marginTop: 40 * u, opacity: brand.board ? 1 : fadeIn(frame, quoteDone, 10)}}>
+        <div style={{fontFamily: hand(brand), fontSize: 54 * u, color: brand.muted, marginTop: 40 * u, opacity: brand.board ? 1 : fadeIn(frame, quoteDone, 10)}}>
           {brand.board ? <Write text={`— ${attribution}`} frame={frame} fps={fps} start={quoteDone + 4} cps={30} color={brand.muted} /> : `— ${attribution}`}
         </div>
       ) : null}

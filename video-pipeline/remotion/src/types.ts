@@ -63,6 +63,7 @@ export type Scene = {
   narration: string;
   words?: Word[];
   cues?: Cue[];
+  punch?: number; // seconds (absolute): a quick zoom-in on the key number said here (pipeline/sfx.py sets it)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props: Record<string, any>;
 };

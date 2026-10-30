@@ -30,7 +30,7 @@ const Label: React.FC<{brand: Brand; text?: string; frame: number; fps: number}>
   const {u} = useLayout();
   if (!text) return null;
   return (
-    <div style={{fontFamily: hand(brand), fontSize: 50 * u, color: brand.accent2, transform: 'rotate(-1.5deg)', transformOrigin: 'left', marginBottom: 18 * u}}>
+    <div style={{fontFamily: hand(brand), fontSize: 62 * u, color: brand.accent2, transform: 'rotate(-1.5deg)', transformOrigin: 'left', marginBottom: 18 * u}}>
       <Write text={text} frame={frame} fps={fps} start={2} cps={34} color={brand.accent2} />
     </div>
   );
@@ -39,7 +39,7 @@ const SourceLine: React.FC<{brand: Brand; source?: string; frame: number; fps: n
   const {u} = useLayout();
   if (!source) return null;
   return (
-    <div style={{fontFamily: hand(brand), fontSize: 30 * u, color: brand.muted, marginTop: 24 * u}}>
+    <div style={{fontFamily: hand(brand), fontSize: 38 * u, color: brand.muted, marginTop: 24 * u}}>
       <Write text={`source: ${source}`} frame={frame} fps={fps} start={start} cps={40} color={brand.muted} />
     </div>
   );
@@ -86,7 +86,7 @@ export const PaperBite: React.FC<P> = ({scene, brand}) => {
         </div>
       </div>
       {sub ? (
-        <div style={{fontFamily: hand(brand), fontSize: 44 * u, color: brand.accent2, marginTop: 20 * u, transform: 'rotate(-1deg)', transformOrigin: 'left'}}>
+        <div style={{fontFamily: hand(brand), fontSize: 54 * u, color: brand.accent2, marginTop: 20 * u, transform: 'rotate(-1deg)', transformOrigin: 'left'}}>
           <Write text={sub} frame={frame} fps={fps} start={subAt} cps={30} color={brand.accent2} />
         </div>
       ) : null}
@@ -135,7 +135,7 @@ export const PaperGrow: React.FC<P> = ({scene, brand}) => {
           <SketchPath d={`M0,${areaH} L${areaW},${areaH}`} win={[t0 - 6, t0]} options={{stroke: brand.ink, strokeWidth: 3 * u, seed: 3, roughness: 1}} />
         </svg>
         {yrs.map((y, i) => (
-          <div key={i} style={{position: 'absolute', left: i * gap, top: areaH + 8 * u, width: gap, textAlign: 'center', fontFamily: hand(brand), fontSize: 30 * u, color: brand.muted}}>
+          <div key={i} style={{position: 'absolute', left: i * gap, top: areaH + 8 * u, width: gap, textAlign: 'center', fontFamily: hand(brand), fontSize: 36 * u, color: brand.muted}}>
             <Write text={i === 0 ? 'now' : `yr ${y}`} frame={frame} fps={fps} start={t0 + i * step + Math.round(step * 0.5)} cps={30} color={brand.muted} />
           </div>
         ))}
@@ -144,7 +144,7 @@ export const PaperGrow: React.FC<P> = ({scene, brand}) => {
           <Underline width={Math.min(areaW * 0.5, 520 * u)} stroke={brand.accent} thickness={7 * u} win={[finalDone, finalDone + Math.round(fps * 0.5)]} easeOut seed={13} style={{marginLeft: 'auto'}} />
         </div>
       </div>
-      <div style={{fontFamily: hand(brand), fontSize: 40 * u, color: brand.accent2, marginTop: 36 * u, transform: 'rotate(-1deg)', transformOrigin: 'left'}}>
+      <div style={{fontFamily: hand(brand), fontSize: 50 * u, color: brand.accent2, marginTop: 36 * u, transform: 'rotate(-1deg)', transformOrigin: 'left'}}>
         <Write text={`${money(from.prefix, from.num, from.suffix)}${monthly ? ' a month' : ' once'} · ${(rate * 100).toFixed(rate * 100 >= 10 ? 0 : 1)}% a year · ${years} years`} frame={frame} fps={fps} start={finalDone + Math.round(fps * 0.5)} cps={34} color={brand.accent2} />
       </div>
       <SourceLine brand={brand} source={scene.props.source} frame={frame} fps={fps} start={finalDone + fps} />
@@ -181,15 +181,16 @@ export const PaperPie: React.FC<P> = ({scene, brand}) => {
       <div style={{display: 'flex', alignItems: 'center', gap: 60 * u, flexWrap: isVertical ? 'wrap' : 'nowrap'}}>
         <div style={{position: 'relative', width: box, height: box}}>
           <svg width={box} height={box} viewBox={`0 0 ${box} ${box}`} style={{position: 'absolute', inset: 0, overflow: 'visible'}}>
-            <SketchEllipse cx={cx} cy={cy} w={r * 2} h={r * 2} win={circleWin} options={{stroke: brand.ink, strokeWidth: 5 * u, seed: 21 + scene.id, roughness: 1.3}} />
-            <SketchPath d={wedge} win={sliceWin} options={{stroke: brand.accent2, strokeWidth: 4 * u, seed: 41 + scene.id, fill: brand.accent2, fillStyle: 'hachure', hachureGap: 16 * u, fillWeight: 3 * u, hachureAngle: -45, roughness: 1.1}} />
+            <SketchEllipse cx={cx} cy={cy} w={r * 2} h={r * 2} win={circleWin} options={{stroke: brand.ink, strokeWidth: 5 * u, seed: 21 + scene.id, roughness: 0.7, curveStepCount: 24}} />
+            {/* the wedge keeps the circle's centre and radius: barely rough, no bowing, so it sits inside the outline */}
+            <SketchPath d={wedge} win={sliceWin} options={{stroke: brand.accent2, strokeWidth: 4 * u, seed: 41 + scene.id, fill: brand.accent2, fillStyle: 'hachure', hachureGap: 16 * u, fillWeight: 3 * u, hachureAngle: -45, roughness: 0.4, bowing: 0, preserveVertices: true, disableMultiStroke: true}} />
           </svg>
           <div style={{position: 'absolute', left: cx + Math.cos(mid) * r * (share > 18 ? 0.55 : 1.25) - 70 * u, top: cy + Math.sin(mid) * r * (share > 18 ? 0.55 : 1.25) - 50 * u, fontFamily: brand.display, fontSize: (isVertical ? 64 : 84) * u, color: share > 18 ? brand.ink : brand.accent2, visibility: frame >= numAt ? undefined : 'hidden'}}>
             <Write text={numText} frame={frame} fps={fps} start={numAt} cps={12} />
           </div>
         </div>
         {sub ? (
-          <div style={{fontFamily: hand(brand), fontSize: 46 * u, lineHeight: 1.15, color: brand.accent2, transform: 'rotate(-2deg)', maxWidth: isVertical ? '100%' : width * 0.34}}>
+          <div style={{fontFamily: hand(brand), fontSize: 56 * u, lineHeight: 1.15, color: brand.accent2, transform: 'rotate(-2deg)', maxWidth: isVertical ? '100%' : width * 0.34}}>
             <Write text={sub} frame={frame} fps={fps} start={numDone + 6} cps={30} color={brand.accent2} />
           </div>
         ) : null}
@@ -222,6 +223,8 @@ export const PaperShrink: React.FC<P> = ({scene, brand}) => {
   const toText = toGiven ? String(scene.props.to) : money(value.prefix, toNum, value.suffix);
   const toDone = toAt + writeFrames(toText, fps, 12);
   const x0 = noteW * keep;
+  const sq = Math.max(0, Math.min(1, (frame - eraseWin[0]) / Math.max(1, eraseWin[1] - eraseWin[0])));
+  const shrinkQ = sq * sq * (3 - 2 * sq);
   return (
     <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.2}}>
       <Label brand={brand} text={label} frame={frame} fps={fps} />
@@ -229,17 +232,26 @@ export const PaperShrink: React.FC<P> = ({scene, brand}) => {
         <Erase win={eraseWin} brand={brand} width={noteW} height={noteH} x0={x0}>
           <svg width={noteW} height={noteH} viewBox={`0 0 ${noteW} ${noteH}`} style={{position: 'absolute', inset: 0, overflow: 'visible'}}>
             <SketchRect x={4} y={4} w={noteW - 8} h={noteH - 8} win={noteWin} options={{stroke: brand.ink, strokeWidth: 5 * u, seed: 61 + scene.id, roughness: 1.2}} />
+          </svg>
+        </Erase>
+        {/* the new right-hand edge, drawn as the old end clears, so the smaller note is a closed box */}
+        <svg width={noteW} height={noteH} viewBox={`0 0 ${noteW} ${noteH}`} style={{position: 'absolute', inset: 0, overflow: 'visible'}}>
+          <SketchPath d={`M${x0},6 L${x0},${noteH - 6}`} win={[eraseWin[0] + Math.round(fps * 0.3), eraseWin[1]]} options={{stroke: brand.ink, strokeWidth: 5 * u, seed: 63 + scene.id, roughness: 1}} />
+        </svg>
+        {/* the coin and its value slide into the middle of what is left and shrink with it */}
+        <div style={{position: 'absolute', left: 0, top: 0, width: noteW, height: noteH, transform: `translateX(${-(noteW - x0) / 2 * shrinkQ}px) scale(${1 - (1 - keep) * shrinkQ})`, transformOrigin: 'center'}}>
+          <svg width={noteW} height={noteH} viewBox={`0 0 ${noteW} ${noteH}`} style={{position: 'absolute', inset: 0, overflow: 'visible'}}>
             <SketchEllipse cx={noteW / 2} cy={noteH / 2} w={noteH * 0.9} h={noteH * 0.9} win={[noteWin[0] + Math.round(fps * 0.5), noteWin[1]]} options={{stroke: brand.muted, strokeWidth: 3 * u, seed: 62 + scene.id, roughness: 1.4}} />
           </svg>
           <div style={{position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: brand.display, fontSize: (isVertical ? 80 : 110) * u, color: brand.ink, visibility: frame >= valueAt ? undefined : 'hidden'}}>
             <Write text={String(scene.props.value ?? '')} frame={frame} fps={fps} start={valueAt} cps={12} wordGap="0.2em" />
           </div>
-        </Erase>
+        </div>
         <div style={{position: 'absolute', left: x0 + 30 * u, top: noteH * 0.5 - 60 * u, fontFamily: brand.display, fontSize: (isVertical ? 72 : 100) * u, color: brand.accent2, whiteSpace: 'nowrap', visibility: frame >= toAt ? undefined : 'hidden'}}>
           <Write text={toText} frame={frame} fps={fps} start={toAt} cps={12} wordGap="0.2em" />
         </div>
       </div>
-      <div style={{fontFamily: hand(brand), fontSize: 44 * u, color: brand.accent2, marginTop: 30 * u, transform: 'rotate(-1deg)', transformOrigin: 'left'}}>
+      <div style={{fontFamily: hand(brand), fontSize: 54 * u, color: brand.accent2, marginTop: 30 * u, transform: 'rotate(-1deg)', transformOrigin: 'left'}}>
         <Write text={scene.props.note ? String(scene.props.note) : `what ${String(scene.props.value ?? '')} buys after ${years} years`} frame={frame} fps={fps} start={toDone + 6} cps={30} color={brand.accent2} />
       </div>
       <SourceLine brand={brand} source={scene.props.source} frame={frame} fps={fps} start={toDone + fps} />

@@ -197,6 +197,14 @@ const SlideIn: React.FC<{children: React.ReactNode}> = ({children}) => {
   const p = frame >= n ? 1 : easeInOut(frame / n);
   return <AbsoluteFill style={{transform: `translateX(${(1 - p) * width}px)`}}>{children}</AbsoluteFill>;
 };
+/** 0 to 1 and back: in over 0.18 s (ease-out), held 0.9 s, out over 0.6 s (ease-in-out) */
+const punchAt = (dt: number) => {
+  if (dt < 0 || dt > 1.68) return 0;
+  if (dt < 0.18) { const q = dt / 0.18; return 1 - (1 - q) * (1 - q); }
+  if (dt < 1.08) return 1;
+  const q = (dt - 1.08) / 0.6;
+  return 1 - (q < 0.5 ? 2 * q * q : 1 - Math.pow(-2 * q + 2, 2) / 2);
+};
 const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
 
 /** Camera moves on the big reactions: a punch-in on shock, a shake on anger, a bounce on a laugh. */
@@ -214,7 +222,9 @@ const Camera: React.FC<{scene: Scene; toon: boolean; push?: boolean; children: R
     const dur = Math.max(1, Math.round((scene.end - scene.start) * fps));
     const amount = Math.min(0.08, 0.03 + (dur / fps) * 0.004);
     const p = Math.min(1, local / dur);
-    const z = 1 + amount * (p * (2 - p) * 0.6 + p * 0.4);
+    // a punch-in on the line's key number (scene.punch, set by the build): 6% in fast, held, eased back out
+    const pz = scene.punch !== undefined ? punchAt((local / fps) - (scene.punch - scene.start)) : 0;
+    const z = (1 + amount * (p * (2 - p) * 0.6 + p * 0.4)) * (1 + 0.06 * pz);
     const pan = (z - 1) * (width / 2) * 0.3;
     return <AbsoluteFill style={{transform: `translateX(${-pan}px) scale(${z})`, transformOrigin: '50% 48%'}}>{children}</AbsoluteFill>;
   }
