@@ -27,6 +27,7 @@ import sys
 import urllib.request
 
 from . import align as al
+from . import sfx
 from .enhance import enhance, level_from_header
 from .preview import write_preview
 from .auto_script import script_from_words
@@ -654,10 +655,14 @@ def voice_over_whole(video: str, sb: dict) -> bool:
         graph = ";".join(parts) + ";" + "".join(labels) + f"amix=inputs={len(labels)}:normalize=0:duration=first[out]"
         subprocess.run(["ffmpeg", "-v", "error", "-y", *inputs, "-filter_complex", graph, "-map", "[out]", "-ac", "1", "-ar", "48000", mixed], check=True)
         track = mixed
+    # the sound effects under the voice (pipeline/sfx.py): a whoosh on the cuts, pops on the cards, a scribble as
+    # the boards write, a ding on the key number
+    effects = video + ".voice-sfx.wav"
+    track = sfx.lay(track, sb, effects)
     tmp = video + ".remux.mp4"
     subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", video, "-i", track, "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-ac", "1", "-b:a", "160k", "-movflags", "+faststart", tmp], check=True, stdin=subprocess.DEVNULL, timeout=900)
     os.replace(tmp, video)
-    for p in (padded, filled, mixed):
+    for p in (padded, filled, mixed, effects):
         if os.path.exists(p):
             os.remove(p)
     return True
@@ -817,6 +822,8 @@ def render_shorts(project: str, sb: dict, audio: str | None, concurrency: str | 
             cut["audio"] = f"projects/{slug}/{name}.mp3"
         else:
             cut["audio"] = None
+        # the punch-ins on the Short's own clock (the long video's times do not carry over)
+        sfx.set_punches(cut, gap=4.0)
         props = os.path.join(project, ".cache", f"{name}.json")
         os.makedirs(os.path.dirname(props), exist_ok=True)
         with open(props, "w", encoding="utf-8") as f:
@@ -999,6 +1006,8 @@ def main(argv: list[str] | None = None) -> int:
             shutil.rmtree(dst, ignore_errors=True)
             shutil.copytree(src_dir, dst)
 
+    sb["sfx"] = _header_lines(md).get("sfx", "on").strip().lower() not in ("off", "no", "none")
+    print(f"punch-ins: {sfx.set_punches(sb)} on key numbers; sound effects: {'on' if sb['sfx'] else 'off'}")
     sb_path = os.path.join(project, "storyboard.json")
     with open(sb_path, "w", encoding="utf-8") as f:
         json.dump(sb, f, indent=1)
