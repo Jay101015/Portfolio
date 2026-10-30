@@ -523,6 +523,10 @@ def render(props_path: str, out_path: str, composition: str, concurrency: str | 
     if chunk <= 0 or total <= chunk:
         if _remotion(base[:4] + [out_path] + base[4:], REMOTION) != 0:
             raise SystemExit("render failed")
+        # one piece, no joins: the sound is still laid on from the voice file, as for a chunked render, so a short
+        # Short gets the same sound (a 13 s Short came out peaking above full scale, +0.7 dB, without it)
+        if voice_over_whole(out_path, sb):
+            print("audio: the voice laid over the picture in one piece", flush=True)
         note = level_audio(out_path)
         if note:
             print(note, flush=True)
