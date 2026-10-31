@@ -230,6 +230,8 @@ def anchor_word(cards: list[dict[str, Any]], narration: str) -> None:
         said = NUMBER_WORDS.get(key, key)
         hit = next((i for i in range(after, len(words)) if key and (words[i].startswith(key) or words[i] == said)), None)
         c["word"] = hit if hit is not None else max(0, len(words) - 1)
+        if hit is None:
+            c["missed"] = str(c["anchor"])  # lands on the last word; the build says so (a card the voice never says)
         after = c["word"]
 
 
@@ -266,15 +268,17 @@ def plan(sc: dict[str, Any], attrs: dict[str, Any]) -> list[str]:
     return problems
 
 
-def plan_cards(sc: dict[str, Any], attrs: dict[str, Any]) -> None:
+def plan_cards(sc: dict[str, Any], attrs: dict[str, Any]) -> list[str]:
     """Cards over a footage scene: the amounts said land on the picture as they are said (or the tag's cards=), so a
     figure the viewer only hears over footage, and a later card crosses out, has been seen."""
     spec = str(attrs.get("cards", "")).strip()
     cards = [] if spec.lower() == "off" else parse_cards(spec) if spec else auto_cards(sc["narration"])
     if not cards:
-        return
+        return []
     anchor_word(cards, sc["narration"])
     sc["setWords"] = [{"word": c["word"], "card": {k: c[k] for k in ("text", "old", "color") if c.get(k)}} for c in cards]
+    return [f"scene {sc.get('id')}: card '{c.get('text')}' anchors on '{c['missed']}', which is not said in this scene (after the card before it); it lands on the last word"
+            for c in cards if c.get("missed")]
 
 
 def _inbetweens() -> dict[str, list[str]]:

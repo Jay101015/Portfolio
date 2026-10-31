@@ -592,9 +592,9 @@ def parse_script(md: str) -> dict[str, Any]:
         if b.type == "set":
             problems += setpiece.plan(sc, b.attrs)
         elif b.type == "broll":
-            setpiece.plan_cards(sc, b.attrs)  # the amounts said over footage land on it as cards
+            problems += setpiece.plan_cards(sc, b.attrs)  # the amounts said over footage land on it as cards
         elif b.attrs.get("cards"):
-            setpiece.plan_cards(sc, b.attrs)  # cards= on a board, stat or chart: text pops up on its word there too
+            problems += setpiece.plan_cards(sc, b.attrs)  # cards= on a board, stat or chart: text pops up on its word there too
         if b.attrs.get("marks"):
             problems += craft.plan_marks(sc, b.attrs)  # marks= on footage or a photo: circles, arrows and notes drawn on the picture on their word
         if sc["props"].get("anim") and str(sc["props"]["anim"]) not in craft.LOOPS:

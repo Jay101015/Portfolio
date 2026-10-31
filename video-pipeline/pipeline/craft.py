@@ -200,6 +200,8 @@ def key_words(sc: dict) -> int:
         if _phrase(words, i0, i1):
             continue
         text, v = fig
+        if v < 13 and re.search(r"\b(years?|months?|weeks?|days?|times)$", text):
+            continue  # "two years running", "three times": a count, not a figure to pop up
         t = round(float(words[i0]["s"]), 3)
         if t - last < KEY_GAP or t > end - 0.6:
             continue
