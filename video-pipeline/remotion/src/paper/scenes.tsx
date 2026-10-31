@@ -443,18 +443,19 @@ export const PaperHook: React.FC<P> = ({scene, brand}) => {
   const line: string = scene.props.board ? String(scene.props.board).split('|')[0].trim() : captionLine(scene.narration, 9);
   // a drawing beside the hook (`art=payday`): the picture has the right (or, vertical, the band under the words)
   const art = scene.props.art && isTraced(String(scene.props.art)) ? String(scene.props.art) : undefined;
+  const beside = !!art || !!scene.props.anim; // a drawing or a loop on the right: the line keeps to the left column
   const total = Math.max(1, Math.round((scene.end - scene.start) * fps));
   // the line is already being written on the first frame: an autoplay preview never opens on blank paper
   // (at most a third of a second in, whenever the first word comes: there is ink on frame 0, a few letters already down)
   const at = Math.min(fitStart(Math.max(2, Math.round(((scene.words?.[0]?.s ?? scene.start) - scene.start) * fps) - 2), total) - Math.round(fps * 0.35), -Math.round(fps * 0.25));
   const cps = fitCps(line, fps, Math.max(0, at), 20, total);
   const done = at + writeFrames(line, fps, cps) + 4;
-  const colW = art && !isVertical ? width * 0.46 - pad : width - pad * 2;
-  const w = Math.min(colW, Math.max(360 * u, line.length * (art ? 36 : 44) * u));
+  const colW = beside && !isVertical ? width * 0.46 - pad : width - pad * 2;
+  const w = Math.min(colW, Math.max(360 * u, line.length * (beside ? 36 : 44) * u));
   const size = (isVertical ? 700 : 760) * u;
   return (
-    <AbsoluteFill style={{padding: pad, justifyContent: art && isVertical ? 'flex-start' : 'center', alignItems: art && !isVertical ? 'flex-start' : 'center', paddingTop: art && isVertical ? 300 * u : pad}}>
-      <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 92 : art ? 100 : 118) * u, lineHeight: 1.1, color: brand.ink, textAlign: art && !isVertical ? 'left' : 'center', maxWidth: art && !isVertical ? colW : '92%'}}>
+    <AbsoluteFill style={{padding: pad, justifyContent: beside && isVertical ? 'flex-start' : 'center', alignItems: beside && !isVertical ? 'flex-start' : 'center', paddingTop: beside && isVertical ? 300 * u : pad}}>
+      <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 92 : beside ? 100 : 118) * u, lineHeight: 1.1, color: brand.ink, textAlign: beside && !isVertical ? 'left' : 'center', maxWidth: beside && !isVertical ? colW : '92%'}}>
         <Write text={line} frame={frame} fps={fps} start={at} cps={cps} tint={moneyTint(line, brand.accent, brand.accent2)} />
       </div>
       <svg width={w} height={30 * u} viewBox={`0 0 ${w} ${30 * u}`} style={{overflow: 'visible', marginTop: 10 * u}}>

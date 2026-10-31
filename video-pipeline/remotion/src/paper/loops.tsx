@@ -469,19 +469,21 @@ export const DrawnLoop: React.FC<{name: string; size: number; brand: Brand; star
       </>
     );
   } else if (name === 'calendar-flip') {
-    // a desk calendar: the month on the band, the day big; a page lifts and flies off each half second
+    // a desk calendar: one month on the band, the day big; a page lifts and flies off five times a second and the
+    // days count 1 to 30, then the 30 holds (it used to flip the months, which read as years passing)
     const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    const i = Math.floor(tt / 0.5);
-    const k = Math.floor(tt * STEPS) % 4;
-    const n = 1 + (i % 12);
-    const sy = k === 2 ? 0.55 : k === 3 ? 0.15 : 1;
-    const fly = k === 3 || k === 0 ? (k === 3 ? 0.4 : 0.9) : 0;
+    const i = seed % 12;
+    const n = Math.min(30, 1 + Math.floor(tt / 0.18)); // 30 by 5.3 s, inside the six-second loop's hold
+    const flipping = n < 30;
+    const k = flipping ? Math.floor(tt * STEPS) % 2 : 0;
+    const sy = k === 1 ? 0.5 : 1;
+    const fly = k === 1 ? 0.6 : 0;
     body = (
       <>
         <Shadow cx={50} cy={90} w={56} k={2} />
         <SketchRect x={24} y={24} w={52} h={62} draw={1} options={o(ink, 210, solid(paper))} />
         <SketchRect x={24} y={24} w={52} h={15} draw={1} options={o(ink, 211, solid(ink))} />
-        <T x={50} y={35} s={9} c={paper}>{months[i % 12]}</T>
+        <T x={50} y={35} s={9} c={paper}>{months[i]}</T>
         {[32, 50, 64].map((x) => (
           <g key={x}>
             <SketchEllipse cx={x} cy={24} w={5} h={5} draw={1} options={fine(ink, 212 + x, solid(paper))} />

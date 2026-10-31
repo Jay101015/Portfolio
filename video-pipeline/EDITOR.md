@@ -96,14 +96,29 @@ Tags for the script:
   clock, hourglass. This against that: scales. Stories: payday-split (a payslip split into save, bills and spend),
   price-creep (a coffee's tag flips up four times, the cup shrinks), rent-day (three months of the envelope leaving
   the wallet), interest-grows (a red layer a month on a card's debt), isa-shield (the tax arrow bounces off).
-  `dur=` on the board sets how long it has when there is no recording to time it.
+  A loop plays once and holds its end state until the cut, so a scene longer than the loop keeps the picture
+  (it used to start again, or fade to its shadow, under the payoff line). A loop carries its own figures
+  (payday-split's £2,100 payslip, deposit-jar's £5K to £20K scale): cast it only where those figures are not
+  arguing with the words; a stat about a £1,000 bonus takes a drawing (lisa-bonus), not deposit-jar. The cards
+  on a board with a loop land under the written lines, on the left, as on a board with a drawing; a stat with a
+  loop puts its note under the figure; a bite's cards land low on the right, under the bar's end. `dur=` on the
+  board sets how long it has when there is no recording to time it, and caps it: a `dur` shorter than the words
+  cuts the scene before they end.
 - `screen=laptop` on `[broll]`: the clip in a drawn laptop with a browser bar, for screen recordings; `phone=on`
   is the upright phone.
+- `pace.lead` and `pace.hold` in the header: the air before a scene's first word and after its last (the
+  illustrated style's `pace: calm` default is 1.2 and 0.6, about 1.8 s a scene; the £10K demo ran at 0.6 and 0.4
+  after the retention reviewer measured 29% of the film with no words at all). A card's words must be in the
+  scene's narration: "from a few pounds" on a scene that never says it landed on the wrong word.
+- "tax-free" is not a cost word: the figure in "ISA: £20,000 a year, tax-free" is green. "Spend £1,000" is red
+  (spending is money going), so a board about the £1,000 to enjoy says "£1,000 for you".
 
 ## Punch-ins (automatic) and sound effects (off)
 
 On the key number of a hook, stat, bite, grow, shrink, pie or compare scene (the spoken number that matches the
-figure on screen, at most one every 6 seconds) a marker ring is drawn round the figure (the camera punch-in only
+figure on screen, at most one every 6 seconds; a bite's is the figure it loses, so "two hundred" not "thousand")
+a marker ring is drawn round the figure, green on a gain and red on a loss (a hook's figure sits inside a written
+line and gets the punch, not a ring), and a bite takes its slice and writes the lost figure as the number is said (the camera punch-in only
 plays with `brand.motion: on`). The sound effects in
 pipeline/sfx.py (a whoosh on cuts, a pop on cards, a scribble on writing, a ding on the number) are off: Jeffrey
 did not like them on the first cut. `sfx: on` in a script's header is the only thing that turns them on.
