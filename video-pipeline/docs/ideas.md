@@ -53,6 +53,39 @@ luxury-cars-parked, hooded-hacker-screens (scams), the living-room room, the ind
 and phone-balance-up drawings. Ask Jeffrey for: a phone clip searching "Take-Two" in his fund's holdings; a pose of the
 character gaming on a sofa with a controller.
 
+## S&P 500 vs the best stocks since 2000 (researched 31 October 2026, figures to re-check at scripting)
+
+**The twist.** Picked in hindsight the best stocks crush the index; picked in 2000, the biggest names lost for a
+generation. Bessembinder (Journal of Financial Economics, 2018): the best 4% of US companies explain the whole
+market's net gain since 1926; 58% of stocks returned less than one-month Treasury bills over their life. UK beat:
+the FTSE 100 barely moved on price for 20 years.
+
+| Fact | Figure | Source |
+|---|---|---|
+| £1,000 in the S&P 500, 31 Dec 1999 to now | about £9,000 with dividends (7.5x in dollars, about 9x in pounds because the pound fell from $1.61 to $1.34); price only 5.3x (1,469 to about 7,819) | Slickcharts annual totals compounded; BoE spot 30 Dec 1999 1.6121; close 6 Oct 2026 |
+| £1,000 in the FTSE 100, same dates | price only about £1,530 (6,930 to about 10,600); with dividends roughly £4,000 (Schroders: £2,222 by end-2019; the last seven years added about 1.8x). Check against the FTSE 100 total return index | Schroders; yieldtheory; worked in code |
+| Dividends' share of the FTSE's gain | 72% of the 20-year gain | yieldtheory |
+| £1,000 in Nvidia, 2000 to 2025 | about £2.5M (209,002%, price only) | StatMuse, S&P 500 2000 to 2025 |
+| £1,000 in Monster Beverage | about £2.1M (173,487%) | StatMuse |
+| £1,000 in Apple | about £420,000 (34,723%) | StatMuse |
+| Netflix | 80,903% but it floated in 2002, so not "since 2000" | StatMuse |
+| Cisco, the biggest company in the world in March 2000 | regained its $80.06 peak in December 2025, 25 years and 8 months later; market cap still 40% below | FT via Slashdot, Dec 2025 |
+| Intel | peaked near $75 in August 2000, fell 82% by 2002 | Yahoo Finance |
+| Vodafone, the biggest UK company in 2000 | about 399p then, about 110 to 120p in 2026: down about 70% on price, before dividends | LSE, 2026 (check the 2000 peak) |
+| The best 4% | 4.3% of companies (1,092 of about 26,000) made all the net wealth 1926 to 2016 | Bessembinder, ASU |
+
+**Shape.** Hook: "£1,000 in Monster Energy in 2000 is about £2 million today. £1,000 in the S&P 500 is about
+£9,000. Here's why you should still buy the index." Teasers: what the smartest money bought in 2000 (Cisco,
+Intel, Vodafone) and what it is worth now; the UK investor who bought the home index; at the end, the 4% number.
+Beats: the hindsight table (bar-race loop); the 2000 top ten and what became of them (shrink, compare); the FTSE
+versus the S&P in pounds (chart with marks on 2000 and 2008); Bessembinder; the personal beat: the fund Jeffrey
+holds and the sliver of Nvidia he already owns through it (his holdings page in the phone frame). Reveal: the index
+is the only way to own the 4% without guessing them.
+
+**Pictures.** bar-race, stack-grow, shrink; luxury-cars and office clips; no logos (trademarks) beyond names in
+ink. Ask Jeffrey for the holdings page recording. Title: "S&P 500 vs the Best Stocks Since 2000: Who Really Won?
+(UK investor)". Sequel: "FTSE 100 vs S&P 500 since 2000: why British investors lost".
+
 ## Thinking ahead (2026-10-30)
 
 The aim: when a moment comes (a Budget, a rate cut, a launch, a crash), the video is a day's work, not a week's,
