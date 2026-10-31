@@ -93,7 +93,7 @@ export const isMoneyWord = (word: string): boolean =>
 
 /** The line is about money going the wrong way: a fee, a loss, a debt, a cost. The figure in it is drawn red. */
 export const isLoss = (line: string): boolean =>
-  /\b(fee|fees|lose|loses|lost|loss|losing|cost|costs|costing|debt|debts|tax|taxes|charge|charges|charged|interest|penalt\w*|miss\w*|gone|wasted|waste|drain\w*|eat\w*|eaten|minus|down|drop\w*|fall\w*|fell|overdraft|owe\w*|inflation|shrink\w*|burn\w*|spend\w*|spent|rent|loan|unemploy\w*|out of work|halved|lowest|barely|prices up|price rise\w*)\b/i.test(line) || /(^|\s)[−-]\d/.test(line);
+  /\b(fee|fees|lose|loses|lost|loss|losing|cost|costs|costing|debt|debts|tax(?!-free)|taxes|charge|charges|charged|interest|penalt\w*|miss\w*|gone|wasted|waste|drain\w*|eat\w*|eaten|minus|down|drop\w*|fall\w*|fell|overdraft|owe\w*|inflation|shrink\w*|burn\w*|spend\w*|spent|rent|loan|unemploy\w*|out of work|halved|lowest|barely|prices up|price rise\w*)\b/i.test(line) || /(^|\s)[−-]\d/.test(line);
 
 /**
  * Colour for the money words: the figure in a line lands in green when the line is about money growing, in red when

@@ -58,7 +58,7 @@ export const DrawnLoop: React.FC<{name: string; size: number; brand: Brand; star
   const t = (frame - start) / fps;
   if (t < 0) return null;
   const P = LOOP_SECONDS[name] ?? 6;
-  const tt = step(t) % P;
+  const tt = Math.min(step(t), P - 0.4); // once through, then the end state holds until the cut
   const ink = brand.ink;
   const green = brand.fill ?? brand.accent;
   const greenInk = brand.accent;

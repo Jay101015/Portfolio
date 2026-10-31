@@ -38,7 +38,7 @@ ROOM_LIB = os.path.join(ROOT, "library", "backgrounds", "manifest.json")
 HAPPY = {"thumbs-up", "fist-pump", "arms-up", "jump", "phone-excited", "relieved", "idea"}  # these land with a little hop
 SET_CUE_RE = re.compile(r"\{([a-z][a-z0-9-]*)(?::(flip))?(?:=([a-z0-9-]+))?\}")
 AMOUNT_RE = re.compile(r"£\s?\d[\d,]*(?:\.\d+)?(?:\s?(?:k|m|bn|million|billion)\b)?|\d[\d,]*(?:\.\d+)?\s?%", re.I)
-COST_WORDS = re.compile(r"\b(fees?|costs?|debts?|lose|lost|loss|tax|interest|charges?|penalty|short|shortfall|owe|owed)\b", re.I)
+COST_WORDS = re.compile(r"\b(fees?|costs?|debts?|lose|lost|loss|tax(?!-free)|interest|charges?|penalty|short|shortfall|owe|owed)\b", re.I)
 CAPTION_FLOOR = {"land": 0.80, "vert": 0.80}  # his feet stay above this: the captions (landscape), the Shorts title (vertical)
 NUMBER_WORDS = {str(i): w for i, w in enumerate("zero one two three four five six seven eight nine ten eleven twelve".split())}
 # single-word pose tags too common to act on by themselves when picking poses from the words

@@ -169,7 +169,7 @@ def auto_cards(sc: dict) -> int:
     return added
 
 
-EMPHASIS = {"free", "never", "nothing", "double", "everything"}
+EMPHASIS = {"free", "never", "double", "everything"}
 UNITS = {"years", "year", "months", "month", "weeks", "week", "days", "day", "hours", "hour", "minutes", "minute"}
 
 

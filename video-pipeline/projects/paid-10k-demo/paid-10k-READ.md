@@ -22,7 +22,9 @@ Next, three months of essentials, rent, bills, food, in an easy-access savings a
 
 Now the part that actually makes you money.
 
-Every year you can put up to twenty thousand pounds into an ISA, and you never pay tax on what it makes. Ten thousand fits with room to spare. A stocks and shares ISA, one global index fund, done.
+Every year you can put up to twenty thousand pounds into an ISA, and you never pay tax on what it makes.
+
+Ten thousand fits with room to spare. A stocks and shares ISA, one global index fund, done.
 
 Left alone at seven percent a year, it's about nineteen thousand seven hundred in ten years, thirty-eight thousand seven hundred in twenty, and seventy-six thousand in thirty. You do nothing. Time does it.
 
@@ -32,7 +34,9 @@ And it takes about ten minutes on your phone to open one.
 
 And the bit most people miss.
 
-Buying your first home one day? Put four thousand of it in a Lifetime ISA and the government adds a thousand on top. Twenty-five percent, free, for anyone eighteen to thirty-nine. That's the easiest thousand pounds you will ever make.
+Buying your first home one day? Put four thousand of it in a Lifetime ISA and the government adds a thousand on top.
+
+Twenty-five percent, free, for anyone eighteen to thirty-nine. That's the easiest thousand pounds you will ever make.
 
 And spend a thousand on something you'll actually remember. You earned it. A plan you enjoy is a plan you keep.
 

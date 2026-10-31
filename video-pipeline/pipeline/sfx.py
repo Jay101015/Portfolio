@@ -92,7 +92,7 @@ def spoken_value(run: list[dict]) -> float | None:
 
 def figure_on_screen(props: dict) -> float | None:
     """the number the scene shows (its value, the shrink's `to`, a bite's `lose`, the hook line's figure)"""
-    for k in ("value", "to", "lose", "from", "board", "label"):
+    for k in ("lose", "to", "value", "from", "board", "label"):  # a bite rings what it loses, a shrink what is left
         m = re.search(r"\d[\d,]*(?:\.\d+)?", str(props.get(k) or ""))
         if m:
             return float(m.group(0).replace(",", ""))
