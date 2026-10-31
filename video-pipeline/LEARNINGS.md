@@ -230,6 +230,11 @@ one change at a time where possible, so a result can be read.
   (a person swapped between poses); small objects doing one thing each read as animation, not as a slide show.
 - A loop on an illustrated board replaces the auto-picked drawing: with both, the loop sat on a stranger's shoulder.
   Rule: one picture per beat; the loop is the second thing beside the words, never on top of a first thing.
+- Jeffrey scored the first seventeen 5/10 and asked for more and longer. What moved them: each became a small scene
+  of six to nine seconds with a beginning, a middle and an end (the receipt prints, says TOTAL, tears off and
+  drops); properly drawn objects (the pig has ears, a snout and a tail; the notes have a £); and the craft of
+  animation on top: a squash on every landing, a wobble after it, a wind-up before a move, a fade instead of a snap.
+  Rule for any new loop: it is a scene, not an icon that twitches.
 
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage?

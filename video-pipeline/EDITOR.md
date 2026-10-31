@@ -89,10 +89,14 @@ Tags for the script:
 - `marks="circle 62,40@price; arrow 30,70@word; note:the bit that matters 50,80@word"` on footage or a photo: a
   marker ring, an arrow from lower left, or a handwritten note drawn on the picture at that point (per cent of the
   picture, left to right and top to bottom) on the word. Red unless `green:` or `ink:` leads the mark.
-- `anim=<loop>` on any board, stat or chart: a stop-motion loop where a drawing would go (`art_at`, `art_size`,
-  `art_start` place it), moving in steps eight a second. The loops: coins-jar, piggy-bank, card-tap, money-flies,
-  bills-pile, receipt-print, phone-ping (spending and bills); stack-grow, bar-race, snowball, plant-grow, arrow-up
-  (growth); house-build (a deposit, a home); calendar-flip, clock, hourglass (time); scales (this against that).
+- `anim=<loop>` on any board, stat or chart: a stop-motion scene where a drawing would go (`art_at`, `art_size`,
+  `art_start` place it), six to nine seconds with a beginning, a middle and an end, moving in steps eight a second.
+  Spending and bills: coins-jar, piggy-bank, card-tap, money-flies, bills-pile, receipt-print, phone-ping. Growth:
+  stack-grow, bar-race, snowball, plant-grow, arrow-up. A home: house-build, deposit-jar. Time: calendar-flip,
+  clock, hourglass. This against that: scales. Stories: payday-split (a payslip split into save, bills and spend),
+  price-creep (a coffee's tag flips up four times, the cup shrinks), rent-day (three months of the envelope leaving
+  the wallet), interest-grows (a red layer a month on a card's debt), isa-shield (the tax arrow bounces off).
+  `dur=` on the board sets how long it has when there is no recording to time it.
 - `screen=laptop` on `[broll]`: the clip in a drawn laptop with a browser bar, for screen recordings; `phone=on`
   is the upright phone.
 
