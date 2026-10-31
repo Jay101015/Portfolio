@@ -272,8 +272,9 @@ export const FootageCards: React.FC<{scene: Scene}> = ({scene}) => {
   // on footage the column is on the right; on a board with a drawing on its right half they go under the written
   // lines on the left, so the page fills up instead of sitting white
   // a board with a drawing: the cards go under its written lines, low on the left; a stat keeps them in the right column
-  const underLines = !vertical && scene.type === 'text' && ((!!scene.props.art && scene.props.art !== 'off') || !!scene.props.anim);
-  const iconBoard = !vertical && scene.type === 'text' && !underLines; // a corner doodle top right: the column starts below it
+  const board = scene.type === 'text' || scene.type === 'hook';
+  const underLines = !vertical && board && ((!!scene.props.art && scene.props.art !== 'off') || !!scene.props.anim);
+  const iconBoard = !vertical && board && !underLines; // a corner doodle top right: the column starts below it
   // a chart's lines and bars start low on the left: its cards go top-left, under the title, where the page is empty
   const chart = !vertical && scene.type === 'chart';
   const left = underLines || chart;
