@@ -398,5 +398,30 @@
     "source": "Jeffrey, 31 Oct 2026",
     "phone": true,
     "notes": "phone=on. Four seconds only: ask for a longer, slower scroll of this page for the 'you already own it' beat"
+  },
+  {
+    "name": "vuag-max-chart-app",
+    "file": "vuag-max-chart-app.mp4",
+    "orientation": "portrait",
+    "w": 1080,
+    "h": 1562,
+    "seconds": 25.5,
+    "about": "Jeffrey's investing app on his S&P 500 fund (Vanguard S&P 500 Acc, VUAG): the all-time chart scrubbed from £49.51 in November 2020 to £109.78 now, '129.66% since start'. Status bar and his holding cropped off",
+    "tags": [
+      "index fund",
+      "s&p 500",
+      "vanguard",
+      "vuag",
+      "chart",
+      "app",
+      "phone",
+      "screen recording",
+      "investing",
+      "all time",
+      "compounding"
+    ],
+    "source": "Jeffrey, 31 Oct 2026",
+    "phone": true,
+    "notes": "phone=on. Never show the uncropped original: it carries his holding (£ value) under the chart. Scrub lands on Sept 2021, Sept 2022, April 2023, Jan 2024, Sept 2024, July 2025, June 2026: a marks= ring can sit on any of them"
   }
 ]
