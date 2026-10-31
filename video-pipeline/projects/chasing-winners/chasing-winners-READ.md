@@ -1,4 +1,4 @@
-Read the plain text aloud. Skip the bold lines (they are section names). Fill the [BRACKETS]; the OPTIONAL line is yours to keep or cut.
+Read the plain text aloud. Skip the bold lines (they are section names). No brackets to fill in this one.
 
 **Hook**
 
@@ -40,11 +40,11 @@ From 2017 the chaser gets lucky. Nvidia, the best stock of 2016, goes up another
 
 Nine years of being right, almost in a row. And here is where the chaser's pot ends 2025: about seven thousand two hundred pounds. The boring pot: about nine thousand. Nine straight years of picking the winner's follow-up, and it still has not caught up.
 
-And look at what you had to sit through to get there. This is Nvidia's chart in my own app. The chaser owned this stock in 2002, when it fell eighty-three percent, and sold it at the bottom, because the rules said buy the new winner. The chaser never owned it on the way up until 2017.
+And look at what you had to sit through to get there. This is Nvidia's chart since 2018. The chaser owned this stock in 2002, when it fell eighty-three percent, and sold it at the bottom, because the rules said buy the new winner. The chaser never owned it on the way up until 2017.
 
 And this year? Last year's winner was Sandisk, and it is up nearly four hundred percent so far. So right now, in October 2026, the chaser's pot is ahead for the first time in twenty-six years. That is the trap. It always looks like it is about to work. But to be here, you had to watch a thousand pounds become twenty-five, hold a stock that lost eighty-three percent, sell it, and never once flinch for a decade. Nobody does that. Most people who chase winners arrive in year twenty-five, buy at the top, and get the next 2002.
 
-This is my boring pot. An S&P 500 fund, [AMOUNT] a month, since [YEAR]. Up about a hundred and thirty percent since the start. I have done nothing to it. [OPTIONAL: And I'll be honest, I own a little Nvidia too. I bought it after it had already gone up about five hundred times. Which is exactly what this video is about.]
+And this is what the boring pot looks like from the inside. An S&P 500 index fund, bought in 2020 and left alone, up about a hundred and thirty percent since the start. Nothing clever happened here. Nobody touched it.
 
 **The number that settles it**
 
@@ -60,4 +60,4 @@ None of this is advice, and the past is not a promise about the future. It is ju
 
 **Recap**
 
-Chase the winner every year, and you spend a decade at twenty-five pounds for seven thousand today. Leave it in the index, and it is nine thousand and you never lost sleep. Four percent of companies make all the gains, and the index owns every one of them. Monthly, in an ISA, hands off. Tell me in the comments, honestly: which stock would you have chased in 2000? Next video: the one company you can buy before the biggest launch in gaming history, and why I'm not.
+Chase the winner every year, and you spend a decade at twenty-five pounds for seven thousand today. Leave it in the index, and it is nine thousand and you never lost sleep. Four percent of companies make all the gains, and the index owns every one of them. Monthly, in an ISA, hands off. Tell me in the comments, honestly: which stock would you have chased in 2000? Next video: the one company you can buy before the biggest launch in gaming history, and whether you should.

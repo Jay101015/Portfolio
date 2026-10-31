@@ -74,14 +74,14 @@ data: Boring pot = 2000:909, 2002:624, 2005:934, 2008:719, 2011:1069, 2014:1866,
 data: Chaser = 2000:909, 2002:71, 2005:137, 2008:43, 2011:25, 2014:35, 2017:69, 2020:478, 2023:947, 2025:6033
 Nine years of being right, almost in a row. And here is where the chaser's pot ends 2025: about seven thousand two hundred pounds. The boring pot: about nine thousand. Nine straight years of picking the winner's follow-up, and it still has not caught up.
 
-[broll lib="nvda-max-chart-app" phone=on caption="Nvidia, since 2018, in my app" marks="green:circle 50,30@eighty-three"]
-And look at what you had to sit through to get there. This is Nvidia's chart in my own app. The chaser owned this stock in 2002, when it fell eighty-three percent, and sold it at the bottom, because the rules said buy the new winner. The chaser never owned it on the way up until 2017.
+[broll lib="nvda-max-chart-app" phone=on caption="Nvidia, since 2018" marks="green:circle 50,30@eighty-three"]
+And look at what you had to sit through to get there. This is Nvidia's chart since 2018. The chaser owned this stock in 2002, when it fell eighty-three percent, and sold it at the bottom, because the rules said buy the new winner. The chaser never owned it on the way up until 2017.
 
 [text board="2026: the chaser is finally ahead. That's the trap." anim=scales art_at=r art_size=0.5 cards="green:Sandisk +385% this year@Sandisk; red:26 years to get here@twenty-six; ink:nobody holds £25 for a decade@decade"]
 And this year? Last year's winner was Sandisk, and it is up nearly four hundred percent so far. So right now, in October 2026, the chaser's pot is ahead for the first time in twenty-six years. That is the trap. It always looks like it is about to work. But to be here, you had to watch a thousand pounds become twenty-five, hold a stock that lost eighty-three percent, sell it, and never once flinch for a decade. Nobody does that. Most people who chase winners arrive in year twenty-five, buy at the top, and get the next 2002.
 
-[broll lib="vuag-max-chart-app" phone=on caption="My boring pot: the S&P 500 fund in my app" marks="green:circle 78,20@start"]
-This is my boring pot. An S&P 500 fund, [AMOUNT] a month, since [YEAR]. Up about a hundred and thirty percent since the start. I have done nothing to it. [OPTIONAL: And I'll be honest, I own a little Nvidia too. I bought it after it had already gone up about five hundred times. Which is exactly what this video is about.]
+[broll lib="vuag-max-chart-app" phone=on caption="The boring pot: an S&P 500 fund since 2020" marks="green:circle 78,20@start"]
+And this is what the boring pot looks like from the inside. An S&P 500 index fund, bought in 2020 and left alone, up about a hundred and thirty percent since the start. Nothing clever happened here. Nobody touched it.
 
 [takeaway title="The number that settles it" n="4" of="4"]
 And the number I promised you at the start.
@@ -107,6 +107,6 @@ None of this is advice, and the past is not a promise about the future. It is ju
 - Leave it in the index: about £9,000, never below £600
 - 4% of companies make all the gains, and the index owns them
 - Monthly, in an ISA, hands off
-Chase the winner every year, and you spend a decade at twenty-five pounds for seven thousand today. Leave it in the index, and it is nine thousand and you never lost sleep. Four percent of companies make all the gains, and the index owns every one of them. Monthly, in an ISA, hands off. Tell me in the comments, honestly: which stock would you have chased in 2000? Next video: the one company you can buy before the biggest launch in gaming history, and why I'm not.
+Chase the winner every year, and you spend a decade at twenty-five pounds for seven thousand today. Leave it in the index, and it is nine thousand and you never lost sleep. Four percent of companies make all the gains, and the index owns every one of them. Monthly, in an ISA, hands off. Tell me in the comments, honestly: which stock would you have chased in 2000? Next video: the one company you can buy before the biggest launch in gaming history, and whether you should.
 
 [outro title="The Everyday Investor" cta="Subscribe for the next one" dur=3]
