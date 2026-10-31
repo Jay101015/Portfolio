@@ -109,9 +109,20 @@ def _same(a: float, b: float) -> bool:
     return abs(a - b) <= max(0.051, abs(b) * 0.005)
 
 
+def _phrase(words: list[dict], i0: int, i1: int) -> bool:
+    """A lone "one" or "a" ("one day", "a year") is a turn of phrase, not a figure to put on the page."""
+    return i1 - i0 == 1 and str(words[i0].get("w", "")).strip(".,!?").lower() in ("one", "a")
+
+
 def _cost(words: list[dict], i0: int) -> bool:
-    before = " ".join(str(w.get("w", "")) for w in words[max(0, i0 - 6):i0])
-    return bool(COST_WORDS.search(before))
+    """A figure is a cost when a cost word comes just before it in the same sentence ("costs you two hundred"); a
+    full stop ends the look-back, so "never pay tax on it. Ten thousand fits" is not a cost."""
+    run = []
+    for w in reversed(words[max(0, i0 - 6):i0]):
+        run.insert(0, str(w.get("w", "")))
+        if str(w.get("w", "")).rstrip('"\')').endswith((".", "?", "!")):
+            break
+    return bool(COST_WORDS.search(" ".join(run)))
 
 
 def auto_cards(sc: dict) -> int:
@@ -140,8 +151,8 @@ def auto_cards(sc: dict) -> int:
         fig = figure_text(words, i0, i1)
         if fig is None:
             continue
-        if str(words[i0].get("w", "")).strip(".,!?").lower() in ("one", "a") and i1 - i0 == 1:
-            continue  # "one day", "a year": a turn of phrase, not a figure
+        if _phrase(words, i0, i1):
+            continue
         text, v = fig
         t = round(max(start, float(words[i0]["s"]) - 0.08), 3)
         if t < start + 0.5 or t > end - 0.8:
@@ -185,6 +196,8 @@ def key_words(sc: dict) -> int:
     for i0, i1 in number_runs(words):
         fig = figure_text(words, i0, i1)
         if fig is None:
+            continue
+        if _phrase(words, i0, i1):
             continue
         text, v = fig
         t = round(float(words[i0]["s"]), 3)

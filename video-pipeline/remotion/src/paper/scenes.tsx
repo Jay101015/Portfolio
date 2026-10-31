@@ -195,6 +195,8 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
   const note = brand.board ? lin(frame, noteStart, noteStart + 8) : fadeIn(frame, 20, 10);
   const loss = isLoss(`${raw} ${label ?? ''} ${sub ?? ''}`);
   const subColor = sub && isLoss(sub) ? brand.accent2 : noteColor(brand);
+  // with a loop or a drawing on the right the note goes under the figure, not beside it, where it would run into the picture
+  const stacked = isVertical || !!scene.props.anim || (!!scene.props.art && scene.props.art !== 'off');
   // the ring round the figure lands on the word that says it (scene.punch, from the build), once it is written
   const ringAt = scene.punch !== undefined ? Math.max(numDone, Math.round((scene.punch - scene.start) * fps)) : null;
   return (
@@ -204,7 +206,7 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
           {brand.board ? <Write text={label} frame={frame} fps={fps} start={0} cps={labelCps} color={noteColor(brand)} /> : label}
         </div>
       ) : null}
-      <div style={{display: 'flex', flexDirection: isVertical ? 'column' : 'row', alignItems: isVertical ? 'flex-start' : 'flex-end', gap: (isVertical ? 10 : 50) * u}}>
+      <div style={{display: 'flex', flexDirection: stacked ? 'column' : 'row', alignItems: stacked ? 'flex-start' : 'flex-end', gap: (stacked ? 10 : 50) * u}}>
         <div>
           <div style={{position: 'relative', display: 'inline-block'}}>
             <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: size, lineHeight: 1, letterSpacing: brand.board ? 0 : -5 * u, color: brand.ink, fontVariantNumeric: 'tabular-nums', transform: brand.board ? undefined : `scale(${0.85 + 0.15 * s})`, transformOrigin: 'left bottom', opacity: brand.board ? 1 : Math.min(1, s * 1.5)}}>
@@ -215,7 +217,7 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
           <Underline width={Math.min(size * 2.4, width * 0.5)} stroke={loss ? brand.accent2 : brand.accent} thickness={8 * u} win={[numDone, numDone + fps * 0.5]} easeOut seed={7} style={{marginTop: 8 * u}} />
         </div>
         {sub ? (
-          <div style={{display: 'flex', alignItems: 'center', gap: 16 * u, marginBottom: (isVertical ? 0 : 40) * u, opacity: brand.board ? 1 : note, maxWidth: isVertical ? '100%' : width * 0.34}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: 16 * u, marginBottom: (stacked ? 0 : 40) * u, marginTop: stacked && !isVertical ? 18 * u : 0, opacity: brand.board ? 1 : note, maxWidth: isVertical ? '100%' : width * (stacked ? 0.5 : 0.34)}}>
             {!isVertical ? <Arrow length={120 * u} stroke={subColor} win={brand.board ? [noteStart, noteStart + 8] : [20, 30]} angle={-8} seed={9} thickness={4 * u} /> : null}
             <div style={{fontFamily: hand(brand), fontSize: 54 * u, lineHeight: 1.15, color: subColor, transform: 'rotate(-2deg)'}}>
               {brand.board ? <Write text={sub} frame={frame} fps={fps} start={noteStart + 8} cps={30} color={subColor} /> : sub}

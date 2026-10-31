@@ -60,6 +60,9 @@ def test_auto_cards_leave_a_loop_board_and_a_turn_of_phrase():
     craft.auto_cards(plain)
     assert "1 day" not in [c["text"] for c in plain["cues"]]  # "one day" is not a figure
     assert [c["text"] for c in plain["cues"]][:1] == ["4,000"]
+    keyed = {"type": "stat", "start": 0.0, "end": 16.0, "props": {}, "words": words, "cues": []}
+    craft.key_words(keyed)
+    assert "1 day" not in [k["text"] for k in keyed.get("keys", [])]
 
 
 def test_marks_parse_to_word_indexed_cues():
