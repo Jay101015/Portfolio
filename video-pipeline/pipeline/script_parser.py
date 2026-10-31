@@ -242,6 +242,11 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
     for k in ("pos", "pose", "face", "scale", "icon", "keep", "transition", "tint", "anim", "screen"):  # anim=coins-jar: a drawn loop where a drawing would go; screen=laptop: footage in a drawn laptop  # tint=red: every figure on the board in red (bad news)  # keep=yes|arrow|strike builds on the board before; transition=wipe|slide|cut picks how it comes in
         if k in a:
             p[k] = a[k]
+    if "dur" in a and "dur" not in p:  # dur=6.4 on any scene: its length in seconds when there is no recording to time it
+        try:
+            p["dur"] = float(a["dur"])
+        except ValueError:
+            pass
     # a sticker (GIF or picture) on any scene, with its own edits as sticker_<edit>; a drawing from the art library
     # on any scene as art=<name> with art_at, art_size, art_start (art=off keeps the corner clear)
     for k, v in a.items():
