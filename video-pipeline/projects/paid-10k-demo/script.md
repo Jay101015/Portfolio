@@ -8,10 +8,10 @@ captions: off
 slug: paid-10k-demo
 topic: a bonus or a windfall of £10,000 just landed; the order to deal with it in, UK, with the free £1,000
 
-[hook board="£10,000 just landed. Now what?" art=payday]
+[hook board="£10,000 just landed. Now what?" art=payday cards="green:in order@order"]
 Ten thousand pounds just landed in your account. Here's exactly what to do with it, in order.
 
-[text board="The debt to kill first | The account that makes it tax-free | The £1,000 the government adds" art=crossroads cards="green:in order@order; ink:3 moves@three"]
+[text board="The debt to kill first | The account that makes it tax-free | The £1,000 the government adds" art=crossroads cards="ink:1, 2, 3@first; green:the best one last@end"]
 The debt to kill first, the account that makes the growth tax-free, and at the end, the thousand pounds the government will add if you ask.
 
 [title dur=2.4 kicker="The Everyday Investor" title="I just got paid £10K" subtitle="Here's what to do"]

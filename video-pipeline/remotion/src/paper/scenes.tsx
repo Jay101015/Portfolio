@@ -153,7 +153,7 @@ export const PaperTitle: React.FC<P> = ({scene, brand}) => {
       <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: (isVertical ? 96 : 124) * u * (brand.board ? 1.08 : 1), lineHeight: 1.02, letterSpacing: brand.board ? 0 : -2 * u, color: brand.ink, maxWidth: isVertical ? '100%' : '82%'}}>
         <Txt brand={brand} text={title} frame={frame} fps={fps} start={titleStart} cps={48} seed={3} />
       </div>
-      <Underline width={Math.min(width * 0.42, 640 * u)} stroke={brand.accent2} thickness={7 * u} win={[titleDone, titleDone + fps * 0.6]} easeOut seed={5} style={{marginTop: 18 * u}} />
+      <Underline width={Math.min(width * 0.42, 640 * u)} stroke={(brand.fill ?? brand.accent)} thickness={7 * u} win={[titleDone, titleDone + fps * 0.6]} easeOut seed={5} style={{marginTop: 18 * u}} />
       {subtitle ? (
         <div style={{fontSize: (isVertical ? 40 : 44) * u, color: brand.muted, marginTop: 26 * u, maxWidth: isVertical ? '100%' : '62%', lineHeight: 1.35, opacity: brand.board ? 1 : fadeIn(frame, 18, 10)}}>
           {brand.board ? <Write text={subtitle} frame={frame} fps={fps} start={subStart} cps={60} color={brand.muted} /> : subtitle}
@@ -536,7 +536,7 @@ export const PaperList: React.FC<P> = ({scene, brand}) => {
           <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 60 : 70) * u * (brand.board ? 1.1 : 1), color: brand.ink, letterSpacing: brand.board ? 0 : -1 * u}}>
             <Txt brand={brand} text={title} frame={frame} fps={fps} seed={11} per={2} cps={22} />
           </div>
-          <Underline width={Math.min(560 * u, title.length * 28 * u)} stroke={brand.accent2} thickness={6 * u} win={[brand.board ? titleDone : 6, (brand.board ? titleDone : 6) + fps * 0.5]} easeOut seed={12} />
+          <Underline width={Math.min(560 * u, title.length * 28 * u)} stroke={(brand.fill ?? brand.accent)} thickness={6 * u} win={[brand.board ? titleDone : 6, (brand.board ? titleDone : 6) + fps * 0.5]} easeOut seed={12} />
         </div>
       ) : null}
       {items.map((item, i) => {
@@ -804,7 +804,7 @@ export const PaperQuote: React.FC<P> = ({scene, brand}) => {
   const quoteDone = doneAt(brand, quote, fps, start, per, cps);
   return (
     <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.4}}>
-      <div style={{fontFamily: brand.display, fontSize: 200 * u, lineHeight: 0.5, color: brand.accent2, marginBottom: 20 * u, opacity: fadeIn(frame, 0, 8)}}>“</div>
+      <div style={{fontFamily: brand.display, fontSize: 200 * u, lineHeight: 0.5, color: (brand.fill ?? brand.accent), marginBottom: 20 * u, opacity: fadeIn(frame, 0, 8)}}>“</div>
       <div style={{fontFamily: brand.display, fontStyle: brand.board ? 'normal' : 'italic', fontWeight: 400, fontSize: (isVertical ? 64 : 84) * u, lineHeight: 1.25, color: brand.ink, maxWidth: isVertical ? '100%' : '80%'}}>
         <Txt brand={brand} text={quote} frame={frame} fps={fps} start={start} per={per} cps={cps} seed={51} />
       </div>
