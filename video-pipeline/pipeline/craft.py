@@ -118,6 +118,8 @@ def auto_cards(sc: dict) -> int:
     """Cards from the figures said, on a board that runs on with nothing landing. Returns how many were added."""
     if sc.get("type") not in BOARD_TYPES:
         return 0
+    if (sc.get("props") or {}).get("anim"):
+        return 0  # a drawn loop is the motion on that board, and the cards would land on it
     start, end = float(sc["start"]), float(sc["end"])
     dur = end - start
     if dur < CARD_EVERY:
@@ -138,6 +140,8 @@ def auto_cards(sc: dict) -> int:
         fig = figure_text(words, i0, i1)
         if fig is None:
             continue
+        if str(words[i0].get("w", "")).strip(".,!?").lower() in ("one", "a") and i1 - i0 == 1:
+            continue  # "one day", "a year": a turn of phrase, not a figure
         text, v = fig
         t = round(max(start, float(words[i0]["s"]) - 0.08), 3)
         if t < start + 0.5 or t > end - 0.8:

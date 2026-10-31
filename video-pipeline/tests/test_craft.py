@@ -52,6 +52,16 @@ def test_auto_cards_fill_a_long_board_and_leave_a_short_one():
     assert craft.auto_cards(short) == 0
 
 
+def test_auto_cards_leave_a_loop_board_and_a_turn_of_phrase():
+    words = _w("buying your first home one day put four thousand of it in and twenty thousand more the year after", step=0.5)
+    loop = {"type": "stat", "start": 0.0, "end": 16.0, "props": {"anim": "deposit-jar"}, "words": words, "cues": []}
+    assert craft.auto_cards(loop) == 0  # the loop is the motion on that board
+    plain = {"type": "stat", "start": 0.0, "end": 16.0, "props": {}, "words": words, "cues": []}
+    craft.auto_cards(plain)
+    assert "1 day" not in [c["text"] for c in plain["cues"]]  # "one day" is not a figure
+    assert [c["text"] for c in plain["cues"]][:1] == ["4,000"]
+
+
 def test_marks_parse_to_word_indexed_cues():
     sc = {"id": 3, "narration": "look at the price on the right then the total", "words": []}
     bad = craft.plan_marks(sc, {"marks": "circle 62,40@price; green:arrow 30,70@total; note:the bit that matters 50,80@right; squiggle 1,1"})

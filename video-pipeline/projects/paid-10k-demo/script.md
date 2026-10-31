@@ -22,8 +22,11 @@ First, protect it from yourself.
 [text board="Rule one: sit on it for 30 days" anim=calendar-flip art_at=r art_size=0.5 dur=7 cards="ink:30 days@thirty; red:the dumb spending: week one@week"]
 Do nothing for thirty days. Most of the dumb spending happens in the first week, when it still feels like free money.
 
-[bite value="£1,000" lose="£200" label="£1,000 on a card at 20%, one year" sub="gone in interest" source="illustrative" anim=interest-grows art_at=r art_size=0.5 dur=8.5]
-Got credit card debt? Clear it before anything else. Every thousand pounds on a card at twenty percent costs you two hundred a year. Paying it off is a guaranteed twenty percent return, and nothing else on this list beats that.
+[bite value="£1,000" lose="£200" label="£1,000 on a card at 20%, one year" sub="gone in interest" source="illustrative"]
+Got credit card debt? Clear it before anything else. Every thousand pounds on a card at twenty percent costs you two hundred a year.
+
+[text board="Paying it off = a guaranteed 20% return" art=card-scissors cards="green:20%, guaranteed@guaranteed"]
+Paying it off is a guaranteed twenty percent return, and nothing else on this list beats that.
 
 [text board="3 months of essentials | Easy-access savings | The money you never touch" anim=coins-jar art_at=r art_size=0.5 dur=7 cards="ink:rent + bills + food@essentials; green:easy access@easy"]
 Next, three months of essentials, rent, bills, food, in an easy-access savings account. Boring. It's the money that stops a broken boiler becoming a credit card bill.
@@ -31,7 +34,7 @@ Next, three months of essentials, rent, bills, food, in an easy-access savings a
 [takeaway title="Make it grow" n="2" of="3"]
 Now the part that actually makes you money.
 
-[stat value="£20,000" label="ISA allowance, every year" sub="no tax on the growth, ever" source="GOV.UK, 2026" anim=isa-shield art_at=r art_size=0.5 dur=8.5]
+[stat value="£20,000" label="ISA allowance, every year" sub="you keep every penny it makes" source="GOV.UK, 2026" anim=isa-shield art_at=r art_size=0.5 dur=8.5]
 Every year you can put up to twenty thousand pounds into an ISA, and you never pay tax on what it makes. Ten thousand fits with room to spare. A stocks and shares ISA, one global index fund, done.
 
 [chart line title="£10,000 at 7% a year, left alone" y="£" x="Years" source="7% a year, compounded, illustrative" cards="ink:year 10: £19,700@ten; green:year 20: £38,700@twenty; green:year 30: £76,100@thirty"]

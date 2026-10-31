@@ -12,7 +12,9 @@ First, protect it from yourself.
 
 Do nothing for thirty days. Most of the dumb spending happens in the first week, when it still feels like free money.
 
-Got credit card debt? Clear it before anything else. Every thousand pounds on a card at twenty percent costs you two hundred a year. Paying it off is a guaranteed twenty percent return, and nothing else on this list beats that.
+Got credit card debt? Clear it before anything else. Every thousand pounds on a card at twenty percent costs you two hundred a year.
+
+Paying it off is a guaranteed twenty percent return, and nothing else on this list beats that.
 
 Next, three months of essentials, rent, bills, food, in an easy-access savings account. Boring. It's the money that stops a broken boiler becoming a credit card bill.
 
