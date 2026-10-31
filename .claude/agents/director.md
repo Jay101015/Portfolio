@@ -60,6 +60,16 @@ Every note you give is a picture, not a principle: say what goes on screen, at w
   (a share), `[bite]` (a bite out of a bar: fees, debt), `[compare]` (two sides, `good=left`), `[chart]`,
   `[news search=]` (a real headline), `[quote]`, `[list]`, `[recap]`.
 - Stop-motion strips: `art=celebrate|hand-money|train` (four or so drawings played in steps).
+- Drawn loops: `anim=coins-jar|stack-grow|arrow-up|clock|plant-grow` on any board, stat or chart, placed like a
+  drawing (`art_at`, `art_size`): coins dropping into a jar, notes stacking, the brand's arrow drawing itself, a
+  clock sweeping, a plant growing. Little animations in the line style, no character.
+- Marks on footage and photos: `marks="circle 62,40@word; arrow 30,70@word; note:the bit that matters 50,80@word"`
+  (per cent of the picture): a marker ring, an arrow, a handwritten note drawn on the clip on its word. Jeffrey's own
+  clips and photos earn these first.
+- Screens: `phone=on` (an upright phone), `screen=laptop` (a drawn laptop with a browser bar) for recordings.
+- Automatic, so plan around them: a stat's figure counts up and gets a ring on its word; the figures said pop up as
+  key words along the bottom; a board over six seconds with nothing landing gets cards from its figures; the
+  chapters' titles tick off in the corner; a takeaway card opens with the last chapter's boards along its top.
 
 When a moment needs something none of these can do, say so under NEW TOOLS: a one-line description of the device and
 where it would have gone. That is how the pipeline grows.

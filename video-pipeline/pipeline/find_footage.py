@@ -37,6 +37,7 @@ from dataclasses import dataclass
 from typing import Any, Callable
 
 from .script_parser import parse_script
+from . import footage_gate
 
 UA = "reel-takes-pipeline/1.0 (+https://github.com/)"
 DEFAULT_LICENSES = {"pd", "cc0", "cc-by", "cc-by-sa", "pexels", "pixabay"}
@@ -450,16 +451,41 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
         if not chosen:
             report["scenes"].append(entry)
             continue
-        used.add(attribution(chosen))
-        fname = f"{sc['id']:02d}-{slugify(q)}.{chosen.ext}"
-        entry.update({"status": "dry-run" if dry_run else "downloaded", "src": fname, "credit": attribution(chosen), "license": chosen.license_name, "page": chosen.page})
-        if not dry_run:
+        # the chosen clip, then the next two if it fails the quality gate (a clip picked by hand, pick= or stock=, is not gated)
+        picked = bool(p.get("pick") or p.get("stock"))
+        tries = [chosen] if picked or dry_run else [chosen] + [h for h in usable if h is not chosen][:2]
+        got = None
+        for h in tries:
+            fname = f"{sc['id']:02d}-{slugify(q)}.{h.ext}"
+            if dry_run:
+                got = h
+                break
             try:
-                download(chosen.url, os.path.join(media, fname), {"Authorization": os.environ.get("PEXELS_API_KEY", "")} if chosen.provider == "pexels" else None)
+                download(h.url, os.path.join(media, fname), {"Authorization": os.environ.get("PEXELS_API_KEY", "")} if h.provider == "pexels" else None)
             except Exception as e:  # noqa: BLE001
                 entry["status"] = f"download failed: {e}"
-                report["scenes"].append(entry)
                 continue
+            if h.kind == "video" and not picked:
+                measures, why = footage_gate.check(os.path.join(media, fname))
+                if why:
+                    entry.setdefault("gated", []).append({"title": h.title, "why": why, **measures})
+                    print(f"scene {sc['id']}: {h.title}: {why}; trying the next", flush=True)
+                    try:
+                        os.remove(os.path.join(media, fname))
+                    except OSError:
+                        pass
+                    continue
+            got = h
+            break
+        if got is None:
+            entry["status"] = entry.get("status") if str(entry.get("status", "")).startswith("download failed") else "no candidate passed the quality gate"
+            report["scenes"].append(entry)
+            continue
+        chosen = got
+        used.add(attribution(chosen))
+        fname = f"{sc['id']:02d}-{slugify(q)}.{chosen.ext}"
+        entry.update({"status": "dry-run" if dry_run else "downloaded", "src": fname, "credit": attribution(chosen), "license": chosen.license_name, "page": chosen.page, "pick": usable.index(chosen) + 1 if chosen in usable else entry.get("pick")})
+        if not dry_run:
             # Replace the footage and its credit; drop a from= offset that was written for a different file.
             new_md = rewrite_tag(new_md, sc["id"], sb, {"src": fname, "credit": attribution(chosen)}, to_type=None if sc["type"] == "broll" else ("clip" if chosen.kind == "video" else "still"), drop=("from",))
         report["scenes"].append(entry)

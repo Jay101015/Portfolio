@@ -387,8 +387,8 @@ export const PaperTakeaway: React.FC<P> = ({scene, brand}) => {
   const hand = brand.hand ?? 'cursive';
   return (
     <AbsoluteFill style={{padding: pad, justifyContent: 'center'}}>
-      <div style={{fontFamily: hand, fontSize: (isVertical ? 52 : 58) * u, color: brand.accent2, transform: 'rotate(-1.5deg)', transformOrigin: 'left', marginBottom: 18 * u}}>
-        <Write text={kicker} frame={frame} fps={fps} start={2} cps={34} color={brand.accent2} />
+      <div style={{fontFamily: hand, fontSize: (isVertical ? 52 : 58) * u, color: noteColor(brand), transform: 'rotate(-1.5deg)', transformOrigin: 'left', marginBottom: 18 * u}}>
+        <Write text={kicker} frame={frame} fps={fps} start={2} cps={34} color={noteColor(brand)} />
       </div>
       <div style={{display: 'flex', flexDirection: isVertical ? 'column' : 'row', alignItems: 'center', gap: (isVertical ? 30 : 60) * u}}>
         <div style={{position: 'relative', width: R, height: R, flex: '0 0 auto'}}>

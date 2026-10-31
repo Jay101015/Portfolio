@@ -220,6 +220,43 @@ const ComingUp: React.FC<{sb: Storyboard; brand: Brand}> = ({sb, brand}) => {
     </div>
   );
 };
+const STRIP_TYPES = ['text', 'stat', 'chart', 'compare', 'shrink', 'grow', 'bite', 'pie', 'news', 'list', 'quote', 'hook'];
+/** One big board per chapter, seen at its end: as a takeaway card opens, the boards of the chapter just finished fly
+ * in along the top as small frozen frames, the way a whiteboard fills up, so the viewer sees the ground covered
+ * before the next chapter starts. Boards only (footage is left out: a frozen clip costs a decode). */
+const ChapterStrip: React.FC<{boards: Scene[]; brand: Brand}> = ({boards, brand}) => {
+  const frame = useCurrentFrame();
+  const {fps, width, height} = useVideoConfig();
+  const show = boards.slice(-5);
+  if (!show.length) return null;
+  const u = width / 1920;
+  const tw = Math.min(width * 0.16, (width * 0.9) / show.length - 16 * u);
+  const th = (tw * height) / width;
+  const gap = (width * 0.9 - tw * show.length) / Math.max(1, show.length - 1);
+  const x0 = width * 0.05;
+  return (
+    <AbsoluteFill style={{pointerEvents: 'none'}}>
+      {show.map((sc, i) => {
+        const at = Math.round(fps * (0.25 + i * 0.12));
+        const q = Math.max(0, Math.min(1, (frame - at) / Math.round(fps * 0.45)));
+        const e = 1 - Math.pow(1 - q, 3);
+        const last = Math.max(0, Math.round((sc.end - sc.start) * fps) - 1);
+        const tilt = (i % 2 ? 1 : -1) * 1.2;
+        return (
+          <div key={sc.id} style={{position: 'absolute', left: x0 + i * (tw + gap), top: height * 0.07, width: tw, height: th, opacity: e, transform: `translateX(${(1 - e) * -width * 0.3}px) rotate(${tilt}deg)`, background: brand.panel, border: `${4 * u}px solid ${brand.ink}`, boxShadow: `${7 * u}px ${7 * u}px 0 ${brand.ink}`, overflow: 'hidden', boxSizing: 'border-box'}}>
+            <AbsoluteFill style={{width, height, transform: `scale(${(tw - 8 * u) / width})`, transformOrigin: '0 0', background: brand.bg}}>
+              <Freeze frame={last}>
+                <SceneSwitch scene={sc} brand={brand} />
+                <Sticker scene={sc} brand={brand} />
+                <ArtLayer scene={sc} brand={brand} />
+              </Freeze>
+            </AbsoluteFill>
+          </div>
+        );
+      })}
+    </AbsoluteFill>
+  );
+};
 /** A faint paper grain over everything: a tile, not a filter, so it costs nothing to draw. */
 const Grain: React.FC = () => <AbsoluteFill style={{backgroundImage: `url(${staticFile('paper/grain.png')})`, backgroundRepeat: 'repeat', opacity: 0.045, pointerEvents: 'none', mixBlendMode: 'multiply'}} />;
 
@@ -436,6 +473,13 @@ export const Video: React.FC<Storyboard> = (sb) => {
           </AbsoluteFill>
         );
         if (tr === 'slide' && prev) board = <SlideIn>{board}</SlideIn>;
+        // the chapter just finished, as a strip of its boards along the top of the takeaway card that opens the next
+        let strip: Scene[] = [];
+        if (scene.type === 'takeaway' && brand.board && height <= width && String(flags.strip ?? 'on').toLowerCase() !== 'off') {
+          const back = sb.scenes.slice(0, idx);
+          const from = back.map((s) => s.type).lastIndexOf('takeaway');
+          strip = back.slice(from + 1).filter((s) => STRIP_TYPES.includes(s.type));
+        }
         return (
           <Sequence key={scene.id} from={from} durationInFrames={dur} name={`${scene.id} ${scene.type}`}>
             <SceneFade durationInFrames={dur} toon={brand.toon} transition={tr} dir={scene.id % 2 ? 1 : -1}>
@@ -443,6 +487,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
                 {keep && prev ? <KeptBoard prev={prev} brand={brand} mode={keep} /> : null}
                 {tr === 'slide' && prev ? <SlideOut prev={prev} brand={brand} /> : null}
                 {board}
+                {strip.length >= 2 ? <ChapterStrip boards={strip} brand={brand} /> : null}
                 {sb.host === 'none' ? null : <HostLayer sb={sb} scene={scene} avatar={avatar} toon={brand.toon} />}
                 {scene.type !== 'set' && (scene.cues ?? []).some((c) => (c as {do?: string}).do === 'card') ? <FootageCards scene={scene} /> : null}
                 <LoopLayer scene={scene} brand={brand} />

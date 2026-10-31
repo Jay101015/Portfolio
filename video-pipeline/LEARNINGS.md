@@ -209,6 +209,20 @@ one change at a time where possible, so a result can be read.
 - What he does not want, in one list, so it is not tried again: sound effects, icon doodles, GIFs, a stop-motion or
   paper-doll character, a navy title card. What he likes: little animations, text pop-ups, a clean editorial page.
 
+### Animations and drawings (2026-10-31)
+- Built, all on by default on the board look: figures count up and get a ring on their word; the figures said pop
+  up as key words on the highlighter along the bottom (never the scene's own figure, never one on a card or in the
+  chart's data, never a bare small number); a board over six seconds with nothing landing gets cards from its
+  figures; marks (`marks=`) drawn on footage and photos on their word; five drawn loops (`anim=`); a laptop frame
+  for screen recordings; the chapters' titles ticking off in the corner (it steps aside on footage and in a room);
+  a takeaway card opens with the last chapter's boards along its top; a quality gate on downloaded stock (too
+  still, too dark, letterboxed, lettering burned in); one set piece a video until the animated clips exist.
+- Spoken figures are harder than they look: "percent" alone is not a number ("a few percent"), "thousand." with a
+  full stop ends a run unless the dot is stripped, "three pound fifty" is £3.50, "twenty-four year olds" is an age,
+  and a bare "22" says nothing on a card. The rules are in pipeline/craft.py with tests; a new oddity goes there.
+- The colour rule caught two more reds that were not losses: the takeaway kicker and the handwritten labels in the
+  money graphics. Rule: every `accent2` in the renderer is a loss or it is wrong.
+
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage?
 2. Thumbnail: a face (Jeffrey) vs no face, once Canva thumbnails are in use.

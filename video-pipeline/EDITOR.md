@@ -79,6 +79,11 @@ Automatic on every build (pipeline/craft.py):
   ticked off as each is covered, the one in hand on the highlighter. It steps aside on footage and in a room.
   `brand.comingup: off` hides it.
 - **One set piece a video** until the character's animated clips are in the library: a second one gets a warning.
+- **The chapter strip.** As a takeaway card opens, the boards of the chapter just finished fly in along the top as
+  small frozen frames: one big board per chapter, seen at its end. `brand.strip: off` hides it.
+- **The footage gate.** A downloaded stock clip that barely moves, is too dark, is letterboxed, or has lettering or
+  a logo burned in is dropped and the next candidate tried (pipeline/footage_gate.py; a clip picked by hand with
+  pick= or stock= is never gated). footage-report.md lists what was gated and why.
 
 Tags for the script:
 - `marks="circle 62,40@price; arrow 30,70@word; note:the bit that matters 50,80@word"` on footage or a photo: a
