@@ -9,6 +9,7 @@ import {Doodle, Write, WriteSpoken, fitCps, fitStart, pickDoodle, writeFrames} f
 import {Art, PaperArt, isTraced, pickArt, pickArtAmong} from './art';
 import {PaperBite, PaperGrow, PaperPie, PaperShrink} from './money';
 import {Erase} from './erase';
+import {Marks} from './marks';
 import {captionLine, isLoss, keyWords, moneyTint} from './phrase';
 import {Media} from './media';
 import {Loop, Sequence} from 'remotion';
@@ -178,14 +179,17 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
   const labelCps = label ? fitCps(label, fps, 0, 34, total, 0.3) : 34;
   const labelDone = label ? doneAt(brand, label, fps, 0, 2, labelCps) : 0;
   const numStart = brand.board ? labelDone + 2 : 6;
-  // on the board the number is written, not counted: a marker cannot count up
-  const p = brand.board ? 1 : ease(frame, numStart, numStart + fps * countSec);
+  // on the board the figure counts up to its value (count=off writes it with the marker instead)
+  const counting = brand.board && !!parsed && String(scene.props.count ?? 'on') !== 'off';
+  const countFrames = Math.round(fps * Math.min(1.4, Math.max(0.5, Number(scene.props.countSeconds ?? 0.9))));
+  const p = brand.board && !counting ? 1 : ease(frame, numStart, numStart + (counting ? countFrames : fps * countSec));
   const display = parsed ? `${parsed.prefix}${formatNum(from + (parsed.num - from) * p, parsed.decimals, parsed.grouped || parsed.num >= 1000)}${parsed.suffix}` : raw;
+  const finalText = parsed ? `${parsed.prefix}${formatNum(parsed.num, parsed.decimals, parsed.grouped || parsed.num >= 1000)}${parsed.suffix}` : raw;
   const s = pop(frame, fps, 3, 13);
-  const digits = display.length;
+  const digits = finalText.length;
   const size = (isVertical ? 190 : 300) * u * (digits > 9 ? 0.7 : digits > 7 ? 0.85 : 1);
-  const numCps = fitCps(display, fps, numStart, 9, total, 0.65);
-  const numDone = brand.board ? doneAt(brand, display, fps, numStart, 3, numCps) : 8 + fps * countSec * 0.6;
+  const numCps = fitCps(finalText, fps, numStart, 9, total, 0.65);
+  const numDone = counting ? numStart + countFrames : brand.board ? doneAt(brand, finalText, fps, numStart, 3, numCps) : 8 + fps * countSec * 0.6;
   const ul = ease(frame, numDone, numDone + fps * 0.5);
   const noteStart = brand.board ? numDone + Math.round(fps * 0.3) : 20;
   const note = brand.board ? lin(frame, noteStart, noteStart + 8) : fadeIn(frame, 20, 10);
@@ -204,9 +208,9 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
         <div>
           <div style={{position: 'relative', display: 'inline-block'}}>
             <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: size, lineHeight: 1, letterSpacing: brand.board ? 0 : -5 * u, color: brand.ink, fontVariantNumeric: 'tabular-nums', transform: brand.board ? undefined : `scale(${0.85 + 0.15 * s})`, transformOrigin: 'left bottom', opacity: brand.board ? 1 : Math.min(1, s * 1.5)}}>
-              {brand.board ? <Write text={display} frame={frame} fps={fps} start={numStart} cps={numCps} wordGap="0.2em" /> : display}
+              {counting ? <span style={{visibility: frame >= numStart ? 'visible' : 'hidden'}}>{display}</span> : brand.board ? <Write text={display} frame={frame} fps={fps} start={numStart} cps={numCps} wordGap="0.2em" /> : display}
             </div>
-            {ringAt !== null && brand.board ? <Ring width={figureWidth(display, size)} height={figureHeight(size)} stroke={loss ? brand.accent2 : brand.accent} win={[ringAt, ringAt + Math.round(fps * 0.35)]} thickness={7 * u} seed={scene.id * 3 + 1} /> : null}
+            {ringAt !== null && brand.board ? <Ring width={figureWidth(finalText, size)} height={figureHeight(size)} stroke={loss ? brand.accent2 : brand.accent} win={[ringAt, ringAt + Math.round(fps * 0.35)]} thickness={7 * u} seed={scene.id * 3 + 1} /> : null}
           </div>
           <Underline width={Math.min(size * 2.4, width * 0.5)} stroke={loss ? brand.accent2 : brand.accent} thickness={8 * u} win={[numDone, numDone + fps * 0.5]} easeOut seed={7} style={{marginTop: 8 * u}} />
         </div>
@@ -893,6 +897,7 @@ export const PaperStill: React.FC<P> = ({scene, brand}) => {
                 {scene.props.want ?? scene.props.prompt ?? 'picture goes here'}
               </div>
             )}
+            <Marks scene={scene} brand={brand} w={w - 36 * u} h={h - 36 * u} />
           </div>
         </div>
         {brand.board ? (
@@ -1010,6 +1015,40 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
       </AbsoluteFill>
     );
   }
+  if (src && brand.board && !isVertical && String(scene.props.screen ?? '') === 'laptop') {
+    // a screen recording in a drawn laptop: a navy screen with a browser bar, a base under it, no tilt, the caption under the base
+    const bez = 14 * u;
+    const bar = 40 * u;
+    const fw = width * 0.66;
+    const fh = (fw * 10) / 16;
+    const fx = (width - fw) / 2;
+    const fy = (height - fh) / 2 - height * 0.07;
+    const mw = fw - bez * 2;
+    const mh = fh - bez * 2 - bar;
+    return (
+      <AbsoluteFill style={{background: brand.bg, overflow: 'hidden'}}>
+        <div style={{position: 'absolute', left: fx, top: fy, width: fw, height: fh, transform: `translateY(${(1 - s) * 40 * u}px)`, opacity: Math.min(1, s * 1.5), background: brand.ink, padding: bez, boxSizing: 'border-box', borderRadius: 24 * u, boxShadow: `${12 * u}px ${12 * u}px 0 ${brand.ink}`}}>
+          <div style={{width: '100%', height: bar, background: '#EEF2F8', borderRadius: `${8 * u}px ${8 * u}px 0 0`, display: 'flex', alignItems: 'center', gap: 10 * u, padding: `0 ${18 * u}px`, boxSizing: 'border-box'}}>
+            {[0, 1, 2].map((k) => <span key={k} style={{width: 12 * u, height: 12 * u, borderRadius: '50%', background: brand.muted, opacity: 0.7}} />)}
+            <span style={{marginLeft: 18 * u, flex: 1, height: bar * 0.55, borderRadius: bar * 0.3, background: '#fff', border: `${2 * u}px solid ${brand.muted}55`}} />
+          </div>
+          <div style={{position: 'relative', width: mw, height: mh, overflow: 'hidden', background: '#111'}}>
+            {mediaAt(mw, mh)}
+            <Marks scene={scene} brand={brand} w={mw} h={mh} />
+          </div>
+          <div style={{position: 'absolute', left: '50%', top: bez * 0.35, width: 10 * u, height: 10 * u, borderRadius: '50%', background: brand.muted, transform: 'translateX(-50%)'}} />
+        </div>
+        <div style={{position: 'absolute', left: fx - fw * 0.04, top: fy + fh + 2 * u, width: fw * 1.08, height: 26 * u, background: brand.ink, borderRadius: `0 0 ${16 * u}px ${16 * u}px`, boxShadow: `${12 * u}px ${12 * u}px 0 ${brand.ink}`, opacity: Math.min(1, s * 1.5)}}>
+          <div style={{position: 'absolute', left: '50%', top: 0, width: fw * 0.16, height: 8 * u, background: brand.muted, borderRadius: `0 0 ${6 * u}px ${6 * u}px`, transform: 'translateX(-50%)', opacity: 0.6}} />
+        </div>
+        {caption ? (
+          <div style={{position: 'absolute', left: fx, top: fy + fh + 48 * u, transform: `rotate(-1deg) scale(${0.9 + 0.1 * s})`, transformOrigin: 'left top', opacity: Math.min(1, s * 1.5), background: '#fff', color: brand.ink, fontFamily: hand(brand), fontSize: labelSize, lineHeight: 1.15, padding: `${8 * u}px ${24 * u}px`, border: `${3 * u}px solid ${brand.ink}`, boxShadow: `${6 * u}px ${6 * u}px 0 ${brand.ink}`, maxWidth: width * 0.6}}>
+            <Write text={caption} frame={frame} fps={fps} start={Math.round(fps * 0.4)} cps={30} />
+          </div>
+        ) : null}
+      </AbsoluteFill>
+    );
+  }
   if (src && brand.board && !isVertical) {
     // footage taped to the board: a navy frame with an offset shadow, a degree or two of tilt, a lighter grade so the
     // photo sits with the ink rather than cutting hard against it, the caption on the frame's bottom edge
@@ -1022,7 +1061,10 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
     return (
       <AbsoluteFill style={{background: brand.bg, overflow: 'hidden'}}>
         <div style={{position: 'absolute', left: fx, top: fy, width: fw, height: fh, transform: `rotate(${tilt}deg) translateY(${(1 - s) * 40 * u}px)`, opacity: Math.min(1, s * 1.5), background: brand.ink, padding: bord, boxSizing: 'border-box', boxShadow: `${12 * u}px ${12 * u}px 0 ${brand.ink}`}}>
-          <div style={{position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: '#111', filter: 'saturate(0.88) contrast(1.04) sepia(0.06)'}}>{mediaAt(fw - bord * 2, fh - bord * 2)}</div>
+          <div style={{position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: '#111', filter: 'saturate(0.88) contrast(1.04) sepia(0.06)'}}>
+            {mediaAt(fw - bord * 2, fh - bord * 2)}
+            <Marks scene={scene} brand={brand} w={fw - bord * 2} h={fh - bord * 2} />
+          </div>
           <div style={{position: 'absolute', left: '50%', top: -12 * u, width: 150 * u, height: 28 * u, background: brand.marker, opacity: 0.85, transform: 'translateX(-50%) rotate(1.5deg)'}} />
         </div>
         {caption ? (

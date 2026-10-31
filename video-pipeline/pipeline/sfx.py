@@ -24,8 +24,8 @@ WRITE_TYPES = {"hook", "text", "takeaway", "recap", "list", "quote"}
 NUMBER_WORDS = {
     "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen",
     "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "thirty", "forty", "fifty",
-    "sixty", "seventy", "eighty", "ninety", "hundred", "thousand", "million", "billion", "percent", "half", "double",
-    "triple", "quarter", "grand",
+    "sixty", "seventy", "eighty", "ninety", "hundred", "thousand", "million", "billion", "half", "double",
+    "triple", "quarter", "grand",  # "percent" is the unit after a number, never a number ("a few percent" is not one)
 }
 # peak level of each sound, relative to full scale, before the whole track is levelled to -14 LUFS (a voice peaks
 # around 0.5 to 0.9 here): a cut and a card are felt more than heard, the ding is the one you notice
@@ -42,7 +42,7 @@ def _is_number(word: str) -> bool:
         return False
     if re.search(r"\d", w):
         return True
-    return any(p in NUMBER_WORDS or p.rstrip("s") in NUMBER_WORDS for p in w.split("-"))
+    return any(p.strip(".") in NUMBER_WORDS or p.strip(".").rstrip("s") in NUMBER_WORDS for p in w.split("-"))
 
 
 UNITS = {w: i for i, w in enumerate(["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve",

@@ -32,6 +32,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from . import setpiece
+from . import craft
 
 WORDS_PER_SEC = 2.6  # typical YouTube narration pace; replaced by real timings after alignment
 SCENE_GAP_SEC = 0.35
@@ -116,7 +117,7 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
                 p[k] = a[k]
     elif b.type == "stat":
         # fact="uk.cpi" (or plain words: "uk inflation") is filled in at render time with the real figure, its source and date
-        for k in ("value", "label", "sub", "source", "from", "trend", "fact"):
+        for k in ("value", "label", "sub", "source", "from", "trend", "fact", "count", "countSeconds"):  # count=off: the figure is written, not counted up
             if k in a:
                 p[k] = a[k]
         if "count" in a:
@@ -238,7 +239,7 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
     if "dur" in a:
         p["dur"] = float(a["dur"])
     # The character can be placed and posed on any scene; a doodle (icon=) can be drawn on any scene on the board.
-    for k in ("pos", "pose", "face", "scale", "icon", "keep", "transition", "tint"):  # tint=red: every figure on the board in red (bad news)  # keep=yes|arrow|strike builds on the board before; transition=wipe|slide|cut picks how it comes in
+    for k in ("pos", "pose", "face", "scale", "icon", "keep", "transition", "tint", "anim", "screen"):  # anim=coins-jar: a drawn loop where a drawing would go; screen=laptop: footage in a drawn laptop  # tint=red: every figure on the board in red (bad news)  # keep=yes|arrow|strike builds on the board before; transition=wipe|slide|cut picks how it comes in
         if k in a:
             p[k] = a[k]
     # a sticker (GIF or picture) on any scene, with its own edits as sticker_<edit>; a drawing from the art library
@@ -331,6 +332,10 @@ def time_cues(sc: dict[str, Any]) -> None:
         cues.append(cue)
     if sc.get("setWords") is not None:
         cues += setpiece.timed(sc)
+    for m in sc.get("markWords") or []:
+        i = min(m["word"], max(0, len(words) - 1))
+        t = words[i]["s"] - 0.08 if words else sc["start"]
+        cues.append({"t": round(max(sc["start"], t), 3), "do": "mark", **m["mark"]})
     sc["cues"] = cues
 
 
@@ -572,6 +577,10 @@ def parse_script(md: str) -> dict[str, Any]:
             setpiece.plan_cards(sc, b.attrs)  # the amounts said over footage land on it as cards
         elif b.attrs.get("cards"):
             setpiece.plan_cards(sc, b.attrs)  # cards= on a board, stat or chart: text pops up on its word there too
+        if b.attrs.get("marks"):
+            problems += craft.plan_marks(sc, b.attrs)  # marks= on footage or a photo: circles, arrows and notes drawn on the picture on their word
+        if sc["props"].get("anim") and str(sc["props"]["anim"]) not in craft.LOOPS:
+            problems.append(f"scene {i}: anim='{sc['props']['anim']}' is not a drawn loop ({', '.join(sorted(craft.LOOPS))})")
         scenes.append(sc)
     if scenes and header.get("kicker") and scenes[0]["type"] == "title":
         scenes[0]["props"].setdefault("kicker", header["kicker"])

@@ -67,6 +67,7 @@ export type Scene = {
   narration: string;
   words?: Word[];
   cues?: Cue[];
+  keys?: {t: number; text: string; color?: string}[]; // the figures said, popping up as they are said (pipeline/craft.py)
   punch?: number; // seconds (absolute): a quick zoom-in on the key number said here (pipeline/sfx.py sets it)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props: Record<string, any>;

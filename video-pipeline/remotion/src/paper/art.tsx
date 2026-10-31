@@ -1299,7 +1299,7 @@ export const Art: React.FC<ArtProps> = ({name, size, brand, start = 0, seed = 1,
 
 // ------------------------------------------------------------------ on a scene, and as a scene
 
-const PLACE: Record<string, React.CSSProperties> = {
+export const PLACE: Record<string, React.CSSProperties> = {
   tr: {top: '8%', right: '5%'},
   tl: {top: '8%', left: '5%'},
   br: {bottom: '15%', right: '5%'},

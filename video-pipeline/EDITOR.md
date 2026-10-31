@@ -66,6 +66,29 @@ notes and source lines. So a handwritten label is never red; red on the page is 
 - Drawings on boards show objects, hands and places. People only when it is the character: a traced person beside
   his set pieces reads as a second host.
 
+## What lands by itself, and the tags that put more on the page
+
+Automatic on every build (pipeline/craft.py):
+- **Key words.** The figures said pop up big on a highlighter in the band along the bottom ("£83,000 a year",
+  "7.6×", "18 years") and go after a second: never the scene's own figure, never one a card already carries, never a
+  bare small number ("22"). For the viewer watching muted. Long videos only; a Short's captions say every word.
+- **Cards on empty stretches.** A board that runs more than six seconds with nothing landing gets cards from the
+  figures it says (red after a cost word, green otherwise), four seconds apart.
+- **Count-up.** A stat's figure counts up to its value as it is said, then the ring (`count=off` writes it instead).
+- **"Coming up".** The chapters' titles small in the bottom-right corner, from the first takeaway to the recap,
+  ticked off as each is covered, the one in hand on the highlighter. It steps aside on footage and in a room.
+  `brand.comingup: off` hides it.
+- **One set piece a video** until the character's animated clips are in the library: a second one gets a warning.
+
+Tags for the script:
+- `marks="circle 62,40@price; arrow 30,70@word; note:the bit that matters 50,80@word"` on footage or a photo: a
+  marker ring, an arrow from lower left, or a handwritten note drawn on the picture at that point (per cent of the
+  picture, left to right and top to bottom) on the word. Red unless `green:` or `ink:` leads the mark.
+- `anim=coins-jar|stack-grow|arrow-up|clock|plant-grow` on any board, stat or chart: a drawn loop where a drawing
+  would go (`art_at`, `art_size`, `art_start` place it). Little animations in the line style, no character.
+- `screen=laptop` on `[broll]`: the clip in a drawn laptop with a browser bar, for screen recordings; `phone=on`
+  is the upright phone.
+
 ## Punch-ins (automatic) and sound effects (off)
 
 On the key number of a hook, stat, bite, grow, shrink, pie or compare scene (the spoken number that matches the

@@ -28,6 +28,7 @@ import urllib.request
 
 from . import align as al
 from . import sfx
+from . import craft
 from .enhance import enhance, level_from_header
 from .preview import write_preview
 from .auto_script import script_from_words
@@ -1008,6 +1009,8 @@ def main(argv: list[str] | None = None) -> int:
             shutil.copytree(src_dir, dst)
 
     # Jeffrey did not like the effects on the first cut, so they are off unless a script's header says `sfx: on`
+    for note in craft.enrich(sb):  # cards on empty stretches, key words popping up, the set-piece ration
+        print(note)
     sb["sfx"] = _header_lines(md).get("sfx", "off").strip().lower() in ("on", "yes")
     print(f"punch-ins: {sfx.set_punches(sb)} on key numbers; sound effects: {'on' if sb['sfx'] else 'off'}")
     sb_path = os.path.join(project, "storyboard.json")

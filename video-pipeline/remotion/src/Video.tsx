@@ -29,6 +29,8 @@ import {PoseLayer} from './paper/poses';
 import {CharacterOn} from './paper/character';
 import {FootageCards, SetScene} from './paper/setpiece';
 import {Arrow, BoilContext, SketchPath} from './paper/sketch';
+import {KeyWords} from './paper/keywords';
+import {LoopLayer} from './paper/loops';
 import {FACES, POSES, defaultAvatar, defaultFaceFor, type AvatarConfig, type Face, type Pose} from './avatar/Avatar';
 
 const SceneSwitch: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}) => {
@@ -180,6 +182,43 @@ const ProgressLine: React.FC<{color: string}> = ({color}) => {
   if (height > width) return null;
   const u = width / 1920;
   return <div style={{position: 'absolute', left: 0, top: 0, height: 6 * u, width: width * Math.min(1, frame / Math.max(1, durationInFrames - 1)), background: color, opacity: 0.9, pointerEvents: 'none'}} />;
+};
+/** "Coming up": the chapters' titles small in the bottom-right corner from the first takeaway to the recap, ticked
+ * off as each is covered, the one in hand on the highlighter. The unticked line is a reason to stay. Long videos only. */
+const ComingUp: React.FC<{sb: Storyboard; brand: Brand}> = ({sb, brand}) => {
+  const frame = useCurrentFrame();
+  const {fps, width, height} = useVideoConfig();
+  if (height > width || !brand.board) return null;
+  const items = sb.scenes.filter((s) => s.type === 'takeaway' && s.props.title);
+  if (items.length < 2) return null;
+  const t = frame / fps;
+  const first = items[0].start;
+  const endScene = sb.scenes.find((s) => s.type === 'recap' || s.type === 'outro' || String(s.props.next ?? '') === 'on');
+  const until = endScene ? endScene.start : sb.durationSec;
+  if (t < first - 0.3 || t >= until) return null;
+  // footage, a photo and a room fill the corner the list sits in: it steps aside for them
+  const here = sb.scenes.find((s) => t >= s.start && t < s.end);
+  if (here && ['broll', 'still', 'image', 'clip', 'set'].includes(here.type)) return null;
+  const u = width / 1920;
+  const fs = 30 * u;
+  const alpha = Math.max(0, Math.min(1, (t - (first - 0.3)) / 0.5, (until - t) / 0.5));
+  return (
+    <div style={{position: 'absolute', right: width * 0.03, bottom: height * 0.05, opacity: alpha, fontFamily: brand.hand ?? 'cursive', fontSize: fs, color: brand.ink, lineHeight: 1.4, pointerEvents: 'none'}}>
+      {items.map((it, i) => {
+        const done = t >= (items[i + 1]?.start ?? until) - 0.1;
+        const now = t >= it.start && !done;
+        return (
+          <div key={it.id} style={{display: 'flex', alignItems: 'center', gap: 10 * u, opacity: done ? 0.6 : 1}}>
+            <svg width={fs * 0.95} height={fs * 0.95} viewBox="0 0 20 20" style={{overflow: 'visible', flex: '0 0 auto'}}>
+              <SketchPath d="M2,2 L18,2 L18,18 L2,18 Z" draw={1} options={{stroke: brand.ink, strokeWidth: 1.8, roughness: 0.9, seed: 40 + i}} />
+              {done ? <SketchPath d="M4,10 L8,15 L17,4" draw={1} options={{stroke: brand.fill ?? brand.accent, strokeWidth: 2.8, roughness: 1.1, seed: 50 + i}} /> : null}
+            </svg>
+            <span style={{textDecoration: done ? 'line-through' : undefined, background: now ? brand.marker : undefined, padding: `0 ${6 * u}px`}}>{String(it.props.title)}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
 };
 /** A faint paper grain over everything: a tile, not a filter, so it costs nothing to draw. */
 const Grain: React.FC = () => <AbsoluteFill style={{backgroundImage: `url(${staticFile('paper/grain.png')})`, backgroundRepeat: 'repeat', opacity: 0.045, pointerEvents: 'none', mixBlendMode: 'multiply'}} />;
@@ -406,6 +445,8 @@ export const Video: React.FC<Storyboard> = (sb) => {
                 {board}
                 {sb.host === 'none' ? null : <HostLayer sb={sb} scene={scene} avatar={avatar} toon={brand.toon} />}
                 {scene.type !== 'set' && (scene.cues ?? []).some((c) => (c as {do?: string}).do === 'card') ? <FootageCards scene={scene} /> : null}
+                <LoopLayer scene={scene} brand={brand} />
+                {scene.keys?.length ? <KeyWords scene={scene} brand={brand} /> : null}
               </Camera>
             </SceneFade>
           </Sequence>
@@ -417,6 +458,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
       {sb.captions ? <Captions scenes={sb.scenes} brand={brand} host={sb.host} always={!!sb.short} /> : null}
       {brand.board && sb.hand ? <PenHand brand={brand} /> : null}
       {brand.board ? <Grain /> : null}
+      {brand.board && String(flags.comingup ?? 'on').toLowerCase() !== 'off' ? <ComingUp sb={sb} brand={brand} /> : null}
       {brand.board && brand.progress !== false && String(flags.progress ?? 'on').toLowerCase() !== 'off' ? <ProgressLine color={brand.fill ?? brand.accent} /> : null}
     </AbsoluteFill>
     </BoilContext.Provider>
