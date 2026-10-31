@@ -33,7 +33,7 @@ Pot two is the hype pot. Every January it buys the stock that was the best perfo
 [news outlet="CNBC" date="January 2025" url="https://www.cnbc.com/2025/01/13/top-performing-stocks-of-2024.html" headline="Palantir was the best-performing S&P 500 stock of 2024, up 340%" board="2024's best stock in the S&P 500: Palantir, +340%" cards="ink:held 12 months@12; ink:sell, buy the new winner@new"]
 the one in every headline, and holds it for 12 months. Then it sells and buys the new winner.
 
-[text board="Pick this year's winner in advance? | £1,000,000,000,000,000 | more than all the money on Earth" art=maya-shrug cards="red:nobody knows in January@nobody; ink:you only know in December@December"]
+[text board="Pick this year's winner in advance? | £1,000,000,000,000,000 | more than all the money on Earth" art=maya-shrug cards="red:nobody knows in January@nobody; ink:the maths says no@maths"]
 Why last year's winner and not this year's? Because nobody knows this year's winner in January. If you somehow could, your £1,000 would be a number with 15 zeros on it, more than all the money on Earth. That is the maths telling you it cannot be done.
 
 [takeaway title="The lost decade" n="2" of="4"]
@@ -72,7 +72,7 @@ Then the story turns, and this is the part the hype merchants will quote at you.
 - Palantir (2024's winner) → 2025: +135%
 From 2017 the hype pot gets lucky. Nvidia, the best stock of 2016, goes up another 81%. AMD wins two years running and the hype pot rides it up 148%, then 100%. Tesla, Devon Energy. Then Nvidia again, up 171% in 2024. Then Palantir, up 135% last year.
 
-[chart line title="Two pots, £1,000 each, since 2000" y="£" x="Year" draw=12 source="S&P 500 total return (Slickcharts); each winner's next-year return; in pounds at today's rate" cards="red:hype pot: £30 in 2011@£30; green:boring pot: £9,000@£9,000; ink:hype pot: £7,200@£7,200; ink:nine years of winners, still behind@caught"]
+[chart line title="Two pots, £1,000 each, since 2000" y="£" x="Year" draw=12 source="S&P 500 total return (Slickcharts); each winner's next-year return; in pounds at today's rate" cards="red:hype pot: £30 in 2011@£30; ink:hype pot: £7,200@£7,200; green:boring pot: £9,000@£9,000; ink:nine years of winners, still behind@caught"]
 data: Boring pot = 2000:1091, 2002:749, 2005:1121, 2008:863, 2011:1283, 2014:2239, 2017:3096, 2020:4609, 2023:6136, 2025:9042
 data: Hype pot:ink = 2000:1091, 2002:85, 2005:164, 2008:52, 2011:30, 2014:42, 2017:83, 2020:574, 2023:1136, 2025:7240
 Nine years of being right, almost in a row. Here is the hype pot at the end of 2025, after sitting at £30 in 2011: about £7,200. The boring pot: about £9,000. Nine straight years of picking the winner's follow-up, and it still has not caught up.
@@ -89,7 +89,7 @@ That is the trap. It always looks like it is about to work. But to be here, you 
 [text keep=arrow board="Arrive in year 25, buy at the top, get the next 2002" cards="red:the next 2002@2002"]
 Most people who chase winners arrive in year 25, buy at the top, and get the next 2002.
 
-[broll lib="vuag-max-chart-app" phone=on caption="The boring pot: an S&P 500 fund since 2020" marks="green:circle 78,20@130%; ink:note:nobody touched it 25,75@touched" cards="green:+130% since the start@130%; ink:bought in 2020, left alone@alone"]
+[broll lib="vuag-max-chart-app" phone=on caption="The boring pot: an S&P 500 fund since 2020" marks="green:circle 78,20@130%; ink:note:nobody touched it 25,75@touched" cards="ink:bought in 2020, left alone@alone; green:+130% since the start@130%"]
 And this is what the boring pot looks like from the inside. An S&P 500 index fund, bought in 2020 and left alone, up about 130% since the start. Nothing clever happened here. Nobody touched it.
 
 [takeaway title="The number that settles it" n="4" of="4"]
@@ -111,7 +111,7 @@ But an index fund owns all of them, automatically, and it bought Nvidia in 2001 
 - If you heard about it from a headline, it's already in the price
 So here is the boring way. One index fund, global or S&P 500. The same amount every month, inside an ISA so the growth is tax-free. Dividends reinvested, nothing sold. And the hype test: if you heard about a stock from a headline, the price already knows.
 
-[text board="Not advice. Just the maths. | The past is not a promise | 26 years, and the maths doesn't care how exciting the stock is" art=calculator-table cards="ink:your money, your call@call; ink:26 years@26"]
+[text board="Not advice. Just the maths. | The past is not a promise | 26 years, and the maths doesn't care how exciting the stock is" art=calculator-table cards="ink:not advice@advice; ink:26 years@26"]
 None of this is advice, and the past is not a promise about the future. It is just 26 years of maths, and the maths does not care how exciting the stock is.
 
 [recap title="£1,000 since 2000, two ways" art=garden-retirement art_at=r art_size=0.6 art_start=0.3 cards="red:£30@£30; green:£9,000@£9,000; ink:which stock in 2000?@comments"]

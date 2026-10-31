@@ -182,7 +182,7 @@ def _shown_values(props: dict) -> list[float]:
     return out
 
 
-def key_words(sc: dict) -> int:
+def key_words(sc: dict, seen: set | None = None) -> int:
     """scene["keys"]: the figures said, popping up as they are said, where nothing on the page already shows them."""
     sc.pop("keys", None)
     if sc.get("type") not in KEY_TYPES or str((sc.get("props") or {}).get("next", "")) == "on":
@@ -216,11 +216,13 @@ def key_words(sc: dict) -> int:
         if used:
             break
         clean = re.sub(r"[^a-z]", "", str(w.get("w", "")).lower())
-        if clean in EMPHASIS and w.get("s") is not None:
+        if clean in EMPHASIS and w.get("s") is not None and (seen is None or clean not in seen):
             t = round(float(w["s"]), 3)
             if all(abs(t - k["t"]) >= KEY_GAP for k in keys) and start + 0.5 < t < end - 0.6:
                 keys.append({"t": t, "text": clean, "color": "green" if clean == "free" else "ink"})
                 used = 1
+                if seen is not None:
+                    seen.add(clean)  # an emphasis word pops once a video ("never" five times read as a tic)
     keys.sort(key=lambda k: k["t"])
     if keys:
         sc["keys"] = keys
@@ -259,7 +261,8 @@ def ration(sb: dict) -> str | None:
 def enrich(sb: dict) -> list[str]:
     """Auto cards, then key words (which skip what the cards carry). Returns the notes to print."""
     cards = sum(auto_cards(sc) for sc in sb.get("scenes", []))
-    keys = sum(key_words(sc) for sc in sb.get("scenes", []))
+    seen: set = set()
+    keys = sum(key_words(sc, seen) for sc in sb.get("scenes", []))
     notes = [f"auto cards: {cards} added on boards that ran on with nothing landing; key words: {keys} pop up as they are said"]
     r = ration(sb)
     if r:
