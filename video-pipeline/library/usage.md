@@ -63,13 +63,13 @@ last videos used is what this one should not lean on again, and the unused list 
 
 ## paid-10k-demo
 - footage: lib:businessman-phone-city
-- drawing: payday, crossroads, high-five
-- scene type: text ×4, takeaway ×3, stat ×2, hook, title, bite, chart, broll, recap, outro
+- drawing: budget-jars, card-scissors, index-fund-basket, lisa-bonus, airport-departures, maya-pleased
+- scene type: text ×7, takeaway ×3, stat ×2, hook, title, bite, chart, broll, recap, outro
 
 ## Used in more than one video
 
 - footage: file:watch-next-200-1000-10000.mp4 (2 videos); lib:businessman-phone-city (2 videos)
-- drawing: crossroads (4 videos); payday (3 videos); investing-app (3 videos); high-five (3 videos); snowball (2 videos); pension-letter (2 videos); sam-pleased (2 videos)
+- drawing: investing-app (3 videos); crossroads (3 videos); snowball (2 videos); pension-letter (2 videos); sam-pleased (2 videos); payday (2 videos); high-five (2 videos)
 - room: first-flat (3 videos); office (2 videos); terraced-street (2 videos)
 - pose: point-board (3 videos); thumbs-up (3 videos); thinking (2 videos); shocked (2 videos); facepalm (2 videos); desk-type (2 videos); desk-point (2 videos); desk-shocked (2 videos); desk-reading (2 videos); ponder (2 videos); but-finger (2 videos); idea (2 videos); welcome (2 videos)
 - prop: coins (2 videos)
@@ -77,7 +77,7 @@ last videos used is what this one should not lean on again, and the unused list 
 ## In the libraries, never used yet
 
 - footage (3 of 14 unused): lib:uk-suburb-drone, lib:uk-motorway-drone, lib:hooded-hacker-screens
-- drawing (51 of 96 unused): bank-queue, kitchen-table, car-dealer, scam-call, coffee-shop, budget-jars, side-hustle, broken-car, rainy-day-umbrella, empty-fridge, subscriptions-phone, card-scissors, debt-ball-chain, small-basket, brown-envelope, pay-rise-ask, moving-boxes, wedding-bill, pram-bill, friends-split-bill, retired-bench, maya-pleased, maya-facepalm, tax-return, pub-round, online-shopping, commute-platform, family-dinner, hospital-desk, airport-departures, garden-retirement, isa-shield, lisa-bonus, pension-match, emergency-jar, bnpl-boxes, road-to-100k, laptop-standing-order, cash-vs-stocks-isa, overdraft-hole, credit-score-meter, student-loan-letter, car-finance-monthly, christmas-bags, index-fund-basket, sam-celebrating, estate-agent-window, house-viewing, jeffrey, celebrate, train
+- drawing (45 of 96 unused): bank-queue, kitchen-table, car-dealer, scam-call, coffee-shop, side-hustle, broken-car, rainy-day-umbrella, empty-fridge, subscriptions-phone, debt-ball-chain, small-basket, brown-envelope, pay-rise-ask, moving-boxes, wedding-bill, pram-bill, friends-split-bill, retired-bench, maya-facepalm, tax-return, pub-round, online-shopping, commute-platform, family-dinner, hospital-desk, garden-retirement, isa-shield, pension-match, emergency-jar, bnpl-boxes, road-to-100k, laptop-standing-order, cash-vs-stocks-isa, overdraft-hole, credit-score-meter, student-loan-letter, car-finance-monthly, christmas-bags, sam-celebrating, estate-agent-window, house-viewing, jeffrey, celebrate, train
 - room (1 of 5 unused): living-room
 - pose (15 of 45 unused): bill-shock, brown-envelope, calculator, chart-down, coin-jar, confused, count-fingers, cut-card, desk, desk-type-b, hand-over, magnifier, smug, suspicious, thumbs-down
 - prop (14 of 16 unused): coins-b, envelope, form, house, house-b, keys, keys-b, note-20, note-20-b, payslip, phone-b, piggy-bank, piggy-bank-b, tax-envelope
