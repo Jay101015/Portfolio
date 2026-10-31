@@ -581,6 +581,8 @@ def parse_script(md: str) -> dict[str, Any]:
             problems += craft.plan_marks(sc, b.attrs)  # marks= on footage or a photo: circles, arrows and notes drawn on the picture on their word
         if sc["props"].get("anim") and str(sc["props"]["anim"]) not in craft.LOOPS:
             problems.append(f"scene {i}: anim='{sc['props']['anim']}' is not a drawn loop ({', '.join(sorted(craft.LOOPS))})")
+        if sc["props"].get("anim") and not sc["props"].get("art"):
+            sc["props"]["art"] = "off"  # the loop takes the drawing's place: no auto-picked drawing under it
         scenes.append(sc)
     if scenes and header.get("kicker") and scenes[0]["type"] == "title":
         scenes[0]["props"].setdefault("kicker", header["kicker"])

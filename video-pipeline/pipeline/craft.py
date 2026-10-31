@@ -17,7 +17,8 @@ from .setpiece import COST_WORDS, anchor_word
 
 KEY_TYPES = {"text", "stat", "compare", "shrink", "grow", "bite", "pie", "news", "list", "quote", "broll", "still", "image"}  # a chart is its figures already
 BOARD_TYPES = {"text", "stat", "chart", "compare", "shrink", "grow", "bite", "pie", "news", "list", "quote"}
-LOOPS = {"coins-jar", "stack-grow", "arrow-up", "clock", "plant-grow"}
+LOOPS = {"coins-jar", "stack-grow", "arrow-up", "clock", "plant-grow", "card-tap", "piggy-bank", "money-flies", "house-build",
+         "calendar-flip", "scales", "bar-race", "receipt-print", "phone-ping", "snowball", "hourglass", "bills-pile"}
 MARK_RE = re.compile(r"^(?:(red|green|ink):\s*)?(circle|arrow|note(?::([^@]*?))?)\s+(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*(?:@(.+))?$", re.I)
 KEY_GAP = 2.5  # seconds between key words on one scene
 CARD_EVERY = 6.0  # a landing at least this often on a board

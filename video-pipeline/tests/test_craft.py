@@ -64,3 +64,10 @@ def test_marks_parse_to_word_indexed_cues():
 def test_the_character_is_rationed():
     assert craft.ration({"scenes": [{"type": "set"}, {"type": "text"}]}) is None
     assert "rationed" in craft.ration({"scenes": [{"type": "set"}, {"type": "set"}]})
+
+
+def test_every_loop_the_parser_allows_is_drawn():
+    import os, re
+    src = open(os.path.join(os.path.dirname(__file__), "..", "remotion", "src", "paper", "loops.tsx"), encoding="utf-8").read()
+    drawn = set(re.findall(r"name === '([a-z-]+)'", src))
+    assert craft.LOOPS == drawn

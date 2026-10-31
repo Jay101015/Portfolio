@@ -89,8 +89,10 @@ Tags for the script:
 - `marks="circle 62,40@price; arrow 30,70@word; note:the bit that matters 50,80@word"` on footage or a photo: a
   marker ring, an arrow from lower left, or a handwritten note drawn on the picture at that point (per cent of the
   picture, left to right and top to bottom) on the word. Red unless `green:` or `ink:` leads the mark.
-- `anim=coins-jar|stack-grow|arrow-up|clock|plant-grow` on any board, stat or chart: a drawn loop where a drawing
-  would go (`art_at`, `art_size`, `art_start` place it). Little animations in the line style, no character.
+- `anim=<loop>` on any board, stat or chart: a stop-motion loop where a drawing would go (`art_at`, `art_size`,
+  `art_start` place it), moving in steps eight a second. The loops: coins-jar, piggy-bank, card-tap, money-flies,
+  bills-pile, receipt-print, phone-ping (spending and bills); stack-grow, bar-race, snowball, plant-grow, arrow-up
+  (growth); house-build (a deposit, a home); calendar-flip, clock, hourglass (time); scales (this against that).
 - `screen=laptop` on `[broll]`: the clip in a drawn laptop with a browser bar, for screen recordings; `phone=on`
   is the upright phone.
 
