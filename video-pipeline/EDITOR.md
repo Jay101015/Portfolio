@@ -101,7 +101,8 @@ Tags for the script:
   (payday-split's £2,100 payslip, deposit-jar's £5K to £20K scale): cast it only where those figures are not
   arguing with the words; a stat about a £1,000 bonus takes a drawing (lisa-bonus), not deposit-jar. The cards
   on a board with a loop land under the written lines, on the left, as on a board with a drawing; a stat with a
-  loop puts its note under the figure; a bite's cards land low on the right, under the bar's end. `dur=` on the
+  loop puts its note under the figure; a bite's cards land top right, above the bar's end (low on the right they
+  covered the lost figure). `dur=` on the
   board sets how long it has when there is no recording to time it, and caps it: a `dur` shorter than the words
   cuts the scene before they end.
 - `screen=laptop` on `[broll]`: the clip in a drawn laptop with a browser bar, for screen recordings; `phone=on`

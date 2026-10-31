@@ -238,6 +238,33 @@ one change at a time where possible, so a result can be read.
 - Scoreboard: the first seventeen loops 5/10; the twenty-three scenes 8.5/10 (Jeffrey, 2026-10-31). The gap was
   not more loops but each loop being a scene with craft in it. The same test applies to anything new on the page.
 
+### Demo: I just got paid £10K (2026-10-31)
+- A 2:30 silent demo on estimated timing, built to show the look with everything on: five drawn loops, cards,
+  key words, the chapter strip, the coming-up ticks, a bite, a chart, a taped clip with a drawn circle.
+- Review: editor 6, animator 6, retention 6, director 6 (round 1; a demo gets one round, so the fixes went in
+  without a second score). All four found the same things, which is the useful part:
+  - Three of the five loops were miscast: a loop carries its own figures (payday-split's £2,100 payslip,
+    deposit-jar's £5K to £20K scale, interest-grows' £1,581) and beside a stat about other numbers it argues with
+    the words. Rule: a loop goes where its own story is the beat; otherwise a drawing. The calendar flipped months
+    under "30 days" (now it counts the days and holds the 30).
+  - Loops restarted or faded to their shadow before the cut, under the payoff line. Now a loop plays once and
+    holds its end state.
+  - Cards landed on the loops (the card placer thought a board with `anim` had no picture), the stat's note ran
+    under the loop, the hook's card sat on the character's head, and the hook's one-line headline ran under the
+    loop. All four were the same bug: `anim` sets `art=off`, and four places asked "is there art?".
+  - Red where there was no loss: the title and recap underlines, "tax-free" (the "tax" in it), "Spend £1,000", a
+    key word after "pay tax." in the previous sentence, a circle on footage (red by default). Each is now a rule.
+  - The bite rang "thousand" (its value) instead of "two hundred" (its loss) and wrote the £200 four seconds before
+    the word. The punch now prefers the lose figure and the bite waits for it.
+  - A card whose words are not in the scene's narration landed on the wrong word ("from a few pounds").
+  - 29% of the film had no words: the illustrated default pace (1.2 s lead, 0.6 s hold a scene) is a lot of air on
+    a 17-scene video. The demo runs at 0.6/0.4 (`pace.lead`, `pace.hold`). Decide the default from the next real
+    video's retention graph, not from a reviewer.
+- What a frame grid catches in a minute that reviewers take ten on: pull one frame per scene from the first chunks
+  while the rest renders. Three rounds of fixes went in before the reviewers saw the file.
+- Chunked local render recipe, improved: 300 frames a chunk, three browser tabs on drawn scenes, one tab on the
+  chunks that decode a clip; a fix to one scene re-renders only its chunks and the parts are joined again.
+
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage?
 2. Thumbnail: a face (Jeffrey) vs no face, once Canva thumbnails are in use.
