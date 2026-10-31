@@ -9,12 +9,13 @@ Runs after the words have their times (build.py), before the storyboard is writt
 """
 from __future__ import annotations
 
+import json
 import re
 
 from . import sfx
 from .setpiece import COST_WORDS, anchor_word
 
-KEY_TYPES = {"text", "stat", "chart", "compare", "shrink", "grow", "bite", "pie", "news", "list", "quote", "broll", "still", "image"}
+KEY_TYPES = {"text", "stat", "compare", "shrink", "grow", "bite", "pie", "news", "list", "quote", "broll", "still", "image"}  # a chart is its figures already
 BOARD_TYPES = {"text", "stat", "chart", "compare", "shrink", "grow", "bite", "pie", "news", "list", "quote"}
 LOOPS = {"coins-jar", "stack-grow", "arrow-up", "clock", "plant-grow"}
 MARK_RE = re.compile(r"^(?:(red|green|ink):\s*)?(circle|arrow|note(?::([^@]*?))?)\s+(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*(?:@(.+))?$", re.I)
@@ -155,11 +156,11 @@ UNITS = {"years", "year", "months", "month", "weeks", "week", "days", "day", "ho
 
 
 def _shown_values(props: dict) -> list[float]:
-    """every figure already written on the scene (its value, lines, label, note): a key or card never repeats one"""
+    """every figure already written on the scene, whatever the tag calls it: a key or card never repeats one"""
     out = []
-    for k in ("value", "to", "lose", "from", "board", "label", "sub", "note", "title", "headline", "bars", "data", "rows", "left", "right", "items"):
-        for m in re.finditer(r"(\d[\d,]*(?:\.\d+)?)\s*(k|m|bn)?\b", str(props.get(k) or ""), re.I):
-            out.append(float(m.group(1).replace(",", "")) * {"k": 1e3, "m": 1e6, "bn": 1e9}.get((m.group(2) or "").lower(), 1))
+    text = json.dumps({k: v for k, v in props.items() if k not in ("src", "credit", "page", "clipDur", "rate", "from", "clip_src")}, ensure_ascii=False)  # "£" stays "£", not "\u00a3" with digits in it
+    for m in re.finditer(r"(\d[\d,]*(?:\.\d+)?)\s*(k|m|bn)?\b", text, re.I):
+        out.append(float(m.group(1).replace(",", "")) * {"k": 1e3, "m": 1e6, "bn": 1e9}.get((m.group(2) or "").lower(), 1))
     return out
 
 

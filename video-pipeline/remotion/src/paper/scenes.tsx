@@ -981,6 +981,7 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
   const caption: string | undefined = scene.props.caption;
   const credit: string | undefined = brand.creditsOnScreen ? scene.props.credit : undefined; // credits go to credits.txt unless asked for on screen
   const s = pop(frame, fps, Math.round(fps * 0.35), 12);
+  const sf = pop(frame, fps, 0, 9); // the frame itself lands from the cut: a blank page at a cut is the one thing a cut must never show
   const labelSize = (isVertical ? 60 : 54) * u;
   const bottom = isVertical ? height * 0.2 : pad * 0.9;
   const mediaAt = (w: number, h: number) => (src ? (
@@ -1027,7 +1028,7 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
     const mh = fh - bez * 2 - bar;
     return (
       <AbsoluteFill style={{background: brand.bg, overflow: 'hidden'}}>
-        <div style={{position: 'absolute', left: fx, top: fy, width: fw, height: fh, transform: `translateY(${(1 - s) * 40 * u}px)`, opacity: Math.min(1, s * 1.5), background: brand.ink, padding: bez, boxSizing: 'border-box', borderRadius: 24 * u, boxShadow: `${12 * u}px ${12 * u}px 0 ${brand.ink}`}}>
+        <div style={{position: 'absolute', left: fx, top: fy, width: fw, height: fh, transform: `translateY(${(1 - sf) * 40 * u}px)`, opacity: Math.min(1, sf * 1.5), background: brand.ink, padding: bez, boxSizing: 'border-box', borderRadius: 24 * u, boxShadow: `${12 * u}px ${12 * u}px 0 ${brand.ink}`}}>
           <div style={{width: '100%', height: bar, background: '#EEF2F8', borderRadius: `${8 * u}px ${8 * u}px 0 0`, display: 'flex', alignItems: 'center', gap: 10 * u, padding: `0 ${18 * u}px`, boxSizing: 'border-box'}}>
             {[0, 1, 2].map((k) => <span key={k} style={{width: 12 * u, height: 12 * u, borderRadius: '50%', background: brand.muted, opacity: 0.7}} />)}
             <span style={{marginLeft: 18 * u, flex: 1, height: bar * 0.55, borderRadius: bar * 0.3, background: '#fff', border: `${2 * u}px solid ${brand.muted}55`}} />
@@ -1038,7 +1039,7 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
           </div>
           <div style={{position: 'absolute', left: '50%', top: bez * 0.35, width: 10 * u, height: 10 * u, borderRadius: '50%', background: brand.muted, transform: 'translateX(-50%)'}} />
         </div>
-        <div style={{position: 'absolute', left: fx - fw * 0.04, top: fy + fh + 2 * u, width: fw * 1.08, height: 26 * u, background: brand.ink, borderRadius: `0 0 ${16 * u}px ${16 * u}px`, boxShadow: `${12 * u}px ${12 * u}px 0 ${brand.ink}`, opacity: Math.min(1, s * 1.5)}}>
+        <div style={{position: 'absolute', left: fx - fw * 0.04, top: fy + fh + 2 * u, width: fw * 1.08, height: 26 * u, background: brand.ink, borderRadius: `0 0 ${16 * u}px ${16 * u}px`, boxShadow: `${12 * u}px ${12 * u}px 0 ${brand.ink}`, opacity: Math.min(1, sf * 1.5)}}>
           <div style={{position: 'absolute', left: '50%', top: 0, width: fw * 0.16, height: 8 * u, background: brand.muted, borderRadius: `0 0 ${6 * u}px ${6 * u}px`, transform: 'translateX(-50%)', opacity: 0.6}} />
         </div>
         {caption ? (
@@ -1060,7 +1061,7 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
     const tilt = -1.6 + 0.35 * Math.sin(frame / (fps * 1.9));
     return (
       <AbsoluteFill style={{background: brand.bg, overflow: 'hidden'}}>
-        <div style={{position: 'absolute', left: fx, top: fy, width: fw, height: fh, transform: `rotate(${tilt}deg) translateY(${(1 - s) * 40 * u}px)`, opacity: Math.min(1, s * 1.5), background: brand.ink, padding: bord, boxSizing: 'border-box', boxShadow: `${12 * u}px ${12 * u}px 0 ${brand.ink}`}}>
+        <div style={{position: 'absolute', left: fx, top: fy, width: fw, height: fh, transform: `rotate(${tilt}deg) translateY(${(1 - sf) * 40 * u}px)`, opacity: Math.min(1, sf * 1.5), background: brand.ink, padding: bord, boxSizing: 'border-box', boxShadow: `${12 * u}px ${12 * u}px 0 ${brand.ink}`}}>
           <div style={{position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: '#111', filter: 'saturate(0.88) contrast(1.04) sepia(0.06)'}}>
             {mediaAt(fw - bord * 2, fh - bord * 2)}
             <Marks scene={scene} brand={brand} w={fw - bord * 2} h={fh - bord * 2} />
