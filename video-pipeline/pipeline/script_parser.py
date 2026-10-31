@@ -347,10 +347,10 @@ def time_cues(sc: dict[str, Any]) -> None:
 def estimate_timings(scenes: list[dict[str, Any]], lead_in: float = 0.4) -> float:
     """Fill start/end/words with a reading-pace estimate. Returns total duration."""
     t = lead_in
-    for sc in scenes:
+    for i, sc in enumerate(scenes):
         n = len(sc["narration"].split())
         dur = sc["props"].get("dur") or max(2.5, n / WORDS_PER_SEC + SCENE_GAP_SEC)
-        sc["start"] = round(t, 3)
+        sc["start"] = 0.0 if i == 0 else round(t, 3)  # the first page is on screen from frame 0, its first word after the lead-in
         sc["end"] = round(t + dur, 3)
         sc["words"] = _spread_words(sc["narration"], t + 0.15, t + dur - 0.25)
         time_cues(sc)

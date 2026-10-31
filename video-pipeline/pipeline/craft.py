@@ -98,7 +98,7 @@ def _card_values(cues: list[dict]) -> list[tuple[float, float]]:
         if c.get("do") != "card":
             continue
         for text in (c.get("text"), c.get("old")):
-            for m in re.finditer(r"(\d[\d,]*(?:\.\d+)?)\s*(k|m|bn)?", str(text or ""), re.I):
+            for m in re.finditer(r"(\d[\d,]*(?:\.\d+)?)\s*(?:(k|m|bn)\b)?", str(text or ""), re.I):  # "10 minutes" is 10, not 10m
                 v = float(m.group(1).replace(",", ""))
                 v *= {"k": 1e3, "m": 1e6, "bn": 1e9}.get((m.group(2) or "").lower(), 1)
                 out.append((float(c.get("t", 0)), v))

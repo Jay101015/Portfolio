@@ -68,7 +68,11 @@ export const PaperBite: React.FC<P> = ({scene, brand}) => {
   const t0 = labelDone(label, fps);
   const barWin: [number, number] = [t0, t0 + Math.round(fps * 0.9)];
   const valueAt = barWin[1] + 2;
-  const sliceAt = valueAt + writeFrames(String(scene.props.value ?? ''), fps, 12) + Math.round(fps * 0.4);
+  const soonest = valueAt + writeFrames(String(scene.props.value ?? ''), fps, 12) + Math.round(fps * 0.4);
+  // the bite waits for its number to be said: the slice is taken and the lost figure written so that the figure is
+  // on the page as the word lands (scene.punch), not seconds before it; with no punch it runs on its own clock
+  const saidAt = scene.punch != null ? Math.round((scene.punch - scene.start) * fps) - 6 - writeFrames(loseText, fps, 12) - 4 - Math.round(fps * 0.8) : null;
+  const sliceAt = saidAt != null && saidAt > soonest ? saidAt : soonest;
   const sliceWin: [number, number] = [sliceAt, sliceAt + Math.round(fps * 0.8)];
   const loseAt = sliceWin[1] + 4;
   const subAt = loseAt + writeFrames(loseText, fps, 12) + Math.round(fps * 0.3);

@@ -65,6 +65,11 @@ def test_auto_cards_leave_a_loop_board_and_a_turn_of_phrase():
     assert "1 day" not in [k["text"] for k in keyed.get("keys", [])]
 
 
+def test_card_values_read_units_as_words_not_millions():
+    vals = craft._card_values([{"do": "card", "t": 1.0, "text": "open an ISA: 10 minutes"}, {"do": "card", "t": 2.0, "text": "£83K"}, {"do": "card", "t": 3.0, "text": "£1.2m"}])
+    assert [v for _, v in vals] == [10.0, 83000.0, 1200000.0]
+
+
 def test_marks_parse_to_word_indexed_cues():
     sc = {"id": 3, "narration": "look at the price on the right then the total", "words": []}
     bad = craft.plan_marks(sc, {"marks": "circle 62,40@price; green:arrow 30,70@total; note:the bit that matters 50,80@right; squiggle 1,1"})

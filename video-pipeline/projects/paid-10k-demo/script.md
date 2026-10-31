@@ -5,10 +5,12 @@ host: none
 brand.name: The Everyday Investor
 brand.style: illustrated
 captions: off
+pace.lead: 0.6
+pace.hold: 0.4
 slug: paid-10k-demo
 topic: a bonus or a windfall of £10,000 just landed; the order to deal with it in, UK, with the free £1,000
 
-[hook board="£10,000 just landed. Now what?" art=payday cards="green:in order@order"]
+[hook board="£10,000 just landed. Now what?" anim=phone-ping art_at=r art_size=0.5 cards="ink:what to do@exactly; green:in order@order"]
 Ten thousand pounds just landed in your account. Here's exactly what to do with it, in order.
 
 [text board="The debt to kill first | The account that makes it tax-free | The £1,000 the government adds" art=crossroads cards="ink:1, 2, 3@first; green:the best one last@end"]
@@ -41,7 +43,7 @@ Every year you can put up to twenty thousand pounds into an ISA, and you never p
 data: £10,000 = 0:10000, 5:14026, 10:19672, 15:27590, 20:38697, 25:54274, 30:76123
 Left alone at seven percent a year, it's about nineteen thousand seven hundred in ten years, thirty-eight thousand seven hundred in twenty, and seventy-six thousand in thirty. You do nothing. Time does it.
 
-[broll lib="businessman-phone-city" caption="Ten minutes on your phone" marks="circle 46,56@phone" cards="green:open an ISA: 10 minutes@minutes; ink:from a few pounds@pounds"]
+[broll lib="businessman-phone-city" caption="Ten minutes on your phone" marks="circle 45,76@phone" cards="green:open an ISA: 10 minutes@minutes"]
 And it takes about ten minutes on your phone to open one.
 
 [takeaway title="The free £1,000" n="3" of="3"]
