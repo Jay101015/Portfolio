@@ -235,6 +235,8 @@ one change at a time where possible, so a result can be read.
   drops); properly drawn objects (the pig has ears, a snout and a tail; the notes have a £); and the craft of
   animation on top: a squash on every landing, a wobble after it, a wind-up before a move, a fade instead of a snap.
   Rule for any new loop: it is a scene, not an icon that twitches.
+- Scoreboard: the first seventeen loops 5/10; the twenty-three scenes 8.5/10 (Jeffrey, 2026-10-31). The gap was
+  not more loops but each loop being a scene with craft in it. The same test applies to anything new on the page.
 
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage?
