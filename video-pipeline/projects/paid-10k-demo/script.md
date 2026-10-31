@@ -46,7 +46,7 @@ Ten thousand fits with room to spare. A stocks and shares ISA, one global index 
 data: £10,000 = 0:10000, 5:14026, 10:19672, 15:27590, 20:38697, 25:54274, 30:76123
 Left alone at seven percent a year, it's about nineteen thousand seven hundred in ten years, thirty-eight thousand seven hundred in twenty, and seventy-six thousand in thirty. You do nothing. Time does it.
 
-[broll lib="businessman-phone-city" caption="Ten minutes on your phone" marks="ink:circle 45,78@ten" cards="green:open an ISA: 10 minutes@minutes; ink:on your phone@phone"]
+[broll lib="businessman-phone-city" caption="Ten minutes on your phone" marks="green:circle 46,82@ten" cards="green:open an ISA: 10 minutes@minutes; ink:on your phone@phone"]
 And it takes about ten minutes on your phone to open one.
 
 [takeaway title="The free £1,000" n="3" of="3"]

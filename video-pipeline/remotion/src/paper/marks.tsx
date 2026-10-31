@@ -26,13 +26,16 @@ export const Marks: React.FC<{scene: Scene; brand: Brand; w: number; h: number}>
         if (frame < at) return null;
         const x = (m.x / 100) * w;
         const y = (m.y / 100) * h;
-        const col = m.color === 'green' ? brand.accent : m.color === 'ink' ? brand.ink : brand.accent2;
+        // on footage a mark needs to read against anything: the brand's bright fill for green, and a pale halo under the stroke
+        const col = m.color === 'green' ? (brand.fill ?? brand.accent) : m.color === 'ink' ? brand.ink : brand.accent2;
+        const halo = brand.bg ?? '#ffffff';
         const win: [number, number] = [at, at + Math.round(fps * 0.4)];
         if (m.kind === 'circle') {
           const rw = w * 0.17;
           const rh = h * 0.24;
           return (
             <svg key={i} width={rw} height={rh} viewBox={`0 0 ${rw} ${rh}`} style={{position: 'absolute', left: x - rw / 2, top: y - rh / 2, overflow: 'visible', transform: 'rotate(-4deg)'}}>
+              <g opacity={0.55}><SketchEllipse cx={rw / 2} cy={rh / 2} w={rw} h={rh} win={win} easeOut options={{stroke: halo, strokeWidth: 14 * u, roughness: 1.6, bowing: 1.8, seed: scene.id * 7 + i}} /></g>
               <SketchEllipse cx={rw / 2} cy={rh / 2} w={rw} h={rh} win={win} easeOut options={{stroke: col, strokeWidth: 6 * u, roughness: 1.6, bowing: 1.8, seed: scene.id * 7 + i}} />
             </svg>
           );
@@ -44,6 +47,7 @@ export const Marks: React.FC<{scene: Scene; brand: Brand; w: number; h: number}>
           const cy = y + 0.285 * len;
           return (
             <div key={i} style={{position: 'absolute', left: cx - len / 2, top: cy - 30}}>
+              <div style={{position: 'absolute', inset: 0, opacity: 0.55}}><Arrow length={len} stroke={halo} win={win} angle={-35} seed={scene.id * 7 + i} thickness={14 * u} /></div>
               <Arrow length={len} stroke={col} win={win} angle={-35} seed={scene.id * 7 + i} thickness={6 * u} />
             </div>
           );
