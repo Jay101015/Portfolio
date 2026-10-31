@@ -672,12 +672,15 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
   const top = 60 * u;
   const plotW = W - left - 200 * u;
   const plotH = H - bottom - top;
-  const colors = [brand.accent, brand.accent2, brand.blue ?? '#3b5bdb', '#b83280'];
+  // a second line is never the loss red by default: green, ink, blue; `data: Name:red = ...` asks for red
+  const colors = [brand.accent, brand.ink, brand.blue ?? '#3b5bdb', brand.note ?? brand.muted];
+  const named: Record<string, string> = {ink: brand.ink, green: brand.accent, red: brand.accent2, blue: brand.blue ?? '#3b5bdb', note: brand.note ?? brand.muted};
+  const drawFrames = Math.round(fps * (Number(scene.props.drawSeconds) > 0 ? Number(scene.props.drawSeconds) : 2.2));
   const titleDone = title ? doneAt(brand, title, fps, 4, 2, 24) : 0;
   const axesAt = brand.board ? titleDone + 2 : 2;
   const axes = brand.board ? lin(frame, axesAt, axesAt + Math.round(fps * 0.5)) : ease(frame, 2, 14);
   const lineAt = brand.board ? axesAt + Math.round(fps * 0.5) + 4 : 10;
-  const reveal = brand.board ? lin(frame, lineAt, lineAt + fps * 2.2) : ease(frame, 10, 10 + fps * 2.2);
+  const reveal = brand.board ? lin(frame, lineAt, lineAt + drawFrames) : ease(frame, 10, 10 + drawFrames);
   let yMax = 1;
   let ticks = 4;
   let body: React.ReactNode = null;
@@ -704,7 +707,7 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
     body = (
       <>
         {series.map((s, i) => {
-          const c = s.color ?? colors[i % colors.length];
+          const c = s.color ? (named[s.color] ?? s.color) : colors[i % colors.length];
           // the curve is smoothed through the points so the pen does not corner at every sample
           const pts = s.points.map(([x, y]) => [sx(x), sy(y)] as [number, number]);
           // Catmull-Rom through the samples, so the pen flows through each point instead of flattening at it
@@ -723,7 +726,7 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
           const cy = sy(vNow);
           return (
             <g key={i} visibility={brand.board && reveal <= 0 ? 'hidden' : undefined}>
-              <SketchPath d={d} win={brand.board ? [lineAt, lineAt + fps * 2.2] : [10, 10 + fps * 2.2]} easeOut={!brand.board} options={{stroke: c, strokeWidth: 6 * u, roughness: 1.1, bowing: 0.6, seed: 60 + i}} />
+              <SketchPath d={d} win={brand.board ? [lineAt, lineAt + drawFrames] : [10, 10 + drawFrames]} easeOut={!brand.board} options={{stroke: c, strokeWidth: 6 * u, roughness: 1.1, bowing: 0.6, seed: 60 + i}} />
               <circle cx={cx} cy={cy} r={9 * u} fill={c} />
               <text x={cx + 18 * u} y={cy + 12 * u} fontFamily={hand(brand)} fontSize={38 * u} fontWeight={700} fill={c}>{yLab(vNow)}</text>
               {s.name ? <text x={left + 10 * u + i * 300 * u} y={28 * u} fontFamily={hand(brand)} fontSize={34 * u} fill={c} {...labelWipe(lineAt)}>— {s.name}</text> : null}
@@ -786,7 +789,7 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
         {body}
       </svg>
       <div style={{marginTop: 10 * u}}>
-        <Source brand={brand} source={scene.props.source} delay={brand.board ? lineAt + Math.round(fps * 2.4) : 24} />
+        <Source brand={brand} source={scene.props.source} delay={brand.board ? lineAt + drawFrames + Math.round(fps * 0.2) : 24} />
       </div>
     </AbsoluteFill>
   );

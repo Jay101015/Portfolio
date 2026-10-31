@@ -89,3 +89,22 @@ def test_every_loop_the_parser_allows_is_drawn():
     src = open(os.path.join(os.path.dirname(__file__), "..", "remotion", "src", "paper", "loops.tsx"), encoding="utf-8").read()
     drawn = set(re.findall(r"name === '([a-z-]+)'", src))
     assert craft.LOOPS == drawn
+
+
+def test_chart_series_take_a_named_colour_and_a_draw_length():
+    from pipeline import script_parser
+    src = """# T
+
+theme: whiteboard
+host: none
+
+[chart line title="Two pots" draw=12]
+data: Boring = 2000:1000, 2025:9000
+data: Chaser:ink = 2000:1000, 2025:7200
+Two pots.
+"""
+    sb = script_parser.parse_script(src)
+    chart = [sc for sc in sb["scenes"] if sc["type"] == "chart"][0]
+    names = [(se.get("name"), se.get("color")) for se in chart["props"]["series"]]
+    assert names == [("Boring", None), ("Chaser", "ink")]
+    assert chart["props"]["drawSeconds"] == 12.0

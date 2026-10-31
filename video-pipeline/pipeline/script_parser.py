@@ -142,11 +142,24 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
             for line in b.data_lines:
                 name = None
                 spec = line
+                color = None
                 if "=" in line:
                     name, spec = line.split("=", 1)
                     name = name.strip()
-                series.append({"name": name, "points": _parse_points(spec)} if name else {"points": _parse_points(spec)})
+                    # "Chaser:ink = 2000:909, ..." names the line's colour: ink, green, red, blue. A line is never red unless
+                    # it is told to be (a second series used to take the loss red by default)
+                    if ":" in name and name.rsplit(":", 1)[1].strip().lower() in ("ink", "green", "red", "blue", "note"):
+                        name, color = name.rsplit(":", 1)
+                        name, color = name.strip(), color.strip().lower()
+                entry = {"points": _parse_points(spec)}
+                if name:
+                    entry["name"] = name
+                if color:
+                    entry["color"] = color
+                series.append(entry)
             p["series"] = series
+            if "draw" in a:
+                p["drawSeconds"] = float(a["draw"])  # how long the lines take to draw (default 2.2 s)
         else:
             bars = []
             for pair in (b.bars or "").split(","):
