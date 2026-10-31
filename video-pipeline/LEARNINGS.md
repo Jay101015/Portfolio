@@ -223,6 +223,14 @@ one change at a time where possible, so a result can be read.
 - The colour rule caught two more reds that were not losses: the takeaway kicker and the handwritten labels in the
   money graphics. Rule: every `accent2` in the renderer is a loss or it is wrong.
 
+### Stop-motion loops (2026-10-31)
+- Jeffrey liked the drawn loops and asked for more stop motion. Seventeen now (`anim=`), drawn by code from the
+  sketch primitives, so each costs nothing and always matches the hand; they move in steps, eight a second, the
+  pace of a flip book, with the lines boiling between steps. What he did not like was the stop-motion *character*
+  (a person swapped between poses); small objects doing one thing each read as animation, not as a slide show.
+- A loop on an illustrated board replaces the auto-picked drawing: with both, the loop sat on a stranger's shoulder.
+  Rule: one picture per beat; the loop is the second thing beside the words, never on top of a first thing.
+
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage?
 2. Thumbnail: a face (Jeffrey) vs no face, once Canva thumbnails are in use.
