@@ -50,12 +50,12 @@ And the bit most people miss.
 [stat value="£1,000" label="Lifetime ISA bonus, at most, a year" sub="25% on up to £4,000" source="GOV.UK, 2026" anim=deposit-jar art_at=r art_size=0.5 dur=9]
 Buying your first home one day? Put four thousand of it in a Lifetime ISA and the government adds a thousand on top. Twenty-five percent, free, for anyone eighteen to thirty-nine. That's the easiest thousand pounds you will ever make.
 
-[text board="Spend £1,000. Seriously." anim=payday-split art_at=r art_size=0.5 dur=9 cards="green:£1,000 for you@thousand; ink:a plan you enjoy is a plan you keep@keep"]
+[text board="£1,000 for you. Seriously." anim=payday-split art_at=r art_size=0.5 dur=9 cards="green:something you'll remember@remember; ink:a plan you enjoy is a plan you keep@keep"]
 And spend a thousand on something you'll actually remember. You earned it. A plan you enjoy is a plan you keep.
 
 [recap title="£10,000, in order" art=high-five art_at=r art_size=0.6 art_start=0.3]
 - Sit on it for 30 days
-- Kill the 20% debt
+- Kill the debt at 20%
 - 3 months of essentials, easy access
 - ISA: £20,000 a year, tax-free
 - Lifetime ISA: the free £1,000
