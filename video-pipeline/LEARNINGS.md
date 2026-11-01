@@ -56,6 +56,10 @@ one change at a time where possible, so a result can be read.
   could not tell this video had ended. Rule: `next=on` frames it as a card on a dark backdrop under "Watch next".
 - Did not: three stock clips in ten minutes (18 seconds). Rule: aim for a clip every 90 seconds or so where the
   sentence names something you can film; scout first, then pin the exact clip with `stock=<id>` from the sheet.
+- Real numbers (Studio, first 4 days, published as "How Much House Can You Afford..."): 270 impressions, 4.8%
+  click-through, 73% of views from the home feed and 14% from search, average view 1:21 of 10:01 (13%). The
+  opening is the likely leak: a 12-second title card from 0:05 to 0:17 under "In this video, I'll show you...",
+  the pattern the retention rules now forbid. The thumbnail is a busy photo whose "£111K" is hard to read small.
 
 ### Rules on test (from 2026-10-28)
 - WRITING.md: open loops, stakes after numbers, re-hooks every 60 to 90 seconds, a payoff before the title, an
@@ -164,6 +168,10 @@ one change at a time where possible, so a result can be read.
 - Next recording: his own numbers in the plan; a spoken one-line disclaimer and a specific comment question; end on a
   bridge to the next video, not "thank you for watching, like and subscribe"; say "ISA", "uni" and "ChatGPT" clearly
   (Shorts cut from the take carry captions).
+- Real numbers (Studio, first 2 days, published as "You'd Need £83,000 a Year..."): 122 impressions and still
+  climbing, 8.2% click-through, 89% of views from the home feed, average view 2:30 of 7:38 (33%). Hook, stakes,
+  footage by 0:08 and the title card only at 0:27; thumbnail one big figure ("7.6x your salary"), a drawn figure
+  and a house on white. Reviewers predicted retention 7 to 7.5, the house video 6 to 7: the order held.
 
 ### Animation: what moves and what does not (2026-10-30)
 - Jeffrey's verdict on the stop-motion character: "very choppy, not 5 seconds of legit animation". Pose swaps on twos
