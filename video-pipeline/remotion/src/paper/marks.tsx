@@ -31,8 +31,11 @@ export const Marks: React.FC<{scene: Scene; brand: Brand; w: number; h: number}>
         const halo = brand.bg ?? '#ffffff';
         const win: [number, number] = [at, at + Math.round(fps * 0.4)];
         if (m.kind === 'circle') {
-          const rw = w * 0.17;
-          const rh = h * 0.24;
+          const rw0 = w * 0.17;
+          const rh0 = h * 0.24;
+          const round = w < h; // a phone screen: a ring that is round, not a thin oval
+          const rw = round ? Math.sqrt(rw0 * rh0) : rw0;
+          const rh = round ? rw : rh0;
           return (
             <svg key={i} width={rw} height={rh} viewBox={`0 0 ${rw} ${rh}`} style={{position: 'absolute', left: x - rw / 2, top: y - rh / 2, overflow: 'visible', transform: 'rotate(-4deg)'}}>
               <g opacity={0.55}><SketchEllipse cx={rw / 2} cy={rh / 2} w={rw} h={rh} win={win} easeOut options={{stroke: halo, strokeWidth: 14 * u, roughness: 1.6, bowing: 1.8, seed: scene.id * 7 + i}} /></g>
@@ -53,7 +56,7 @@ export const Marks: React.FC<{scene: Scene; brand: Brand; w: number; h: number}>
           );
         }
         return (
-          <div key={i} style={{position: 'absolute', left: x + 14 * u, top: y - 34 * u, background: '#fff', border: `${3 * u}px solid ${col}`, color: col, fontFamily: brand.hand ?? 'cursive', fontSize: 46 * u, lineHeight: 1.1, padding: `${4 * u}px ${16 * u}px`, transform: 'rotate(-2deg)', boxShadow: `${5 * u}px ${5 * u}px 0 ${brand.ink}`, whiteSpace: 'nowrap'}}>
+          <div key={i} style={{position: 'absolute', left: Math.min(x + 14 * u, w * 0.55), top: y - 34 * u, maxWidth: w * 0.42, background: '#fff', border: `${3 * u}px solid ${col}`, color: col, fontFamily: brand.hand ?? 'cursive', fontSize: 46 * u, lineHeight: 1.1, padding: `${4 * u}px ${16 * u}px`, transform: 'rotate(-2deg)', boxShadow: `${5 * u}px ${5 * u}px 0 ${brand.ink}`, whiteSpace: 'normal'}}>
             <Write text={m.text ?? ''} frame={frame} fps={fps} start={at} cps={30} color={col} />
           </div>
         );

@@ -382,7 +382,7 @@
     "orientation": "portrait",
     "w": 1080,
     "h": 1480,
-    "seconds": 4.0,
+    "seconds": 1.3,
     "about": "Jeffrey's investing app on his S&P 500 fund (VUAG): the allocation list with Nvidia, Apple, Microsoft, Alphabet and Amazon at the top, then the tap through to Nvidia",
     "tags": [
       "index fund",
@@ -397,7 +397,7 @@
     ],
     "source": "Jeffrey, 31 Oct 2026",
     "phone": true,
-    "notes": "phone=on. Four seconds only: ask for a longer, slower scroll of this page for the 'you already own it' beat"
+    "notes": "phone=on. 1.3 s: the allocation list held still (the tap through to Nvidia cut off); a longer slow scroll is asked for"
   },
   {
     "name": "vuag-max-chart-app",

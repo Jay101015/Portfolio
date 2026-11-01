@@ -317,7 +317,7 @@ export const DrawnLoop: React.FC<{name: string; size: number; brand: Brand; star
         {pings}
         {count > 0 ? (
           <>
-            <SketchEllipse cx={66} cy={16} w={11} h={11} draw={1} options={fine(red, 129, solid(red))} />
+            <SketchEllipse cx={66} cy={16} w={11} h={11} draw={1} options={fine(blue, 129, solid(blue))} />
             <T x={66} y={19} s={7} c={paper}>{count}</T>
           </>
         ) : null}

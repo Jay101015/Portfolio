@@ -903,6 +903,20 @@ def main(argv: list[str] | None = None) -> int:
         wav = al.to_wav16k(audio, os.path.join(project, ".cache", "asr16k.wav"))
         hint = " ".join(sc["narration"] for sc in sb["scenes"]) if sb else ""
         words = transcript_for(project, audio, wav, total, args, hint)
+        if words:
+            from .voice import despike, remove_spans, restarts, shift_time
+            spikes = despike(words)
+            if spikes:
+                print(f"voice: {spikes} collapsed runs in the transcript re-timed (a word held for seconds, then a sentence on one instant)")
+            cuts = restarts(words)
+            if cuts:
+                audio = remove_spans(audio, os.path.join(project, ".cache", "voice-restarts.wav"), cuts)
+                for w in words:
+                    w["s"], w["e"] = shift_time(float(w["s"]), cuts), shift_time(float(w["e"]), cuts)
+                words = [w for i, w in enumerate(words) if not any(abs(float(w["s"]) - shift_time(a, cuts)) < 1e-6 and i + 1 < len(words) and float(words[i + 1]["s"]) - float(w["s"]) < 0.02 for a, _ in cuts)]
+                wav = al.to_wav16k(audio, os.path.join(project, ".cache", "voice-restarts-16k.wav"))
+                total = len(words) and max(float(w["e"]) for w in words) + 0.5
+                print(f"voice: {len(cuts)} restarts cut (a half-said word before the same word again, {sum(b - a for a, b in cuts):.1f}s)")
     if sb is None or not sb["scenes"]:
         if not words:
             print(f"no script in {project}, and no voiceover to build one from", file=sys.stderr)

@@ -45,7 +45,7 @@ Now the race. And the first 12 years are brutal.
 - Two years in: £1,000 → £85
 In 2000 the hottest stock was an energy trader called Dynegy, up more than 200%. The hype pot bought it in January 2001, and it fell 54%. In 2001 the winner was Nvidia, up 308%. The hype pot bought that, and in 2002 it lost 83%. Two years in, the £1,000 is £85.
 
-[bite value="£1,000" lose="£830" label="Nvidia, the year after it was the best stock in the index" sub="gone in 12 months" source="2002, split-adjusted price" cards="ink:best stock of 2001@2001; red:bought the January after@January"]
+[bite value="£1,000" lose="£830" label="Nvidia, the January after its best year" sub="gone in 12 months" source="2002, split-adjusted price" cards="ink:best stock of 2001@2001; red:−83%@83%"]
 Sit with that one. Nvidia, the company everyone is chasing today, was the best stock in the index in 2001. Buy it the January after, and you lose 83%. Being right about the company is not the same as being right about the price.
 
 [list title="2003 to 2011: eight more winners" art=commute-platform art_at=r art_size=0.4 cards="ink:up a bit, then flat@flat; red:−67% in the crash@67%; red:−61%@61%"]
@@ -78,28 +78,28 @@ data: Boring pot = 2000:1091, 2001:961, 2002:749, 2003:964, 2004:1068, 2005:1121
 data: Hype pot:ink = 2000:1091, 2001:497, 2002:85, 2003:110, 2004:146, 2005:164, 2006:162, 2007:155, 2008:52, 2009:65, 2010:78, 2011:30, 2012:40, 2013:44, 2014:42, 2015:42, 2016:46, 2017:83, 2018:115, 2019:287, 2020:574, 2021:858, 2022:1199, 2023:1136, 2024:3080, 2025:7200
 Nine years of being right, almost in a row. Here is the hype pot at the end of 2025, after sitting at £30 in 2011: about £7,200. The boring pot: about £9,000. Nine straight years of picking the winner's follow-up, and it still has not caught up.
 
-[broll lib="nvda-max-chart-app" phone=on caption="Nvidia since 2018" marks="ink:note:the hype pot sold in 2002, years before this 20,80@sold; ink:circle 80,70@2017" cards="red:−83% in 2002@83%; ink:never owned the climb until 2017@2017"]
+[broll lib="nvda-max-chart-app" phone=on caption="Nvidia since 2018" marks="ink:note:sold in 2002 8,78@sold; ink:circle 80,70@2017" cards="red:−83% in 2002@83%; ink:never owned the climb until 2017@2017"]
 And look at what you had to sit through to get there. This is Nvidia's chart since 2018. The hype pot owned this stock in 2002, when it fell 83%, and sold it at the bottom, because the rules said buy the new winner. The hype pot never owned it on the way up until 2017.
 
-[stat value="+385%" label="Sandisk, last year's winner, in 2026 so far" sub="the hype pot is ahead, for the first time in 26 years" source="Yahoo Finance quote, 30 October 2026" art=phone-balance-up art_at=r art_size=0.45 cards="ink:ahead for the first time in 26 years@26"]
+[stat value="nearly 400%" count=off label="Sandisk, last year's winner, in 2026 so far" sub="the hype pot is ahead, for the first time in 26 years" source="Yahoo Finance quote, 30 October 2026" art=phone-balance-up art_at=r art_size=0.45 cards="ink:ahead for the first time in 26 years@26"]
 And this year? Last year's winner was Sandisk, and it is up nearly 400% so far. So right now, in October 2026, the hype pot is ahead for the first time in 26 years.
 
 [text wrong="Chasing works!" board="That's the trap | £1,000 → £30, a −83% stock, a decade of nothing | Nobody does that" anim=hourglass art_at=r art_size=0.45 cards="red:£30@£30; red:−83%@83%; ink:a decade@decade"]
 That is the trap. It always looks like it is about to work. But to be here, you had to watch £1,000 become £30, hold a stock that lost 83%, sell it, and never once flinch for a decade. Nobody does that.
 
-[broll lib="vuag-max-chart-app" phone=on caption="The boring pot: an S&P 500 fund since 2020" marks="green:circle 78,20@130%; ink:note:nobody touched it 25,75@touched" cards="ink:from the inside@inside; ink:bought in 2020, left alone@alone; green:+130% since the start@130%"]
+[broll lib="vuag-max-chart-app" phone=on caption="The boring pot: an S&P 500 fund since 2020" marks="green:circle 85,52@130%; ink:note:nobody touched it 8,75@Nothing" cards="ink:from the inside@inside; ink:bought in 2020, left alone@alone; green:+130% since the start@130%"]
 And this is what the boring pot looks like from the inside. An S&P 500 index fund, bought in 2020 and left alone, up about 130% since the start. Nothing clever happened here. Nobody touched it.
 
 [takeaway title="The number that settles it" n="4" of="4"]
 And the number I promised you at the start.
 
-[pie value="96%" label="of US companies since 1926 did no better than cash" sub="the other 4%, about 1,090 of 26,000, made all the gains" source="Bessembinder, Journal of Financial Economics, 2018" cards="ink:26,000 companies@26,000; green:4% made all the gains@4%; ink:no better than cash@cash; red:most lose money@lose"]
+[pie value="96%" label="of US companies since 1926 did no better than cash" sub="the other 4%, about 1,090 of 26,000, made all the gains" source="Bessembinder, Journal of Financial Economics, 2018" cards="ink:26,000 companies@26,000; green:4% made all the gains@4%"]
 A professor called Hendrik Bessembinder studied every US stock since 1926. 26,000 companies. 4% of them, about 1,090, made all of the market's gains. The other 96%, put together, did no better than cash. Most individual stocks lose money over their life.
 
 [text board="You can't guess the 4%. The index owns all of them." art=index-fund-basket art_at=r art_size=0.4 cards="ink:nobody can@Nobody"]
 You cannot guess which 4%. Nobody can.
 
-[broll lib="vuag-holdings-app" phone=on caption="An index fund's top holdings" marks="ink:circle 50,22@Nvidia" cards="green:owns every winner, automatically@automatically"]
+[broll lib="vuag-holdings-app" phone=on caption="An index fund's top holdings" marks="ink:circle 50,30@all" cards="green:owns every winner, automatically@automatically"]
 But an index fund owns all of them, automatically, and it bought Nvidia in 2001 and never sold.
 
 [list title="The boring way, in four lines" anim=isa-shield art_at=r art_size=0.45 cards="green:tax-free in an ISA@ISA"]
@@ -109,10 +109,10 @@ But an index fund owns all of them, automatically, and it bought Nvidia in 2001 
 - Nothing sold
 So here is the boring way. One index fund, global or S&P 500. The same amount every month, inside an ISA so the growth is tax-free. Dividends reinvested, nothing sold.
 
-[text board="Not advice. Just the maths. | The past is not a promise | 26 years of maths" art=sam-thinking art_at=r art_size=0.4 cards="ink:not advice@advice"]
+[text board="Not advice. Just the maths. | The past is not a promise | 26 years of maths" art=sam-thinking art_at=r art_size=0.3 cards="ink:not advice@advice"]
 None of this is financial advice, and the past is not a promise about the future. It is just 26 years of maths, and the maths does not care how exciting the stock is.
 
-[recap title="£1,000 since 2000, two ways" art=retired-bench art_at=r art_size=0.45 art_start=0.3 cards="red:£30@£30; green:£9,000@£9,000; ink:which stock in 2000?@comments"]
+[recap title="£1,000 since 2000, two ways" art=garden-retirement art_at=r art_size=0.4 art_start=0.3 cards="red:£30@£30; green:£9,000@£9,000; ink:which stock in 2000?@comments"]
 - Hype pot: £1,000 → £30 by 2011
 - Hype pot: back to £7,200 by 2025
 - Boring pot: about £9,000, never below £750

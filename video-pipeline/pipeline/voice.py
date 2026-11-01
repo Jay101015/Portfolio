@@ -152,6 +152,56 @@ def tighten_pauses(src: str, dst: str, longest: float = 0.7, keep: float = 0.4, 
     return dst, gone, removed
 
 
+def despike(words: list[dict], long: float = 1.5, fast: float = 0.12) -> int:
+    """Whisper sometimes holds one word for seconds and stamps the sentence after it on one instant. Each such run
+    (a word over `long` s, then words closer than `fast` s apart) is spread evenly from the long word's start to the
+    run's end, at the pace of the words around it. Returns how many runs were re-timed."""
+    n = 0
+    i = 0
+    while i < len(words):
+        w = words[i]
+        if float(w["e"]) - float(w["s"]) > long:
+            j = i + 1
+            while j + 1 < len(words) and float(words[j + 1]["s"]) - float(words[j]["s"]) < fast:
+                j += 1
+            if j > i + 1:
+                t0, t1 = float(w["s"]), max(float(words[j]["e"]), float(words[j]["s"]) + 0.2)
+                k = j - i + 1
+                step = (t1 - t0) / k
+                for m, x in enumerate(words[i:j + 1]):
+                    x["s"], x["e"] = round(t0 + m * step, 3), round(t0 + (m + 0.85) * step, 3)
+                n += 1
+                i = j
+        i += 1
+    return n
+
+
+def restarts(words: list[dict], gap: float = 0.15) -> list[tuple[float, float]]:
+    """Spans to cut for a restart: a word said, a gap, then the same word again ("The ... The boring pot?"): from
+    just before the first to just before the second. The closer shuts the gap and the restart reads as a stammer."""
+    out: list[tuple[float, float]] = []
+    for a, b in zip(words, words[1:]):
+        wa = re.sub(r"[^a-z0-9£%]", "", str(a.get("w", "")).lower())
+        wb = re.sub(r"[^a-z0-9£%]", "", str(b.get("w", "")).lower())
+        if wa and wa == wb and float(b["s"]) - float(a["e"]) >= gap:
+            out.append((max(0.0, float(a["s"]) - 0.04), max(0.0, float(b["s"]) - 0.04)))
+    return out
+
+
+def remove_spans(src: str, dst: str, spans: list[tuple[float, float]], sr: int = SR) -> str:
+    """`dst`: `src` with the (start, end) stretches taken out (seconds in the source's clock)."""
+    x = read(src, sr)
+    keep = []
+    pos = 0
+    for a, b in sorted(spans):
+        s0, s1 = int(a * sr), int(b * sr)
+        keep.append(x[pos:s0])
+        pos = max(pos, s1)
+    keep.append(x[pos:])
+    write(dst, np.concatenate(keep), sr)
+    return dst
+
+
 def shift_time(t: float, removed: list[tuple[float, float]]) -> float:
     """a moment of the original recording on the tightened one"""
     gone = 0.0
