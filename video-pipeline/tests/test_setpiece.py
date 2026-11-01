@@ -118,7 +118,7 @@ class VoiceTest(unittest.TestCase):
         src = os.path.join(self.dir, "in.wav")
         voice.write(src, x)
         path, gone, removed = voice.tighten_pauses(src, os.path.join(self.dir, "out.wav"), longest=0.7, keep=0.4)
-        self.assertAlmostEqual(gone, 1.1, delta=0.08)
+        self.assertAlmostEqual(gone, 0.98, delta=0.08)  # 1.5 s closed to 0.4 s, plus 60 ms kept on each side of the cut
         self.assertAlmostEqual(len(voice.read(path)) / sr, 3.5 - gone, delta=0.03)
         self.assertAlmostEqual(voice.shift_time(3.0, removed), 3.0 - gone, places=2)
         self.assertAlmostEqual(voice.shift_time(0.5, removed), 0.5, places=3)
