@@ -323,6 +323,9 @@ one change at a time where possible, so a result can be read.
   empty part of the holdings page, cards wanted through every beat of a long scene (a Short's lower band should
   land one every 3 to 4 s), and the phone clip's foot under the Shorts title strip. Fixed and re-rendered without
   a third review round.
+- Jeffrey, after it was posted: the long video had almost no b-roll (3 footage scenes of 23, all his app clips;
+  the channel's rule is about one in four). A numbers topic still needs stock between the charts. Now flagged by
+  the parser under one in five, in EDITOR.md and in the director's plan.
 - Open, told to Jeffrey: the chart's linear axis (the £30 decade is a floor); the trap board's second line in one
   go; the hook's money-flies loop runs out before "£1,000" is said; the hourglass idles once it has run (an
   "again" cue); every inner cut still opens on a bare page for half a second (a head start on every scene, not

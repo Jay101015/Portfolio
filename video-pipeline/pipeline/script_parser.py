@@ -414,6 +414,26 @@ def pace_scenes(sb: dict[str, Any], lead: float, hold: float) -> list[tuple[floa
     return silences
 
 
+FOOTAGE_TYPES = {"broll", "clip", "still", "image"}
+CARD_TYPES = {"title", "takeaway", "outro"}  # cards between sections: not counted either way
+
+
+def footage_share(scenes: list[dict]) -> list[str]:
+    """About one scene in four is footage on a long video (EDITOR.md). A script under one in five is flagged before it
+    is built: the chasing-winners video went out with 3 of 23 (all phone clips), a numbers topic with no stock
+    footage between the charts, and Jeffrey noticed. Jeffrey's own clips count; so does any free-use stock."""
+    body = [s for s in scenes if s["type"] not in CARD_TYPES]
+    if len(body) < 8:
+        return []  # a demo or a Short's script: too short to judge
+    n = sum(1 for s in body if s["type"] in FOOTAGE_TYPES)
+    if n / len(body) >= 0.2:
+        return []
+    want = -(-len(body) // 4)
+    return [f"footage: {n} of {len(body)} scenes are footage, under one in five; aim for about {want} (one in four). "
+            "On a numbers topic use free-use stock between the charts: ticker screens, trading apps, a calendar turning, "
+            "coins in a jar; Jeffrey's own phone clips count too"]
+
+
 def room_for_silent(sb: dict[str, Any], after: float = 0.25, lead: float = 0.25) -> list[tuple[float, float]]:
     """A card with no words between two spoken scenes (the title after the teasers) was given its `dur` out of the end
     of the scene before it, so it covered the last line said there. Each one now gets its own stretch: it starts just
@@ -604,6 +624,7 @@ def parse_script(md: str) -> dict[str, Any]:
         scenes.append(sc)
     if scenes and header.get("kicker") and scenes[0]["type"] == "title":
         scenes[0]["props"].setdefault("kicker", header["kicker"])
+    problems += footage_share(scenes)
 
     brand: dict[str, str] = {}
     avatar: dict[str, str] = {}

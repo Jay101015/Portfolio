@@ -193,7 +193,9 @@ buttons: a Short's page is laid out in bands between them, and nothing sits on a
    nothing: use that organisation's own press footage or an Open Government Licence clip, linked in
    media/sources.txt and put on the scene as src= with credit= (docs/footage-sources.md lists where to look and
    the terms); never a broadcaster's clip as decoration. Roughly one broll scene in every
-   four, between board scenes, so the video moves like a documentary; the render fetches it from Pixabay, Pexels,
+   four, between board scenes, so the video moves like a documentary, on every topic: a numbers video still gets
+   free-use stock between its charts (ticker screens, trading apps, a calendar turning, coins in a jar), not only
+   Jeffrey's app clips (chasing-winners went out with 3 of 23; the parser now flags anything under one in five); the render fetches it from Pixabay, Pexels,
    Wikimedia Commons or the Internet Archive (`pipeline/find_footage.py`). (`clip=` on a text scene still gives
    the small framed card beside the words; use it only when the words must stay on screen.)
    The channel's own footage comes first: `[broll lib="<name>" caption="..."]` uses a clip from library/footage

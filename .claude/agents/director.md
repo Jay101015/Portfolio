@@ -141,3 +141,6 @@ IDEAS FOR JEFFREY
 ```
 Must fix is what makes a viewer's eyes drift: a still stretch over 6 seconds, a page left mostly empty for more than 3
 seconds, a strong line on a weak or wrong picture, a picture repeated within the video. Never pad. Never change the spoken words: those are recorded.
+
+Footage share: in a PLAN, about one scene in four on a long video is footage (Jeffrey's clips or free-use stock), on
+every topic. A numbers-heavy script still gets stock between its charts; say which scenes and what to search for.
