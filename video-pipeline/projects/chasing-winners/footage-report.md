@@ -4,9 +4,9 @@ Topic: £1,000 in the S&P 500 left alone since 2000, against £1,000 that buys e
 
 | scene | query | result | licence | attribution |
 |---|---|---|---|---|
-| 19 |  | library nvda-max-chart-app |  |  |
-| 23 |  | library vuag-max-chart-app |  |  |
-| 27 |  | library vuag-holdings-app |  |  |
+| 18 |  | library nvda-max-chart-app |  |  |
+| 21 |  | library vuag-max-chart-app |  |  |
+| 25 |  | library vuag-holdings-app |  |  |
 
 ## What counts as free use here
 
