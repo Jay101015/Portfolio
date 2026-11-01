@@ -33,9 +33,6 @@ Pot two is the hype pot. Every January it buys the stock that was the best perfo
 [news outlet="CNBC" date="January 2025" url="https://www.cnbc.com/2025/01/13/top-performing-stocks-of-2024.html" headline="Palantir was the best-performing S&P 500 stock of 2024, up 340%" board="2024's best stock in the S&P 500: Palantir, +340%" cards="ink:held 12 months@12; ink:sell, buy the new winner@new"]
 the one in every headline, and holds it for 12 months. Then it sells and buys the new winner.
 
-[text board="Pick this year's winner in advance? | £1,000,000,000,000,000 | more than all the money on Earth" art=maya-shrug cards="red:nobody knows in January@nobody; ink:the maths says no@maths"]
-Why last year's winner and not this year's? Because nobody knows this year's winner in January. If you somehow could, your £1,000 would be a number with 15 zeros on it, more than all the money on Earth. That is the maths telling you it cannot be done.
-
 [takeaway title="The lost decade" n="2" of="4"]
 Now the race. And the first 12 years are brutal.
 
@@ -86,9 +83,6 @@ And this year? Last year's winner was Sandisk, and it is up nearly 400% so far. 
 [text wrong="Chasing works!" board="That's the trap: it always looks about to work | £1,000 → £30, a −83% stock, sold at the bottom, a decade of nothing | Nobody does that" anim=hourglass art_at=r art_size=0.5 cards="red:£30@£30; red:−83%@83%; ink:a decade@decade"]
 That is the trap. It always looks like it is about to work. But to be here, you had to watch £1,000 become £30, hold a stock that lost 83%, sell it, and never once flinch for a decade. Nobody does that.
 
-[text keep=arrow board="Arrive in year 25, buy at the top, get the next 2002" cards="red:the next 2002@2002"]
-Most people who chase winners arrive in year 25, buy at the top, and get the next 2002.
-
 [broll lib="vuag-max-chart-app" phone=on caption="The boring pot: an S&P 500 fund since 2020" marks="green:circle 78,20@130%; ink:note:nobody touched it 25,75@touched" cards="ink:bought in 2020, left alone@alone; green:+130% since the start@130%"]
 And this is what the boring pot looks like from the inside. An S&P 500 index fund, bought in 2020 and left alone, up about 130% since the start. Nothing clever happened here. Nobody touched it.
 
@@ -98,27 +92,26 @@ And the number I promised you at the start.
 [pie value="96%" label="of US companies since 1926 did no better than cash" sub="the other 4%, about 1,090 of 26,000, made all the gains" source="Bessembinder, Journal of Financial Economics, 2018" cards="ink:26,000 companies@26,000; green:4% made all the gains@4%"]
 A professor called Hendrik Bessembinder studied every US stock since 1926. 26,000 companies. 4% of them, about 1,090, made all of the market's gains. The other 96%, put together, did no better than cash. Most individual stocks lose money over their life.
 
-[text board="You can't guess the 4%. The index owns all of them." art=index-fund-basket cards="red:nobody can@Nobody; ink:the 15 zeros again@15"]
-You cannot guess which 4%. Nobody can. That is what the 15 zeros were telling you.
+[text board="You can't guess the 4%. The index owns all of them." art=index-fund-basket cards="red:nobody can@Nobody"]
+You cannot guess which 4%. Nobody can.
 
 [broll lib="vuag-holdings-app" phone=on caption="An index fund's top holdings" marks="ink:circle 50,22@Nvidia" cards="green:owns every winner, automatically@automatically"]
 But an index fund owns all of them, automatically, and it bought Nvidia in 2001 and never sold.
 
-[list title="The boring way, in four lines" art=laptop-standing-order art_at=r art_size=0.45 cards="green:tax-free in an ISA@ISA; ink:the price already knows@knows"]
+[list title="The boring way, in four lines" art=laptop-standing-order art_at=r art_size=0.45 cards="green:tax-free in an ISA@ISA; ink:nothing sold@sold"]
 - A global or S&P 500 index fund
 - The same amount every month, inside an ISA
 - Dividends reinvested, nothing sold
-- If you heard about it from a headline, it's already in the price
-So here is the boring way. One index fund, global or S&P 500. The same amount every month, inside an ISA so the growth is tax-free. Dividends reinvested, nothing sold. And the hype test: if you heard about a stock from a headline, the price already knows.
+So here is the boring way. One index fund, global or S&P 500. The same amount every month, inside an ISA so the growth is tax-free. Dividends reinvested, nothing sold.
 
 [text board="Not advice. Just the maths. | The past is not a promise | 26 years, and the maths doesn't care how exciting the stock is" art=calculator-table cards="ink:not advice@advice; ink:26 years@26"]
-None of this is advice, and the past is not a promise about the future. It is just 26 years of maths, and the maths does not care how exciting the stock is.
+None of this is financial advice, and the past is not a promise about the future. It is just 26 years of maths, and the maths does not care how exciting the stock is.
 
 [recap title="£1,000 since 2000, two ways" art=garden-retirement art_at=r art_size=0.6 art_start=0.3 cards="red:£30@£30; green:£9,000@£9,000; ink:which stock in 2000?@comments"]
 - The hype pot: £30 by 2011, about £7,200 by 2025
 - The boring pot: about £9,000, never below £750
 - 4% of companies make all the gains, and the index owns them
 - Monthly, in an ISA, hands off
-The hype pot: a decade at £30 for £7,200 today. The boring pot: £9,000, and you never lost sleep. 4% of companies make all the gains, and the index owns every one of them. Monthly, in an ISA, hands off. Tell me in the comments, honestly: which stock would you have chased in 2000? Next video: the one company you can buy before the biggest launch in gaming history, and whether you should.
+The hype pot: a decade at £30 for £7,200 today. The boring pot: £9,000, and you never lost sleep. 4% of companies make all the gains, and the index owns every one of them. Monthly, in an ISA, hands off. Tell me in the comments, honestly: which stock would you have chased in 2000?
 
 [outro title="The Everyday Investor" cta="Subscribe for the next one" dur=3]
