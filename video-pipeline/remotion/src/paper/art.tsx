@@ -1213,7 +1213,7 @@ const Traced: React.FC<{def: NonNullable<ArtDef['svg']>; size: number; brand: Br
   let acc = 0;
   return (
     <div style={{position: 'relative', width: size, height: size, display: 'flex', alignItems: 'center', justifyContent: 'center', transform: `translate(${jx}px, ${jy}px) rotate(${tilt + jr}deg)`, ...style}}>
-      <svg width={def.w * scale} height={def.h * scale} viewBox={`0 0 ${def.w} ${def.h}`} fill="none" stroke={brand.ink} strokeWidth={def.width} strokeLinecap="round" strokeLinejoin="round" style={{overflow: 'visible', display: 'block'}}>
+      <svg width={def.w * scale} height={def.h * scale} viewBox={`0 0 ${def.w} ${def.h}`} fill="none" stroke={brand.ink} strokeWidth={Math.max(def.width, 3.2 / Math.max(scale, 0.01))} strokeLinecap="round" strokeLinejoin="round" style={{overflow: 'visible', display: 'block'}}>
         {def.paths.map((p, i) => {
           const from = acc / total;
           acc += lens[i];

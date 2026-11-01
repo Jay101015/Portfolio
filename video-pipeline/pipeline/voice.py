@@ -132,11 +132,12 @@ def tighten_pauses(src: str, dst: str, longest: float = 0.7, keep: float = 0.4, 
     removed: list[tuple[float, float]] = []
     if not cut:
         return src, 0.0, removed
-    xf = int(0.01 * sr)
+    xf = int(0.025 * sr)
     pieces, last, gone = [], 0, 0.0
     for a, b in cut:
-        # keep half of `keep` after the word that ends and half before the word that starts
-        s0, s1 = int((a + keep / 2) * sr), int((b - keep / 2) * sr)
+        # keep half of `keep` after the word that ends and half before the word that starts, and 60 ms more on each
+        # side so the cut never touches the tail or the onset of a word the detector counted as quiet
+        s0, s1 = int((a + keep / 2 + 0.06) * sr), int((b - keep / 2 - 0.06) * sr)
         if s1 - s0 < xf * 2:
             continue
         pieces.append(x[last:s0 + xf])
@@ -191,14 +192,18 @@ def restarts(words: list[dict], gap: float = 0.15) -> list[tuple[float, float]]:
 def remove_spans(src: str, dst: str, spans: list[tuple[float, float]], sr: int = SR) -> str:
     """`dst`: `src` with the (start, end) stretches taken out (seconds in the source's clock)."""
     x = read(src, sr)
-    keep = []
+    xf = int(0.02 * sr)
+    ramp = np.linspace(0, 1, xf)
+    out = None
     pos = 0
     for a, b in sorted(spans):
-        s0, s1 = int(a * sr), int(b * sr)
-        keep.append(x[pos:s0])
+        s0, s1 = max(0, int(a * sr)), int(b * sr)
+        piece = x[pos:s0]
+        out = piece if out is None else np.concatenate([out[:-xf], out[-xf:] * ramp[::-1] + piece[:xf] * ramp, piece[xf:]]) if len(out) > xf and len(piece) > xf else np.concatenate([out, piece])
         pos = max(pos, s1)
-    keep.append(x[pos:])
-    write(dst, np.concatenate(keep), sr)
+    tail = x[pos:]
+    out = tail if out is None else (np.concatenate([out[:-xf], out[-xf:] * ramp[::-1] + tail[:xf] * ramp, tail[xf:]]) if len(out) > xf and len(tail) > xf else np.concatenate([out, tail]))
+    write(dst, out, sr)
     return dst
 
 

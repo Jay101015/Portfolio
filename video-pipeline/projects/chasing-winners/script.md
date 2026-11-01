@@ -17,7 +17,7 @@ If you had bought last year's hottest stock every single January since 2000, you
 [stat value="£9,000" label="£1,000 in the S&P 500, left alone since 2000" sub="its worst year-end: about £750" source="Slickcharts, dividends reinvested, to end 2025, in pounds at today's rate" anim=plant-grow art_at=r art_size=0.5]
 The same £1,000 in the S&P 500, left completely alone, is about £9,000 today. It never once dropped below £750.
 
-[text board="Every winner, and what it did next | The one year the hype paid off | The number that settles it" art=road-to-100k art_at=r art_size=0.4 cards="ink:year by year@year; green:the one year it paid off@spectacularly"]
+[text board="Every winner, and what it did next | The one year the hype paid off | The number that settles it" art=road-to-100k art_at=r art_size=0.5 cards="ink:year by year@year; green:the one year it paid off@spectacularly"]
 So I ran the whole race, year by year. I'll show you every year's winner and what it did next, the one year the hype paid off spectacularly, and at the end, the number from the biggest study ever done on this. It settles the argument.
 
 [title dur=2.4 kicker="The Everyday Investor" title="The hype pot vs the boring pot" subtitle="£1,000 each, since 2000"]
@@ -37,7 +37,7 @@ the one in every headline, and holds it for 12 months. Then it sells and buys th
 [takeaway title="The lost decade" n="2" of="4"]
 Now the race. And the first 12 years are brutal.
 
-[list title="2000 to 2002: the hype pot's first two buys" art=phone-balance-drop art_at=r art_size=0.4 cards="red:−54%@54%; red:−83%@83%"]
+[list title="2000 to 2002: the hype pot's first two buys" art=phone-balance-drop art_at=r art_size=0.5 cards="red:−54%@54%; red:−83%@83%"]
 - 2000: Dynegy, up over 200%
 - January 2001: it fell 54%
 - 2001: Nvidia, up 308%
@@ -56,16 +56,16 @@ Sit with that one. Nvidia, the company everyone is chasing today, was the best s
 - 2011: down 61%
 Then a few decent years. Avaya, Autodesk, Valero, Allegheny Technologies. Up a bit, then flat. Then 2007's winner, National Oilwell Varco, bought in January 2008, lost 67% in the crash. Then Netflix, the best stock of 2010, lost 61% in 2011.
 
-[stat value="£30" label="The hype pot, end of 2011" sub="down 97%" source="worked from each winner's next-year return, in pounds at today's rate" art=overdraft-hole art_at=r art_size=0.45 cards="red:12 years of chasing@12"]
+[stat value="£30" label="The hype pot, end of 2011" sub="down 97%" source="worked from each winner's next-year return, in pounds at today's rate" art=maya-facepalm art_at=r art_size=0.5 cards="red:12 years of chasing@12"]
 By the end of 2011, the hype pot's £1,000 is £30. Down 97%. 12 years of buying the stock everyone was talking about.
 
-[stat value="£1,280" label="The boring pot, end of 2011" sub="through the dot-com crash and 2008" source="Slickcharts, S&P 500 total return 2000 to 2011, in pounds at today's rate" art=rainy-day-umbrella art_at=r art_size=0.45 cards="ink:dot-com crash, 2008@2008; green:still standing@standing"]
+[stat value="£1,280" label="The boring pot, end of 2011" sub="through the dot-com crash and 2008" source="Slickcharts, S&P 500 total return 2000 to 2011, in pounds at today's rate" art=rainy-day-umbrella art_at=r art_size=0.5 cards="ink:dot-com crash, 2008@2008; green:still standing@standing"]
 The boring pot? About £1,280. It had been through the dot-com crash and the 2008 crash and it was still standing. Not exciting. Standing.
 
 [takeaway title="The comeback" n="3" of="4"]
 Then the story turns, and this is the part the hype merchants will quote at you.
 
-[list title="2017 to 2025: the hype pot's run" art=sam-celebrating art_at=r art_size=0.4 cards="green:+81%@81%; green:+148%, then +100%@148%; green:+171%@171%; green:+135%@135%"]
+[list title="2017 to 2025: the hype pot's run" art=maya-pleased art_at=r art_size=0.5 cards="green:+81%@81%; green:+148%, then +100%@148%; green:+171%@171%; green:+135%@135%"]
 - 2017: Nvidia, up another 81%
 - AMD, two years running: up 148%, then 100%
 - Tesla, Devon Energy
@@ -81,7 +81,7 @@ Nine years of being right, almost in a row. Here is the hype pot at the end of 2
 [broll lib="nvda-max-chart-app" phone=on caption="Nvidia since 2018" marks="ink:note:sold in 2002 8,78@sold; ink:circle 80,70@2017" cards="red:−83% in 2002@83%; ink:never owned the climb until 2017@2017"]
 And look at what you had to sit through to get there. This is Nvidia's chart since 2018. The hype pot owned this stock in 2002, when it fell 83%, and sold it at the bottom, because the rules said buy the new winner. The hype pot never owned it on the way up until 2017.
 
-[stat value="nearly 400%" count=off label="Sandisk, last year's winner, in 2026 so far" sub="the hype pot is ahead, for the first time in 26 years" source="Yahoo Finance quote, 30 October 2026" art=phone-balance-up art_at=r art_size=0.45 cards="ink:ahead for the first time in 26 years@26"]
+[stat value="nearly 400%" count=off label="Sandisk, last year's winner, in 2026 so far" sub="the hype pot is ahead, for the first time in 26 years" source="Yahoo Finance quote, 30 October 2026" art=phone-balance-up art_at=r art_size=0.5 cards="ink:ahead for the first time in 26 years@26"]
 And this year? Last year's winner was Sandisk, and it is up nearly 400% so far. So right now, in October 2026, the hype pot is ahead for the first time in 26 years.
 
 [text wrong="Chasing works!" board="That's the trap | £1,000 → £30, a −83% stock, a decade of nothing | Nobody does that" anim=hourglass art_at=r art_size=0.45 cards="red:£30@£30; red:−83%@83%; ink:a decade@decade"]
@@ -96,7 +96,7 @@ And the number I promised you at the start.
 [pie value="96%" label="of US companies: no better than cash" sub="since 1926; the other 4%, about 1,090 of 26,000, made all the gains" source="Bessembinder, Journal of Financial Economics, 2018" cards="ink:26,000 companies@26,000; green:4% made all the gains@4%"]
 A professor called Hendrik Bessembinder studied every US stock since 1926. 26,000 companies. 4% of them, about 1,090, made all of the market's gains. The other 96%, put together, did no better than cash. Most individual stocks lose money over their life.
 
-[text board="You can't guess the 4%. The index owns all of them." art=index-fund-basket art_at=r art_size=0.4 cards="ink:nobody can@Nobody"]
+[text board="You can't guess the 4%. The index owns all of them." art=index-fund-basket art_at=r art_size=0.5 cards="ink:nobody can@Nobody"]
 You cannot guess which 4%. Nobody can.
 
 [broll lib="vuag-holdings-app" phone=on caption="An index fund's top holdings" marks="ink:circle 50,30@all" cards="green:owns every winner, automatically@automatically"]
@@ -109,10 +109,10 @@ But an index fund owns all of them, automatically, and it bought Nvidia in 2001 
 - Nothing sold
 So here is the boring way. One index fund, global or S&P 500. The same amount every month, inside an ISA so the growth is tax-free. Dividends reinvested, nothing sold.
 
-[text board="Not advice. Just the maths. | The past is not a promise | 26 years of maths" art=sam-thinking art_at=r art_size=0.3 cards="ink:not advice@advice"]
+[text board="Not advice. Just the maths. | The past is not a promise | 26 years of maths" art=sam-thinking art_at=r art_size=0.4 cards="ink:not advice@advice"]
 None of this is financial advice, and the past is not a promise about the future. It is just 26 years of maths, and the maths does not care how exciting the stock is.
 
-[recap title="£1,000 since 2000, two ways" art=garden-retirement art_at=r art_size=0.4 art_start=0.3 cards="red:£30@£30; green:£9,000@£9,000; ink:which stock in 2000?@comments"]
+[recap title="£1,000 since 2000, two ways" art=garden-retirement art_at=r art_size=0.5 art_start=0.3 cards="red:£30@£30; green:£9,000@£9,000; ink:which stock in 2000?@comments"]
 - Hype pot: £1,000 → £30 by 2011
 - Hype pot: back to £7,200 by 2025
 - Boring pot: about £9,000, never below £750
