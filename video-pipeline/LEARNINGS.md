@@ -265,6 +265,23 @@ one change at a time where possible, so a result can be read.
 - Chunked local render recipe, improved: 300 frames a chunk, three browser tabs on drawn scenes, one tab on the
   chunks that decode a clip; a fix to one scene re-renders only its chunks and the parts are joined again.
 
+### Chasing winners (built 2026-11-01, Jeffrey's recording)
+- The first long video cut to his own recording in the new look: 13 phone-recorded parts joined, 5:45 of speech,
+  transcribed on the GitHub runner (the cloud session cannot fetch the speech model). He skipped five scripted
+  lines; the build kept their boards with guessed timing, so the first render showed two boards nobody spoke over.
+  Rule: after the first transcript, read the per-scene match (a scene under 40% heard was skipped) and cut those
+  scenes from the script before anyone reviews.
+- Review: editor 5, animator 5, retention 7, director 5 (round 1). The figures were all right; the picture was not:
+  cards on the lines and on the drawings (one placement rule for cards on a board with a drawing was missing),
+  list lines written seconds ahead of the words because a line carried two beats, the marks on his phone clips
+  never drawn (the drawn phone never mounted the mark layer), a transcriber's "109 years" on the highlighter, the
+  room dropping out at every cut, a five-second pause the closer could not see past his breaths. Each is a rule
+  now (EDITOR.md).
+- Retention's best mark yet for an opening: number, counter-number, three promises, title by 0:33, the last promise
+  paid off in the same words. Keep writing openings that way.
+- Ask for next time: the VUAG holdings page scrolled slowly for 10 s; app charts recorded in one slow 25-second
+  scroll with no taps; say the live number with its date so it never needs a headline.
+
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage?
 2. Thumbnail: a face (Jeffrey) vs no face, once Canva thumbnails are in use.

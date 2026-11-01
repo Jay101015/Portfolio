@@ -106,7 +106,22 @@ Tags for the script:
   board sets how long it has when there is no recording to time it, and caps it: a `dur` shorter than the words
   cuts the scene before they end.
 - `screen=laptop` on `[broll]`: the clip in a drawn laptop with a browser bar, for screen recordings; `phone=on`
-  is the upright phone.
+  is the upright phone, which letterboxes a cropped recording (status bar and balances cut off) rather than cropping
+  its sides, and draws `marks=` on the screen (per cent of the screen, not the page). A clip shorter than half its
+  scene loops, which shows: cut the recording to the part you want and let the player slow it (a chart scrub at
+  0.6x reads fine), or record 25 seconds in one slow scroll.
+- `[outro ... dur=20 cards=on]` holds the subscribe page for YouTube's 20-second end screen; `cards=on` there is the
+  end-screen flag, not a card.
+- Cards and drawings never share a spot: on any board, list, stat or recap with a drawing or a loop on the right,
+  the cards sit top right above it, two at a time; on a bare board they go under the lines; on a chart top left; on
+  a bite top right above the bar; on footage in the right column. A board line is one colour: a line that carries a
+  gain and a loss ("Nvidia +308% → 2002: −83%") is two lines. A year is never a money word, and "£1,000 → £30" is a
+  loss. List lines land on their own words, so one beat a line: "2001: Nvidia, up 308%" then "2002: it lost 83%".
+- Key words pop only for figures the script says; a transcriber's mishearing ("109 years") never reaches the page,
+  and bare words ("never", "free") no longer pop at all.
+- `pauses.ceiling: -36` in the header for a take with breaths inside its pauses: the pause closer (pauses over
+  0.7 s shut to 0.4 s) otherwise treats a -40 dB breath as speech and leaves a five-second gap at a title card. The
+  silences the pace adds carry the room's own tone, so the room never drops out at a cut.
 - `pace.lead` and `pace.hold` in the header: the air before a scene's first word and after its last (the
   illustrated style's `pace: calm` default is 1.2 and 0.6, about 1.8 s a scene; the £10K demo ran at 0.6 and 0.4
   after the retention reviewer measured 29% of the film with no words at all). A card's words must be in the
