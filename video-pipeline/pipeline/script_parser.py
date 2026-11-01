@@ -414,7 +414,7 @@ def pace_scenes(sb: dict[str, Any], lead: float, hold: float) -> list[tuple[floa
     return silences
 
 
-def room_for_silent(sb: dict[str, Any], after: float = 0.15, lead: float = 0.25) -> list[tuple[float, float]]:
+def room_for_silent(sb: dict[str, Any], after: float = 0.25, lead: float = 0.25) -> list[tuple[float, float]]:
     """A card with no words between two spoken scenes (the title after the teasers) was given its `dur` out of the end
     of the scene before it, so it covered the last line said there. Each one now gets its own stretch: it starts just
     after the last word before it and runs its `dur`, and the voice after it moves later to make the room. Returns the

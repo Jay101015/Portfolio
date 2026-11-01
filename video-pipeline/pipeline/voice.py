@@ -153,6 +153,54 @@ def tighten_pauses(src: str, dst: str, longest: float = 0.7, keep: float = 0.4, 
     return dst, gone, removed
 
 
+def knocks(x: np.ndarray, sr: int, loud: float = -30.0, quiet: float = -45.0, longest: float = 0.06, around: float = 0.15) -> list[tuple[int, int]]:
+    """Sample spans of knocks in the pauses: a burst over `loud` dBFS lasting at most `longest` seconds with at least
+    `around` seconds under `quiet` on both sides (a phone's record button tapped, a knock on the desk). A word's
+    consonant is louder than the pause too, but it is never surrounded by silence on both sides."""
+    win = int(0.005 * sr)
+    db = rms_db(x, win)
+    n = len(db)
+    out: list[tuple[int, int]] = []
+    i = 0
+    k = int(around / 0.005)
+    while i < n:
+        if db[i] > loud:
+            j = i
+            while j < n and db[j] > quiet + 8:
+                j += 1
+            if (j - i) * 0.005 <= longest:
+                before = db[max(0, i - k):i]
+                after = db[j:j + k]
+                if len(before) >= k // 2 and len(after) >= k // 2 and before.max() < quiet and after.max() < quiet:
+                    out.append((max(0, (i - 1) * win), min(len(x), (j + 1) * win)))
+            i = j + 1
+        else:
+            i += 1
+    return out
+
+
+def silence_knocks(src: str, dst: str, sr: int = SR) -> tuple[str, int]:
+    """`src` with every knock in a pause zeroed (5 ms ramps); fill_gated then lays room tone over the hole."""
+    x = read(src, sr)
+    spans = knocks(x, sr)
+    if not spans:
+        return src, 0
+    y = x.astype(np.float32).copy()
+    r = int(0.005 * sr)
+    for a, b in spans:
+        a0, b0 = max(0, a - r), min(len(y), b + r)
+        y[a0:b0] = 0
+    write(dst, y, sr)
+    return dst, len(spans)
+
+
+def declick(src: str, dst: str) -> str:
+    """ffmpeg's de-clicker over the whole voice: the 2 to 5 ms mouth clicks a close phone mic catches in the pauses."""
+    import subprocess
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-af", "adeclick=window=55:overlap=75:arorder=2:threshold=2:burst=2", "-ar", str(SR), "-ac", "1", dst], check=True)
+    return dst
+
+
 def despike(words: list[dict], long: float = 1.5, fast: float = 0.12) -> int:
     """Whisper sometimes holds one word for seconds and stamps the sentence after it on one instant. Each such run
     (a word over `long` s, then words closer than `fast` s apart) is spread evenly from the long word's start to the

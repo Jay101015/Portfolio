@@ -705,9 +705,14 @@ def tidy_voice(project: str, audio: str, header: dict[str, str]) -> str:
     mode = header.get("pauses", "keep" if legacy else "tight").strip().lower()
     if mode == "keep":
         return audio
+    from .voice import declick, silence_knocks
+    audio, k = silence_knocks(audio, os.path.join(project, ".cache", "voice-knocks.wav"))
+    if k:
+        print(f"voice: {k} knocks in the pauses (the record button, a tap on the desk) taken out")
     audio, n = fill_gated(audio, os.path.join(project, ".cache", "voice-filled.wav"))
     if n:
         print(f"voice: {n} patches of digital silence filled with the room's own tone")
+    audio = declick(audio, os.path.join(project, ".cache", "voice-declick.wav"))
     longest = float(header.get("pauses.longest", 0.7))
     ceiling = float(header.get("pauses.ceiling", -40))  # a take with breaths in its pauses: -36 lets the pause close over them
     audio, gone, _ = tighten_pauses(audio, os.path.join(project, ".cache", "voice-tight.wav"), longest=longest, ceiling=ceiling)
