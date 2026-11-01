@@ -103,12 +103,12 @@ def fill_gated(src: str, dst: str, sr: int = SR, tone_from: str | None = None) -
     return dst, len(runs)
 
 
-def silences(x: np.ndarray, sr: int, min_len: float) -> list[tuple[float, float]]:
-    """stretches quieter than the room plus 12 dB (and under -40 dBFS) lasting at least `min_len` seconds"""
+def silences(x: np.ndarray, sr: int, min_len: float, ceiling: float = -40.0) -> list[tuple[float, float]]:
+    """stretches quieter than the room plus 12 dB (and under `ceiling` dBFS, -40 by default) lasting at least `min_len` seconds"""
     win = int(0.02 * sr)
     db = rms_db(x, win)
     floor = float(np.percentile(db, 10))
-    quiet = db < min(floor + 12, -40)
+    quiet = db < min(floor + 12, ceiling) if ceiling <= -40 else db < ceiling
     out = []
     i = 0
     while i < len(quiet):
@@ -124,11 +124,11 @@ def silences(x: np.ndarray, sr: int, min_len: float) -> list[tuple[float, float]
     return out
 
 
-def tighten_pauses(src: str, dst: str, longest: float = 0.7, keep: float = 0.4, sr: int = SR) -> tuple[str, float, list[tuple[float, float]]]:
+def tighten_pauses(src: str, dst: str, longest: float = 0.7, keep: float = 0.4, sr: int = SR, ceiling: float = -40.0) -> tuple[str, float, list[tuple[float, float]]]:
     """`src` with every pause over `longest` seconds closed up to `keep` (the start of the recording is left to
     trim_lead); returns (path, seconds taken out, the stretches taken out in the original's seconds)."""
     x = read(src, sr)
-    cut = [(a, b) for a, b in silences(x, sr, longest) if a > 0.05]
+    cut = [(a, b) for a, b in silences(x, sr, longest, ceiling) if a > 0.05]
     removed: list[tuple[float, float]] = []
     if not cut:
         return src, 0.0, removed

@@ -86,7 +86,7 @@ export const Media: React.FC<{src: string; props: MediaProps; durationFrames: nu
     top: (height - boxH) / 2,
     width: boxW,
     height: boxH,
-    objectFit: 'cover',
+    objectFit: String(props.fit ?? '') === 'contain' ? 'contain' : 'cover',
     objectPosition: `${fx}% ${fy}%`,
     transformOrigin: `${fx}% ${fy}%`,
     transform: `rotate(${rot}deg) scale(${sx * mag * push}, ${sy * mag * push})`,

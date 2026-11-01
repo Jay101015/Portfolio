@@ -301,7 +301,7 @@ export const DrawnLoop: React.FC<{name: string; size: number; brand: Brand; star
       pings.push(
         <g key={i} opacity={q}>
           <SketchRect x={38} y={y} w={25} h={9.5} draw={1} options={fine(ink, 110 + i * 2, solid('#EEF2F8'))} />
-          <SketchEllipse cx={42} cy={y + 4.7} w={4.5} h={4.5} draw={1} options={fine(ink, 111 + i * 2, solid(['#2E6FE8', '#01C77B', '#D7263D', '#6B7A99'][i]))} />
+          <SketchEllipse cx={42} cy={y + 4.7} w={4.5} h={4.5} draw={1} options={fine(ink, 111 + i * 2, solid(['#2E6FE8', '#01C77B', '#0B8F58', '#6B7A99'][i]))} />
           <SketchPath d={`M46,${y + 3.5} L59,${y + 3.5} M46,${y + 6.5} L55,${y + 6.5}`} draw={1} options={fine(slate, 120 + i, {strokeWidth: 0.9})} />
         </g>
       );

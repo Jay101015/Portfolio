@@ -259,7 +259,7 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
   const named = scene.props.art && brand.illustrated && isTraced(String(scene.props.art)) && scene.props.art_x === undefined ? String(scene.props.art) : undefined;
   const clipSrc: string | undefined = scene.props.clip_src; // stock b-roll in the picture column (clip="...", fetched by the footage finder)
   const artName = clipSrc || scene.props.sticker || scene.props.icon ? undefined : named ?? (scene.props.art ? undefined : autoArt(brand, headline, scene.narration));
-  const big = bigArt(brand, artName) || !!clipSrc; // picture first: the words keep to a column (landscape) or the top (vertical), the picture has the rest
+  const big = bigArt(brand, artName) || !!clipSrc || !!scene.props.anim; // picture first: the words keep to a column (landscape) or the top (vertical), the picture has the rest
   const total = Math.max(1, Math.round((scene.end - scene.start) * fps)); // a quick cut writes and draws faster than a long scene
   const corner = <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, headline, scene.narration)} art={artName} frame={frame} fps={fps} start={brand.board ? 6 : 0} seed={scene.id} by={Math.round(total * 0.7)} />;
   const head = headline ? (
@@ -1011,7 +1011,8 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
         <div style={{position: 'absolute', left: width * 0.36 - pw / 2, top: (height - ph) / 2, width: pw, height: ph, transform: `rotate(${tilt}deg) translateY(${(1 - s) * 60 * u}px)`, opacity: Math.min(1, s * 1.5),
           background: '#1d1d1f', borderRadius: 54 * u, padding: bez, boxShadow: `0 ${18 * u}px ${48 * u}px rgba(40,30,10,0.3)`}}>
           <div style={{position: 'relative', width: '100%', height: '100%', borderRadius: 40 * u, overflow: 'hidden', background: '#000'}}>
-            <Media src={src} props={{...scene.props, zoom: 'none'}} durationFrames={total} width={pw - bez * 2} height={ph - bez * 2} />
+            <Media src={src} props={{...scene.props, zoom: 'none', fit: 'contain'}} durationFrames={total} width={pw - bez * 2} height={ph - bez * 2} />
+            <Marks scene={scene} brand={brand} w={pw - bez * 2} h={ph - bez * 2} />
           </div>
         </div>
         {caption ? (

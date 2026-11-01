@@ -109,6 +109,15 @@ def _same(a: float, b: float) -> bool:
     return abs(a - b) <= max(0.051, abs(b) * 0.005)
 
 
+def _script_values(narration: str) -> list[float]:
+    """Every figure the script's own words carry, as values: "£1,000", "83%", "26,000", "12 years"."""
+    out: list[float] = []
+    for m in re.finditer(r"£?(\d[\d,]*(?:\.\d+)?)\s*(k|m|bn)?\b", narration, re.I):
+        v = float(m.group(1).replace(",", "")) * {"k": 1e3, "m": 1e6, "bn": 1e9}.get((m.group(2) or "").lower(), 1)
+        out.append(v)
+    return out
+
+
 def _phrase(words: list[dict], i0: int, i1: int) -> bool:
     """A lone "one" or "a" ("one day", "a year") is a turn of phrase, not a figure to put on the page."""
     return i1 - i0 == 1 and str(words[i0].get("w", "")).strip(".,!?").lower() in ("one", "a")
@@ -169,7 +178,7 @@ def auto_cards(sc: dict) -> int:
     return added
 
 
-EMPHASIS = {"free", "never", "double", "everything"}
+EMPHASIS: set[str] = set()  # bare words on the highlighter read as a glitch to every reviewer; figures only
 UNITS = {"years", "year", "months", "month", "weeks", "week", "days", "day", "hours", "hour", "minutes", "minute"}
 
 
@@ -191,6 +200,8 @@ def key_words(sc: dict, seen: set | None = None) -> int:
     start, end = float(sc["start"]), float(sc["end"])
     shown = _shown_values(sc.get("props") or {})
     have = _card_values(sc.get("cues") or [])
+    narration = str(sc.get("narration") or "")
+    said = _script_values(narration) if narration.strip() else None  # a figure the script never says is a mishearing
     keys: list[dict] = []
     last = -1e9
     for i0, i1 in number_runs(words):
@@ -200,6 +211,8 @@ def key_words(sc: dict, seen: set | None = None) -> int:
         if _phrase(words, i0, i1):
             continue
         text, v = fig
+        if said is not None and not any(_same(v, sv) for sv in said):
+            continue  # the recording's transcript said a figure the script never did: a mishearing, not a key word
         if v < 13 and re.search(r"\b(years?|months?|weeks?|days?|times)$", text):
             continue  # "two years running", "three times": a count, not a figure to pop up
         t = round(float(words[i0]["s"]), 3)

@@ -89,10 +89,17 @@ export const captionLine = (text: string, max = 8): string => {
 /** A money word on the board: digits, a sum, a percentage, or a magnitude word (forty, hundred, million). Not "one"
  * or "half", which are usually not figures when spoken. */
 export const isMoneyWord = (word: string): boolean =>
-  /\d|[£$€%]/.test(word) || /^(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|billion|percent)$/.test(clean(word));
+  (/\d|[£$€%]/.test(word) && !/^(19|20)\d\d'?s?[,.:]?$/.test(word)) || /^(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|billion|percent)$/.test(clean(word));
 
 /** The line is about money going the wrong way: a fee, a loss, a debt, a cost. The figure in it is drawn red. */
+const fallsTo = (line: string): boolean => {
+  // "£1,000 → £30": a figure that arrives smaller than it left is a loss, whatever the words round it
+  const m = /£?([\d,]+)\s*(?:→|->)\s*£?([\d,]+)/.exec(line);
+  return !!m && Number(m[2].replace(/,/g, '')) < Number(m[1].replace(/,/g, ''));
+};
+
 export const isLoss = (line: string): boolean =>
+  fallsTo(line) ||
   /\b(fee|fees|lose|loses|lost|loss|losing|cost|costs|costing|debt|debts|tax(?!-free)|taxes|charge|charges|charged|interest|penalt\w*|miss\w*|gone|wasted|waste|drain\w*|eat\w*|eaten|minus|down|drop\w*|fall\w*|fell|overdraft|owe\w*|inflation|shrink\w*|burn\w*|spend\w*|spent|rent|loan|unemploy\w*|out of work|halved|lowest|barely|prices up|price rise\w*)\b/i.test(line) || /(^|\s)[−-]\d/.test(line);
 
 /**

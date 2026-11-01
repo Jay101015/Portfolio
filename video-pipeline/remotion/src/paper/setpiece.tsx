@@ -277,10 +277,12 @@ export const FootageCards: React.FC<{scene: Scene}> = ({scene}) => {
   const iconBoard = !vertical && board && !underLines; // a corner doodle top right: the column starts below it
   // a chart's lines and bars start low on the left: its cards go top-left, under the title, where the page is empty
   const chart = !vertical && scene.type === 'chart';
-  const left = underLines || chart;
+  // a drawing or a loop on the right half (any board, list, stat or recap): the cards sit top right, above it, two at a time
+  const rightArt = !vertical && !chart && scene.type !== 'broll' && ((!!scene.props.art && scene.props.art !== 'off') || !!scene.props.anim);
+  const left = (underLines && !rightArt) || chart;
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
-      <Column items={cues.slice(-(vertical ? 3 : underLines ? 2 : left ? 3 : iconBoard ? 3 : 4))} colX={(vertical ? 0.5 : chart ? 0.3 : underLines ? 0.25 : 0.74) * W} y0={(vertical ? 0.3 : chart ? 0.33 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H} step={(vertical ? 0.09 : underLines ? 0.1 : 0.118) * H}
+      <Column items={cues.slice(-(vertical ? 3 : rightArt ? 2 : underLines ? 2 : left ? 3 : iconBoard ? 3 : 4))} colX={(vertical ? 0.5 : chart ? 0.3 : rightArt ? 0.74 : underLines ? 0.25 : 0.74) * W} y0={(vertical ? 0.3 : chart ? 0.33 : rightArt ? 0.06 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H} step={(vertical ? 0.09 : underLines ? 0.1 : 0.118) * H}
         maxw={(vertical ? 0.8 : left ? 0.42 : 0.44) * W} tq={tq} k={k} left={left} vertical={vertical} W={W} H={H} />
     </AbsoluteFill>
   );

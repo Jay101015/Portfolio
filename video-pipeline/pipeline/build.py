@@ -709,7 +709,8 @@ def tidy_voice(project: str, audio: str, header: dict[str, str]) -> str:
     if n:
         print(f"voice: {n} patches of digital silence filled with the room's own tone")
     longest = float(header.get("pauses.longest", 0.7))
-    audio, gone, _ = tighten_pauses(audio, os.path.join(project, ".cache", "voice-tight.wav"), longest=longest)
+    ceiling = float(header.get("pauses.ceiling", -40))  # a take with breaths in its pauses: -36 lets the pause close over them
+    audio, gone, _ = tighten_pauses(audio, os.path.join(project, ".cache", "voice-tight.wav"), longest=longest, ceiling=ceiling)
     if gone:
         print(f"voice: pauses over {longest:.1f}s closed up to 0.4s ({gone:.1f}s of dead air taken out)")
     return audio
@@ -963,7 +964,7 @@ def main(argv: list[str] | None = None) -> int:
             paced = os.path.join(project, ".cache", "voice-paced.wav")
             os.makedirs(os.path.dirname(paced), exist_ok=True)
             insert_silences(audio, paced, silences)
-            audio = paced
+            audio, _ = fill_gated(paced, os.path.join(project, ".cache", "voice-paced-tone.wav"), tone_from=audio)  # room tone, not dead air, at every cut
             wav = al.to_wav16k(audio, os.path.join(project, ".cache", "voice-paced-16k.wav"))
             print(f"pace: {lead:.1f}s before each scene's first word, {hold:.1f}s after its last ({len(silences)} silences in the voice)")
         header = _header_lines(md)
