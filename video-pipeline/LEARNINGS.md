@@ -171,7 +171,7 @@ one change at a time where possible, so a result can be read.
 - Real numbers (Studio, first 2 days, published as "You'd Need £83,000 a Year..."): 122 impressions and still
   climbing, 8.2% click-through, 89% of views from the home feed, average view 2:30 of 7:38 (33%). Hook, stakes,
   footage by 0:08 and the title card only at 0:27; thumbnail one big figure ("7.6x your salary"), a drawn figure
-  and a house on white. Reviewers predicted retention 7 to 7.5, the house video 6 to 7: the order held.
+  and a house on white. The retention reviewer had scored it 7.5; the house video was built before the reviews.
 
 ### Animation: what moves and what does not (2026-10-30)
 - Jeffrey's verdict on the stop-motion character: "very choppy, not 5 seconds of legit animation". Pose swaps on twos
