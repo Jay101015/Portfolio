@@ -93,7 +93,7 @@ And this is what the boring pot looks like from the inside. An S&P 500 index fun
 [takeaway title="The number that settles it" n="4" of="4"]
 And the number I promised you at the start.
 
-[pie value="96%" label="of US companies since 1926 did no better than cash" sub="the other 4%, about 1,090 of 26,000, made all the gains" source="Bessembinder, Journal of Financial Economics, 2018" cards="ink:26,000 companies@26,000; green:4% made all the gains@4%"]
+[pie value="96%" label="of US companies: no better than cash" sub="since 1926; the other 4%, about 1,090 of 26,000, made all the gains" source="Bessembinder, Journal of Financial Economics, 2018" cards="ink:26,000 companies@26,000; green:4% made all the gains@4%"]
 A professor called Hendrik Bessembinder studied every US stock since 1926. 26,000 companies. 4% of them, about 1,090, made all of the market's gains. The other 96%, put together, did no better than cash. Most individual stocks lose money over their life.
 
 [text board="You can't guess the 4%. The index owns all of them." art=index-fund-basket art_at=r art_size=0.4 cards="ink:nobody can@Nobody"]

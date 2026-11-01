@@ -277,6 +277,12 @@ one change at a time where possible, so a result can be read.
   never drawn (the drawn phone never mounted the mark layer), a transcriber's "109 years" on the highlighter, the
   room dropping out at every cut, a five-second pause the closer could not see past his breaths. Each is a rule
   now (EDITOR.md).
+- Review: editor 6.5, animator 6, retention 7.5, director 6 (round 2). Round two's own finds: the pause closer had
+  turned three of his restarts into stammers (a restart cut now removes the half-said word), whisper stamped one
+  sentence on one instant so a list wrote ahead of the voice (a de-spike pass re-times such runs), and the new
+  top-right card column needed its own rules for bites, clippings, charts and pies. Open after round two: no set
+  piece, no watch-next clip in the 20-second outro, the chart on a linear axis (the £30 decade is a floor, not a
+  cliff), the cast mixed across drawings, the 1.3-second holdings clip held still, and every list the same frame.
 - Retention's best mark yet for an opening: number, counter-number, three promises, title by 0:33, the last promise
   paid off in the same words. Keep writing openings that way.
 - Ask for next time: the VUAG holdings page scrolled slowly for 10 s; app charts recorded in one slow 25-second

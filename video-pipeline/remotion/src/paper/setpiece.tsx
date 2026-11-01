@@ -283,7 +283,7 @@ export const FootageCards: React.FC<{scene: Scene}> = ({scene}) => {
   const left = (underLines && !rightArt) || chart;
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
-      <Column items={cues.slice(-(vertical ? 3 : rightArt || topRow || chart ? 2 : underLines ? 2 : left ? 3 : iconBoard ? 3 : 4))} colX={(vertical ? 0.5 : chart ? 0.66 : rightArt ? 0.74 : underLines ? 0.25 : 0.74) * W} y0={(vertical ? 0.3 : chart ? 0.14 : topRow ? 0.03 : rightArt ? 0.11 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H} step={(vertical ? 0.09 : underLines ? 0.1 : 0.118) * H}
+      <Column items={cues.slice(-(vertical ? 3 : rightArt || topRow || chart ? 2 : underLines ? 2 : left ? 3 : iconBoard ? 3 : 4))} colX={(vertical ? 0.5 : chart ? 0.66 : rightArt ? 0.74 : underLines ? 0.25 : 0.74) * W} y0={(vertical ? 0.3 : chart ? 0.21 : topRow ? 0.03 : rightArt ? 0.11 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H} step={(vertical ? 0.09 : underLines ? 0.1 : 0.118) * H}
         maxw={(vertical ? 0.8 : left ? 0.42 : 0.44) * W} tq={tq} k={k} left={left} vertical={vertical} W={W} H={H} />
     </AbsoluteFill>
   );
