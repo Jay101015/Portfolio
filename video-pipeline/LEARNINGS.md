@@ -283,6 +283,14 @@ one change at a time where possible, so a result can be read.
   top-right card column needed its own rules for bites, clippings, charts and pies. Open after round two: no set
   piece, no watch-next clip in the 20-second outro, the chart on a linear axis (the £30 decade is a floor, not a
   cliff), the cast mixed across drawings, the 1.3-second holdings clip held still, and every list the same frame.
+- Jeffrey's own notes on the sent cut: the audio slightly choppy and uneven, some drawings blurry and bald. Measured:
+  the 13 phone parts sat 6.4 dB apart (the final leveller is one gain, so the spread stayed); the pause closer joined
+  with 10 ms fades on cuts that could touch a word's tail; two record-button knocks near full scale, one the first
+  thing heard; about fifteen lip clicks at speech level in the pauses. Now: parts levelled to -23 LUFS before the join
+  (every 30 s window within 0.7 dB), 60 ms margins and a 25 ms crossfade at each cut, knocks in pauses zeroed and
+  filled with room tone, ffmpeg's adeclick over the take. Drawings: a 3 px minimum stroke, 0.5 on the page, and
+  figures whose hair is drawn in lines (a traced fill comes out bald). Editor's verdict on the pass: 7, levels and
+  joins resolved; animator's: 7, drawings resolved.
 - Retention's best mark yet for an opening: number, counter-number, three promises, title by 0:33, the last promise
   paid off in the same words. Keep writing openings that way.
 - Ask for next time: the VUAG holdings page scrolled slowly for 10 s; app charts recorded in one slow 25-second
