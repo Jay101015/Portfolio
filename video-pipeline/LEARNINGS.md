@@ -301,6 +301,28 @@ one change at a time where possible, so a result can be read.
 - Ask for next time: the VUAG holdings page scrolled slowly for 10 s; app charts recorded in one slow 25-second
   scroll with no taps; say the live number with its date so it never needs a headline.
 
+### Chasing winners: the four Shorts (2026-11-01)
+- Review: editor 7/6/6/6, animator 5/4/5/5, retention 7/5.5/7/6, director 5/4/7/5 (round 1); editor 8/7.5/6/6.5,
+  animator 7/7/6/7, retention 7.5/7/7/6, director 6/7/7/5 (round 2; Shorts 1 to 4). Round one's finds were the
+  vertical page itself, not the cuts: the renderer dropped every card on a drawn scene in a Short, the first frame
+  was bare paper with a sticker and the last a bare tail, captions sat on a list's rows and a pie's label, a phone
+  clip was cover-fitted so its price readout ran off the edge, the chart was a sixth of the page, and a 1.3 s clip
+  looped with jumps. Now in EDITOR.md as "A Short's page": bands for the sticker, the caption, the figure and the
+  cards; the first scene already into its board (0.8 s; 2.6 s for a stat, 3.6 s for a pie) and the last held; a
+  phone clip fitted 29% to 84% down with its marks; figures landing on their words (count-ups, written figures, a
+  chart's tips, a pie's small slice in green); a short clip slowed to 0.3x and held. Round two's finds: the one
+  transcript word that flipped a stat ("it is up" heard as "not"; the caption said the opposite), a ring on an
+  empty part of the holdings page, cards wanted through every beat of a long scene (a Short's lower band should
+  land one every 3 to 4 s), and the phone clip's foot under the Shorts title strip. Fixed and re-rendered without
+  a third review round.
+- Open, told to Jeffrey: the chart's linear axis (the £30 decade is a floor); the trap board's second line in one
+  go; the hook's money-flies loop runs out before "£1,000" is said; the hourglass idles once it has run (an
+  "again" cue); every inner cut still opens on a bare page for half a second (a head start on every scene, not
+  only the first); a card over a phone clip's rows; Sam three sizes across the set.
+- Ask for next time: a 5-second cold-open line per Short on the take; the figure in every sticker; the Sandisk
+  quote page and the Nvidia 2001-2002 fall as phone clips; a two-jars drawing (hype and boring); an "owns
+  everything" drawing; a baited-trap drawing; the holdings page as one slow 10 s scroll.
+
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage?
 2. Thumbnail: a face (Jeffrey) vs no face, once Canva thumbnails are in use.
