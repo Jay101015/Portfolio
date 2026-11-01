@@ -1018,9 +1018,9 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
   ) : null);
   const media = mediaAt(width, height);
   if (src && String(scene.props.phone ?? '') === 'on' && isVertical) {
-    // a Short: the phone's whole screen fitted to the frame's width, under the sticker and the caption band, its marks
-    // on it, the caption label on its lower right (the top of a screen recording is the app's own header)
-    const cw = width * 0.78;
+    // a Short: the phone's whole screen fitted between the caption band and the Shorts title strip (29% to 84% of the
+    // height: 72% of the width on a 1080x1480 recording), its marks on it, the caption label on its lower right
+    const cw = width * 0.72;
     const ch = cw * (Number(scene.props.h) > 0 && Number(scene.props.w) > 0 ? Number(scene.props.h) / Number(scene.props.w) : 1480 / 1080);
     const cx = (width - cw) / 2;
     const cy = height * 0.29;

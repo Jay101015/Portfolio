@@ -78,7 +78,7 @@ data: Boring pot = 2000:1091, 2001:961, 2002:749, 2003:964, 2004:1068, 2005:1121
 data: Hype pot:ink = 2000:1091, 2001:497, 2002:85, 2003:110, 2004:146, 2005:164, 2006:162, 2007:155, 2008:52, 2009:65, 2010:78, 2011:30, 2012:40, 2013:44, 2014:42, 2015:42, 2016:46, 2017:83, 2018:115, 2019:287, 2020:574, 2021:858, 2022:1199, 2023:1136, 2024:3080, 2025:7200
 Nine years of being right, almost in a row. Here is the hype pot at the end of 2025, after sitting at £30 in 2011: about £7,200. The boring pot: about £9,000. Nine straight years of picking the winner's follow-up, and it still has not caught up.
 
-[broll lib="nvda-max-chart-app" from=2 phone=on caption="Nvidia since 2018" marks="ink:note:sold in 2002 8,78@sold; ink:circle 80,70@2017" cards="red:−83% in 2002@83%; ink:never owned the climb until 2017@2017"]
+[broll lib="nvda-max-chart-app" from=2 phone=on caption="Nvidia since 2018" marks="ink:note:sold in 2002 8,78@sold; ink:circle 80,70@2017" cards="red:−83% in 2002@83%; ink:never owned the climb until 2017@never"]
 And look at what you had to sit through to get there. This is Nvidia's chart since 2018. The hype pot owned this stock in 2002, when it fell 83%, and sold it at the bottom, because the rules said buy the new winner. The hype pot never owned it on the way up until 2017.
 
 [stat value="nearly 400%" count=off label="Sandisk, last year's winner, in 2026 so far" sub="the hype pot is ahead, for the first time in 26 years" source="Yahoo Finance quote, 30 October 2026" art=sam-celebrating art_at=r art_size=0.5 cards="ink:October 2026@October; green:the hype pot is ahead@ahead; ink:first time in 26 years@26"]

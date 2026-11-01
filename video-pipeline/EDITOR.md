@@ -157,8 +157,9 @@ buttons: a Short's page is laid out in bands between them, and nothing sits on a
 - The caption: on a text or hook board, in the middle under the board's lines (44% down); on a stat, chart, pie,
   list or clip, high on a white pill under the sticker (22% down), above the figure, the title or the screen.
 - The figure, chart, pie, list and clip start at 29% down, under that caption band.
-- A phone clip is fitted to the frame's width (78%), the whole screen in view, its marks on it, the caption label
-  on its lower right; never cover-fitted (the app's price readout went off the edge).
+- A phone clip is fitted between the caption band and the title strip (29% to 84% down: 72% of the width on a
+  1080x1480 recording), the whole screen in view, its marks on it, the caption label on its lower right; never
+  cover-fitted (the app's price readout went off the edge).
 - Cards land in the band 74% down, right of centre (the drawing stands bottom left), two at a time: a Short's
   cards are what fills its lower half, so the storyboard's cards must render on every scene, not only on footage.
 - The first frame is already 0.8 s into the first board (ink on frame 0, never bare paper with a sticker) and the
