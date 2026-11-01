@@ -1,0 +1,40 @@
+{
+ "shorts": [
+  {
+   "name": "short-1",
+   "scenes": [
+    1,
+    10,
+    11
+   ],
+   "hook": "£1,000 to £30, chasing the hottest stock"
+  },
+  {
+   "name": "short-2",
+   "scenes": [
+    13,
+    14,
+    17
+   ],
+   "hook": "Hype pot vs boring pot, since 2000"
+  },
+  {
+   "name": "short-3",
+   "scenes": [
+    18,
+    19,
+    20
+   ],
+   "hook": "The hype pot is winning right now. That's the trap"
+  },
+  {
+   "name": "short-4",
+   "scenes": [
+    23,
+    24,
+    25
+   ],
+   "hook": "4% of companies made all the gains"
+  }
+ ]
+}
