@@ -291,6 +291,11 @@ one change at a time where possible, so a result can be read.
   filled with room tone, ffmpeg's adeclick over the take. Drawings: a 3 px minimum stroke, 0.5 on the page, and
   figures whose hair is drawn in lines (a traced fill comes out bald). Editor's verdict on the pass: 7, levels and
   joins resolved; animator's: 7, drawings resolved.
+- Jeffrey heard his smoke alarm in the sent cut: a low-battery chirp at 3.09 kHz, 100 to 300 ms, 22 times across
+  the take (as loud as -19 dBFS in a pause, masked inside words elsewhere). Found from its narrowness (13 dB above
+  the bands either side, which speech never holds for that long) and taken out with a gated band-stop
+  (pipeline/dechirp.py, now in the voice chain after the de-click); the sent video and the four Shorts were
+  patched the same way without a re-render (audio re-muxed, loudness unchanged at -14.5 LUFS).
 - Retention's best mark yet for an opening: number, counter-number, three promises, title by 0:33, the last promise
   paid off in the same words. Keep writing openings that way.
 - Ask for next time: the VUAG holdings page scrolled slowly for 10 s; app charts recorded in one slow 25-second

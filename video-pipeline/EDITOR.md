@@ -125,6 +125,10 @@ Tags for the script:
 - A recording sent in parts is levelled part by part before the join (each to -23 LUFS, linear gain): his 13 parts
   sat 6.4 dB apart and the final leveller, one even gain, cannot fix that. The pause closer keeps 60 ms either side
   of a cut and joins with a 25 ms crossfade; a 10 ms join on a cut that touched a word's tail read as chops.
+- A smoke alarm's low-battery chirp (a 3.1 kHz beep, 100 to 300 ms, once every 30 to 60 seconds; it came through
+  22 times on one take, in speech and in the pauses) is found and notched out of the take by pipeline/dechirp.py:
+  a band-stop at 2.85 to 3.35 kHz and at the harmonic, only inside a gated window round each chirp, so speech is
+  untouched. The build prints how many it took out and where. Still: change the battery before the next recording.
 - Traced drawings never render thinner than 3 px and sit at 0.5 of the page beside a board: at 0.4 with their
   natural line they read as fuzzy grey, and a figure whose hair was a fill in the source comes out bald, so pick
   figures whose hair is drawn in lines (phone-balance-drop, sam-thinking, maya-facepalm, maya-pleased).

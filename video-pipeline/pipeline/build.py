@@ -713,6 +713,11 @@ def tidy_voice(project: str, audio: str, header: dict[str, str]) -> str:
     if n:
         print(f"voice: {n} patches of digital silence filled with the room's own tone")
     audio = declick(audio, os.path.join(project, ".cache", "voice-declick.wav"))
+    from .dechirp import dechirp_file
+    chirps = dechirp_file(audio, os.path.join(project, ".cache", "voice-dechirp.wav"))
+    if chirps:
+        audio = os.path.join(project, ".cache", "voice-dechirp.wav")
+        print(f"voice: {len(chirps)} smoke-alarm chirps (a 3 kHz beep) notched out at " + ", ".join(f"{a:.0f}s" for a, _, _ in chirps))
     longest = float(header.get("pauses.longest", 0.7))
     ceiling = float(header.get("pauses.ceiling", -40))  # a take with breaths in its pauses: -36 lets the pause close over them
     audio, gone, _ = tighten_pauses(audio, os.path.join(project, ".cache", "voice-tight.wav"), longest=longest, ceiling=ceiling)
