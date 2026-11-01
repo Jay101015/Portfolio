@@ -17,7 +17,7 @@ If you had bought last year's hottest stock every single January since 2000, you
 [stat value="£9,000" label="£1,000 in the S&P 500, left alone since 2000" sub="its worst year-end: about £750" source="Slickcharts, dividends reinvested, to end 2025, in pounds at today's rate" anim=plant-grow art_at=r art_size=0.5]
 The same £1,000 in the S&P 500, left completely alone, is about £9,000 today. It never once dropped below £750.
 
-[text board="Every winner, and what it did next | The one year the hype paid off | The number that settles it" art=stock-chart-laptop art_at=r art_size=0.4]
+[text board="Every winner, and what it did next | The one year the hype paid off | The number that settles it" art=road-to-100k art_at=r art_size=0.4 cards="ink:year by year@year; green:the one year it paid off@spectacularly"]
 So I ran the whole race, year by year. I'll show you every year's winner and what it did next, the one year the hype paid off spectacularly, and at the end, the number from the biggest study ever done on this. It settles the argument.
 
 [title dur=2.4 kicker="The Everyday Investor" title="The hype pot vs the boring pot" subtitle="£1,000 each, since 2000"]
@@ -48,7 +48,7 @@ In 2000 the hottest stock was an energy trader called Dynegy, up more than 200%.
 [bite value="£1,000" lose="£830" label="Nvidia, the January after its best year" sub="gone in 12 months" source="2002, split-adjusted price" cards="ink:best stock of 2001@2001; red:−83%@83%"]
 Sit with that one. Nvidia, the company everyone is chasing today, was the best stock in the index in 2001. Buy it the January after, and you lose 83%. Being right about the company is not the same as being right about the price.
 
-[list title="2003 to 2011: eight more winners" art=commute-platform art_at=r art_size=0.4 cards="ink:up a bit, then flat@flat; red:−67% in the crash@67%; red:−61%@61%"]
+[list title="2003 to 2011: eight more winners" anim=clock art_at=r art_size=0.45 cards="ink:up a bit, then flat@flat; red:−67% in the crash@67%; red:−61%@61%"]
 - Avaya, Autodesk, Valero, Allegheny: up a bit, then flat
 - 2007's winner: National Oilwell Varco
 - January 2008: down 67% in the crash
@@ -73,7 +73,7 @@ Then the story turns, and this is the part the hype merchants will quote at you.
 - 2025: Palantir, up 135%
 From 2017 the hype pot gets lucky. Nvidia, the best stock of 2016, goes up another 81%. AMD wins two years running and the hype pot rides it up 148%, then 100%. Tesla, Devon Energy. Then Nvidia again, up 171% in 2024. Then Palantir, up 135% last year.
 
-[chart line title="Two pots, £1,000 each, since 2000" y="£" x="Year" draw=8 source="S&P 500 total return (Slickcharts); each winner's next-year return; in pounds at today's rate" cards="ink:£1,000 each, January 2000@Nine; red:hype pot: £30 in 2011@£30; ink:hype pot: £7,200@£7,200; green:boring pot: £9,000@£9,000; ink:nine years of winners, still behind@caught"]
+[chart line title="Two pots, £1,000 each, since 2000" y="£" x="" draw=8 source="S&P 500 total return (Slickcharts); each winner's next-year return; in pounds at today's rate" cards="ink:£1,000 each, January 2000@Nine; red:hype pot: £30 in 2011@£30; ink:hype pot: £7,200@£7,200; green:boring pot: £9,000@£9,000; ink:nine years of winners, still behind@caught"]
 data: Boring pot = 2000:1091, 2001:961, 2002:749, 2003:964, 2004:1068, 2005:1121, 2006:1298, 2007:1369, 2008:863, 2009:1091, 2010:1256, 2011:1283, 2012:1488, 2013:1969, 2014:2239, 2015:2270, 2016:2542, 2017:3096, 2018:2960, 2019:3893, 2020:4609, 2021:5933, 2022:4859, 2023:6136, 2024:7670, 2025:9000
 data: Hype pot:ink = 2000:1091, 2001:497, 2002:85, 2003:110, 2004:146, 2005:164, 2006:162, 2007:155, 2008:52, 2009:65, 2010:78, 2011:30, 2012:40, 2013:44, 2014:42, 2015:42, 2016:46, 2017:83, 2018:115, 2019:287, 2020:574, 2021:858, 2022:1199, 2023:1136, 2024:3080, 2025:7200
 Nine years of being right, almost in a row. Here is the hype pot at the end of 2025, after sitting at £30 in 2011: about £7,200. The boring pot: about £9,000. Nine straight years of picking the winner's follow-up, and it still has not caught up.

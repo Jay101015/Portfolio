@@ -120,8 +120,8 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
         for k in ("value", "label", "sub", "source", "from", "trend", "fact", "count", "countSeconds"):  # count=off: the figure is written, not counted up
             if k in a:
                 p[k] = a[k]
-        if "count" in a:
-            p["countSeconds"] = float(a["count"])
+        if "count" in a and str(a["count"]).lower() not in ("off", "no"):
+            p["countSeconds"] = float(a["count"])  # count=off is a flag (the figure is written, not counted up), not a length
     elif b.type == "list":
         p["items"] = b.items
         if "title" in a:
