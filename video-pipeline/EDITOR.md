@@ -149,6 +149,25 @@ plays with `brand.motion: on`). The sound effects in
 pipeline/sfx.py (a whoosh on cuts, a pop on cards, a scribble on writing, a ding on the number) are off: Jeffrey
 did not like them on the first cut. `sfx: on` in a script's header is the only thing that turns them on.
 
+## A Short's page (vertical)
+
+The phone's top 8% is its status bar and the Shorts header, the bottom 15% the title strip, the right 15% its
+buttons: a Short's page is laid out in bands between them, and nothing sits on a label or a row.
+- The hook sticker: 9% down, two lines if it must, for the first three seconds (the scroll-in moment), then smaller.
+- The caption: on a text or hook board, in the middle under the board's lines (44% down); on a stat, chart, pie,
+  list or clip, high on a white pill under the sticker (22% down), above the figure, the title or the screen.
+- The figure, chart, pie, list and clip start at 29% down, under that caption band.
+- A phone clip is fitted to the frame's width (78%), the whole screen in view, its marks on it, the caption label
+  on its lower right; never cover-fitted (the app's price readout went off the edge).
+- Cards land in the band 74% down, right of centre (the drawing stands bottom left), two at a time: a Short's
+  cards are what fills its lower half, so the storyboard's cards must render on every scene, not only on footage.
+- The first frame is already 0.8 s into the first board (ink on frame 0, never bare paper with a sticker) and the
+  last board holds to the file's end, so the loop runs payoff to hook.
+- A chart is a third of the height, draws in five seconds at most, and prints its tip figures only once drawn; a
+  pie leaves its sub-line to the cards. A clip shorter than half its scene plays slower and holds its last frame.
+- The sticker is a claim or a comparison with the figure in it ("Chase the hottest stock: £30. Do nothing:
+  £1,280"), never a label a cold viewer cannot place ("hype pot vs boring pot").
+
 ## The shape
 
 1. `[hook board="..." art="..."]` as the first scene, holding the first sentence or two. The hook is the attention
