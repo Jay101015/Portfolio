@@ -1,7 +1,8 @@
 import React from 'react';
 import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {Brand, Scene} from '../types';
-import {formatNum, parseValue, useLayout} from '../components/layout';
+import {findPhraseTime, formatNum, parseValue, useLayout} from '../components/layout';
+import {isLoss} from './phrase';
 import {Arrow, Ring, SketchEllipse, SketchPath, SketchRect, Underline, figureHeight, figureWidth} from './sketch';
 import {Write, writeFrames} from './write';
 import {Erase} from './erase';
@@ -173,7 +174,7 @@ export const PaperPie: React.FC<P> = ({scene, brand}) => {
   const label: string | undefined = scene.props.label;
   const share = Math.max(1, Math.min(99, pct(scene.props.value) ?? 25));
   const sub: string | undefined = scene.props.sub;
-  const r = (isVertical ? 0.16 : 0.3) * height;
+  const r = (isVertical ? 0.15 : 0.3) * height;
   const cx = r + 20 * u;
   const cy = r + 20 * u;
   const t0 = labelDone(label, fps);
@@ -188,6 +189,15 @@ export const PaperPie: React.FC<P> = ({scene, brand}) => {
   const numText = `${Math.round(share)}%`;
   const numDone = numAt + writeFrames(numText, fps, 12);
   const box = r * 2 + 40 * u;
+  // red only ever means a loss: the shaded share is red for a fee, a loss or a debt, navy otherwise
+  const red = isLoss(`${label ?? ''} ${sub ?? ''}`);
+  const shade = red ? brand.accent2 : brand.ink;
+  // the small slice: the rest of the circle, in green, with its own figure landing on the word that says it
+  const restText = `${Math.round(100 - share)}%`;
+  const restSaid = findPhraseTime(scene.words, restText);
+  const restAt = restSaid !== null ? Math.max(numDone, Math.round((restSaid - scene.start) * fps)) : null;
+  const restMid = (a1 + a0 + Math.PI * 2) / 2;
+  const rest = `M${cx},${cy} L${cx + r * Math.cos(a1)},${cy + r * Math.sin(a1)} A${r},${r} 0 ${share < 50 ? 1 : 0} 1 ${cx + r * Math.cos(a0)},${cy + r * Math.sin(a0)} Z`;
   return (
     <AbsoluteFill style={{justifyContent: isVertical ? 'flex-start' : 'center', padding: pad, paddingLeft: pad * 1.2, paddingTop: isVertical ? height * 0.29 : pad}}>
       <Label brand={brand} text={label} frame={frame} fps={fps} />
@@ -196,9 +206,15 @@ export const PaperPie: React.FC<P> = ({scene, brand}) => {
           <svg width={box} height={box} viewBox={`0 0 ${box} ${box}`} style={{position: 'absolute', inset: 0, overflow: 'visible'}}>
             <SketchEllipse cx={cx} cy={cy} w={r * 2} h={r * 2} win={circleWin} options={{stroke: brand.ink, strokeWidth: 5 * u, seed: 21 + scene.id, roughness: 0.7, curveStepCount: 24}} />
             {/* the wedge keeps the circle's centre and radius: barely rough, no bowing, so it sits inside the outline */}
-            <SketchPath d={wedge} win={sliceWin} options={{stroke: brand.accent2, strokeWidth: 4 * u, seed: 41 + scene.id, fill: brand.accent2, fillStyle: 'hachure', hachureGap: 16 * u, fillWeight: 3 * u, hachureAngle: -45, roughness: 0.4, bowing: 0, preserveVertices: true, disableMultiStroke: true}} />
+            <SketchPath d={wedge} win={sliceWin} options={{stroke: shade, strokeWidth: 4 * u, seed: 41 + scene.id, fill: shade, fillStyle: 'hachure', hachureGap: 16 * u, fillWeight: 3 * u, hachureAngle: -45, roughness: 0.4, bowing: 0, preserveVertices: true, disableMultiStroke: true}} />
+            {restAt !== null ? <SketchPath d={rest} win={[restAt, restAt + Math.round(fps * 0.5)]} options={{stroke: brand.accent, strokeWidth: 4 * u, seed: 43 + scene.id, fill: brand.accent, fillStyle: 'hachure', hachureGap: 10 * u, fillWeight: 3 * u, hachureAngle: 45, roughness: 0.4, bowing: 0, preserveVertices: true, disableMultiStroke: true}} /> : null}
           </svg>
-          <div style={{position: 'absolute', left: cx + Math.cos(mid) * r * (share > 18 ? 0.55 : 1.25) - 70 * u, top: cy + Math.sin(mid) * r * (share > 18 ? 0.55 : 1.25) - 50 * u, fontFamily: brand.display, fontSize: (isVertical ? 64 : 84) * u, color: share > 18 ? brand.ink : brand.accent2, visibility: frame >= numAt ? undefined : 'hidden'}}>
+          {restAt !== null ? (
+            <div style={{position: 'absolute', left: cx + Math.cos(restMid) * r * 1.2 - 40 * u, top: cy + Math.sin(restMid) * r * 1.2 - 50 * u, fontFamily: brand.display, fontSize: (isVertical ? 64 : 84) * u, color: brand.accent, visibility: frame >= restAt ? undefined : 'hidden'}}>
+              <Write text={restText} frame={frame} fps={fps} start={restAt} cps={12} />
+            </div>
+          ) : null}
+          <div style={{position: 'absolute', left: cx + Math.cos(mid) * r * (share > 18 ? 0.55 : 1.25) - 70 * u, top: cy + Math.sin(mid) * r * (share > 18 ? 0.55 : 1.25) - 50 * u, fontFamily: brand.display, fontSize: (isVertical ? 64 : 84) * u, color: share > 18 ? brand.ink : shade, visibility: frame >= numAt ? undefined : 'hidden'}}>
             <Write text={numText} frame={frame} fps={fps} start={numAt} cps={12} />
           </div>
         </div>

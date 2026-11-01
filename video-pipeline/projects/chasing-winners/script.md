@@ -11,7 +11,7 @@ pauses.ceiling: -36
 slug: chasing-winners
 topic: £1,000 in the S&P 500 left alone since 2000, against £1,000 that buys each year's best S&P 500 stock the January after it won; why chasing hype loses and the boring way wins, UK investor
 
-[hook board="Buy the hottest stock every year: £1,000 → £30" anim=money-flies art_at=r art_size=0.5 cards="red:£30 by 2011@£30"]
+[hook board="Buy the hottest stock every year: £1,000 → £30" anim=money-flies art_at=r art_size=0.6 cards="red:£30 by 2011@£30"]
 If you had bought last year's hottest stock every single January since 2000, your £1,000 would have been worth about £30 by 2011.
 
 [stat value="£9,000" label="£1,000 in the S&P 500, left alone since 2000" sub="its worst year-end: about £750" source="Slickcharts, dividends reinvested, to end 2025, in pounds at today's rate" anim=plant-grow art_at=r art_size=0.5]
@@ -37,7 +37,7 @@ the one in every headline, and holds it for 12 months. Then it sells and buys th
 [takeaway title="The lost decade" n="2" of="4"]
 Now the race. And the first 12 years are brutal.
 
-[list title="2000 to 2002: the first two buys" art=phone-balance-drop art_at=r art_size=0.5 cards="red:−54%@54%; red:−83%@83%"]
+[list title="2000 to 2002: the first two buys" art=phone-balance-drop art_at=r art_size=0.5 cards="green:up 200%@200%; red:−54%@54%; green:up 308%@308%; red:−83%@83%"]
 - 2000: Dynegy, up over 200%
 - January 2001: it fell 54%
 - 2001: Nvidia, up 308%
@@ -45,7 +45,7 @@ Now the race. And the first 12 years are brutal.
 - Two years in: £1,000 → £85
 In 2000 the hottest stock was an energy trader called Dynegy, up more than 200%. The hype pot bought it in January 2001, and it fell 54%. In 2001 the winner was Nvidia, up 308%. The hype pot bought that, and in 2002 it lost 83%. Two years in, the £1,000 is £85.
 
-[bite value="£1,000" lose="£830" label="Nvidia, the January after its best year" sub="gone in 12 months" source="2002, split-adjusted price" cards="ink:best stock of 2001@2001; red:−83%@83%"]
+[bite value="£1,000" lose="£830" label="Nvidia, the January after its best year" sub="gone in 12 months" source="2002, split-adjusted price" cards="ink:best stock of 2001@Nvidia; ink:everyone is chasing it today@today; red:−83%@83%; ink:right about the company@company; ink:not the same as the price@price"]
 Sit with that one. Nvidia, the company everyone is chasing today, was the best stock in the index in 2001. Buy it the January after, and you lose 83%. Being right about the company is not the same as being right about the price.
 
 [list title="2003 to 2011: eight more winners" anim=clock art_at=r art_size=0.45 cards="ink:up a bit, then flat@flat; red:−67% in the crash@67%; red:−61%@61%"]
@@ -81,10 +81,10 @@ Nine years of being right, almost in a row. Here is the hype pot at the end of 2
 [broll lib="nvda-max-chart-app" from=2 phone=on caption="Nvidia since 2018" marks="ink:note:sold in 2002 8,78@sold; ink:circle 80,70@2017" cards="red:−83% in 2002@83%; ink:never owned the climb until 2017@2017"]
 And look at what you had to sit through to get there. This is Nvidia's chart since 2018. The hype pot owned this stock in 2002, when it fell 83%, and sold it at the bottom, because the rules said buy the new winner. The hype pot never owned it on the way up until 2017.
 
-[stat value="nearly 400%" count=off label="Sandisk, last year's winner, in 2026 so far" sub="the hype pot is ahead, for the first time in 26 years" source="Yahoo Finance quote, 30 October 2026" art=sam-celebrating art_at=r art_size=0.5 cards="ink:ahead for the first time in 26 years@26"]
+[stat value="nearly 400%" count=off label="Sandisk, last year's winner, in 2026 so far" sub="the hype pot is ahead, for the first time in 26 years" source="Yahoo Finance quote, 30 October 2026" art=sam-celebrating art_at=r art_size=0.5 cards="ink:October 2026@October; green:the hype pot is ahead@ahead; ink:first time in 26 years@26"]
 And this year? Last year's winner was Sandisk, and it is up nearly 400% so far. So right now, in October 2026, the hype pot is ahead for the first time in 26 years.
 
-[text wrong="Chasing works!" board="That's the trap | £1,000 → £30, a −83% stock, a decade of nothing | Nobody does that" anim=hourglass art_at=r art_size=0.45 cards="red:£30@£30; red:−83%@83%; ink:a decade@decade"]
+[text wrong="Chasing works!" board="That's the trap | £1,000 → £30, a −83% stock, a decade of nothing | Nobody does that" anim=hourglass art_at=r art_size=0.45 cards="ink:it always looks about to work@looks; red:£30@£30; red:−83%@83%; ink:a decade@decade"]
 That is the trap. It always looks like it is about to work. But to be here, you had to watch £1,000 become £30, hold a stock that lost 83%, sell it, and never once flinch for a decade. Nobody does that.
 
 [broll lib="vuag-max-chart-app" phone=on caption="The boring pot: an S&P 500 fund since 2020" marks="green:circle 85,52@130%; ink:note:nobody touched it 8,75@Nothing" cards="ink:from the inside@inside; ink:bought in 2020, left alone@alone; green:+130% since the start@130%"]
@@ -93,13 +93,13 @@ And this is what the boring pot looks like from the inside. An S&P 500 index fun
 [takeaway title="The number that settles it" n="4" of="4"]
 And the number I promised you at the start.
 
-[pie value="96%" label="of US companies: no better than cash" sub="since 1926; the other 4%, about 1,090 of 26,000, made all the gains" source="Bessembinder, Journal of Financial Economics, 2018" cards="ink:26,000 companies@26,000; green:4% made all the gains@4%"]
+[pie value="96%" label="of US companies: no better than cash" sub="since 1926; the other 4%, about 1,090 of 26,000, made all the gains" source="Bessembinder, Journal of Financial Economics, 2018" cards="ink:26,000 companies@26,000; green:4% made all the gains@4%; ink:about 1,090 companies@1,090; ink:the other 96%: no better than cash@96%; red:most stocks lose money@lose"]
 A professor called Hendrik Bessembinder studied every US stock since 1926. 26,000 companies. 4% of them, about 1,090, made all of the market's gains. The other 96%, put together, did no better than cash. Most individual stocks lose money over their life.
 
 [text board="You can't guess the 4%. The index owns all of them." art=index-fund-basket art_at=r art_size=0.5 cards="ink:nobody can@Nobody"]
 You cannot guess which 4%. Nobody can.
 
-[broll lib="vuag-holdings-app" phone=on caption="An index fund's top holdings" marks="ink:circle 50,30@all" cards="green:owns every winner, automatically@automatically"]
+[broll lib="vuag-holdings-app" phone=on caption="An index fund's top holdings" marks="green:note:owns every winner, automatically 34,62@automatically; ink:circle 27,37@Nvidia; ink:note:bought 2001, never sold 45,46@never"]
 But an index fund owns all of them, automatically, and it bought Nvidia in 2001 and never sold.
 
 [list title="The boring way, in four lines" anim=isa-shield art_at=r art_size=0.45 cards="green:tax-free in an ISA@ISA"]

@@ -181,18 +181,20 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
   // the count-up ends as the figure is said (scene.punch, from the build), not seconds before it
   const countTo = scene.punch !== undefined && scene.start >= 0 ? Math.round((scene.punch - scene.start) * fps) : null; // a Short's opening stat (start < 0) counts at once
   const numStart0 = brand.board ? labelDone + 2 : 6;
-  const numStart = countTo !== null && brand.board && !!parsed && String(scene.props.count ?? 'on') !== 'off' ? Math.max(numStart0, countTo - Math.round(fps * Math.min(1.4, Math.max(0.5, Number(scene.props.countSeconds ?? 0.9))))) : numStart0;
   // on the board the figure counts up to its value (count=off writes it with the marker instead)
   const counting = brand.board && !!parsed && String(scene.props.count ?? 'on') !== 'off';
   const countFrames = Math.round(fps * Math.min(1.4, Math.max(0.5, Number(scene.props.countSeconds ?? 0.9))));
-  const p = brand.board && !counting ? 1 : ease(frame, numStart, numStart + (counting ? countFrames : fps * countSec));
-  const display = parsed ? `${parsed.prefix}${formatNum(from + (parsed.num - from) * p, parsed.decimals, parsed.grouped || parsed.num >= 1000)}${parsed.suffix}` : raw;
   const finalText = parsed ? `${parsed.prefix}${formatNum(parsed.num, parsed.decimals, parsed.grouped || parsed.num >= 1000)}${parsed.suffix}` : raw;
   const s = pop(frame, fps, 3, 13);
   const digits = finalText.length;
   const size = (isVertical ? 190 : 300) * u * (digits > 9 ? 0.7 : digits > 7 ? 0.85 : 1);
-  const numCps = fitCps(finalText, fps, numStart, 9, total, 0.65);
+  const numCps = fitCps(finalText, fps, numStart0, 9, total, 0.65);
+  // the figure lands on its word: a count-up ends there, a written figure (count=off) finishes writing there
+  const writeLen = brand.board && !counting ? doneAt(brand, finalText, fps, 0, 3, numCps) : 0;
+  const numStart = countTo !== null && brand.board && !!parsed ? Math.max(numStart0, countTo - (counting ? countFrames : writeLen)) : numStart0;
   const numDone = counting ? numStart + countFrames : brand.board ? doneAt(brand, finalText, fps, numStart, 3, numCps) : 8 + fps * countSec * 0.6;
+  const p = brand.board && !counting ? 1 : ease(frame, numStart, numStart + (counting ? countFrames : fps * countSec));
+  const display = parsed ? `${parsed.prefix}${formatNum(from + (parsed.num - from) * p, parsed.decimals, parsed.grouped || parsed.num >= 1000)}${parsed.suffix}` : raw;
   const ul = ease(frame, numDone, numDone + fps * 0.5);
   const noteStart = brand.board ? numDone + Math.round(fps * 0.3) : 20;
   const note = brand.board ? lin(frame, noteStart, noteStart + 8) : fadeIn(frame, 20, 10);
@@ -679,6 +681,11 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
   const colors = [brand.accent, brand.ink, brand.blue ?? '#3b5bdb', brand.note ?? brand.muted];
   const named: Record<string, string> = {ink: brand.ink, green: brand.accent, red: brand.accent2, blue: brand.blue ?? '#3b5bdb', note: brand.note ?? brand.muted};
   const drawSec = Number(scene.props.drawSeconds) > 0 ? Number(scene.props.drawSeconds) : 2.2;
+  // a Short: a line's end figure prints when it is said ("about £9,000"), else once the line is drawn
+  const tipAt = (label: string) => {
+    const said = findPhraseTime(scene.words, label);
+    return said !== null ? Math.round((said - scene.start) * fps) : 0;
+  };
   const drawFrames = Math.round(fps * (isVertical ? Math.min(drawSec, 5) : drawSec)); // a Short has no time for an eight-second draw
   const titleDone = title ? doneAt(brand, title, fps, 4, 2, 24) : 0;
   const axesAt = brand.board ? titleDone + 2 : 2;
@@ -732,7 +739,7 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
             <g key={i} visibility={brand.board && reveal <= 0 ? 'hidden' : undefined}>
               <SketchPath d={d} win={brand.board ? [lineAt, lineAt + drawFrames] : [10, 10 + drawFrames]} easeOut={!brand.board} options={{stroke: c, strokeWidth: 6 * u, roughness: 1.1, bowing: 0.6, seed: 60 + i}} />
               <circle cx={cx} cy={cy} r={9 * u} fill={c} />
-              {!isVertical || reveal >= 1 ? <text x={cx + 18 * u} y={cy + 12 * u} fontFamily={hand(brand)} fontSize={(isVertical ? 48 : 38) * u} fontWeight={700} fill={c}>{yLab(vNow)}</text> : null}
+              {!isVertical || (reveal >= 1 && frame >= tipAt(yLab(vNow))) ? <text x={cx + 18 * u} y={cy + 12 * u} fontFamily={hand(brand)} fontSize={(isVertical ? 48 : 38) * u} fontWeight={700} fill={c}>{yLab(vNow)}</text> : null}
               {s.name ? <text x={left + 10 * u + i * 300 * u} y={28 * u} fontFamily={hand(brand)} fontSize={(isVertical ? 42 : 34) * u} fill={c} {...labelWipe(lineAt)}>— {s.name}</text> : null}
             </g>
           );
