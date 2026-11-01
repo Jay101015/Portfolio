@@ -179,7 +179,7 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
   const labelCps = label ? fitCps(label, fps, 0, 34, total, 0.3) : 34;
   const labelDone = label ? doneAt(brand, label, fps, 0, 2, labelCps) : 0;
   // the count-up ends as the figure is said (scene.punch, from the build), not seconds before it
-  const countTo = scene.punch !== undefined ? Math.round((scene.punch - scene.start) * fps) : null;
+  const countTo = scene.punch !== undefined && scene.start >= 0 ? Math.round((scene.punch - scene.start) * fps) : null; // a Short's opening stat (start < 0) counts at once
   const numStart0 = brand.board ? labelDone + 2 : 6;
   const numStart = countTo !== null && brand.board && !!parsed && String(scene.props.count ?? 'on') !== 'off' ? Math.max(numStart0, countTo - Math.round(fps * Math.min(1.4, Math.max(0.5, Number(scene.props.countSeconds ?? 0.9))))) : numStart0;
   // on the board the figure counts up to its value (count=off writes it with the marker instead)

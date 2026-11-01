@@ -168,6 +168,12 @@ def plan_scene_shorts(sb: dict[str, Any], want: int = 3) -> list[dict[str, Any]]
 
 
 FIRST_INK = 0.8  # seconds the first scene is already into its drawing on a Short's first frame
+# a stat, pie or chart writes its label first and its figure after: it needs a longer head start to show the figure
+FIRST_INK_BY_TYPE = {"stat": 2.6, "pie": 3.6, "chart": 3.0, "bite": 2.6}
+
+
+def first_ink(scene_type: str) -> float:
+    return FIRST_INK_BY_TYPE.get(scene_type, FIRST_INK)
 
 
 def cut_short(sb: dict[str, Any], scene_ids: list[int], hook: str | None = None, name: str = "short-1", lead: float = 0.4, tail: float = 0.8) -> tuple[dict[str, Any], list[tuple[float, float]]]:
@@ -196,7 +202,7 @@ def cut_short(sb: dict[str, Any], scene_ids: list[int], hook: str | None = None,
     # the picture runs from the first frame to the last: the first scene is already 0.8 s in when the file starts, so
     # its first frame carries ink, and the last holds through the tail (a blank page at either end is what a scroller
     # sees first, and what the loop lands on)
-    keep[0]["start"] = -FIRST_INK
+    keep[0]["start"] = -first_ink(keep[0]["type"])
     keep[-1]["end"] = round(t + tail, 3)
     if keep[0]["type"] == "set":
         keep[0]["props"].pop("walk", None)
@@ -540,7 +546,7 @@ def cut_spans(sb: dict[str, Any], spans: list[list[float]], hook: str | None = N
     # the picture runs from the first frame to the last: the first scene is already 0.8 s in when the file starts, so
     # its first frame carries ink, and the last holds through the tail (a blank page at either end is what a scroller
     # sees first, and what the loop lands on); a Short that opens on a set piece opens with him already in place
-    keep[0]["start"] = -FIRST_INK
+    keep[0]["start"] = -first_ink(keep[0]["type"])
     keep[-1]["end"] = round(t + tail, 3)
     if keep[0]["type"] == "set":
         keep[0]["props"].pop("walk", None)
