@@ -1,0 +1,4 @@
+Which stock would you have chased in 2000? Be honest.
+
+The year-by-year table (winner, its gain, what it did the year after):
+2000 Dynegy +200% → −54% | 2001 Nvidia +308% → −83% | 2003 Avaya +428% → +33% | 2004 Autodesk +209% → +12% | 2005 Valero +128% → −1% | 2006 Allegheny +151% → −5% | 2007 National Oilwell Varco +140% → −67% | 2009 XL +395% → +19% | 2010 Netflix +219% → −61% | 2011 Cabot Oil & Gas +102% → +31% | 2012 PulteGroup +188% → +12% | 2013 Netflix +298% → −7% | 2014 Southwest +125% → +2% | 2015 Netflix +134% → +8% | 2016 Nvidia +224% → +81% | 2017 NRG +132% → +39% | 2018 AMD +80% → +148% | 2019 AMD +148% → +100% | 2020 Tesla +743% → +50% | 2021 Devon +179% → +40% | 2022 Occidental +117% → −5% | 2023 Nvidia +239% → +171% | 2024 Palantir +341% → +135% | 2025 Sandisk +559% → +385% so far.
