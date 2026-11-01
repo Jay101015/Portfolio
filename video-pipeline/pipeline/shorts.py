@@ -167,6 +167,9 @@ def plan_scene_shorts(sb: dict[str, Any], want: int = 3) -> list[dict[str, Any]]
     return picked
 
 
+FIRST_INK = 0.8  # seconds the first scene is already into its drawing on a Short's first frame
+
+
 def cut_short(sb: dict[str, Any], scene_ids: list[int], hook: str | None = None, name: str = "short-1", lead: float = 0.4, tail: float = 0.8) -> tuple[dict[str, Any], list[tuple[float, float]]]:
     """A storyboard of just `scene_ids`, re-timed to start at `lead`, captions on, the hook on top. Also the spans of
     the original voiceover (start, end) that make up the short, in order, so the audio can be cut to match."""
@@ -190,6 +193,16 @@ def cut_short(sb: dict[str, Any], scene_ids: list[int], hook: str | None = None,
         sc["end"] = round(e0 + shift, 3)
         spans.append((s0, e0))
         t = sc["end"]
+    # the picture runs from the first frame to the last: the first scene is already 0.8 s in when the file starts, so
+    # its first frame carries ink, and the last holds through the tail (a blank page at either end is what a scroller
+    # sees first, and what the loop lands on)
+    keep[0]["start"] = -FIRST_INK
+    keep[-1]["end"] = round(t + tail, 3)
+    if keep[0]["type"] == "set":
+        keep[0]["props"].pop("walk", None)
+    for c in keep:
+        if c["type"] == "set":
+            c["props"]["leave"] = "no"
     out["scenes"] = keep
     out["durationSec"] = round(t + tail, 3)
     out["captions"] = True
@@ -524,10 +537,10 @@ def cut_spans(sb: dict[str, Any], spans: list[list[float]], hook: str | None = N
             if hit:
                 cues.append(dict(cue, t=round(max(hit[0], cue["t"]) + hit[1], 3)))
         c["cues"] = cues
-    # the picture runs from the first frame to the last: the first scene starts under the voice's lead-in and the
-    # last holds through the tail (a blank page there is what a scroller sees first, and what the loop lands on);
-    # a Short that opens on a set piece opens with him already in place, not walking in
-    keep[0]["start"] = 0.0
+    # the picture runs from the first frame to the last: the first scene is already 0.8 s in when the file starts, so
+    # its first frame carries ink, and the last holds through the tail (a blank page at either end is what a scroller
+    # sees first, and what the loop lands on); a Short that opens on a set piece opens with him already in place
+    keep[0]["start"] = -FIRST_INK
     keep[-1]["end"] = round(t + tail, 3)
     if keep[0]["type"] == "set":
         keep[0]["props"].pop("walk", None)

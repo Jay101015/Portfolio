@@ -364,7 +364,7 @@ def fit_clip(sc: dict, path: str) -> list[str]:
     # Footage the finder fetched (a search= tag and no from= of its own) opens past the first
     # fifteen percent of the file, so a found film does not play its title cards.
     found = p.get("from") is None and bool(p.get("search"))
-    head = dur * 0.15 if found else 0.0  # where the slowed clip starts: past a found film's titles
+    head = max(dur * 0.15 if found else 0.0, start)  # where the slowed clip starts: past a found film's titles, or from=
     if dur - margin - head < scene_len and (dur - margin - head) / scene_len >= 0.5:
         # too short from where it was asked to start: the whole clip, played slower to fill the scene (down to half
         # speed, which reads as a slow, deliberate shot; a loop shows as a freeze and a jump back to an earlier frame)
@@ -373,11 +373,14 @@ def fit_clip(sc: dict, path: str) -> list[str]:
         p.pop("loop", None)
         notes.append(f"scene {sc['id']}: '{os.path.basename(path)}' is {dur:.1f}s for a {scene_len:.1f}s scene{f' from {start:g}s' if start else ''}; it plays from the start at {p['rate']:.2f}x speed")
     elif dur - margin < scene_len:
+        # under half the scene: played at no less than 0.3x and then held on its last frame (a loop shows as a jump back)
         if found:
             start = dur * 0.15
         p["from"] = round(min(start, max(0.0, dur - margin - 1.0)), 2)
-        p["loop"] = True
-        notes.append(f"WARNING: scene {sc['id']}: '{os.path.basename(path)}' is {dur:.1f}s, under half the scene ({scene_len:.1f}s); it loops, which shows. Use a longer clip or split the scene")
+        p["rate"] = round(max(0.3, (dur - margin - p["from"]) / scene_len), 3)
+        p["hold"] = True
+        p.pop("loop", None)
+        notes.append(f"WARNING: scene {sc['id']}: '{os.path.basename(path)}' is {dur:.1f}s, under half the scene ({scene_len:.1f}s); it plays at {p['rate']:.2f}x and holds its last frame. Use a longer clip or split the scene")
     else:
         if found:
             start = min(dur * 0.15, dur - margin - scene_len)

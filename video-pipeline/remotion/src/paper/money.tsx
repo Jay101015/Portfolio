@@ -71,7 +71,7 @@ export const PaperBite: React.FC<P> = ({scene, brand}) => {
   const soonest = valueAt + writeFrames(String(scene.props.value ?? ''), fps, 12) + Math.round(fps * 0.4);
   // the bite waits for its number to be said: the slice is taken and the lost figure written so that the figure is
   // on the page as the word lands (scene.punch), not seconds before it; with no punch it runs on its own clock
-  const saidAt = scene.punch != null ? Math.round((scene.punch - scene.start) * fps) - 6 - writeFrames(loseText, fps, 12) - 4 - Math.round(fps * 0.8) : null;
+  const saidAt = scene.punch != null ? Math.round((scene.punch - scene.start) * fps) - Math.round(fps * 0.8) : null;
   const sliceAt = saidAt != null && saidAt > soonest ? saidAt : soonest;
   const sliceWin: [number, number] = [sliceAt, sliceAt + Math.round(fps * 0.8)];
   const loseAt = sliceWin[1] + 4;
@@ -173,7 +173,7 @@ export const PaperPie: React.FC<P> = ({scene, brand}) => {
   const label: string | undefined = scene.props.label;
   const share = Math.max(1, Math.min(99, pct(scene.props.value) ?? 25));
   const sub: string | undefined = scene.props.sub;
-  const r = (isVertical ? 0.22 : 0.3) * height;
+  const r = (isVertical ? 0.16 : 0.3) * height;
   const cx = r + 20 * u;
   const cy = r + 20 * u;
   const t0 = labelDone(label, fps);
@@ -189,7 +189,7 @@ export const PaperPie: React.FC<P> = ({scene, brand}) => {
   const numDone = numAt + writeFrames(numText, fps, 12);
   const box = r * 2 + 40 * u;
   return (
-    <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.2}}>
+    <AbsoluteFill style={{justifyContent: isVertical ? 'flex-start' : 'center', padding: pad, paddingLeft: pad * 1.2, paddingTop: isVertical ? height * 0.29 : pad}}>
       <Label brand={brand} text={label} frame={frame} fps={fps} />
       <div style={{display: 'flex', alignItems: 'center', gap: 60 * u, flexWrap: isVertical ? 'wrap' : 'nowrap'}}>
         <div style={{position: 'relative', width: box, height: box}}>
@@ -202,7 +202,7 @@ export const PaperPie: React.FC<P> = ({scene, brand}) => {
             <Write text={numText} frame={frame} fps={fps} start={numAt} cps={12} />
           </div>
         </div>
-        {sub ? (
+        {sub && !(isVertical && ((scene.cues ?? []) as unknown as {do?: string}[]).some((c) => c.do === 'card')) ? (
           <div style={{fontFamily: hand(brand), fontSize: 56 * u, lineHeight: 1.15, color: noteColor(brand), transform: 'rotate(-2deg)', maxWidth: isVertical ? '100%' : width * 0.34}}>
             <Write text={sub} frame={frame} fps={fps} start={numDone + 6} cps={30} color={noteColor(brand)} />
           </div>

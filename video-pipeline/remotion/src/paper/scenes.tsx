@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {AbsoluteFill, Easing, Img, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Easing, Freeze, Img, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import {Check, X} from 'lucide-react';
 import type {Brand, Scene, Word} from '../types';
 import {compactNum, findPhraseTime, formatNum, parseValue, useLayout} from '../components/layout';
@@ -178,7 +178,10 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
   const total = Math.max(1, Math.round((scene.end - scene.start) * fps)); // a one-second stat writes its number fast
   const labelCps = label ? fitCps(label, fps, 0, 34, total, 0.3) : 34;
   const labelDone = label ? doneAt(brand, label, fps, 0, 2, labelCps) : 0;
-  const numStart = brand.board ? labelDone + 2 : 6;
+  // the count-up ends as the figure is said (scene.punch, from the build), not seconds before it
+  const countTo = scene.punch !== undefined ? Math.round((scene.punch - scene.start) * fps) : null;
+  const numStart0 = brand.board ? labelDone + 2 : 6;
+  const numStart = countTo !== null && brand.board && !!parsed && String(scene.props.count ?? 'on') !== 'off' ? Math.max(numStart0, countTo - Math.round(fps * Math.min(1.4, Math.max(0.5, Number(scene.props.countSeconds ?? 0.9))))) : numStart0;
   // on the board the figure counts up to its value (count=off writes it with the marker instead)
   const counting = brand.board && !!parsed && String(scene.props.count ?? 'on') !== 'off';
   const countFrames = Math.round(fps * Math.min(1.4, Math.max(0.5, Number(scene.props.countSeconds ?? 0.9))));
@@ -200,7 +203,7 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
   // the ring round the figure lands on the word that says it (scene.punch, from the build), once it is written
   const ringAt = scene.punch !== undefined ? Math.max(numDone, Math.round((scene.punch - scene.start) * fps)) : null;
   return (
-    <AbsoluteFill style={{justifyContent: isVertical ? 'flex-start' : 'center', padding: pad, paddingLeft: pad * 1.2, paddingTop: isVertical ? height * 0.24 : pad}}>
+    <AbsoluteFill style={{justifyContent: isVertical ? 'flex-start' : 'center', padding: pad, paddingLeft: pad * 1.2, paddingTop: isVertical ? height * 0.29 : pad}}>
       {label ? (
         <div style={{fontFamily: hand(brand), fontSize: 60 * u, color: noteColor(brand), transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8), marginBottom: 4 * u}}>
           {brand.board ? <Write text={label} frame={frame} fps={fps} start={0} cps={labelCps} color={noteColor(brand)} /> : label}
@@ -341,7 +344,7 @@ export const PaperText: React.FC<P> = ({scene, brand}) => {
     </div>
   );
   return (
-    <AbsoluteFill style={{justifyContent: isVertical && big ? 'flex-start' : 'center', padding: pad, paddingLeft: pad * 1.2, paddingTop: isVertical && big ? 300 * u : pad}}>
+    <AbsoluteFill style={{justifyContent: isVertical && big ? 'flex-start' : 'center', padding: pad, paddingLeft: pad * 1.2, paddingTop: isVertical && big ? height * 0.2 : pad}}>
       {head}
       <div style={{position: 'relative', width: boxW, height: boxH}}>
         {wrong ? (
@@ -439,7 +442,7 @@ const ClipCard: React.FC<{src: string; props: Record<string, any>; frame: number
 export const PaperHook: React.FC<P> = ({scene, brand}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const {u, pad, isVertical, width} = useLayout();
+  const {u, pad, isVertical, width, height} = useLayout();
   const line: string = scene.props.board ? String(scene.props.board).split('|')[0].trim() : captionLine(scene.narration, 9);
   // a drawing beside the hook (`art=payday`): the picture has the right (or, vertical, the band under the words)
   const art = scene.props.art && isTraced(String(scene.props.art)) ? String(scene.props.art) : undefined;
@@ -454,7 +457,7 @@ export const PaperHook: React.FC<P> = ({scene, brand}) => {
   const w = Math.min(colW, Math.max(360 * u, line.length * (beside ? 36 : 44) * u));
   const size = (isVertical ? 700 : 760) * u;
   return (
-    <AbsoluteFill style={{padding: pad, justifyContent: beside && isVertical ? 'flex-start' : 'center', alignItems: beside && !isVertical ? 'flex-start' : 'center', paddingTop: beside && isVertical ? 300 * u : pad}}>
+    <AbsoluteFill style={{padding: pad, justifyContent: beside && isVertical ? 'flex-start' : 'center', alignItems: beside && !isVertical ? 'flex-start' : 'center', paddingTop: beside && isVertical ? height * 0.2 : pad}}>
       <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 92 : beside ? 100 : 118) * u, lineHeight: 1.1, color: brand.ink, textAlign: beside && !isVertical ? 'left' : 'center', maxWidth: beside && !isVertical ? colW : '92%'}}>
         <Write text={line} frame={frame} fps={fps} start={at} cps={cps} tint={moneyTint(line, brand.accent, brand.accent2)} />
       </div>
@@ -666,7 +669,7 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
   const yFormat: string | undefined = scene.props.yFormat;
   const xLabel: string | undefined = scene.props.xLabel;
   const W = width - pad * 2;
-  const H = Math.min(height * (isVertical ? 0.3 : 0.56), 640 * u); // a Short: the band above the character, who stands below it
+  const H = Math.min(height * (isVertical ? 0.31 : 0.56), (isVertical ? 640 : 640) * u); // a Short: the band under the caption, above its cards
   const left = 150 * u;
   const bottom = 70 * u;
   const top = 60 * u;
@@ -675,7 +678,8 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
   // a second line is never the loss red by default: green, ink, blue; `data: Name:red = ...` asks for red
   const colors = [brand.accent, brand.ink, brand.blue ?? '#3b5bdb', brand.note ?? brand.muted];
   const named: Record<string, string> = {ink: brand.ink, green: brand.accent, red: brand.accent2, blue: brand.blue ?? '#3b5bdb', note: brand.note ?? brand.muted};
-  const drawFrames = Math.round(fps * (Number(scene.props.drawSeconds) > 0 ? Number(scene.props.drawSeconds) : 2.2));
+  const drawSec = Number(scene.props.drawSeconds) > 0 ? Number(scene.props.drawSeconds) : 2.2;
+  const drawFrames = Math.round(fps * (isVertical ? Math.min(drawSec, 5) : drawSec)); // a Short has no time for an eight-second draw
   const titleDone = title ? doneAt(brand, title, fps, 4, 2, 24) : 0;
   const axesAt = brand.board ? titleDone + 2 : 2;
   const axes = brand.board ? lin(frame, axesAt, axesAt + Math.round(fps * 0.5)) : ease(frame, 2, 14);
@@ -728,13 +732,13 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
             <g key={i} visibility={brand.board && reveal <= 0 ? 'hidden' : undefined}>
               <SketchPath d={d} win={brand.board ? [lineAt, lineAt + drawFrames] : [10, 10 + drawFrames]} easeOut={!brand.board} options={{stroke: c, strokeWidth: 6 * u, roughness: 1.1, bowing: 0.6, seed: 60 + i}} />
               <circle cx={cx} cy={cy} r={9 * u} fill={c} />
-              <text x={cx + 18 * u} y={cy + 12 * u} fontFamily={hand(brand)} fontSize={38 * u} fontWeight={700} fill={c}>{yLab(vNow)}</text>
-              {s.name ? <text x={left + 10 * u + i * 300 * u} y={28 * u} fontFamily={hand(brand)} fontSize={34 * u} fill={c} {...labelWipe(lineAt)}>— {s.name}</text> : null}
+              {!isVertical || reveal >= 1 ? <text x={cx + 18 * u} y={cy + 12 * u} fontFamily={hand(brand)} fontSize={(isVertical ? 48 : 38) * u} fontWeight={700} fill={c}>{yLab(vNow)}</text> : null}
+              {s.name ? <text x={left + 10 * u + i * 300 * u} y={28 * u} fontFamily={hand(brand)} fontSize={(isVertical ? 42 : 34) * u} fill={c} {...labelWipe(lineAt)}>— {s.name}</text> : null}
             </g>
           );
         })}
         {[xMin, (xMin + xMax) / 2, xMax].map((x, i) => (
-          <text key={i} x={sx(x)} y={H - 18 * u} fontFamily={hand(brand)} fontSize={30 * u} fill={brand.muted} textAnchor={i === 0 ? 'start' : i === 2 ? 'end' : 'middle'} {...labelWipe(axesAt + Math.round(fps * 0.5) + i * 3)}>{xLabel ? `${xLabel} ${Math.round(x)}` : Math.round(x)}</text>
+          <text key={i} x={sx(x)} y={H - 18 * u} fontFamily={hand(brand)} fontSize={(isVertical ? 38 : 30) * u} fill={brand.muted} textAnchor={i === 0 ? 'start' : i === 2 ? 'end' : 'middle'} {...labelWipe(axesAt + Math.round(fps * 0.5) + i * 3)}>{xLabel ? `${xLabel} ${Math.round(x)}` : Math.round(x)}</text>
         ))}
       </>
     );
@@ -767,7 +771,7 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
     );
   }
   return (
-    <AbsoluteFill style={{justifyContent: isVertical ? 'flex-start' : 'center', padding: pad, paddingTop: isVertical ? height * 0.24 : pad}}>
+    <AbsoluteFill style={{justifyContent: isVertical ? 'flex-start' : 'center', padding: pad, paddingTop: isVertical ? height * 0.29 : pad}}>
       {title ? (
         <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 54 : 64) * u * (brand.board ? 1.1 : 1), color: brand.ink, marginBottom: 14 * u, letterSpacing: brand.board ? 0 : -1 * u}}>
           <Txt brand={brand} text={title} frame={frame} fps={fps} seed={31} per={2} cps={24} />
@@ -990,16 +994,45 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
   const sf = pop(frame, fps, 0, 9); // the frame itself lands from the cut: a blank page at a cut is the one thing a cut must never show
   const labelSize = (isVertical ? 60 : 54) * u;
   const bottom = isVertical ? height * 0.2 : pad * 0.9;
-  const mediaAt = (w: number, h: number) => (src ? (
-    scene.props.loop && scene.props.clipDur ? (
+  // hold: a clip shorter than its scene (the build slows it to 0.3x at least) plays once and holds its last frame
+  const holdAt = scene.props.hold && scene.props.clipDur ? Math.max(1, Math.round(((Number(scene.props.clipDur) - Number(scene.props.from ?? 0)) / Math.max(0.05, Number(scene.props.rate ?? 1))) * fps) - 2) : null;
+  const mediaAt = (w: number, h: number, over: Record<string, unknown> = {}) => (src ? (
+    holdAt !== null && frame >= holdAt ? (
+      <Freeze frame={holdAt}>
+        <Media src={src} props={{zoom: 'in', ...scene.props, ...over}} durationFrames={total} width={w} height={h} />
+      </Freeze>
+    ) : scene.props.loop && scene.props.clipDur ? (
       <Loop durationInFrames={Math.max(1, Math.round(Number(scene.props.clipDur) * fps))}>
-        <Media src={src} props={{zoom: 'in', ...scene.props}} durationFrames={total} width={w} height={h} />
+        <Media src={src} props={{zoom: 'in', ...scene.props, ...over}} durationFrames={total} width={w} height={h} />
       </Loop>
     ) : (
-      <Media src={src} props={{zoom: 'in', ...scene.props}} durationFrames={total} width={w} height={h} />
+      <Media src={src} props={{zoom: 'in', ...scene.props, ...over}} durationFrames={total} width={w} height={h} />
     )
   ) : null);
   const media = mediaAt(width, height);
+  if (src && String(scene.props.phone ?? '') === 'on' && isVertical) {
+    // a Short: the phone's whole screen fitted to the frame's width, under the sticker and the caption band, its marks
+    // on it, the caption label on its lower right (the top of a screen recording is the app's own header)
+    const cw = width * 0.78;
+    const ch = cw * (Number(scene.props.h) > 0 && Number(scene.props.w) > 0 ? Number(scene.props.h) / Number(scene.props.w) : 1480 / 1080);
+    const cx = (width - cw) / 2;
+    const cy = height * 0.29;
+    return (
+      <AbsoluteFill style={{background: brand.bg, overflow: 'hidden'}}>
+        <div style={{position: 'absolute', left: cx, top: cy, width: cw, height: ch, transform: `translateY(${(1 - sf) * 40 * u}px)`, opacity: Math.min(1, sf * 1.5), borderRadius: 36 * u, overflow: 'hidden', background: '#000', boxShadow: `0 ${14 * u}px ${40 * u}px rgba(40,30,10,0.28)`}}>
+          <div style={{position: 'relative', width: cw, height: ch, overflow: 'hidden'}}>
+            {mediaAt(cw, ch, {zoom: 'none', fit: 'contain'})}
+            <Marks scene={scene} brand={brand} w={cw} h={ch} />
+          </div>
+        </div>
+        {caption ? (
+          <div style={{position: 'absolute', right: cx + pad * 0.3, top: cy + ch - labelSize * 2.2, transform: `rotate(-1deg) scale(${0.9 + 0.1 * s})`, transformOrigin: 'right bottom', opacity: Math.min(1, s * 1.5), background: '#fff', color: brand.ink, fontFamily: hand(brand), fontSize: labelSize * 0.85, lineHeight: 1.15, padding: `${8 * u}px ${22 * u}px`, boxShadow: `0 ${8 * u}px ${24 * u}px rgba(0,0,0,0.3)`, maxWidth: cw * 0.8}}>
+            <Write text={caption} frame={frame} fps={fps} start={Math.round(fps * 0.4)} cps={30} />
+          </div>
+        ) : null}
+      </AbsoluteFill>
+    );
+  }
   if (src && String(scene.props.phone ?? '') === 'on' && !isVertical) {
     // a phone's screen recording: the phone stands on the board left of centre, upright, the cards in the column on the right
     const ph = height * 0.86;

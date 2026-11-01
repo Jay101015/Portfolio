@@ -129,10 +129,12 @@ const HookBanner: React.FC<{text: string; brand: Brand}> = ({text, brand}) => {
   const vertical = height > width;
   // big for the first three seconds (the scroll-in moment), then a smaller line so it never sits on a headline
   const p = Math.max(0, Math.min(1, (frame - fps * 3) / (fps * 0.4)));
-  const size = (vertical ? 60 : 48) * u * (1 - 0.3 * p);
+  // on a phone the top 8% is the status bar and the Shorts header, and the right 15% its buttons: the sticker starts
+  // 9% down at 72 px (two lines if it must), then settles to 50 px once the board's lines need the room
+  const size = (vertical ? 72 - 22 * p : 48) * u;
   return (
-    <div style={{position: 'absolute', left: 0, right: 0, top: vertical ? height * (0.085 - 0.03 * p) : height * 0.04, display: 'flex', justifyContent: 'center', padding: `0 ${40 * u}px`, pointerEvents: 'none'}}>
-      <div style={{fontFamily: brand.display, fontWeight: 800, fontSize: size, lineHeight: 1.15, color: brand.ink, textAlign: 'center', background: brand.marker ?? '#fff176', padding: `${10 * u}px ${22 * u}px`, borderRadius: 8 * u, boxShadow: `0 ${4 * u}px ${12 * u}px rgba(0,0,0,0.12)`, transform: 'rotate(-1deg)', maxWidth: '92%', boxDecorationBreak: 'clone'}}>
+    <div style={{position: 'absolute', left: 0, right: 0, top: vertical ? height * (0.09 - 0.015 * p) : height * 0.04, display: 'flex', justifyContent: 'center', padding: `0 ${40 * u}px`, pointerEvents: 'none'}}>
+      <div style={{fontFamily: brand.display, fontWeight: 800, fontSize: size, lineHeight: 1.15, color: brand.ink, textAlign: 'center', background: brand.marker ?? '#fff176', padding: `${10 * u}px ${22 * u}px`, borderRadius: 8 * u, boxShadow: `0 ${4 * u}px ${12 * u}px rgba(0,0,0,0.12)`, transform: 'rotate(-1deg)', maxWidth: vertical ? '84%' : '92%', boxDecorationBreak: 'clone'}}>
         {text}
       </div>
     </div>

@@ -272,7 +272,7 @@ class ArtLibraryTests(unittest.TestCase):
         assert all(not (a & b) for a in ids for b in ids if a is not b)
         assert any(c["hook"] == "Rent day is not a surprise" for c in plan)
         cut, spans = cut_short(sb, [2, 3], None, "short-1")
-        assert [sc["id"] for sc in cut["scenes"]] == [2, 3] and cut["scenes"][0]["start"] == 0.4 and cut["captions"] is True and cut["hook"]
+        assert [sc["id"] for sc in cut["scenes"]] == [2, 3] and cut["scenes"][0]["start"] == -0.8 and cut["captions"] is True and cut["hook"]
         assert cut["scenes"][1]["start"] == cut["scenes"][0]["end"] and cut["scenes"][0]["words"][0]["s"] > 0.4
         assert spans == [(sb["scenes"][1]["start"], sb["scenes"][1]["end"]), (sb["scenes"][2]["start"], sb["scenes"][2]["end"])]
         assert caption_line("The car dealer offered Sam a brand new car on finance, and he nearly signed.") == "The car dealer offered Sam a brand new"
@@ -325,7 +325,7 @@ class ArtLibraryTests(unittest.TestCase):
         a = s1["words"][0]["s"]
         cut, audio = cut_spans(sb, [(sb["scenes"][0]["end"] - 0.1, s1["words"][3]["e"] + 0.2), (s1["words"][8]["s"], s1["end"])], "Hook", "short-1")
         # the picture runs from the first frame (under the voice's 0.4 s lead-in) to the last (through the tail)
-        assert len(cut["scenes"]) == 1 and cut["scenes"][0]["src"] == 2 and cut["scenes"][0]["start"] == 0.0
+        assert len(cut["scenes"]) == 1 and cut["scenes"][0]["src"] == 2 and cut["scenes"][0]["start"] == -0.8
         assert cut["scenes"][-1]["end"] == cut["durationSec"]
         assert [w["w"] for w in cut["scenes"][0]["words"]] == ["Nine", "ten", "eleven", "twelve.", "Seventeen", "eighteen", "nineteen", "twenty."]
         assert len(audio) == 2 and audio[0][0] <= a and audio[1] == (s1["words"][8]["s"], s1["end"])
@@ -722,7 +722,7 @@ class AlignTests(unittest.TestCase):
             resolve_media(sb, d, "t")
             p1, p2, p3, p4 = (sc["props"] for sc in sb["scenes"])
             self.assertAlmostEqual(p1["from"], 1.5, places=1)      # 15% of a 10 s file
-            self.assertTrue(p2.get("loop"))
+            self.assertTrue(p2.get("hold") and not p2.get("loop") and p2["rate"] >= 0.3)
             self.assertAlmostEqual(p2["from"], 1.5, places=1)      # the loop starts past the titles too
             self.assertEqual(p3["from"], 0.0)                      # an explicit from= is kept
             self.assertEqual(sb["scenes"][3]["type"], "still")

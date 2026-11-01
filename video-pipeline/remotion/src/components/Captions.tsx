@@ -67,9 +67,10 @@ export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string; a
     // the character's head (he stands lower right), clear of the title band and the buttons
     // ...except on a stat, chart or other figure scene, whose figure sits in the middle: there the caption goes high,
     // under the hook banner and over the figure's label
-    const onBoard = isVertical && !!current && ['text', 'hook', 'takeaway', 'recap', 'list'].includes(current.type);
-    const high = isVertical && (onBoard || setCaptionsHigh(scenes) || (!!current && !['broll', 'clip', 'still', 'image', 'outro'].includes(current.type)));
-    const topAt = onBoard ? 0.44 : 0.155;
+    // a list's rows run down the middle and a clip is fitted under the sticker: both carry the caption high too
+    const onBoard = isVertical && !!current && ['text', 'hook', 'takeaway', 'recap'].includes(current.type);
+    const high = isVertical && (onBoard || setCaptionsHigh(scenes) || (!!current && current.type !== 'outro'));
+    const topAt = onBoard ? 0.44 : 0.22;
     return (
       <AbsoluteFill style={high ? {justifyContent: 'flex-start', alignItems: 'center', paddingTop: height * topAt} : {justifyContent: 'flex-end', alignItems: 'center', paddingBottom: isVertical ? height * 0.3 : 52 * u, ...sideStyle}}>
         <div style={{maxWidth: `calc(100% - ${pad * 2}px)`, fontFamily: isVertical ? brand.display : brand.font, fontSize: (isVertical ? (high ? 76 : 78) : 40) * u, fontWeight: isVertical ? 800 : 700, lineHeight: 1.2, textAlign: 'center', color: brand.ink, ...(high ? {background: 'rgba(255,255,255,0.94)', borderRadius: 24 * u, padding: `${10 * u}px ${30 * u}px`} : {})}}>

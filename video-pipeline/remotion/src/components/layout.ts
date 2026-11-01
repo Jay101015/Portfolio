@@ -36,6 +36,13 @@ export const findPhraseTime = (
     }
     if (ok) return words[i].s;
   }
+  // "2001: Nvidia, up 308%" said as "In 2001 the winner was Nvidia": the first word, with the second within six of it
+  if (probe.length === 2) {
+    for (let i = 0; i < tokens.length; i++) {
+      if (tokens[i] !== probe[0]) continue;
+      for (let j = i + 1; j < Math.min(tokens.length, i + 7); j++) if (tokens[j] === probe[1]) return words[i].s;
+    }
+  }
   return null;
 };
 
