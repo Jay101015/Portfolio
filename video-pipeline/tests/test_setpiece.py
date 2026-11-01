@@ -164,12 +164,12 @@ class SilentCardTests(unittest.TestCase):
         ]}
         silences = room_for_silent(sb)
         a, b, c = sb["scenes"]
-        self.assertEqual(a["end"], 4.65)              # the last line keeps the screen until it is said
-        self.assertEqual((b["start"], b["end"]), (4.65, 7.65))
-        self.assertEqual(silences, [(4.65, 2.65)])    # 4.65 + 3 + 0.25 lead - 5.25
-        self.assertEqual(c["start"], 7.65)
-        self.assertAlmostEqual(c["words"][0]["s"], 7.9)
-        self.assertAlmostEqual(c["cues"][0]["t"], 7.95)
+        self.assertEqual(a["end"], 4.75)              # the last line keeps the screen until it is said, plus its release
+        self.assertEqual((b["start"], b["end"]), (4.75, 7.75))
+        self.assertEqual(silences, [(4.75, 2.75)])    # 4.75 + 3 + 0.25 lead - 5.25
+        self.assertEqual(c["start"], 7.75)
+        self.assertAlmostEqual(c["words"][0]["s"], 8.0)
+        self.assertAlmostEqual(c["cues"][0]["t"], 8.05)
         self.assertEqual(a["cues"][0]["t"], 4.0)      # nothing before the card moves
 
     def test_cards_after_the_last_word_are_left_alone(self):
