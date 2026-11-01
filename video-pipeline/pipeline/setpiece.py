@@ -272,7 +272,7 @@ def plan_cards(sc: dict[str, Any], attrs: dict[str, Any]) -> list[str]:
     """Cards over a footage scene: the amounts said land on the picture as they are said (or the tag's cards=), so a
     figure the viewer only hears over footage, and a later card crosses out, has been seen."""
     spec = str(attrs.get("cards", "")).strip()
-    cards = [] if spec.lower() == "off" else parse_cards(spec) if spec else auto_cards(sc["narration"])
+    cards = [] if spec.lower() in ("off", "on", "yes") else parse_cards(spec) if spec else auto_cards(sc["narration"])  # cards=on is the outro's end-screen flag, not a card
     if not cards:
         return []
     anchor_word(cards, sc["narration"])
