@@ -122,6 +122,12 @@ Tags for the script:
 - `pauses.ceiling: -36` in the header for a take with breaths inside its pauses: the pause closer (pauses over
   0.7 s shut to 0.4 s) otherwise treats a -40 dB breath as speech and leaves a five-second gap at a title card. The
   silences the pace adds carry the room's own tone, so the room never drops out at a cut.
+- A recording sent in parts is levelled part by part before the join (each to -23 LUFS, linear gain): his 13 parts
+  sat 6.4 dB apart and the final leveller, one even gain, cannot fix that. The pause closer keeps 60 ms either side
+  of a cut and joins with a 25 ms crossfade; a 10 ms join on a cut that touched a word's tail read as chops.
+- Traced drawings never render thinner than 3 px and sit at 0.5 of the page beside a board: at 0.4 with their
+  natural line they read as fuzzy grey, and a figure whose hair was a fill in the source comes out bald, so pick
+  figures whose hair is drawn in lines (phone-balance-drop, sam-thinking, maya-facepalm, maya-pleased).
 - `pace.lead` and `pace.hold` in the header: the air before a scene's first word and after its last (the
   illustrated style's `pace: calm` default is 1.2 and 0.6, about 1.8 s a scene; the £10K demo ran at 0.6 and 0.4
   after the retention reviewer measured 29% of the film with no words at all). A card's words must be in the
