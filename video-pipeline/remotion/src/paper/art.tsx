@@ -1304,7 +1304,7 @@ export const PLACE: Record<string, React.CSSProperties> = {
   tl: {top: '8%', left: '5%'},
   br: {bottom: '15%', right: '5%'},
   bl: {bottom: '15%', left: '5%'},
-  r: {top: '50%', right: '5%', transform: 'translateY(-50%)'},
+  r: {top: '55%', right: '5%', transform: 'translateY(-50%)'},
   l: {top: '50%', left: '5%', transform: 'translateY(-50%)'},
   c: {top: '50%', left: '50%', transform: 'translate(-50%, -50%)'},
 };

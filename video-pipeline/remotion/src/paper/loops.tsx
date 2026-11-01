@@ -217,7 +217,7 @@ export const DrawnLoop: React.FC<{name: string; size: number; brand: Brand; star
     body = (
       <>
         <Shadow cx={33} cy={90} w={44} k={2} />
-        <g transform={`translate(0 ${(1 - thin) * 26}) scale(1 ${thin})`}>
+        <g transform={`translate(0 ${(1 - thin) * 88}) scale(1 ${thin})`}>
           <SketchRect x={12} y={60} w={42} h={28} draw={1} options={o(ink, 50, solid(paper))} />
           <SketchPath d="M12,68 L54,68" draw={1} options={o(ink, 51)} />
           <SketchRect x={40} y={71} w={9} h={8} draw={1} options={fine(ink, 52, solid(paper))} />

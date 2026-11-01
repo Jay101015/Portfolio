@@ -37,7 +37,7 @@ the one in every headline, and holds it for 12 months. Then it sells and buys th
 [takeaway title="The lost decade" n="2" of="4"]
 Now the race. And the first 12 years are brutal.
 
-[list title="2000 to 2002: the hype pot's first two buys" art=phone-balance-drop art_at=r art_size=0.5 cards="red:−54%@54%; red:−83%@83%"]
+[list title="2000 to 2002: the first two buys" art=phone-balance-drop art_at=r art_size=0.5 cards="red:−54%@54%; red:−83%@83%"]
 - 2000: Dynegy, up over 200%
 - January 2001: it fell 54%
 - 2001: Nvidia, up 308%
@@ -65,7 +65,7 @@ The boring pot? About £1,280. It had been through the dot-com crash and the 200
 [takeaway title="The comeback" n="3" of="4"]
 Then the story turns, and this is the part the hype merchants will quote at you.
 
-[list title="2017 to 2025: the hype pot's run" art=maya-pleased art_at=r art_size=0.5 cards="green:+81%@81%; green:+148%, then +100%@148%; green:+171%@171%; green:+135%@135%"]
+[list title="2017 to 2025: the lucky run" art=maya-pleased art_at=r art_size=0.5 cards="green:+81%@81%; green:+148%, then +100%@148%; green:+171%@171%; green:+135%@135%"]
 - 2017: Nvidia, up another 81%
 - AMD, two years running: up 148%, then 100%
 - Tesla, Devon Energy
@@ -109,10 +109,10 @@ But an index fund owns all of them, automatically, and it bought Nvidia in 2001 
 - Nothing sold
 So here is the boring way. One index fund, global or S&P 500. The same amount every month, inside an ISA so the growth is tax-free. Dividends reinvested, nothing sold.
 
-[text board="Not advice. Just the maths. | The past is not a promise | 26 years of maths" art=sam-thinking art_at=r art_size=0.4 cards="ink:not advice@advice"]
+[text board="Not advice. Just the maths. | The past is not a promise | 26 years of maths" art=sam-thinking art_at=r art_size=0.42 cards="ink:not advice@advice"]
 None of this is financial advice, and the past is not a promise about the future. It is just 26 years of maths, and the maths does not care how exciting the stock is.
 
-[recap title="£1,000 since 2000, two ways" art=garden-retirement art_at=r art_size=0.5 art_start=0.3 cards="red:£30@£30; green:£9,000@£9,000; ink:which stock in 2000?@comments"]
+[recap title="£1,000 since 2000, two ways" anim=plant-grow art_at=r art_size=0.5 cards="red:£30@£30; green:£9,000@£9,000; ink:which stock in 2000?@comments"]
 - Hype pot: £1,000 → £30 by 2011
 - Hype pot: back to £7,200 by 2025
 - Boring pot: about £9,000, never below £750
