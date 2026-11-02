@@ -24,10 +24,16 @@ one change at a time where possible, so a result can be read.
 | What To Do With £200, £1,000 and £10,000 After Payday | 7:29 | 2026-10-26 | 155 (36 h) | ~14 s, ~3% | 141 of 155 views from YouTube recommendations; pushed for ~20 h, then flatlined once viewers left |
 | Short: What to do with £200 | 0:48 | 2026-10-27 | 6 (day 1) | | |
 | Short: Looking to purchase your first home? | 0:44 | 2026-10-27 | 5 (day 1) | | |
-| Can You Afford a Home? (London and the UK) | 10:04 | not yet | | | first 10-minute build; levelled to -14 LUFS; ad breaks ~2:55, ~5:46, 8:10 |
-| Is the Dream Dead for Gen Z? | 7:38 | not yet | | | Jeffrey: 8/10 (not sold on the icon doodles, the rabbit especially); cost of living, AI and entry-level jobs, how to stay ahead; under 8 min by choice |
+| How Much House Can You Afford (Can You Afford a Home?) | 10:01 | ~2026-10-28 | 270 impressions, 4.8% CTR (4 days, Studio) | 1:21, 13% | 73% home feed, 14% search; 12-second title card at 0:05 the likely leak; busy photo thumbnail |
+| You'd Need £83,000 a Year… (Is the Dream Dead for Gen Z?) | 7:38 | ~2026-10-30 | 122 impressions and climbing, 8.2% CTR (2 days, Studio) | 2:30, 33% | best so far; 89% home feed; title card at 0:27 after the promises; one-number thumbnail; Jeffrey: 8/10 |
+| I Bought the Best Stock Every Year Since 2000 (chasing-winners) | 5:58 | 2026-11-01 | | | 3 footage scenes of 23 (Jeffrey noticed); 4 Shorts; numbers at the 7-day review |
 
 ## Lessons so far
+- Weekly review, 2026-11-02 (Jeffrey's Studio screenshots; vidIQ at 0 credits until 27 Nov, so no retention
+  curves): the channel at 16 videos, 3,655 views, 7 subscribers; Shorts about 3,000 views, long videos about 1,200.
+  The Gen Z video beat the house video on every number (8.2% vs 4.8% click-through, 33% vs 13% watched). The two
+  differences that line up with it: a one-number thumbnail on white, and an opening that holds the title card until
+  the promises are made. Both are already the rules (EDITOR.md, the retention-scenes skill); nothing new to add.
 
 ### £200 / £1,000 / £10,000 (2026-10-26)
 - Worked: a concrete money question in the title with three amounts; 149 views in a day on a 5-subscriber
@@ -335,7 +341,8 @@ one change at a time where possible, so a result can be read.
   everything" drawing; a baited-trap drawing; the holdings page as one slow 10 s scroll.
 
 ## Tests to run next (one at a time)
-1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage?
+1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage? Leans no (13% at 10:01
+   against 33% at 7:38), but not a clean result: the two openings differ too, so the length is not proven guilty.
 2. Thumbnail: a face (Jeffrey) vs no face, once Canva thumbnails are in use.
 3. Shorts: open on the number ("£250 free from the government") vs a question.
 4. Recordings cleaned in Descript (fillers and long pauses cut, sound left natural) vs not: compare retention in
