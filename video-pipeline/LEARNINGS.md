@@ -25,7 +25,7 @@ one change at a time where possible, so a result can be read.
 | Short: What to do with £200 | 0:48 | 2026-10-27 | 6 (day 1) | | |
 | Short: Looking to purchase your first home? | 0:44 | 2026-10-27 | 5 (day 1) | | |
 | How Much House Can You Afford (Can You Afford a Home?) | 10:01 | ~2026-10-28 | 270 impressions, 4.8% CTR (4 days, Studio) | 1:21, 13% | 73% home feed, 14% search; 12-second title card at 0:05 the likely leak; busy photo thumbnail |
-| You'd Need £83,000 a Year… (Is the Dream Dead for Gen Z?) | 7:38 | ~2026-10-30 | 122 impressions and climbing, 8.2% CTR (2 days, Studio) | 2:30, 33% | best so far; 89% home feed; title card at 0:27 after the promises; one-number thumbnail; Jeffrey: 8/10 |
+| You'd Need £83,000 a Year… (Is the Dream Dead for Gen Z?) | 7:22 | ~2026-10-30 | 589 impressions, 5.6% CTR, curve accelerating (~3.5 days, Studio) | 2:14, 30%; 62% at 0:31 | taking off; 95% home feed; title card at 0:27 after the promises; one-number thumbnail; Jeffrey: 8/10 |
 | I Bought the Best Stock Every Year Since 2000 (chasing-winners) | 5:58 | 2026-11-01 | | | 3 footage scenes of 23 (Jeffrey noticed); 4 Shorts; numbers at the 7-day review |
 
 ## Lessons so far
@@ -339,6 +339,22 @@ one change at a time where possible, so a result can be read.
 - Ask for next time: a 5-second cold-open line per Short on the take; the figure in every sticker; the Sandisk
   quote page and the Nvidia 2001-2002 fall as phone clips; a two-jars drawing (hype and boring); an "owns
   everything" drawing; a baited-trap drawing; the holdings page as one slow 10 s scroll.
+
+### What went right on the £83,000 video (Jeffrey: "taking off", 2026-11-02)
+- The numbers: 589 impressions in about three and a half days and accelerating, 95% from the home feed;
+  click-through 8.2% at two days, 5.6% once YouTube widened it to strangers (a normal fall as the test grows).
+  Average view 2:14 of 7:22 (30%). Retention 62% at 0:31 and level to about 1:28: the best hold on the channel.
+- What made the first 90 seconds hold: a title with one specific number; a thumbnail with one big figure
+  ("7.6x your salary") on white; a hook, stakes, footage by 0:08, three promises, the title card only at 0:27;
+  then a picture change every 6 to 10 seconds through the cost-of-living run (shrink, footage, stat, footage,
+  stat), a third of the running time footage. Keep all of it.
+- Where they left: the curve falls from about 62% to 50% between 1:30 and 1:55, exactly where the £83,000 the
+  title promises is said (the 20-second set piece at 1:30). Viewers came for that number, got it, and some went.
+  A second step around 2:04 to 2:50 follows the turn to AI and jobs, a topic the title does not mention. From
+  about 4:00 the line is flat near 30% to the end: the ones who stay for the advice stay.
+- Rules: the title's number is the end reveal or the last third, never in the first two minutes (tease it
+  early, pay it late); everything in the video serves the title's question, and a second topic gets its own
+  video. Into EDITOR.md.
 
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage? Leans no (13% at 10:01

@@ -171,6 +171,12 @@ buttons: a Short's page is laid out in bands between them, and nothing sits on a
 
 ## The shape
 
+The title's number is paid off late. A viewer clicks for the figure in the title; once it is said, some leave (the
+£83,000 video lost a fifth of its viewers in the 25 seconds after "£83,000" was said, at 1:30). Tease it in the
+first 30 seconds, pay it in the last third or as the end reveal. And the whole video answers the title's question:
+a second topic (the same video turned from house prices to AI and jobs at 2:04 and lost viewers again) is its own
+video.
+
 1. `[hook board="..." art="..."]` as the first scene, holding the first sentence or two. The hook is the attention
    grabber, How Money Works style: a counter-intuitive claim or a question with the number in it, stated flat, 4
    to 8 words on the board, the figure in it, and beside it the drawing of the moment (payday, rent-day,
