@@ -68,13 +68,13 @@ last videos used is what this one should not lean on again, and the unused list 
 
 ## chasing-winners
 - footage: lib:nvda-max-chart-app, lib:vuag-max-chart-app, lib:vuag-holdings-app
-- drawing: stock-chart-laptop, phone-balance-drop, kitchen-table, overdraft-hole, rainy-day-umbrella, sam-celebrating, index-fund-basket, laptop-standing-order, calculator-table, garden-retirement
-- scene type: text ×6, takeaway ×4, list ×4, stat ×3, broll ×3, news ×2, hook, title, bite, chart, pie, recap, outro
+- drawing: road-to-100k, phone-balance-drop, sam-facepalm, rainy-day-umbrella, maya-pleased, sam-celebrating, index-fund-basket, sam-thinking
+- scene type: text ×6, stat ×4, takeaway ×4, list ×4, broll ×3, hook, title, news, bite, chart, pie, recap, outro
 
 ## Used in more than one video
 
 - footage: file:watch-next-200-1000-10000.mp4 (2 videos); lib:businessman-phone-city (2 videos)
-- drawing: investing-app (3 videos); crossroads (3 videos); snowball (2 videos); pension-letter (2 videos); sam-pleased (2 videos); payday (2 videos); stock-chart-laptop (2 videos); calculator-table (2 videos); phone-balance-drop (2 videos); high-five (2 videos); index-fund-basket (2 videos)
+- drawing: investing-app (3 videos); crossroads (3 videos); snowball (2 videos); sam-thinking (2 videos); pension-letter (2 videos); sam-pleased (2 videos); payday (2 videos); sam-facepalm (2 videos); phone-balance-drop (2 videos); high-five (2 videos); index-fund-basket (2 videos); maya-pleased (2 videos)
 - room: first-flat (3 videos); office (2 videos); terraced-street (2 videos)
 - pose: point-board (3 videos); thumbs-up (3 videos); thinking (2 videos); shocked (2 videos); facepalm (2 videos); desk-type (2 videos); desk-point (2 videos); desk-shocked (2 videos); desk-reading (2 videos); ponder (2 videos); but-finger (2 videos); idea (2 videos); welcome (2 videos)
 - prop: coins (2 videos)
@@ -82,7 +82,7 @@ last videos used is what this one should not lean on again, and the unused list 
 ## In the libraries, never used yet
 
 - footage (3 of 17 unused): lib:uk-suburb-drone, lib:uk-motorway-drone, lib:hooded-hacker-screens
-- drawing (39 of 96 unused): bank-queue, car-dealer, scam-call, coffee-shop, side-hustle, broken-car, empty-fridge, subscriptions-phone, debt-ball-chain, small-basket, brown-envelope, pay-rise-ask, moving-boxes, wedding-bill, pram-bill, friends-split-bill, retired-bench, maya-facepalm, tax-return, pub-round, online-shopping, commute-platform, family-dinner, hospital-desk, isa-shield, pension-match, emergency-jar, bnpl-boxes, road-to-100k, cash-vs-stocks-isa, credit-score-meter, student-loan-letter, car-finance-monthly, christmas-bags, estate-agent-window, house-viewing, jeffrey, celebrate, train
+- drawing (42 of 96 unused): bank-queue, kitchen-table, car-dealer, scam-call, coffee-shop, side-hustle, broken-car, empty-fridge, subscriptions-phone, debt-ball-chain, small-basket, brown-envelope, pay-rise-ask, moving-boxes, wedding-bill, pram-bill, friends-split-bill, retired-bench, maya-facepalm, tax-return, pub-round, online-shopping, commute-platform, family-dinner, hospital-desk, garden-retirement, isa-shield, pension-match, emergency-jar, bnpl-boxes, laptop-standing-order, cash-vs-stocks-isa, overdraft-hole, credit-score-meter, student-loan-letter, car-finance-monthly, christmas-bags, estate-agent-window, house-viewing, jeffrey, celebrate, train
 - room (1 of 5 unused): living-room
 - pose (15 of 45 unused): bill-shock, brown-envelope, calculator, chart-down, coin-jar, confused, count-fingers, cut-card, desk, desk-type-b, hand-over, magnifier, smug, suspicious, thumbs-down
 - prop (14 of 16 unused): coins-b, envelope, form, house, house-b, keys, keys-b, note-20, note-20-b, payslip, phone-b, piggy-bank, piggy-bank-b, tax-envelope
