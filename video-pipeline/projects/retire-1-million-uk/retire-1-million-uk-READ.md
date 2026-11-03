@@ -20,7 +20,11 @@ Moderate is about £32,700. That gets you more security: a holiday abroad each y
 
 And comfortable is about £45,400. That's regular holidays abroad, a newer car, helping your kids or grandkids, and real freedom with your time.
 
-The difference between those three isn't really holidays and cars. It's how it feels. On the minimum, you're checking every price and saying no a lot. On moderate, you can say yes to most normal things. On comfortable, you're the one who can help when someone in the family needs it.
+The difference between those three isn't really holidays and cars. It's how it feels.
+
+On the minimum, you're checking every price and saying no a lot.
+
+On moderate, you can say yes to most normal things. On comfortable, you're the one who can help when someone in the family needs it.
 
 If you're a couple, it's cheaper per person, because you share the bills. Minimum is about £22,500 between you, moderate about £45,400, and comfortable about £62,700.
 
@@ -62,7 +66,11 @@ For a moderate retirement on your own, that's a pot of about £630,000, in today
 
 For a couple wanting moderate, it's far less each, because you have two state pensions and share the bills. About £317,000 each, or around £634,000 between you.
 
-Now remember the rent. Take that moderate retirement on your own, and add the average UK private rent of about £1,406 a month. Suddenly the pot you'd need is about £1.23 million. That's more than a comfortable retirement for a homeowner. Which is why, for a lot of people, paying off a home before you retire is one of the biggest pension decisions you'll ever make, even though it doesn't look like one.
+Now remember the rent. Take that moderate retirement on your own, and add the average UK private rent of about £1,406 a month.
+
+Suddenly the pot you'd need is about £1.23 million. That's more than a comfortable retirement for a homeowner.
+
+Which is why, for a lot of people, paying off a home before you retire is one of the biggest pension decisions you'll ever make, even though it doesn't look like one.
 
 And if those numbers make your stomach drop, you're not alone. In its update this year, Pensions UK worked out how many working people are on track. About 82% are heading for at least the minimum. But only 23% are on track for moderate, and just 9% for comfortable. That's fewer than 1 in 10. The point isn't to panic. It's to know the number, so you can do something about it.
 
@@ -76,7 +84,9 @@ For a moderate retirement, to reach £630,000 by 67: start at 25, and it's about
 
 Starting twenty years later doesn't cost you a bit more. It costs you about three times as much, every single month. That's the whole video in one number. Time is the most valuable thing you have, and it's the one thing you can't buy back.
 
-And if you're 45 and reading those numbers with a sinking feeling, it's not too late. Your forties and fifties are usually your peak earning years, so you can often put in more. If you pay higher-rate tax, the tax relief is bigger. And working even a couple of years longer, or going part-time instead of stopping, makes a big difference, because the pot grows for longer and has fewer years to pay for.
+And if you're 45 and reading those numbers with a sinking feeling, it's not too late. Your forties and fifties are usually your peak earning years, so you can often put in more.
+
+If you pay higher-rate tax, the tax relief is bigger. And working even a couple of years longer, or going part-time instead of stopping, makes a big difference, because the pot grows for longer and has fewer years to pay for.
 
 And before £483 a month sounds impossible: that's not all coming out of your pay. Your employer and the taxman put in a big chunk of it. Which brings us to the levers.
 
@@ -88,15 +98,21 @@ Lever one: your employer. By law, if you're enrolled in a workplace pension, you
 
 Lever two: tax relief. Money you put into a pension comes out before income tax. So for a basic-rate taxpayer, £100 in your pension only costs you £80. The other £20 is tax you would have paid anyway. For a higher-rate taxpayer, that same £100 can cost as little as £60.
 
-And when you retire, you can usually take up to a quarter of your pot tax-free. Which means the tax on your retirement income is lower than our numbers assumed. That works in your favour. '[text board="Under 40? A Lifetime ISA adds 25%" art=lisa-bonus art_at=r art_size=0.45 cards="green:25% on top@25%; ink:up to £4,000 a year@£4,000; red:locked until 60@60"] If you're under 40, there's one more option. A Lifetime ISA adds a 25% government bonus on up to £4,000 a year, so up to £1,000 a year free. You can use it for a first home, or keep it for retirement, but for retirement it's locked until 60, and taking it out early for anything else costs you a penalty. Read the rules first.
+And when you retire, you can usually take up to a quarter of your pot tax-free. Which means the tax on your retirement income is lower than our numbers assumed. That works in your favour.
 
-And here's a simple habit that makes all of this painless. Every time you get a pay rise, put 1% more into your pension before you get used to the money. You'll barely notice it in your take-home, and over a career it adds up to a very different retirement.
+If you're under 40, there's one more option. A Lifetime ISA adds a 25% government bonus on up to £4,000 a year, so up to £1,000 a year free. You can use it for a first home, or keep it for retirement, but for retirement it's locked until 60, and taking it out early for anything else costs you a penalty. Read the rules first.
+
+And here's a simple habit that makes all of this painless. Every time you get a pay rise, put 1% more into your pension before you get used to the money.
+
+You'll barely notice it in your take-home, and over a career it adds up to a very different retirement.
 
 Lever three is time, and it's the biggest. Look at the same £300 a month, growing at 7% a year before inflation. Over 35 years, it grows to about £540,000. Over 25 years, about £243,000. Ten fewer years, and you end up with less than half.
 
 And there's a quiet fourth lever: fees. On £300 a month over 30 years, the difference between paying 1% a year in fees and paying 0.3% is about £43,700. Same money in, same markets. Just less going to someone else.
 
-And while you're checking: in 2024, the Pensions Policy Institute estimated there were about 3.3 million lost pension pots in the UK, holding about £31.1 billion. Old jobs, old addresses, forgotten pots. If you've changed jobs a few times, search for the government's Pension Tracing Service. It's free, and some of that money might be yours.
+And while you're checking: in 2024, the Pensions Policy Institute estimated there were about 3.3 million lost pension pots in the UK, holding about £31.1 billion.
+
+Old jobs, old addresses, forgotten pots. If you've changed jobs a few times, search for the government's Pension Tracing Service. It's free, and some of that money might be yours.
 
 And it doesn't need to be clever. Most workplace pensions, and most people's ISAs, are invested in funds like this one, spread across hundreds of companies. No stock picking, no timing the market. Just money going in every month and years doing the heavy lifting.
 
@@ -110,7 +126,9 @@ For a comfortable retirement on your own, yes, roughly. You'd need a pot of abou
 
 And here's how to work out your own number in about thirty seconds. Write down what you'd want to spend a year in retirement, in today's money. Take off the state pension, about £12,548. Then multiply what's left by 25. That's the 4% rule turned around, and it gives you a rough target pot. Add a bit for tax, and remember that if you'll still be renting, rent goes in the spending.
 
-And when you get there, there are two main ways to turn a pot into an income. You can buy an annuity, which pays you a guaranteed amount for the rest of your life. Or you can use drawdown, where the money stays invested and you take out what you need. Many people end up mixing the two. It's worth getting proper guidance at that point; the government's free Pension Wise service is there for exactly that, from age 50.
+And when you get there, there are two main ways to turn a pot into an income. You can buy an annuity, which pays you a guaranteed amount for the rest of your life. Or you can use drawdown, where the money stays invested and you take out what you need. Many people end up mixing the two.
+
+It's worth getting proper guidance at that point; the government's free Pension Wise service is there for exactly that, from age 50.
 
 So the honest answer is: it depends on one thing most people never think about. Not your salary, not the stock market. What you'll actually spend when you stop working. A moderate life needs about £630,000. A comfortable one, about £1.05 million. And if you own your home outright by then, you need a lot less, because rent or a mortgage is one of the biggest costs there is.
 
