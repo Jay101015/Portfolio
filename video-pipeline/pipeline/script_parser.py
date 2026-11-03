@@ -625,6 +625,9 @@ def parse_script(md: str) -> dict[str, Any]:
     if scenes and header.get("kicker") and scenes[0]["type"] == "title":
         scenes[0]["props"].setdefault("kicker", header["kicker"])
     problems += footage_share(scenes)
+    for sc in scenes:  # a tag line that does not start with "[" is read as narration (a stray quote did it once)
+        if re.search(r'\b(board|art|cards|label|caption)="', sc.get("narration") or ""):
+            problems.append(f"scene {sc['id']}: its narration contains tag text; a tag line must start with '['")
 
     brand: dict[str, str] = {}
     avatar: dict[str, str] = {}

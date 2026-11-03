@@ -10,13 +10,13 @@ pauses.ceiling: -36
 slug: retire-1-million-uk
 topic: how much a UK retirement actually costs at three living standards, what the state pension covers, the pension pot each one needs, what to put away a month from 25, 35 or 45, and the levers that make it cheaper; for a UK viewer, about them
 
-[hook board="The state pension: £12,548. Comfortable: £45,400" art=retired-bench art_at=r art_size=0.5 cards="ink:the full state pension@state; red:a comfortable retirement@comfortable"]
+[hook board="The state pension: £12,548. Comfortable: £45,400" art=retired-bench art_at=r art_size=0.5 cards="ink:for one person@person"]
 The full state pension pays about £12,548 a year. A comfortable retirement, for one person, costs about £45,400.
 
-[stat value="£32,852" label="The gap, every year, for maybe 20 years or more" sub="that's what your own savings have to cover" source="Pensions UK Retirement Living Standards, June 2026; state pension from April 2026" art=sam-worried art_at=r art_size=0.5 cards="red:every single year@every; ink:twenty years or more@twenty"]
+[stat value="£32,852" label="The gap, every year, for maybe 20 years or more" sub="that's what your own savings have to cover" source="Pensions UK Retirement Living Standards, June 2026; state pension from April 2026" art=kitchen-table art_at=r art_size=0.5 cards="red:every single year@every; ink:twenty years or more@twenty; ink:the only thing that fills it: you@only"]
 That's a gap of over £32,000, every single year, for twenty years or more. And the only thing that fills it is you.
 
-[text board="What each lifestyle costs | What to save from your age | Do you need £1 million?" art=road-to-100k art_at=r art_size=0.5 cards="ink:three lifestyles@three; ink:a month, from your age@month; green:the £1 million question@million"]
+[text board="What three retirements cost | What to save a month from 25, 35 or 45 | Three things that make it cheaper | Do you really need £1 million?" art=garden-retirement art_at=r art_size=0.5 cards="ink:one thing most people never think about@never"]
 So how much do you actually need? I'll show you what three different retirements cost, what you'd need to put away a month starting at 25, 35 or 45, the three things that make it a lot cheaper, and at the end, whether you really need a million pounds. The answer depends on one thing most people never think about.
 
 [title dur=2.4 kicker="The Everyday Investor" title="Do you need £1 million to retire?" subtitle="The real numbers, UK"]
@@ -24,55 +24,63 @@ So how much do you actually need? I'll show you what three different retirements
 [takeaway title="What retirement costs" n="1" of="6"]
 Let's start with what retirement actually costs, because most people have never seen the number.
 
-[broll search="retired couple walking on british seaside promenade" caption="Three ways to retire" cards="ink:minimum, moderate, comfortable@minimum"]
+[broll search="retired couple walking on british seaside promenade" caption="Three ways to retire" cards="ink:minimum, moderate, comfortable@minimum; ink:after tax, outside London@outside"]
 Every year, Pensions UK, the body that represents UK pension schemes, works out what retirement costs at three levels: minimum, moderate and comfortable. These are spending budgets, after tax, for someone living outside London.
 
 [stat value="£13,900" label="A minimum retirement, one person, a year" sub="the basics, a week in the UK, little else" source="Pensions UK Retirement Living Standards, June 2026, outside London" art=small-basket art_at=r art_size=0.5 cards="ink:the basics@basics; red:if something breaks, it hurts@hurts"]
 The minimum is about £13,900 a year for one person. That covers the basics: food, bills, a week's holiday in the UK, not much else. If something breaks, it hurts.
 
-[stat value="£32,700" label="A moderate retirement, one person, a year" sub="a holiday abroad, a car, some security" source="Pensions UK Retirement Living Standards, June 2026, outside London" art=sam-pleased art_at=r art_size=0.5 cards="green:a holiday abroad@abroad; ink:a car@car"]
+[stat value="£32,700" label="A moderate retirement, one person, a year" sub="a holiday abroad, a car, some security" source="Pensions UK Retirement Living Standards, June 2026, outside London" art=coffee-shop art_at=r art_size=0.5 cards="green:a holiday abroad@abroad; ink:running a car@car; ink:eating out now and then@eating; green:no panic when the boiler goes@boiler"]
 Moderate is about £32,700. That gets you more security: a holiday abroad each year, running a car, eating out now and then, and not panicking when the boiler goes.
 
-[stat value="£45,400" label="A comfortable retirement, one person, a year" sub="regular holidays, help for family, real freedom" source="Pensions UK Retirement Living Standards, June 2026, outside London" art=sam-celebrating art_at=r art_size=0.5 cards="green:helping your family@helping; green:real freedom@freedom"]
+[stat value="£45,400" label="A comfortable retirement, one person, a year" sub="regular holidays, help for family, real freedom" source="Pensions UK Retirement Living Standards, June 2026, outside London" art=airport-departures art_at=r art_size=0.5 cards="green:regular holidays abroad@regular; green:helping your family@helping; green:real freedom@freedom"]
 And comfortable is about £45,400. That's regular holidays abroad, a newer car, helping your kids or grandkids, and real freedom with your time.
 
-[broll search="retired woman having coffee with friends in cafe" caption="What the difference feels like" cards="red:checking every price@checking; ink:saying yes@yes"]
-The difference between those three isn't really holidays and cars. It's how it feels. On the minimum, you're checking every price and saying no a lot. On moderate, you can say yes to most normal things. On comfortable, you're the one who can help when someone in the family needs it.
+[broll search="older woman drinking tea looking out of window" caption="What the difference feels like" cards="ink:how it feels@feels"]
+The difference between those three isn't really holidays and cars. It's how it feels.
 
-[list title="For a couple, combined" art=couple-bills art_at=r art_size=0.45 cards="ink:£22,500@£22,500; ink:£45,400@£45,400; green:£62,700@£62,700"]
+[broll search="older woman checking price label in supermarket" caption="Minimum: saying no a lot" cards="red:checking every price@checking"]
+On the minimum, you're checking every price and saying no a lot.
+
+[broll search="grandparents playing with grandchildren in garden" caption="Comfortable: the one who can help" cards="ink:yes to most normal things@yes; green:the one who can help@help"]
+On moderate, you can say yes to most normal things. On comfortable, you're the one who can help when someone in the family needs it.
+
+[list title="For a couple, combined" art=family-dinner art_at=r art_size=0.45 cards="ink:£22,500@£22,500; ink:£45,400@£45,400; green:£62,700@£62,700"]
 - Minimum: £22,500
 - Moderate: £45,400
 - Comfortable: £62,700
 If you're a couple, it's cheaper per person, because you share the bills. Minimum is about £22,500 between you, moderate about £45,400, and comfortable about £62,700.
 
-[broll lib="tower-bridge-office-window" caption="London costs more" cards="red:London has its own, higher figures@higher"]
+[broll search="commuters tapping cards at london underground ticket barriers" caption="London costs more" cards="red:London has its own, higher figures@higher; red:rent and travel cost more@travel"]
 And if you'll retire in London, every one of those numbers is higher. Pensions UK publishes separate London figures, because rent, travel and everything else cost more.
 
-[text board="These are today's prices" art=calendar art_at=r art_size=0.45 cards="ink:today's money@today's"]
+[broll search="hand counting british pound notes on table" caption="Everything in today's money" cards="ink:today's money@today's; ink:allowing for inflation@inflation; ink:otherwise the numbers lie@lie"]
 One important thing. All of these are in today's money. So when we work out what you need, we'll keep everything in today's money too, and allow for inflation along the way. Otherwise the numbers lie to you.
 
-[stat value="£0" count=off label="What these budgets include for rent or a mortgage" sub="they assume you own your home outright" source="Pensions UK Retirement Living Standards: the detail" art=house-price-tag art_at=r art_size=0.5 cards="red:no rent, no mortgage@rent; red:renting needs far more@renting"]
+[stat value="£0" count=off label="What these budgets include for rent or a mortgage" sub="they assume you own your home outright" source="Pensions UK Retirement Living Standards: the detail" anim=house-build art_at=r art_size=0.5 cards="red:no rent, no mortgage@rent; red:renting needs far more@renting; ink:the most important number in the video@important"]
 And here's the part almost nobody mentions. All of these budgets assume you own your home outright by the time you retire. There's nothing in them for rent or a mortgage. So if you're renting when you retire, you need a lot more. We'll come back to exactly how much, because for a lot of people watching this, it's the most important number in the video.
 
 [takeaway title="What the state pension covers" n="2" of="6"]
 Now, the good news first. You don't have to fund all of it yourself.
 
-[stat value="£241.30" label="The full new state pension, a week, from April 2026" sub="about £12,548 a year" source="DWP benefit and pension rates 2026 to 2027" art=pension-letter art_at=r art_size=0.5 cards="ink:a week@week; green:£12,548 a year@£12,548"]
+[stat value="£241.30" label="The full new state pension, a week, from April 2026" sub="about £12,548 a year" source="DWP benefit and pension rates 2026 to 2027" art=pension-letter art_at=r art_size=0.5 cards="ink:a week@week; green:£12,548 a year@£12,548; green:it rises every year: the triple lock@triple"]
 The full new state pension is £241.30 a week from April 2026. That's about £12,548 a year, and it rises every year under the triple lock.
 
-[stat value="90%" count=off label="Of a minimum retirement, covered by the state pension" sub="£12,548 of £13,900" source="Pensions UK, June 2026; DWP rates 2026 to 2027" art=sam-surprised art_at=r art_size=0.5 cards="green:almost all of the minimum@minimum"]
+[pie value="90%" label="Of a minimum retirement, covered by the state pension" sub="£12,548 of £13,900" source="Pensions UK, June 2026; DWP rates 2026 to 2027" cards="green:almost all of the minimum@minimum; ink:the floor most people will have@floor"]
 So on its own, the full state pension covers about 90% of a minimum retirement for one person. That's the floor most people will have.
 
-[text board="35 years of National Insurance for the full amount" art=calendar art_at=r art_size=0.45 cards="ink:35 qualifying years@35; red:fewer than 10: nothing@10"]
+[text board="35 years of National Insurance for the full amount | Fewer than 10 years: nothing" art=brown-envelope art_at=r art_size=0.5 cards="ink:35 qualifying years@qualifying; green:caring for children can count@caring"]
 But there's a catch. To get the full amount, you need 35 qualifying years of National Insurance. With fewer, you get less. With fewer than 10, you get nothing at all. Years caring for children, or on certain benefits, can count too.
 
-[broll search="person checking government website on laptop at home" caption="Check yours: it takes 5 minutes" cards="green:gov.uk/check-state-pension@check"]
+[broll search="hands typing on laptop at kitchen table" caption="Check yours: it takes 5 minutes" cards="green:gov.uk/check-state-pension@check; green:gaps you can fill@gaps"]
 You can check exactly what you're on track for on the government's website. Search "check state pension" on GOV.UK. It takes about five minutes, and it tells you if you've got gaps you can fill.
 
-[text board="State pension age: 67 by 2028" art=hourglass art_at=r art_size=0.45 cards="ink:66 now@66; red:67 by 2028@67"]
+[broll search="pensioners walking in uk town high street" caption="State pension age: 67 by 2028" cards="ink:66 now@66; red:67 by 2028@67; red:set to rise again@again; ink:plan on 67 at the earliest@earliest"]
 And you won't get it as early as your parents did. The state pension age is rising from 66 to 67 between 2026 and 2028, and it's set to rise again later. For most people watching this, plan on 67 at the earliest.
 
-[text board="Final salary pension? Different maths" art=pension-letter art_at=r art_size=0.45 cards="ink:a guaranteed income@guaranteed; ink:most under-40s: a pot@pot"]
+[compare title="Two kinds of workplace pension" cards="ink:a guaranteed income for life@guaranteed; ink:most people under 40: a pot@under; ink:what goes in, how it grows@grows"]
+left: Final salary | Promised | A guaranteed income for life
+right: A pot | It depends | On what goes in and how it grows
 One more thing before the pot. If you have a final salary pension, the kind that pays a guaranteed income for life, your maths is different and probably better, because part of your retirement is already promised. But most people under 40 in private sector jobs don't. They have a pot that they and their employer pay into, and what it's worth at the end depends on what goes in and how it grows. That's the kind we're working out today.
 
 [takeaway title="The pot you need" n="3" of="6"]
@@ -84,100 +92,119 @@ So here's the gap your own pension has to fill. And what it means as a pot of mo
 - Comfortable: about £42,000 a year
 Pension income is taxed like a salary, so you need a bit more than the spending figure. Once you add the tax and take off the state pension, here's the gap. For a minimum retirement, almost nothing. For moderate, about £25,000 a year from your own pension. For comfortable, about £42,000 a year.
 
-[text board="Pension income is taxed like a salary" art=tax-return art_at=r art_size=0.45 cards="ink:£12,570 tax-free@£12,570; red:20% after that@20%"]
+[text board="Pension income is taxed like a salary" art=tax-return art_at=r art_size=0.45 cards="ink:£12,570 tax-free@£12,570; ink:the state pension uses most of it@most; red:20% after that@20%; ink:so the pot has to be bigger@bigger"]
 Quickly, on that tax. In retirement you still get your £12,570 tax-free Personal Allowance, and the state pension uses most of it up. So almost every pound your own pension pays you on top is taxed at 20%, or more if your income is high. That's why the pot has to be bigger than the spending gap alone.
 
-[text board="The 4% rule of thumb" art=calculator-table art_at=r art_size=0.45 cards="ink:take 4% a year@4%; ink:a rough guide, not a promise@rough"]
+[stat value="4%" count=off label="Take out about 4% of your pot a year" sub="rising with inflation, to last about thirty years" source="A rule of thumb; some UK research suggests 3.5%" anim=hourglass art_at=r art_size=0.5 cards="ink:rising with inflation@rising; ink:thirty years@thirty; ink:a rough guide, not a guarantee@rough; ink:3.5% may be safer@3.5%"]
 So how big a pot pays that? A common rule of thumb is that you can take out about 4% of your pot each year, rising with inflation, and have a good chance of it lasting thirty years. It's a rough guide, not a guarantee. Some UK research says 3.5% is safer. But it gives us a number.
 
-[broll search="elderly couple at airport departures with suitcases" caption="Plan for your nineties" cards="red:the risk: running out@running"]
+[broll search="elderly woman blowing out birthday cake candles" caption="Plan for your nineties" cards="red:the risk: running out@running; ink:into their nineties@nineties"]
 And why thirty years? Because the real risk in retirement isn't dying with money left over. It's running out while you're still here. Plenty of people retiring at 67 today will live into their nineties. So the pot has to last.
 
-[stat value="£630,000" count=off label="The pot for a moderate retirement, one person" sub="in today's money, at the 4% rule" source="Worked out from Pensions UK, June 2026; DWP rates 2026 to 2027; 2026-27 tax rates" art=piggy-coin art_at=r art_size=0.5 cards="ink:on your own@own"]
+[stat value="£630,000" label="The pot for a moderate retirement, one person" sub="in today's money, at the 4% rule" source="Worked out from Pensions UK, June 2026; DWP rates 2026 to 2027; 2026-27 tax rates" art=sleep-grow art_at=r art_size=0.5 cards="ink:on your own@own"]
 For a moderate retirement on your own, that's a pot of about £630,000, in today's money.
 
-[broll search="couple sitting at kitchen table looking at bills and laptop" caption="A couple shares the gap" cards="green:about £317,000 each@£317,000"]
+[broll search="retired couple looking at laptop together at home" caption="A couple shares the gap" cards="green:about £317,000 each@£317,000; ink:around £634,000 between you@£634,000"]
 For a couple wanting moderate, it's far less each, because you have two state pensions and share the bills. About £317,000 each, or around £634,000 between you.
 
-[broll lib="uk-flats-block-drone" caption="If you're still renting at 67" cards="red:about £1.23 million@£1.23"]
-Now remember the rent. Take that moderate retirement on your own, and add the average UK private rent of about £1,406 a month. Suddenly the pot you'd need is about £1.23 million. That's more than a comfortable retirement for a homeowner. Which is why, for a lot of people, paying off a home before you retire is one of the biggest pension decisions you'll ever make, even though it doesn't look like one.
+[broll search="to let sign outside house" caption="If you're still renting at 67" cards="red:£1,406 a month@£1,406"]
+Now remember the rent. Take that moderate retirement on your own, and add the average UK private rent of about £1,406 a month.
 
-[stat value="9%" count=off label="Of working people on track for a comfortable retirement" sub="23% for moderate; 82% for minimum" source="Pensions UK Retirement Living Standards, June 2026" art=maya-worried art_at=r art_size=0.5 cards="red:23% for moderate@23%; red:only 9% for comfortable@9%"]
+[stat value="£1.23 million" count=off label="The pot for a moderate retirement if you rent" sub="one person, paying the average UK rent" source="Worked out from Pensions UK, June 2026; ONS private rents, October 2026; 2026-27 tax rates" anim=rent-day art_at=r art_size=0.5 cards="red:more than a comfortable homeowner@more"]
+Suddenly the pot you'd need is about £1.23 million. That's more than a comfortable retirement for a homeowner.
+
+[text board="Paying off your home is a pension decision" art=house-scales art_at=r art_size=0.5 cards="ink:one of the biggest decisions you'll make@biggest; ink:it doesn't look like one@look"]
+Which is why, for a lot of people, paying off a home before you retire is one of the biggest pension decisions you'll ever make, even though it doesn't look like one.
+
+[chart bar title="Working people on track for each retirement" y="%" source="Pensions UK Retirement Living Standards, June 2026" cards="ink:you're not alone@alone; red:fewer than 1 in 10@fewer; ink:know the number@know"]
+bars: Minimum:82, Moderate:23, Comfortable:9
 And if those numbers make your stomach drop, you're not alone. In its update this year, Pensions UK worked out how many working people are on track. About 82% are heading for at least the minimum. But only 23% are on track for moderate, and just 9% for comfortable. That's fewer than 1 in 10. The point isn't to panic. It's to know the number, so you can do something about it.
 
-[takeaway title="What to put away, from your age" n="4" of="6"]
+[takeaway title="What to put away, from your age" n="4" of="6" cards="green:three levers, far cheaper@levers; ink:the million-pound question@million"]
 So what does it take? Let's work it out for you, by the age you start. And stick with me, because after this I'll show you the three levers that make it far cheaper than it looks, and then the honest answer to the million-pound question.
 
-[text board="Our assumptions" art=look-closer art_at=r art_size=0.45 cards="ink:4% a year above inflation@inflation; ink:retire at 67@67"]
+[text board="Growth: 4% a year above inflation | Retire at 67" art=payslip art_at=r art_size=0.5 cards="ink:everything in today's money@today's"]
 Here are the assumptions, so you can see I'm not cheating. Your money grows by 4% a year above inflation. That's after inflation, so everything stays in today's money. And you retire at 67.
 
-[list title="A moderate retirement: £630,000, a month in today's money" anim=bar-race art_at=r art_size=0.45 cards="green:£483 from 25@£483; ink:£811 from 35@£811; red:£1,492 from 45@£1,492"]
+[list title="A moderate retirement: £630,000, a month in today's money" art=laptop-standing-order art_at=r art_size=0.45]
 - Start at 25: about £483 a month
 - Start at 35: about £811 a month
 - Start at 45: about £1,492 a month
 For a moderate retirement, to reach £630,000 by 67: start at 25, and it's about £483 a month. Start at 35, it's about £811. Start at 45, it's about £1,492 a month.
 
-[stat value="3x" count=off label="The cost of starting at 45 instead of 25" sub="£1,492 a month against £483" source="Illustration: 4% a year after inflation; not a promise" art=sam-facepalm art_at=r art_size=0.5 cards="red:three times as much@three"]
+[stat value="3x" count=off label="The cost of starting at 45 instead of 25" sub="£1,492 a month against £483" source="Illustration: 4% a year after inflation; not a promise" anim=scales art_at=r art_size=0.5 cards="red:three times as much@three; ink:the whole video in one number@whole; green:time: the one thing you can't buy back@buy"]
 Starting twenty years later doesn't cost you a bit more. It costs you about three times as much, every single month. That's the whole video in one number. Time is the most valuable thing you have, and it's the one thing you can't buy back.
 
-[text board="45 and behind? It's not too late" art=sam-thinking art_at=r art_size=0.5 cards="green:your peak earning years@peak; green:higher-rate relief@higher-rate; ink:a couple of years longer@couple"]
-And if you're 45 and reading those numbers with a sinking feeling, it's not too late. Your forties and fifties are usually your peak earning years, so you can often put in more. If you pay higher-rate tax, the tax relief is bigger. And working even a couple of years longer, or going part-time instead of stopping, makes a big difference, because the pot grows for longer and has fewer years to pay for.
+[broll search="middle aged woman working on laptop in office" caption="45 and behind? It's not too late" cards="green:not too late@late; green:your peak earning years@peak"]
+And if you're 45 and reading those numbers with a sinking feeling, it's not too late. Your forties and fifties are usually your peak earning years, so you can often put in more.
 
-[broll search="young professional commuting on london underground" caption="£483 a month is not just you" cards="green:your employer pays some@employer; green:the taxman pays some@taxman"]
+[broll search="older man working in hardware shop serving customer" caption="A couple of years longer" cards="green:higher-rate: bigger relief@higher-rate; ink:a couple of years longer@couple; ink:or part-time@part-time"]
+If you pay higher-rate tax, the tax relief is bigger. And working even a couple of years longer, or going part-time instead of stopping, makes a big difference, because the pot grows for longer and has fewer years to pay for.
+
+[broll search="colleagues working at desks in modern office" caption="£483 a month is not just you" cards="green:your employer pays some@employer; green:the taxman pays some@taxman"]
 And before £483 a month sounds impossible: that's not all coming out of your pay. Your employer and the taxman put in a big chunk of it. Which brings us to the levers.
 
 [takeaway title="The three levers that make it cheaper" n="5" of="6"]
 There are three things that make a pension far cheaper than it looks.
 
-[stat value="3%" count=off label="The least your employer must add to your workplace pension" sub="8% in total, on pay between £6,240 and £50,270" source="GOV.UK workplace pensions, automatic enrolment" art=pension-match art_at=r art_size=0.5 cards="green:at least 3% from your employer@employer; ink:on your qualifying pay@qualifying"]
+[stat value="3%" count=off label="The least your employer must add to your workplace pension" sub="8% in total, on pay between £6,240 and £50,270" source="GOV.UK workplace pensions, automatic enrolment" art=pension-match art_at=r art_size=0.5 cards="green:at least 3% from your employer@least; ink:on your qualifying pay@qualifying; green:some match what you add@match; red:pay left on the table@table"]
 Lever one: your employer. By law, if you're enrolled in a workplace pension, your employer has to put in at least 3% of your qualifying pay, as long as you put in your share. Plenty put in more, and some will match whatever you add, up to a limit. If you're not taking the full match, you're leaving part of your pay on the table.
 
-[bite value="£100" lose="£20" label="What £100 in your pension costs a basic-rate taxpayer" sub="£80 from you, £20 from tax relief" source="GOV.UK tax on your private pension contributions" cards="green:£80 from you@£80; green:£20 from tax relief@£20"]
+[bite value="£100" lose="£20" label="What £100 in your pension costs a basic-rate taxpayer" sub="£80 from you, £20 from tax relief" source="GOV.UK tax on your private pension contributions" cards="green:£80 from you@£80; green:£20 from tax relief@£20; green:higher rate: as little as £60@£60"]
 Lever two: tax relief. Money you put into a pension comes out before income tax. So for a basic-rate taxpayer, £100 in your pension only costs you £80. The other £20 is tax you would have paid anyway. For a higher-rate taxpayer, that same £100 can cost as little as £60.
 
-[text board="25% tax-free when you take it" art=gift art_at=r art_size=0.45 cards="green:a quarter tax-free@quarter"]
+[pie value="25%" label="Of your pot, usually tax-free when you take it" sub="so less tax than our numbers assumed" source="GOV.UK, tax when you get a pension" cards="green:a quarter tax-free@quarter; green:works in your favour@favour"]
 And when you retire, you can usually take up to a quarter of your pot tax-free. Which means the tax on your retirement income is lower than our numbers assumed. That works in your favour.
 
-'[text board="Under 40? A Lifetime ISA adds 25%" art=lisa-bonus art_at=r art_size=0.45 cards="green:25% on top@25%; ink:up to £4,000 a year@£4,000; red:locked until 60@60"]
+[text board="Under 40? A Lifetime ISA adds 25%" anim=coins-jar art_at=r art_size=0.5 cards="green:25% on top@25%; ink:up to £4,000 a year@£4,000; green:up to £1,000 a year free@free; red:locked until 60@60; red:a penalty if you take it early@penalty"]
 If you're under 40, there's one more option. A Lifetime ISA adds a 25% government bonus on up to £4,000 a year, so up to £1,000 a year free. You can use it for a first home, or keep it for retirement, but for retirement it's locked until 60, and taking it out early for anything else costs you a penalty. Read the rules first.
 
-[broll search="office worker reviewing payslip at desk" caption="Every pay rise: add 1%" cards="green:1% more with every pay rise@rise"]
-And here's a simple habit that makes all of this painless. Every time you get a pay rise, put 1% more into your pension before you get used to the money. You'll barely notice it in your take-home, and over a career it adds up to a very different retirement.
+[broll search="office worker opening payslip envelope at desk" caption="Every pay rise: add 1%" cards="green:1% more with every pay rise@rise"]
+And here's a simple habit that makes all of this painless. Every time you get a pay rise, put 1% more into your pension before you get used to the money.
 
-[stat value="£540,000" count=off label="£300 a month for 35 years, against 25 years" sub="£243,000 if you start ten years later" source="Illustration: 7% a year average growth before inflation, monthly; not a promise" art=early-bird art_at=r art_size=0.5 cards="green:about £540,000@£540,000; red:about £243,000@£243,000"]
+[broll search="man smiling checking banking app on phone" caption="You'll barely notice it" cards="green:a very different retirement@different"]
+You'll barely notice it in your take-home, and over a career it adds up to a very different retirement.
+
+[stat value="£540,000" count=off label="£300 a month for 35 years, against 25 years" sub="£243,000 if you start ten years later" source="Illustration: 7% a year average growth before inflation, monthly; not a promise" art=snowball-push art_at=r art_size=0.5 cards="green:about £540,000@£540,000; red:about £243,000@£243,000"]
 Lever three is time, and it's the biggest. Look at the same £300 a month, growing at 7% a year before inflation. Over 35 years, it grows to about £540,000. Over 25 years, about £243,000. Ten fewer years, and you end up with less than half.
 
-[stat value="£43,700" count=off label="What 1% fees cost on £300 a month over 30 years" sub="against 0.3%, at 7% growth" source="Illustration: 7% a year before fees, monthly; not a promise" art=fee-slice art_at=r art_size=0.5 cards="red:1% a year@1%; green:0.3% a year@0.3%"]
+[stat value="£43,700" count=off label="What 1% fees cost on £300 a month over 30 years" sub="against 0.3%, at 7% growth" source="Illustration: 7% a year before fees, monthly; not a promise" art=fee-slice art_at=r art_size=0.5 cards="red:1% a year@1%; green:0.3% a year@0.3%; ink:same money in, same markets@Same"]
 And there's a quiet fourth lever: fees. On £300 a month over 30 years, the difference between paying 1% a year in fees and paying 0.3% is about £43,700. Same money in, same markets. Just less going to someone else.
 
-[broll search="person searching through old paperwork and letters at home" caption="3.3 million lost pension pots" cards="red:£31.1 billion, forgotten@£31.1; green:the Pension Tracing Service@Tracing"]
-And while you're checking: in 2024, the Pensions Policy Institute estimated there were about 3.3 million lost pension pots in the UK, holding about £31.1 billion. Old jobs, old addresses, forgotten pots. If you've changed jobs a few times, search for the government's Pension Tracing Service. It's free, and some of that money might be yours.
+[broll search="shoebox of old letters and paperwork" caption="3.3 million lost pension pots" cards="ink:3.3 million lost pots@3.3; red:£31.1 billion, forgotten@£31.1"]
+And while you're checking: in 2024, the Pensions Policy Institute estimated there were about 3.3 million lost pension pots in the UK, holding about £31.1 billion.
 
-[broll lib="vuag-max-chart-app" phone=on caption="An index fund, left alone" cards="ink:no stock picking@picking; green:just years@years"]
+[broll search="person searching on laptop at kitchen table" caption="The Pension Tracing Service: free" cards="green:the Pension Tracing Service@Tracing; green:some of it might be yours@yours"]
+Old jobs, old addresses, forgotten pots. If you've changed jobs a few times, search for the government's Pension Tracing Service. It's free, and some of that money might be yours.
+
+[broll lib="vuag-holdings-app" phone=on caption="An index fund, left alone" marks="ink:circle 50,40@hundreds" cards="ink:hundreds of companies@hundreds; ink:no stock picking@picking; green:just years@years"]
 And it doesn't need to be clever. Most workplace pensions, and most people's ISAs, are invested in funds like this one, spread across hundreds of companies. No stock picking, no timing the market. Just money going in every month and years doing the heavy lifting.
 
-[text board="Check what your pension is invested in" art=investing-app art_at=r art_size=0.45 cards="ink:log in and look@log; ink:the fees@fees"]
+[broll search="person logging into app on smartphone at home" caption="A five-minute job this week" cards="ink:log in and look@Log; ink:how much is going in@going; ink:what it's invested in@invested; red:the fees@fees; green:the ones who look put in more@tend"]
 So here's a five-minute job for this week. Log in to your workplace pension. Check how much is going in, from you and from your employer, what it's invested in, and what the fees are. Most people have never looked. The ones who look tend to put in more.
 
 [takeaway title="So, do you need £1 million?" n="6" of="6"]
 So, back to the question in the title. Do you really need a million pounds to retire?
 
-[stat value="£1.05 million" count=off label="The pot for a comfortable retirement, one person" sub="in today's money, at the 4% rule" source="Worked out from Pensions UK, June 2026; DWP rates 2026 to 2027; 2026-27 tax rates" art=sam-surprised art_at=r art_size=0.5 cards="red:on your own: about £1.05 million@own; green:a couple: about £587,000 each@couple"]
+[stat value="£1.05 million" label="The pot for a comfortable retirement, one person" sub="in today's money, at the 4% rule" source="Worked out from Pensions UK, June 2026; DWP rates 2026 to 2027; 2026-27 tax rates" art=retired-bench art_at=r art_size=0.5 cards="ink:on your own: about £1.05 million@own; green:a couple: about £587,000 each@couple"]
 For a comfortable retirement on your own, yes, roughly. You'd need a pot of about £1.05 million in today's money. But for a couple, it's about £587,000 each, because you have two state pensions and share the costs.
 
-[text board="Your number: spending, minus £12,548, times 25" art=calculator-table art_at=r art_size=0.5 cards="ink:what you'd spend a year@spend; ink:minus the state pension@Take; green:times 25@multiply"]
+[text board="What you'd spend a year | Minus the state pension, £12,548 | Times 25" art=calculator-table art_at=r art_size=0.5 cards="ink:the 4% rule turned around@turned; ink:add a bit for tax@tax; red:still renting? Rent goes in@renting"]
 And here's how to work out your own number in about thirty seconds. Write down what you'd want to spend a year in retirement, in today's money. Take off the state pension, about £12,548. Then multiply what's left by 25. That's the 4% rule turned around, and it gives you a rough target pot. Add a bit for tax, and remember that if you'll still be renting, rent goes in the spending.
 
-[broll search="elderly couple shopping in supermarket uk" caption="Taking the money out" cards="ink:an annuity: guaranteed for life@annuity; ink:drawdown: stay invested@drawdown"]
-And when you get there, there are two main ways to turn a pot into an income. You can buy an annuity, which pays you a guaranteed amount for the rest of your life. Or you can use drawdown, where the money stays invested and you take out what you need. Many people end up mixing the two. It's worth getting proper guidance at that point; the government's free Pension Wise service is there for exactly that, from age 50.
+[broll search="retired couple reviewing documents with financial adviser" caption="Taking the money out" cards="ink:an annuity: guaranteed for life@annuity; ink:drawdown: stay invested@drawdown; ink:many mix the two@mixing"]
+And when you get there, there are two main ways to turn a pot into an income. You can buy an annuity, which pays you a guaranteed amount for the rest of your life. Or you can use drawdown, where the money stays invested and you take out what you need. Many people end up mixing the two.
 
-[text board="The answer depends on one thing: what you'll spend" art=crossroads art_at=r art_size=0.5 cards="ink:moderate: £630,000@£630,000; green:comfortable: £1.05 million@£1.05"]
+[broll search="older man on phone call at home desk" caption="Pension Wise: free, from 50" cards="green:free guidance@Wise"]
+It's worth getting proper guidance at that point; the government's free Pension Wise service is there for exactly that, from age 50.
+
+[text wrong="Your salary? The stock market?" board="It depends on what you'll spend | Moderate: £630,000 | Comfortable: £1.05 million" art=shopping-bags art_at=r art_size=0.5 cards="green:own your home: you need far less@outright"]
 So the honest answer is: it depends on one thing most people never think about. Not your salary, not the stock market. What you'll actually spend when you stop working. A moderate life needs about £630,000. A comfortable one, about £1.05 million. And if you own your home outright by then, you need a lot less, because rent or a mortgage is one of the biggest costs there is.
 
 [broll search="retired man gardening in back garden uk" caption="It's a choice you make now" cards="green:the earlier the cheaper@earlier"]
 Which means you get to choose. And the earlier you choose, the cheaper it is.
 
-[text board="Not advice. Just the numbers." art=sam-thinking art_at=r art_size=0.42 cards="ink:not advice@advice"]
+[text board="Not advice. Just the numbers." art=contract-signing art_at=r art_size=0.42 cards="ink:not advice@advice"]
 None of this is financial advice, and pensions and investments can go down as well as up. The figures are illustrations, not promises. If your situation is complicated, speak to a regulated financial adviser.
 
 [recap title="What retirement really takes" anim=stack-grow art_at=r art_size=0.5 cards="ink:state pension: £12,548@£12,548; ink:moderate: £630,000@£630,000; green:comfortable: £1.05 million@£1.05"]
