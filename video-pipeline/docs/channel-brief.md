@@ -35,4 +35,5 @@ Jeffrey's handoff, 3 November 2026. Read this before planning or writing a video
    hold like the £83,000 one. Likely cause: the hook says the title's answer (£30) in the first sentence.
 5. Re-watch spikes happen on real screens (his Trading 212 pie). Show real numbers more.
 6. Mid-roll ads need 8 minutes or more; aim for 10+.
-7. Pay off the title's number late (EDITOR.md); keep the video on the title's question; one scene in four footage.
+7. Pay off the title's number late (EDITOR.md); keep the video on the title's question.
+8. B-roll is useful (Jeffrey): aim for about one scene in three as footage, one in four at the least.
