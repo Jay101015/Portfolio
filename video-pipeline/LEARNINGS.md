@@ -356,6 +356,11 @@ one change at a time where possible, so a result can be read.
   early, pay it late); everything in the video serves the title's question, and a second topic gets its own
   video. Into EDITOR.md.
 
+- Jeffrey's handoff, 3 November (docs/channel-brief.md): retitling to a search-style, viewer-first title with a
+  money number is what moved both stalled videos (house: 48 to 200+ impressions; £83,000: 11 to 738). Chasing
+  winners got the biggest first test (1K impressions in 2 days) but lost half its viewers by 0:40 (1:12 of 5:58):
+  its first sentence says the title's answer, £30. Same lesson as the £83,000 drop at 1:30: pay the title late.
+
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage? Leans no (13% at 10:01
    against 33% at 7:38), but not a clean result: the two openings differ too, so the length is not proven guilty.
