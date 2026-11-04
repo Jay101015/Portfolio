@@ -480,12 +480,18 @@ def resolve_media(sb: dict, project: str, slug: str) -> list[str]:
     return notes
 
 
-def level_audio(path: str, target: float = -14.0, peak: float = -1.5) -> str | None:
+# the finished level; `loudness: -16` in a script header sets it for that video and its Shorts (Jeffrey found the
+# retirement video too loud at -14)
+LOUDNESS = -14.0
+
+
+def level_audio(path: str, target: float | None = None, peak: float = -1.5) -> str | None:
     """Bring a finished video's sound to the same loudness as every other one: -14 LUFS (where YouTube plays
     everything; it turns loud videos down but never quiet ones up) with peaks under -1.5 dBTP. Two passes of
     ffmpeg's loudnorm, measured then applied as one even gain, so the voice and a "watch next" preview keep
     their balance and every Short lands at the same level as the long video. The picture is copied untouched.
     Returns a one-line report, or None when the file has no sound."""
+    target = LOUDNESS if target is None else target
     probe = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "a", "-show_entries", "stream=index", "-of", "csv=p=0", path], capture_output=True, text=True)
     if not probe.stdout.strip():
         return None
@@ -904,6 +910,11 @@ def main(argv: list[str] | None = None) -> int:
     if audio:
         # the recording is cleaned up first (voice: raw in the header keeps it as it is)
         level = level_from_header(_header_lines(md).get("voice"))
+        global LOUDNESS
+        try:
+            LOUDNESS = float(str(_header_lines(md).get("loudness") or LOUDNESS).replace("LUFS", "").strip())
+        except ValueError:
+            pass
         audio = enhance(audio, os.path.join(project, ".cache", "voice-clean.mp3"), level)
         print(f"voice: {'as recorded' if level in ('off', 'raw') else 'enhanced (' + level + ')'}")
         before = al.audio_duration(audio)

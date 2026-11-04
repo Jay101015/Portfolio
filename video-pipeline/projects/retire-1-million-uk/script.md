@@ -8,6 +8,7 @@ pace.lead: 0.4
 pace.hold: 0.3
 pauses.ceiling: -36
 voice: natural
+loudness: -16
 slug: retire-1-million-uk
 topic: how much a UK retirement actually costs at three living standards, what the state pension covers, the pension pot each one needs, what to put away a month from 25, 35 or 45, and the levers that make it cheaper; for a UK viewer, about them
 

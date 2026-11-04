@@ -7,7 +7,8 @@
     2,
     34
    ],
-   "hook": "Fewer than 1 in 10 are on track for a comfortable retirement"
+   "hook": "Fewer than 1 in 10 are on track for a comfortable retirement",
+   "speed": 1
   },
   {
    "name": "short-2",
@@ -33,7 +34,8 @@
      379.8
     ]
    ],
-   "hook": "Still renting at 67? You'd need £1.23 million"
+   "hook": "Still renting at 67? You'd need £1.23 million",
+   "speed": 1
   },
   {
    "name": "short-3",
@@ -43,7 +45,8 @@
      713.8
     ]
    ],
-   "hook": "Your retirement number in 30 seconds"
+   "hook": "Your retirement number in 30 seconds",
+   "speed": 1
   },
   {
    "name": "short-4",
@@ -61,7 +64,8 @@
      460.2
     ]
    ],
-   "hook": "Start at 45 and it costs 3x as much"
+   "hook": "Start at 45 and it costs 3x as much",
+   "speed": 1
   }
  ]
 }
