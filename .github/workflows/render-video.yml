@@ -176,7 +176,15 @@ jobs:
         run: |
           tag="demo-$PROJECT"
           gh release view "$tag" >/dev/null 2>&1 || gh release create "$tag" --title "Demo: $PROJECT" --notes "Rendered by the Render video workflow. See footage-report.md for every piece of footage and its licence." --target "${{ github.sha }}"
-          gh release upload "$tag" projects/$PROJECT/*.mp4 projects/$PROJECT/footage-report.md projects/$PROJECT/storyboard.html --clobber
+          # one file at a time, retried: replacing an asset sometimes answers HTTP 500 and the rest were never sent
+          for f in projects/$PROJECT/*.mp4 projects/$PROJECT/footage-report.md projects/$PROJECT/storyboard.html; do
+            [ -f "$f" ] || continue
+            for i in 1 2 3 4; do
+              gh release upload "$tag" "$f" --clobber && break
+              echo "upload of $f failed (try $i), retrying"; sleep $((i * 5))
+              gh release delete-asset "$tag" "$(basename "$f")" -y 2>/dev/null || true
+            done
+          done
           [ -f "projects/$PROJECT/facts-report.md" ] && gh release upload "$tag" "projects/$PROJECT/facts-report.md" --clobber || true
           [ -f "projects/$PROJECT/credits.txt" ] && gh release upload "$tag" "projects/$PROJECT/credits.txt" --clobber || true
           [ -f "projects/$PROJECT/footage-check.png" ] && gh release upload "$tag" "projects/$PROJECT/footage-check.png" --clobber || true
