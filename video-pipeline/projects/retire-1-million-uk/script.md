@@ -42,7 +42,7 @@ The difference between those three isn't really holidays and cars. It's how it f
 [broll search="older woman checking price label in supermarket" caption="Minimum: saying no a lot" cards="ink:checking every price@checking" src="11-older-woman-checking-price-label-in-supe.mp4" credit="Video 1735 by Buvrix27 via Pixabay"]
 On the minimum, you're checking every price and saying no a lot.
 
-[broll search="grandmother playing with grandchild in garden" caption="Comfortable: the one who can help" cards="ink:yes to most normal things@yes; green:the one who can help@help"]
+[text board="Comfortable: the one who can help" art=family-dinner art_at=r art_size=0.5 cards="ink:yes to most normal things@yes; green:the one who can help@help"]
 On moderate, you can say yes to most normal things. On comfortable, you're the one who can help when someone in the family needs it.
 
 [list title="For a couple, combined" art=retired-bench art_at=r art_size=0.45 cards="ink:cheaper per person@cheaper; green:you share the bills@share; green:£62,700 comfortable@£62,700"]
@@ -54,7 +54,7 @@ If you're a couple, it's cheaper per person, because you share the bills. Minimu
 [broll lib="tower-bridge-office-window" caption="London costs more" cards="red:London has its own, higher figures@higher; red:rent and travel cost more@travel"]
 And if you'll retire in London, every one of those numbers is higher. Pensions UK publishes separate London figures, because rent, travel and everything else cost more.
 
-[broll search="hand counting british pound notes on table" caption="Everything in today's money" cards="ink:today's money@today's; ink:allowing for inflation@inflation; ink:otherwise the numbers lie@lie"]
+[broll lib="save-money-coins-graphic" caption="Everything in today's money" cards="ink:today's money@today's; ink:allowing for inflation@inflation; ink:otherwise the numbers lie@lie"]
 One important thing. All of these are in today's money. So when we work out what you need, we'll keep everything in today's money too, and allow for inflation along the way. Otherwise the numbers lie to you.
 
 [stat value="£0" count=off label="What these budgets include for rent or a mortgage" sub="they assume you own your home outright" source="Pensions UK Retirement Living Standards: the detail" anim=house-build art_at=r art_size=0.5 cards="red:no rent, no mortgage@rent; red:renting needs far more@renting; ink:the most important number in the video@important"]
@@ -75,7 +75,7 @@ But there's a catch. To get the full amount, you need 35 qualifying years of Nat
 [broll search="hands typing on laptop at kitchen table" caption="Check yours: it takes 5 minutes" cards="green:gov.uk/check-state-pension@check; green:gaps you can fill@gaps" src="21-hands-typing-on-laptop-at-kitchen-table.mp4" credit="Video 10822 by Coverr-Free-Footage via Pixabay"]
 You can check exactly what you're on track for on the government's website. Search "check state pension" on GOV.UK. It takes about five minutes, and it tells you if you've got gaps you can fill.
 
-[broll search="pensioners walking on british high street" caption="State pension age: 67 by 2028" cards="ink:66 now@66; red:67 by 2028@67; red:set to rise again@again; ink:plan on 67 at the earliest@earliest"]
+[broll lib="uk-suburb-drone" caption="State pension age: 67 by 2028" cards="ink:66 now@66; red:67 by 2028@67; red:set to rise again@again; ink:plan on 67 at the earliest@earliest"]
 And you won't get it as early as your parents did. The state pension age is rising from 66 to 67 between 2026 and 2028, and it's set to rise again later. For most people watching this, plan on 67 at the earliest.
 
 [compare title="Two kinds of workplace pension" cards="ink:two kinds of pension@final; ink:a guaranteed income for life@guaranteed; ink:most people under 40: a pot@under; ink:what goes in, how it grows@grows" good=both]
@@ -98,7 +98,7 @@ Quickly, on that tax. In retirement you still get your £12,570 tax-free Persona
 [stat value="4%" count=off label="Take out about 4% of your pot a year" sub="to last about thirty years" source="A rule of thumb; some UK research suggests 3.5%" anim=hourglass art_at=r art_size=0.5 cards="ink:rising with inflation@rising; ink:thirty years@thirty; ink:a rough guide, not a guarantee@rough; ink:3.5% may be safer@3.5%"]
 So how big a pot pays that? A common rule of thumb is that you can take out about 4% of your pot each year, rising with inflation, and have a good chance of it lasting thirty years. It's a rough guide, not a guarantee. Some UK research says 3.5% is safer. But it gives us a number.
 
-[broll search="elderly woman celebrating birthday with family" caption="Plan for your nineties" cards="red:the risk: running out@running; ink:into their nineties@nineties"]
+[text board="Plan for your nineties" art=pension-letter art_at=r art_size=0.5 cards="red:the risk: running out@running; ink:into their nineties@nineties"]
 And why thirty years? Because the real risk in retirement isn't dying with money left over. It's running out while you're still here. Plenty of people retiring at 67 today will live into their nineties. So the pot has to last.
 
 [stat value="£630,000" label="The pot for a moderate retirement, one person" sub="in today's money, at the 4% rule" source="Worked out: Pensions UK 2026; 2026-27 tax" art_at=r art_size=0.5 cards="ink:on your own@own" anim=stack-grow]
@@ -209,13 +209,13 @@ Not your salary, not the stock market. What you'll actually spend when you stop 
 [stat value="£1.05 million" count=off label="A comfortable retirement, one person" sub="far less if you own your home outright" source="Worked out: Pensions UK 2026; 2026-27 tax" art=garden-retirement art_at=r art_size=0.5 cards="green:own your home: you need far less@outright"]
 A comfortable one, about £1.05 million. And if you own your home outright by then, you need a lot less, because rent or a mortgage is one of the biggest costs there is.
 
-[broll search="older man planting vegetables allotment" caption="It's a choice you make now" cards="green:the earlier the cheaper@earlier"]
+[broll lib="uk-semis-street-pan" caption="It's a choice you make now" cards="green:the earlier the cheaper@earlier"]
 Which means you get to choose. And the earlier you choose, the cheaper it is.
 
 [text board="Not advice. Just the numbers." art=bank-queue art_at=r art_size=0.42 cards="ink:not advice@advice; red:can go down as well as up@down; ink:illustrations, not promises@illustrations; ink:a regulated adviser@adviser"]
 None of this is financial advice, and pensions and investments can go down as well as up. The figures are illustrations, not promises. If your situation is complicated, speak to a regulated financial adviser.
 
-[text board="Which retirement are you aiming for? | Minimum, moderate or comfortable?" anim=plant-grow art_at=r art_size=0.5 cards="ink:minimum@minimum; ink:moderate@moderate; green:comfortable@comfortable"]
+[text board="Which retirement are you aiming for?" anim=plant-grow art_at=r art_size=0.5 cards="ink:minimum@minimum; ink:moderate@moderate; green:comfortable@comfortable"]
 Tell me in the comments, honestly: which retirement are you aiming for, minimum, moderate or comfortable?
 
 [outro title="The Everyday Investor" cta="Subscribe for the next one" dur=20 cards=on]

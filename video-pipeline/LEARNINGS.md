@@ -394,3 +394,10 @@ one change at a time where possible, so a result can be read.
 - A list row lands on its figure ("£1,492"), not on its first two words, which matched the first row.
 - Check the numbers and labels drawn into a loop before casting it: interest-grows shows a red £1,581 debt and
   stack-grow a "year N" counter, both wrong beside a growth figure.
+- Retirement final pass: stock search returned a Tokyo crossing for "State pension age", a Santa hat for "Plan
+  for your nineties" and the same beach and pencil clips again. Where stock keeps failing, use the library's own UK
+  footage (uk-suburb-drone, uk-semis-street-pan, save-money-coins-graphic) or a drawn board, and look at every new
+  clip before rendering.
+- The list fix in round 2 went into PaperRecap, not PaperList (the same block appears twice): check a fix
+  lands in the component the scene actually renders. Figures are matched digit by digit, since the transcriber
+  splits "1,492" into "1" ",492".

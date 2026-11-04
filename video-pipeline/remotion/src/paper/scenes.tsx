@@ -490,11 +490,11 @@ export const PaperRecap: React.FC<P> = ({scene, brand}) => {
   const sceneLen = scene.end - scene.start;
   const titleDone = writeFrames(title, fps, 22) + 4;
   const delays = items.map((item, i) => {
-    // the figure first: the whole line is rarely said word for word, and its first two words match the first row ("Start at 25: about £483 a month"): fall back to its figure, then
+    // the figure first: the whole line is rarely said word for word ("Start at 25: about £483 a month"), and its first two words match the first row: so its figure, then
     // its last number, so each row lands on its own word, not on an even share (retirement round 2: all three
     // age rows were up 5 s before "£1,492" was said)
     const fig = item.match(/£[\d,.]+(?:\s*(?:million|billion|k))?|\d[\d,.]*%?/gi) ?? [];
-    const spoken = (fig.length ? findPhraseTime(scene.words, fig[fig.length - 1]) : null) ?? findPhraseTime(scene.words, item);
+    const spoken = (fig.length ? figureTime(scene.words, fig[fig.length - 1]) : null) ?? findPhraseTime(scene.words, item);
     const delaySec = spoken !== null ? Math.max(0, spoken - scene.start) : titleDone / fps + 0.4 + (i * Math.max(0, sceneLen - titleDone / fps - 2.0)) / Math.max(1, items.length);
     return Math.max(titleDone + 4, Math.round(delaySec * fps));
   });
@@ -528,6 +528,24 @@ export const PaperRecap: React.FC<P> = ({scene, brand}) => {
 };
 
 // ------------------------------------------------------------------ list
+/** when a figure is said: "£1,492" matched against the words as heard, which the transcriber may split ("1" ",492")
+ * or drop the "£" from */
+const figureTime = (words: Word[] | undefined, fig: string): number | null => {
+  if (!words?.length) return null;
+  const digits = fig.replace(/[^0-9]/g, '');
+  if (!digits) return null;
+  for (let i = 0; i < words.length; i++) {
+    if (!/[0-9]/.test(words[i].w)) continue;
+    let acc = '';
+    for (let j = i; j < Math.min(words.length, i + 3); j++) {
+      acc += words[j].w.replace(/[^0-9]/g, '');
+      if (acc === digits) return words[i].s;
+      if (!digits.startsWith(acc)) break;
+    }
+  }
+  return null;
+};
+
 export const PaperList: React.FC<P> = ({scene, brand}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
@@ -538,7 +556,10 @@ export const PaperList: React.FC<P> = ({scene, brand}) => {
   const numbered = scene.props.numbered !== false;
   const titleDone = title ? doneAt(brand, title, fps, 4, 2, 22) : 0;
   const delays = items.map((item, i) => {
-    const spoken = findPhraseTime(scene.words, item);
+    // each row on its own figure ("£1,492"), not its first two words ("Start at" matched the first row: retirement
+    // round 2 wrote all three age rows within 2 s of each other)
+    const fig = item.match(/£[\d,.]+(?:\s*(?:million|billion|k))?|\d[\d,.]*%?/gi) ?? [];
+    const spoken = (fig.length ? figureTime(scene.words, fig[fig.length - 1]) : null) ?? findPhraseTime(scene.words, item);
     const delaySec = spoken !== null ? Math.max(0, spoken - scene.start) : Math.min(i * 0.9, sceneLen * 0.6 * (i / Math.max(1, items.length)));
     return Math.max(brand.board ? titleDone + 4 : 0, Math.round(delaySec * fps) + 6);
   });
