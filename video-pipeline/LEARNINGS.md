@@ -361,6 +361,20 @@ one change at a time where possible, so a result can be read.
   winners got the biggest first test (1K impressions in 2 days) but lost half its viewers by 0:40 (1:12 of 5:58):
   its first sentence says the title's answer, £30. Same lesson as the £83,000 drop at 1:30: pay the title late.
 
+### Do You Really Need £1 Million to Retire? (built 2026-11-04, ElevenLabs clone of Jeffrey's voice)
+- Review round 1: editor 6, animator 5, retention 7 (predicted 26% average view, 58% at 0:30), director 5. Every
+  figure checked band by band. The faults were all in the picture: six fallback stock searches found the wrong
+  thing (chickens for "still renting", hair clippers for "working longer", calligraphy for "lost pension pots",
+  a café for "annuity or drawdown", a metro in Asia for London, a door against a green screen for "gardening");
+  the coming-up checklist sat on every bottom-right drawing all chapter; red used where nothing is lost (a rule
+  of thumb, tax relief, the state pension); rings narrower than "4%" and "3x"; the first frame an empty page.
+- Rules: a stock search is a guess, so check footage-candidates.png and pin by id (stock=) before the build, or use
+  a library clip or a drawn scene for anything stock cannot show (UK renting, lost paperwork, annuity vs drawdown);
+  the checklist shows only at chapter changes; a voice clone gets pace.lead 0.4 and pace.hold 0.3 (no breaths to
+  hide a long gap in); proof-read the take's transcript against the text ("under 40 in" came out "and").
+- Both uploads were takes of part 1; the transcript caught it before anything was sent. Check part order and
+  coverage on every multi-part voice.
+
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage? Leans no (13% at 10:01
    against 33% at 7:38), but not a clean result: the two openings differ too, so the length is not proven guilty.
