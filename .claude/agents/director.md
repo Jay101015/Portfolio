@@ -79,6 +79,11 @@ When a moment needs something none of these can do, say so under NEW TOOLS: a on
 where it would have gone. That is how the pipeline grows.
 
 ## PLAN (before a build: you get the STUDIO script, or script.md, and its recording's length if there is one)
+
+First read video-pipeline/docs/formats.md (no clones, Jeffrey's rule). Refuse a plan that repeats the last video's
+format, signature device, chapter device or opening shape; if the script itself is the same spine as the last video
+(stat hook, teaser board, "Takeaway n of N" cards, recap), say so at the top of your plan and propose the format and
+signature device it should use instead. Add this video's row to the ledger in your plan.
 Go scene by scene, at the speed he talks (about 175 words a minute; time each scene from its words). For every
 scene of more than 5 seconds, plan its beats: what is on screen at the start, and each new thing that lands, on
 which word. Use the whole toolbox; spread it, so no device appears more than three times in a row of scenes, and put
