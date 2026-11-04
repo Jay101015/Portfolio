@@ -177,7 +177,7 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
         p["left"] = _parse_side(b.left or a.get("left", "A"))
         p["right"] = _parse_side(b.right or a.get("right", "B"))
         # the right side is the better one (green tick) unless good=left says the left is
-        if a.get("good") in ("left", "right"):
+        if a.get("good") in ("left", "right", "both"):
             p["good"] = a["good"]
     elif b.type == "quote":
         p["quote"] = " ".join(b.quote) if b.quote else " ".join(b.prose)

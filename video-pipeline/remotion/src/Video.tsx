@@ -185,8 +185,9 @@ const ProgressLine: React.FC<{color: string}> = ({color}) => {
   const u = width / 1920;
   return <div style={{position: 'absolute', left: 0, top: 0, height: 6 * u, width: width * Math.min(1, frame / Math.max(1, durationInFrames - 1)), background: color, opacity: 0.9, pointerEvents: 'none'}} />;
 };
-/** "Coming up": the chapters' titles small in the bottom-right corner from the first takeaway to the recap, ticked
- * off as each is covered, the one in hand on the highlighter. The unticked line is a reason to stay. Long videos only. */
+/** "Coming up": the chapters' titles small in the bottom-right corner at each chapter change (the takeaway card and
+ * a few seconds after it), ticked off as each is covered, the one in hand on the highlighter. The unticked line is a
+ * reason to stay; showing it only at the changes keeps it off the art. Long videos only. */
 const ComingUp: React.FC<{sb: Storyboard; brand: Brand}> = ({sb, brand}) => {
   const frame = useCurrentFrame();
   const {fps, width, height} = useVideoConfig();
@@ -201,9 +202,17 @@ const ComingUp: React.FC<{sb: Storyboard; brand: Brand}> = ({sb, brand}) => {
   // footage, a photo and a room fill the corner the list sits in: it steps aside for them
   const here = sb.scenes.find((s) => t >= s.start && t < s.end);
   if (here && ['broll', 'still', 'image', 'clip', 'set'].includes(here.type)) return null;
+  // it shows at each chapter change only (the takeaway card and 4 s after it), never sitting over the art below:
+  // every bottom-right drawing, chart label and card stack ran under it when it stayed up all chapter
+  const SHOW = 4.5;
+  const at = [...items].reverse().find((it) => t >= it.start - 0.3);
+  if (!at) return null;
+  const since = t - (at.start - 0.3);
+  const inCard = here?.type === 'takeaway';
+  if (!inCard && since > SHOW) return null;
   const u = width / 1920;
   const fs = 30 * u;
-  const alpha = Math.max(0, Math.min(1, (t - (first - 0.3)) / 0.5, (until - t) / 0.5));
+  const alpha = inCard ? Math.min(1, since / 0.5) : Math.max(0, Math.min(1, since / 0.5, (SHOW - since) / 0.5, (until - t) / 0.5));
   return (
     <div style={{position: 'absolute', right: width * 0.03, bottom: height * 0.05, opacity: alpha, fontFamily: brand.hand ?? 'cursive', fontSize: fs, color: brand.ink, lineHeight: 1.4, pointerEvents: 'none'}}>
       {items.map((it, i) => {

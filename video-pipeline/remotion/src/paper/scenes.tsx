@@ -452,8 +452,11 @@ export const PaperHook: React.FC<P> = ({scene, brand}) => {
   const total = Math.max(1, Math.round((scene.end - scene.start) * fps));
   // the line is already being written on the first frame: an autoplay preview never opens on blank paper
   // (at most a third of a second in, whenever the first word comes: there is ink on frame 0, a few letters already down)
-  const at = Math.min(fitStart(Math.max(2, Math.round(((scene.words?.[0]?.s ?? scene.start) - scene.start) * fps) - 2), total) - Math.round(fps * 0.35), -Math.round(fps * 0.25));
-  const cps = fitCps(line, fps, Math.max(0, at), 20, total);
+  const at0 = Math.min(fitStart(Math.max(2, Math.round(((scene.words?.[0]?.s ?? scene.start) - scene.start) * fps) - 2), total) - Math.round(fps * 0.35), -Math.round(fps * 0.25));
+  const cps = fitCps(line, fps, Math.max(0, at0), 20, total);
+  // the video's opening line is fully written by 0.3 s: the first frame carries the number, like the thumbnail
+  // (a viewer deciding in the first second saw "The st" on an empty page)
+  const at = scene.start <= 0.01 ? Math.min(at0, Math.round(fps * 0.3) - writeFrames(line, fps, cps)) : at0;
   const done = at + writeFrames(line, fps, cps) + 4;
   const colW = beside && !isVertical ? width * 0.46 - pad : width - pad * 2;
   const w = Math.min(colW, Math.max(360 * u, line.length * (beside ? 36 : 44) * u));
@@ -635,9 +638,9 @@ export const PaperCompare: React.FC<P> = ({scene, brand}) => {
         </div>
       ) : null}
       <div style={{display: 'flex', flexDirection: isVertical ? 'column' : 'row', gap: 90 * u, alignItems: 'center', position: 'relative'}}>
-        <Card side={left} bad={scene.props.good !== 'left'} delay={leftAt} tilt={-1.2} seed={41} />
+        <Card side={left} bad={scene.props.good !== 'left' && scene.props.good !== 'both'} delay={leftAt} tilt={-1.2} seed={41} />
         <div style={{position: 'absolute', left: '50%', top: '50%', transform: `translate(-50%,-50%) scale(${vs}) rotate(-6deg)`, fontFamily: hand(brand), fontSize: 64 * u, fontWeight: 700, color: brand.ink, zIndex: 2}}>vs</div>
-        <Card side={right} bad={scene.props.good === 'left'} delay={rightAt} tilt={1} seed={42} />
+        <Card side={right} bad={scene.props.good === 'left' && scene.props.good !== 'both'} delay={rightAt} tilt={1} seed={42} />
       </div>
       <div style={{marginTop: 26 * u}}>
         <Source brand={brand} source={scene.props.source} delay={brand.board ? rightAt + fps : 24} />

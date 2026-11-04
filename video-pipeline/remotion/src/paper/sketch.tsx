@@ -147,14 +147,18 @@ export const Ring: React.FC<{width: number; height: number; stroke: string; win:
   const h = height + py * 2;
   const options = React.useMemo(() => ({stroke, strokeWidth: thickness, roughness: 1.6, bowing: 1.8, seed, curveStepCount: 14}), [stroke, thickness, seed]);
   return (
-    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{position: 'absolute', left: -px, top: -py, overflow: 'visible', pointerEvents: 'none', transform: 'rotate(-3deg)'}}>
+    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{position: 'absolute', left: -px, top: -py + height * 0.1, overflow: 'visible', pointerEvents: 'none', transform: 'rotate(-3deg)'}}>
       <SketchEllipse cx={w / 2} cy={h / 2} w={w - thickness * 2} h={h - thickness * 2} win={win} easeOut options={options} />
     </svg>
   );
 };
 
 /** about how wide a figure is in the display face (Caveat Brush: narrow digits), for the ring round it */
-export const figureWidth = (text: string, fontSize: number) => text.length * fontSize * 0.38;
+// per character: narrow digits, but '%', 'x', letters and '£' are wider, and ',' '.' narrower; a flat 0.38 left the
+// ring cutting through the '%' of "4%" and the 'x' of "3x"
+const GLYPH: Record<string, number> = {'%': 0.62, '£': 0.42, ',': 0.16, '.': 0.16, ' ': 0.22, x: 0.42, m: 0.55, M: 0.6};
+export const figureWidth = (text: string, fontSize: number) =>
+  [...text].reduce((w, c) => w + (GLYPH[c] ?? (/[0-9]/.test(c) ? 0.38 : 0.42)), 0) * fontSize;
 export const figureHeight = (fontSize: number) => fontSize * 0.82;
 
 /** A highlighter swipe behind text: a slightly skewed, uneven bar that wipes in. */
