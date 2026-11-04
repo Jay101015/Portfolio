@@ -215,12 +215,7 @@ Which means you get to choose. And the earlier you choose, the cheaper it is.
 [text board="Not advice. Just the numbers." art=bank-queue art_at=r art_size=0.42 cards="ink:not advice@advice; red:can go down as well as up@down; ink:illustrations, not promises@illustrations; ink:a regulated adviser@adviser"]
 None of this is financial advice, and pensions and investments can go down as well as up. The figures are illustrations, not promises. If your situation is complicated, speak to a regulated financial adviser.
 
-[recap title="What retirement really takes" anim=plant-grow art_at=r art_size=0.5 cards="ink:state pension: £12,548@£12,548; ink:moderate: £630,000@£630,000; green:comfortable: £1.05 million@£1.05"]
-- State pension: about £12,548 a year
-- Moderate, one person: about £630,000
-- Comfortable, one person: about £1.05 million
-- Start at 25: a third of the monthly amount at 45
-- Employer match, tax relief, time
-So, let's put it all together. The state pension pays about £12,548 a year. A moderate retirement on your own needs a pot of about £630,000, and a comfortable one about £1.05 million. Starting at 25 costs about a third of starting at 45. And your employer, tax relief and time do most of the work, if you let them. Tell me in the comments, honestly: which retirement are you aiming for, minimum, moderate or comfortable?
+[text board="Which retirement are you aiming for? | Minimum, moderate or comfortable?" anim=plant-grow art_at=r art_size=0.5 cards="ink:minimum@minimum; ink:moderate@moderate; green:comfortable@comfortable"]
+Tell me in the comments, honestly: which retirement are you aiming for, minimum, moderate or comfortable?
 
 [outro title="The Everyday Investor" cta="Subscribe for the next one" dur=20 cards=on]

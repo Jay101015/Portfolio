@@ -136,4 +136,4 @@ Which means you get to choose. And the earlier you choose, the cheaper it is.
 
 None of this is financial advice, and pensions and investments can go down as well as up. The figures are illustrations, not promises. If your situation is complicated, speak to a regulated financial adviser.
 
-So, let's put it all together. The state pension pays about £12,548 a year. A moderate retirement on your own needs a pot of about £630,000, and a comfortable one about £1.05 million. Starting at 25 costs about a third of starting at 45. And your employer, tax relief and time do most of the work, if you let them. Tell me in the comments, honestly: which retirement are you aiming for, minimum, moderate or comfortable?
+Tell me in the comments, honestly: which retirement are you aiming for, minimum, moderate or comfortable?
