@@ -1,0 +1,8 @@
+{
+ "shorts": [
+  {"name": "short-1", "scenes": [1, 2, 34], "hook": "Fewer than 1 in 10 are on track for a comfortable retirement"},
+  {"name": "short-2", "scenes": [16, 29, 31, 32, 33], "hook": "Still renting at 67? You'd need £1.23 million"},
+  {"name": "short-3", "scenes": [27, 57], "hook": "Your retirement number in 30 seconds"},
+  {"name": "short-4", "scenes": [37, 38, 39], "hook": "Start at 45 and it costs 3x as much"}
+ ]
+}
