@@ -91,6 +91,8 @@ def blank_stretches(path: str, fps: int = 2, longest: float = 3.0) -> list[tuple
 def frame_at(path: str, t: float, w: int) -> Image.Image:
     raw = subprocess.run(["ffmpeg", "-v", "error", "-ss", f"{t:.3f}", "-i", path, "-frames:v", "1", "-vf", f"scale={w}:-2", "-f", "image2pipe", "-vcodec", "png", "-"], capture_output=True, check=True).stdout
     import io
+    if not raw and t > 0.5:  # a time at or past the last frame decodes nothing: take the frame just before it
+        return frame_at(path, t - 0.5, w)
     return Image.open(io.BytesIO(raw)).convert("RGB")
 
 
