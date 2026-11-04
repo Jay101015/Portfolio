@@ -5,7 +5,7 @@ Topic: how much a UK retirement actually costs at three living standards, what t
 | scene | query | result | licence | attribution |
 |---|---|---|---|---|
 | 6 | | already in media/: 06-retired-couple-walking-on-british-seasid.mp4 | | |
-| 10 | senior woman drinking tea at kitchen window | downloaded 10-senior-woman-drinking-tea-at-kitchen-win.mp4 | Pixabay Content License | Video 790 by klimkin via Pixabay |
+| 10 | | already in media/: 10-senior-woman-drinking-tea-at-kitchen-win.mp4 | | |
 | 11 | | already in media/: 11-older-woman-checking-price-label-in-supe.mp4 | | |
 | 14 |  | library tower-bridge-office-window |  |  |
 | 15 |  | library save-money-coins-graphic |  |  |
@@ -14,7 +14,7 @@ Topic: how much a UK retirement actually costs at three living standards, what t
 | 30 | | already in media/: 30-retired-couple-looking-at-laptop-togethe.mp4 | | |
 | 31 |  | library uk-flats-block-drone |  |  |
 | 39 | | already in media/: 39-middle-aged-woman-working-on-laptop-in-o.mp4 | | |
-| 40 | older man sanding wood carpentry workshop | downloaded 40-older-man-sanding-wood-carpentry-worksho.mp4 | Pixabay Content License | Video 277 by Life-Of-Vids via Pixabay |
+| 40 | | already in media/: 40-older-man-sanding-wood-carpentry-worksho.mp4 | | |
 | 41 | | already in media/: 41-colleagues-working-at-desks-in-modern-of.mp4 | | |
 | 48 | | already in media/: 48-man-smiling-checking-banking-app-on-phon.mp4 | | |
 | 52 | | already in media/: 52-person-searching-on-laptop-at-kitchen-ta.mp4 | | |
