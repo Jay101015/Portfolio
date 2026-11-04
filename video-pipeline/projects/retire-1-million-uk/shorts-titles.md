@@ -13,9 +13,9 @@ Description: Every UK retirement budget assumes you own your home outright. Add 
 Short 3 (the ×25 rule)
 Title: Work Out Your Retirement Number in 30 Seconds
 Alt: The ×25 Rule for Your Pension Pot
-Description: What you'd spend a year, minus £12,548 for the state pension, times 25. That's the 4% rule turned around. A rough guide, not advice. #retirement #pension #personalfinance
+Description: What you'd spend a year, minus £12,548 for the state pension, times 25. Spend £30,000? That's £17,452 × 25 = about £436,300. A rough guide, not advice. What's your number? #retirement #pension #personalfinance
 
 Short 4 (3x from 45)
 Title: Start Your Pension at 45 and It Costs 3x as Much
 Alt: £483 a Month at 25. £1,492 at 45
-Description: To reach £630,000 by 67: about £483 a month from 25, £811 from 35, £1,492 from 45 (4% a year after inflation, an illustration). Not too late at 45, but time is the one thing you can't buy back. #pension #investing #ukfinance
+Description: To reach £630,000 by 67: about £483 a month from 25, £811 from 35, £1,492 from 45 (4% a year after inflation, an illustration). Time is the one thing you can't buy back. #pension #investing #ukfinance
