@@ -5,26 +5,23 @@ Topic: how much a UK retirement actually costs at three living standards, what t
 | scene | query | result | licence | attribution |
 |---|---|---|---|---|
 | 6 | | already in media/: 06-retired-couple-walking-on-british-seasid.mp4 | | |
-| 10 | | already in media/: 10-older-woman-drinking-tea-looking-out-of-.mp4 | | |
+| 10 | senior woman drinking tea at kitchen window | downloaded 10-senior-woman-drinking-tea-at-kitchen-win.mp4 | Pixabay Content License | Video 790 by klimkin via Pixabay |
 | 11 | | already in media/: 11-older-woman-checking-price-label-in-supe.mp4 | | |
-| 12 | | already in media/: 12-grandparents-playing-with-grandchildren-.mp4 | | |
-| 14 | | already in media/: 14-commuters-tapping-cards-at-london-underg.mp4 | | |
-| 15 | | already in media/: 15-hand-counting-british-pound-notes-on-tab.mp4 | | |
+| 14 |  | library tower-bridge-office-window |  |  |
+| 15 |  | library save-money-coins-graphic |  |  |
 | 21 | | already in media/: 21-hands-typing-on-laptop-at-kitchen-table.mp4 | | |
-| 22 | | already in media/: 22-pensioners-walking-in-uk-town-high-stree.mp4 | | |
-| 28 | | already in media/: 28-elderly-woman-blowing-out-birthday-cake-.mp4 | | |
+| 22 |  | library uk-suburb-drone |  |  |
 | 30 | | already in media/: 30-retired-couple-looking-at-laptop-togethe.mp4 | | |
 | 31 |  | library uk-flats-block-drone |  |  |
 | 39 | | already in media/: 39-middle-aged-woman-working-on-laptop-in-o.mp4 | | |
-| 40 | | already in media/: 40-older-man-working-in-hardware-shop-servi.mp4 | | |
+| 40 | older man sanding wood carpentry workshop | downloaded 40-older-man-sanding-wood-carpentry-worksho.mp4 | Pixabay Content License | Video 277 by Life-Of-Vids via Pixabay |
 | 41 | | already in media/: 41-colleagues-working-at-desks-in-modern-of.mp4 | | |
-| 47 | | already in media/: 47-office-worker-opening-payslip-envelope-a.mp4 | | |
 | 48 | | already in media/: 48-man-smiling-checking-banking-app-on-phon.mp4 | | |
 | 52 | | already in media/: 52-person-searching-on-laptop-at-kitchen-ta.mp4 | | |
 | 53 |  | library vuag-holdings-app |  |  |
 | 54 | | already in media/: 54-person-logging-into-app-on-smartphone-at.mp4 | | |
 | 59 | | already in media/: 59-older-man-on-phone-call-at-home-desk.mp4 | | |
-| 62 | | already in media/: 61-retired-man-gardening-in-back-garden-uk.mp4 | | |
+| 63 |  | library uk-semis-street-pan |  |  |
 
 ## What counts as free use here
 

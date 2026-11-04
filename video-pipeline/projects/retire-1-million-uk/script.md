@@ -36,7 +36,7 @@ Moderate is about £32,700. That gets you more security: a holiday abroad each y
 [stat value="£45,400" label="A comfortable retirement, one person, a year" sub="regular holidays, help for family, real freedom" source="Pensions UK Retirement Living Standards, June 2026, outside London" art=airport-departures art_at=r art_size=0.5 cards="green:regular holidays abroad@regular; green:helping your family@helping; green:real freedom@freedom"]
 And comfortable is about £45,400. That's regular holidays abroad, a newer car, helping your kids or grandkids, and real freedom with your time.
 
-[broll search="senior woman drinking tea at kitchen window" caption="What the difference feels like" cards="ink:how it feels@feels"]
+[broll search="senior woman drinking tea at kitchen window" caption="What the difference feels like" cards="ink:how it feels@feels" src="10-senior-woman-drinking-tea-at-kitchen-win.mp4" credit="Video 790 by klimkin via Pixabay"]
 The difference between those three isn't really holidays and cars. It's how it feels.
 
 [broll search="older woman checking price label in supermarket" caption="Minimum: saying no a lot" cards="ink:checking every price@checking" src="11-older-woman-checking-price-label-in-supe.mp4" credit="Video 1735 by Buvrix27 via Pixabay"]
@@ -138,7 +138,7 @@ Starting twenty years later doesn't cost you a bit more. It costs you about thre
 [broll search="middle aged woman working on laptop in office" caption="45 and behind? It's not too late" cards="green:not too late@late; green:your peak earning years@peak" src="39-middle-aged-woman-working-on-laptop-in-o.mp4" credit="Video 27092 by chuduyen215 via Pixabay"]
 And if you're 45 and reading those numbers with a sinking feeling, it's not too late. Your forties and fifties are usually your peak earning years, so you can often put in more.
 
-[broll search="older man sanding wood carpentry workshop" caption="A couple of years longer" cards="green:higher-rate: bigger relief@higher-rate; ink:a couple of years longer@couple; ink:or part-time@part-time"]
+[broll search="older man sanding wood carpentry workshop" caption="A couple of years longer" cards="green:higher-rate: bigger relief@higher-rate; ink:a couple of years longer@couple; ink:or part-time@part-time" src="40-older-man-sanding-wood-carpentry-worksho.mp4" credit="Video 277 by Life-Of-Vids via Pixabay"]
 If you pay higher-rate tax, the tax relief is bigger. And working even a couple of years longer, or going part-time instead of stopping, makes a big difference, because the pot grows for longer and has fewer years to pay for.
 
 [broll search="colleagues working at desks in modern office" caption="£483 a month is not just you" cards="green:your employer pays some@employer; green:the taxman pays some@taxman" src="41-colleagues-working-at-desks-in-modern-of.mp4" credit="Video 7269 by Coverr-Free-Footage via Pixabay"]
