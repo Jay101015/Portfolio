@@ -1320,15 +1320,15 @@ export const ArtLayer: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand})
   if (brand.illustrated && (scene.type === 'text' || scene.type === 'hook') && isTraced(name) && scene.props.art_x === undefined) return null;
   // a Short has its lines across the top, the character lower right and the captions in between: a placed drawing
   // goes lower left, no bigger than a fifth of the height, whatever the long video's art_at and art_size say
-  // on a Short's stat or board the band between the figure (or the lines) and the cards was bare paper: the drawing
-  // fills it, bigger, from 47% down to 73% (at 40% it sat on a long figure and its source line), and the cards stay in their band under it (retirement Shorts, round 1)
+  // on a Short's stat or board the drawing is a little bigger (0.22 of the height, not 0.2), lower left beside the
+  // cards: centred mid-page it sat on the stat's sub-line and source line (retirement Shorts)
   const midBand = isVertical && ['stat', 'text', 'hook'].includes(scene.type);
   const at = isVertical ? 'bl' : String(scene.props.art_at ?? 'tr');
-  const size = height * (isVertical ? (midBand ? 0.26 : Math.min(0.2, Number(scene.props.art_size ?? 0.2))) : Math.max(0.12, Math.min(0.8, Number(scene.props.art_size ?? 0.3))));
+  const size = height * (isVertical ? (midBand ? 0.22 : Math.min(0.2, Number(scene.props.art_size ?? 0.2))) : Math.max(0.12, Math.min(0.8, Number(scene.props.art_size ?? 0.3))));
   const start = Math.round(Number(scene.props.art_start ?? 0.8) * fps);
   // `art_x` / `art_y`: where its centre sits, as a share of the width and height (dragged into place in the studio)
   const free = scene.props.art_x !== undefined && scene.props.art_y !== undefined;
-  const place: React.CSSProperties = free ? {left: Number(scene.props.art_x) * width - size / 2, top: Number(scene.props.art_y) * height - size / 2} : midBand ? {top: height * 0.47, left: (width - size) / 2} : PLACE[at] ?? PLACE.tr;
+  const place: React.CSSProperties = free ? {left: Number(scene.props.art_x) * width - size / 2, top: Number(scene.props.art_y) * height - size / 2} : PLACE[at] ?? PLACE.tr;
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
       <div style={{position: 'absolute', ...place, width: size, height: size}}>

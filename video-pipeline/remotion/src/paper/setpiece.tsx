@@ -268,7 +268,8 @@ export const FootageCards: React.FC<{scene: Scene}> = ({scene}) => {
   const cues = ((scene.cues ?? []) as unknown as SetCue[]).filter((c) => c.do === 'card' && c.t <= tq + 1e-6);
   if (!cues.length) return null;
   // a Short's board carries its lines at the top and the caption in the middle; the band under them, between the
-  // caption and the Shorts title strip, is where its cards go (right of centre: the drawing sits bottom left)
+  // caption and the Shorts title strip, is where its cards go (right of centre, centred at 0.71 and at most 0.54 wide,
+  // so they end where the drawing bottom left begins: at 0.62 they sat on its hands and props)
   const lowBand = vertical && scene.type !== 'broll';
   // on footage the column is on the right; on a board with a drawing on its right half they go under the written
   // lines on the left, so the page fills up instead of sitting white
@@ -287,8 +288,8 @@ export const FootageCards: React.FC<{scene: Scene}> = ({scene}) => {
   const left = (underLines && !rightArt) || chart || compare;
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
-      <Column items={cues.slice(-(compare ? 2 : lowBand ? 2 : vertical ? 2 : rightArt || topRow || chart ? 2 : underLines ? 2 : left ? 3 : iconBoard ? 3 : 4))} colX={(compare ? 0.5 : lowBand ? 0.62 : vertical ? 0.34 : chart ? 0.66 : rightArt ? 0.74 : underLines ? 0.25 : 0.74) * W} y0={(compare ? 0.81 : lowBand ? 0.755 : vertical ? 0.6 : chart ? 0.21 : topRow ? 0.03 : rightArt ? 0.06 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H} step={(compare ? 0.088 : lowBand ? 0.065 : vertical ? 0.08 : underLines ? 0.1 : 0.118) * H}
-        maxw={(compare ? 0.84 : lowBand ? 0.62 : vertical ? 0.56 : left ? 0.42 : 0.44) * W} tq={tq} k={k} left={left} vertical={vertical} W={W} H={H} />
+      <Column items={cues.slice(-(compare ? 2 : lowBand ? 2 : vertical ? 2 : rightArt || topRow || chart ? 2 : underLines ? 2 : left ? 3 : iconBoard ? 3 : 4))} colX={(compare ? 0.5 : lowBand ? 0.71 : vertical ? 0.34 : chart ? 0.66 : rightArt ? 0.74 : underLines ? 0.25 : 0.74) * W} y0={(compare ? 0.81 : lowBand ? 0.755 : vertical ? 0.6 : chart ? 0.21 : topRow ? 0.03 : rightArt ? 0.06 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H} step={(compare ? 0.088 : lowBand ? 0.065 : vertical ? 0.08 : underLines ? 0.1 : 0.118) * H}
+        maxw={(compare ? 0.84 : lowBand ? 0.54 : vertical ? 0.56 : left ? 0.42 : 0.44) * W} tq={tq} k={k} left={left} vertical={vertical} W={W} H={H} />
     </AbsoluteFill>
   );
 };
