@@ -169,6 +169,12 @@ buttons: a Short's page is laid out in bands between them, and nothing sits on a
 - The sticker is a claim or a comparison with the figure in it ("Chase the hottest stock: £30. Do nothing:
   £1,280"), never a label a cold viewer cannot place ("hype pot vs boring pot").
 
+## No clones (docs/formats.md)
+
+Every long video picks a format, a signature device, a chapter device, an opening and an ending that the last
+two videos did not use, and records them in the ledger in docs/formats.md before the script is written. "Takeaway n
+of N" cards are an option, never the default, and never two videos in a row.
+
 ## The shape
 
 The title's number is paid off late. A viewer clicks for the figure in the title; once it is said, some leave (the
