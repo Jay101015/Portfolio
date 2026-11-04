@@ -401,3 +401,8 @@ one change at a time where possible, so a result can be read.
 - The list fix in round 2 went into PaperRecap, not PaperList (the same block appears twice): check a fix
   lands in the component the scene actually renders. Figures are matched digit by digit, since the transcriber
   splits "1,492" into "1" ",492".
+- Retirement Shorts review: editor 7.5/7/6/6, animator 7.5/7/6/6, retention 7.5/7.5/6/6.5, director 7/6.5/7/6.5 (round 2).
+- Jeffrey: the retirement voice sounded "way too invasive": too loud and harsh. The script had no `voice:` line, so
+  the ElevenLabs take went through the phone-memo chain (noise removal, +2.5 dB at 3 kHz, a 3:1 compressor): 2-8 kHz
+  came out 4 dB brighter than the take and the loudness range was 3.1 LU. An ElevenLabs (or any clean) take is
+  always `voice: natural`, which only sets the level. Every script header carries a `voice:` line.
