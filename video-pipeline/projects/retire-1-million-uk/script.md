@@ -116,7 +116,7 @@ Suddenly the pot you'd need is about £1.23 million. That's more than a comforta
 [text board="Paying off your home is a pension decision" art=house-scales art_at=r art_size=0.5 cards="ink:one of the biggest decisions you'll make@biggest; ink:it doesn't look like one@look"]
 Which is why, for a lot of people, paying off a home before you retire is one of the biggest pension decisions you'll ever make, even though it doesn't look like one.
 
-[chart bar title="On track for each retirement" y="%" source="Pensions UK Retirement Living Standards, June 2026" cards="ink:you're not alone@alone; red:fewer than 1 in 10@fewer; ink:know the number@know"]
+[chart bar title="On track for each retirement" y="%" source="Pensions UK Retirement Living Standards, June 2026" cards="ink:you're not alone@alone; ink:fewer than 1 in 10@fewer; ink:know the number@know"]
 bars: Minimum:82, Moderate:23, Comfortable:9
 And if those numbers make your stomach drop, you're not alone. In its update this year, Pensions UK worked out how many working people are on track. About 82% are heading for at least the minimum. But only 23% are on track for moderate, and just 9% for comfortable. That's fewer than 1 in 10. The point isn't to panic. It's to know the number, so you can do something about it.
 
