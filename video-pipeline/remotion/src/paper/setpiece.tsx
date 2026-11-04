@@ -8,6 +8,7 @@
 import React from 'react';
 import {AbsoluteFill, Img, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {Brand, Scene} from '../types';
+import {isTraced} from './art';
 import poseLib from '../../../library/poses/manifest.json';
 import walkLib from '../../../library/poses/walk.json';
 import roomLib from '../../../library/backgrounds/manifest.json';
@@ -141,12 +142,16 @@ const Card: React.FC<{c: SetCue; x: number; y: number; age: number; tilt: number
   const chars = stack ? Math.max(text.length, (c.old ?? '').length) : text.length + (c.old ? c.old.length + 3 : 0);
   const room = maxw - 70 * u;
   if (chars * 0.47 * size > room) size = room / (chars * 0.47);
+  // a Short's card is never smaller than 50 px type (smaller cannot be read on a phone): it wraps onto two lines instead
+  const floor = vertical ? 50 * u : 0;
+  const wrap = size < floor;
+  if (wrap) size = floor;
   const [sx, sy] = age < 0 ? [1, 1] : squashAt(age);
   const color = COLORS[c.color ?? 'ink'] ?? COLORS.ink;
   return (
     <div style={{position: 'absolute', left: x, top: y, transform: `translate(-50%, -50%) rotate(${tilt}deg) scale(${sx}, ${sy})`, transformOrigin: '50% 100%',
       background: '#fff', border: `${4 * u}px solid ${COLORS.ink}`, borderRadius: 18 * u, padding: `${8 * u}px ${26 * u}px ${12 * u}px`,
-      boxShadow: `${6 * u}px ${8 * u}px 0 rgba(0,0,0,0.18)`, fontFamily: 'Caveat Brush', fontSize: size, lineHeight: 1.1, whiteSpace: 'nowrap', color, display: 'flex', flexDirection: stack ? 'column' : 'row', alignItems: 'center', gap: (stack ? 2 : 14) * u}}>
+      boxShadow: `${6 * u}px ${8 * u}px 0 rgba(0,0,0,0.18)`, fontFamily: 'Caveat Brush', fontSize: size, lineHeight: 1.1, whiteSpace: wrap ? 'normal' : 'nowrap', ...(wrap ? {width: maxw - 60 * u, textAlign: 'center' as const, justifyContent: 'center'} : {}), color, display: 'flex', flexDirection: stack ? 'column' : 'row', alignItems: 'center', gap: (stack ? 2 : 14) * u}}>
       {stack ? <span style={{color: COLORS.red, textDecoration: 'line-through', textDecorationThickness: 5 * u, fontSize: size * 0.8}}>{c.old}</span> : null}
       {c.old && !stack ? (
         <>
@@ -258,7 +263,7 @@ const Column: React.FC<{items: SetCue[]; colX: number; y0: number; step: number;
 /** Cards over footage (and over any board, stat or chart given cards=): the amounts said land on the picture as they are
  * said, in a column on the right (landscape) or under the captions (a Short), on the same stop-motion clock as the set
  * pieces. */
-export const FootageCards: React.FC<{scene: Scene}> = ({scene}) => {
+export const FootageCards: React.FC<{scene: Scene; brand?: Brand}> = ({scene, brand}) => {
   const frame = useCurrentFrame();
   const {fps, width: W, height: H} = useVideoConfig();
   const vertical = H > W;
@@ -268,9 +273,12 @@ export const FootageCards: React.FC<{scene: Scene}> = ({scene}) => {
   const cues = ((scene.cues ?? []) as unknown as SetCue[]).filter((c) => c.do === 'card' && c.t <= tq + 1e-6);
   if (!cues.length) return null;
   // a Short's board carries its lines at the top and the caption in the middle; the band under them, between the
-  // caption and the Shorts title strip, is where its cards go (right of centre, centred at 0.71 and at most 0.54 wide,
+  // caption and the Shorts title strip, is where its cards go (right of centre, centred at 0.73 and at most 0.5 wide,
   // so they end where the drawing bottom left begins: at 0.62 they sat on its hands and props)
   const lowBand = vertical && scene.type !== 'broll';
+  // a Short's board in the illustrated style with a traced drawing: the drawing is the big centred picture from 45% down,
+  // so the cards go in the gap above it, under the caption, not on its hands or props (retirement Shorts round 2)
+  const aboveArt = lowBand && !!brand?.illustrated && (scene.type === 'text' || scene.type === 'hook') && !!scene.props.art && isTraced(String(scene.props.art)) && scene.props.art_x === undefined;
   // on footage the column is on the right; on a board with a drawing on its right half they go under the written
   // lines on the left, so the page fills up instead of sitting white
   // a board with a drawing: the cards go under its written lines, low on the left; a stat keeps them in the right column
@@ -288,8 +296,8 @@ export const FootageCards: React.FC<{scene: Scene}> = ({scene}) => {
   const left = (underLines && !rightArt) || chart || compare;
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
-      <Column items={cues.slice(-(compare ? 2 : lowBand ? 2 : vertical ? 2 : rightArt || topRow || chart ? 2 : underLines ? 2 : left ? 3 : iconBoard ? 3 : 4))} colX={(compare ? 0.5 : lowBand ? 0.71 : vertical ? 0.34 : chart ? 0.66 : rightArt ? 0.74 : underLines ? 0.25 : 0.74) * W} y0={(compare ? 0.81 : lowBand ? 0.755 : vertical ? 0.6 : chart ? 0.21 : topRow ? 0.03 : rightArt ? 0.06 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H} step={(compare ? 0.088 : lowBand ? 0.065 : vertical ? 0.08 : underLines ? 0.1 : 0.118) * H}
-        maxw={(compare ? 0.84 : lowBand ? 0.54 : vertical ? 0.56 : left ? 0.42 : 0.44) * W} tq={tq} k={k} left={left} vertical={vertical} W={W} H={H} />
+      <Column items={cues.slice(-(compare ? 2 : aboveArt ? 1 : lowBand ? 2 : vertical ? 2 : rightArt || topRow || chart ? 2 : underLines ? 2 : left ? 3 : iconBoard ? 3 : 4))} colX={(compare ? 0.5 : aboveArt ? 0.5 : lowBand ? 0.73 : vertical ? 0.34 : chart ? 0.66 : rightArt ? 0.74 : underLines ? 0.25 : 0.74) * W} y0={(compare ? 0.81 : aboveArt ? 0.4 : lowBand ? 0.755 : vertical ? 0.6 : chart ? 0.21 : topRow ? 0.03 : rightArt ? 0.06 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H} step={(compare ? 0.088 : lowBand ? 0.065 : vertical ? 0.08 : underLines ? 0.1 : 0.118) * H}
+        maxw={(compare ? 0.84 : aboveArt ? 0.84 : lowBand ? 0.5 : vertical ? 0.56 : left ? 0.42 : 0.44) * W} tq={tq} k={k} left={left} vertical={vertical} W={W} H={H} />
     </AbsoluteFill>
   );
 };

@@ -126,7 +126,7 @@ So what does it take? Let's work it out for you, by the age you start. And stick
 [text board="Growth: 4% a year, in today's money | Retire at 67" art=payslip art_at=r art_size=0.5 cards="ink:everything in today's money@today's"]
 Here are the assumptions, so you can see I'm not cheating. Your money grows by 4% a year above inflation. That's after inflation, so everything stays in today's money. And you retire at 67.
 
-[list title="To reach £630,000 by 67, a month:" art=laptop-standing-order art_at=r art_size=0.45 cards="ink:a moderate retirement@moderate"]
+[list title="To reach £630,000 by 67, a month:" art=laptop-standing-order art_at=r art_size=0.45 cards="green:£483@£483; ink:£811@£811; red:£1,492@£1,492"]
 - Start at 25: about £483 a month
 - Start at 35: about £811 a month
 - Start at 45: about £1,492 a month
@@ -189,7 +189,7 @@ So, back to the question in the title. Do you really need a million pounds to re
 [stat value="£1.05 million" label="The pot for a comfortable retirement, one person" sub="in today's money, at the 4% rule" source="Worked out: Pensions UK 2026; 2026-27 tax" art_at=r art_size=0.5 cards="ink:on your own: about £1.05 million@own; ink:yes, roughly@roughly; green:a couple: about £587,000 each@couple" anim=bar-race]
 For a comfortable retirement on your own, yes, roughly. You'd need a pot of about £1.05 million in today's money. But for a couple, it's about £587,000 each, because you have two state pensions and share the costs.
 
-[text board="What you'd spend a year | Take off the state pension, £12,548 | Times 25" art=calculator-table art_at=r art_size=0.5 cards="ink:what you'd spend, minus £12,548@Take; green:what's left × 25@multiply; ink:the 4% rule turned around@turned; ink:add a bit for tax@tax; red:still renting? Rent goes in@renting"]
+[text board="What you'd spend a year | Take off the state pension, £12,548 | Times 25" art=calculator-table art_at=r art_size=0.5 cards="ink:say £30,000 − £12,548 = £17,452@Take; green:£17,452 × 25 = £436,300@multiply; ink:the 4% rule turned around@turned; ink:add a bit for tax@tax; red:still renting? Rent goes in@renting"]
 And here's how to work out your own number in about thirty seconds. Write down what you'd want to spend a year in retirement, in today's money. Take off the state pension, about £12,548. Then multiply what's left by 25. That's the 4% rule turned around, and it gives you a rough target pot. Add a bit for tax, and remember that if you'll still be renting, rent goes in the spending.
 
 [compare title="Taking the money out" good=both cards="ink:an annuity: guaranteed for life@annuity; ink:drawdown: stay invested@drawdown; ink:many mix the two@mixing"]

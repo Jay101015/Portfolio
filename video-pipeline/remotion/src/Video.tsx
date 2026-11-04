@@ -500,7 +500,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
                 {board}
                 {strip.length >= 2 ? <ChapterStrip boards={strip} brand={brand} /> : null}
                 {sb.host === 'none' ? null : <HostLayer sb={sb} scene={scene} avatar={avatar} toon={brand.toon} />}
-                {scene.type !== 'set' && (scene.cues ?? []).some((c) => (c as {do?: string}).do === 'card') ? <FootageCards scene={scene} /> : null}
+                {scene.type !== 'set' && (scene.cues ?? []).some((c) => (c as {do?: string}).do === 'card') ? <FootageCards scene={scene} brand={brand} /> : null}
                 <LoopLayer scene={scene} brand={brand} />
                 {scene.keys?.length ? <KeyWords scene={scene} brand={brand} /> : null}
               </Camera>

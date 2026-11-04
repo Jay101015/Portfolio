@@ -575,7 +575,7 @@ export const DrawnLoop: React.FC<{name: string; size: number; brand: Brand; star
         {Array.from({length: landed}, (_, k) => <Coin key={k} cx={lx + (k % 2 ? 3 : -3)} cy={ly + 15 - k * 3.2} r={6} k={290 + k * 3} />)}
         {falling}
         <Envelope x={rx - 14} y={ry + 2} w={28} h={16} k={300} label="BILLS" />
-        {landed >= 3 && tt > 3.6 ? <SketchPath d="M14,70 L19,75 L28,62" draw={clamp01((tt - 3.6) / 0.4)} options={o(greenInk, 305, {strokeWidth: 3})} /> : null}
+        {/* no green tick on the money pan: it read as good news on "three times as much" (retirement Shorts) */}
       </>
     );
   } else if (name === 'payday-split') {
