@@ -157,8 +157,25 @@ export const Ring: React.FC<{width: number; height: number; stroke: string; win:
 // per character: narrow digits, but '%', 'x', letters and '£' are wider, and ',' '.' narrower; a flat 0.38 left the
 // ring cutting through the '%' of "4%" and the 'x' of "3x"
 const GLYPH: Record<string, number> = {'%': 0.62, '£': 0.42, ',': 0.16, '.': 0.16, ' ': 0.22, x: 0.42, m: 0.55, M: 0.6};
-export const figureWidth = (text: string, fontSize: number) =>
+const tableWidth = (text: string, fontSize: number) =>
   [...text].reduce((w, c) => w + (GLYPH[c] ?? (/[0-9]/.test(c) ? 0.38 : 0.42)), 0) * fontSize;
+let measureCtx: CanvasRenderingContext2D | null | undefined;
+/** the real width of a figure in the display face, measured on a canvas (digits as '0': the figures are set in
+ * tabular-nums, so every digit is as wide as a zero); the glyph table is only the fallback when no canvas is there.
+ * The table guessed digits far too narrow and the ring cut the last '0', '%' or 'x' (retirement round 2). */
+export const figureWidth = (text: string, fontSize: number, family?: string, weight: number | string = 400) => {
+  const guess = tableWidth(text, fontSize);
+  if (!family || typeof document === 'undefined') return guess;
+  try {
+    if (measureCtx === undefined) measureCtx = document.createElement('canvas').getContext('2d');
+    if (!measureCtx) return guess;
+    measureCtx.font = `${weight} ${fontSize}px ${family}`;
+    const w = measureCtx.measureText(text.replace(/[0-9]/g, '0')).width;
+    return w > 0 ? Math.max(guess, w * 1.04) : guess;
+  } catch {
+    return guess;
+  }
+};
 export const figureHeight = (fontSize: number) => fontSize * 0.82;
 
 /** A highlighter swipe behind text: a slightly skewed, uneven bar that wipes in. */

@@ -382,3 +382,15 @@ one change at a time where possible, so a result can be read.
 3. Shorts: open on the number ("£250 free from the government") vs a question.
 4. Recordings cleaned in Descript (fillers and long pauses cut, sound left natural) vs not: compare retention in
    the first 60 seconds.
+
+## Retirement round 2 (editor 6.5, animator 6, retention 7.5, director 6.5)
+- A broll scene's `src=` wins over its `search=`: changing the search alone keeps the old clip. To re-find footage,
+  delete `src=` and `credit=` too, then look at the clip (six frames) before it goes in. Round 2 lost every footage
+  fix to this.
+- Rings are sized by measuring the figure on a canvas in the display face (digits as '0', tabular-nums); the glyph
+  table guessed digits too narrow and cut the last '0', '%' and 'x'.
+- "tax relief" is good news: isLoss no longer reads it as a tax, so the relief slice is navy.
+- A compare's cards go in the strip under the boxes, two at a time, never over a heading.
+- A list row lands on its figure ("£1,492"), not on its first two words, which matched the first row.
+- Check the numbers and labels drawn into a loop before casting it: interest-grows shows a red £1,581 debt and
+  stack-grow a "year N" counter, both wrong beside a growth figure.

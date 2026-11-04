@@ -100,7 +100,7 @@ const fallsTo = (line: string): boolean => {
 
 export const isLoss = (line: string): boolean =>
   fallsTo(line) ||
-  /\b(fee|fees|lose|loses|lost|loss|losing|cost|costs|costing|debt|debts|tax(?!-free)|taxes|charge|charges|charged|interest|penalt\w*|miss\w*|gone|wasted|waste|drain\w*|eat\w*|eaten|minus|down|drop\w*|fall\w*|fell|overdraft|owe\w*|inflation|shrink\w*|burn\w*|spend\w*|spent|rent|loan|unemploy\w*|out of work|halved|lowest|barely|prices up|price rise\w*)\b/i.test(line) || /(^|\s)[−-]\d/.test(line);
+  /\b(fee|fees|lose|loses|lost|loss|losing|cost|costs|costing|debt|debts|tax(?!-free|\s+relief)|taxes|charge|charges|charged|interest|penalt\w*|miss\w*|gone|wasted|waste|drain\w*|eat\w*|eaten|minus|down|drop\w*|fall\w*|fell|overdraft|owe\w*|inflation|shrink\w*|burn\w*|spend\w*|spent|rent|loan|unemploy\w*|out of work|halved|lowest|barely|prices up|price rise\w*)\b/i.test(line) || /(^|\s)[−-]\d/.test(line);
 
 /**
  * Colour for the money words: the figure in a line lands in green when the line is about money growing, in red when

@@ -95,7 +95,7 @@ export const PaperBite: React.FC<P> = ({scene, brand}) => {
         <Arrow length={100 * u} stroke={brand.accent2} win={[loseAt, loseAt + 8]} angle={-60} seed={9} thickness={4 * u} />
         <div style={{position: 'relative', fontFamily: brand.display, fontSize: (isVertical ? 64 : 76) * u, color: brand.accent2}}>
           <Write text={loseText} frame={frame} fps={fps} start={loseAt + 6} cps={12} wordGap="0.2em" />
-          {(() => { const w = ringWin(scene, fps, loseAt + 6 + writeFrames(loseText, fps, 12)); return w ? <Ring width={figureWidth(loseText, (isVertical ? 64 : 76) * u)} height={figureHeight((isVertical ? 64 : 76) * u)} stroke={brand.accent2} win={w} thickness={6 * u} seed={scene.id * 3 + 2} /> : null; })()}
+          {(() => { const w = ringWin(scene, fps, loseAt + 6 + writeFrames(loseText, fps, 12)); return w ? <Ring width={figureWidth(loseText, (isVertical ? 64 : 76) * u, brand.display)} height={figureHeight((isVertical ? 64 : 76) * u)} stroke={brand.accent2} win={w} thickness={6 * u} seed={scene.id * 3 + 2} /> : null; })()}
         </div>
       </div>
       {sub ? (
@@ -155,7 +155,7 @@ export const PaperGrow: React.FC<P> = ({scene, brand}) => {
         <div style={{position: 'absolute', right: 0, top: -(isVertical ? 90 : 110) * u, fontFamily: brand.display, fontSize: (isVertical ? 72 : 92) * u, color: brand.ink, whiteSpace: 'nowrap', visibility: frame >= lastAt ? undefined : 'hidden'}}>
           <Write text={finalText} frame={frame} fps={fps} start={lastAt + 4} cps={12} wordGap="0.2em" />
           <Underline width={Math.min(areaW * 0.5, 520 * u)} stroke={brand.accent} thickness={7 * u} win={[finalDone, finalDone + Math.round(fps * 0.5)]} easeOut seed={13} style={{marginLeft: 'auto'}} />
-          {(() => { const w = ringWin(scene, fps, finalDone); return w ? <Ring width={figureWidth(finalText, (isVertical ? 72 : 92) * u)} height={figureHeight((isVertical ? 72 : 92) * u)} stroke={brand.accent} win={w} thickness={6 * u} seed={scene.id * 3 + 2} /> : null; })()}
+          {(() => { const w = ringWin(scene, fps, finalDone); return w ? <Ring width={figureWidth(finalText, (isVertical ? 72 : 92) * u, brand.display)} height={figureHeight((isVertical ? 72 : 92) * u)} stroke={brand.accent} win={w} thickness={6 * u} seed={scene.id * 3 + 2} /> : null; })()}
         </div>
       </div>
       <div style={{fontFamily: hand(brand), fontSize: 50 * u, color: noteColor(brand), marginTop: 36 * u, transform: 'rotate(-1deg)', transformOrigin: 'left'}}>
@@ -278,7 +278,7 @@ export const PaperShrink: React.FC<P> = ({scene, brand}) => {
         </div>
         <div style={{position: 'absolute', left: x0 + 30 * u, top: noteH * 0.5 - 60 * u, fontFamily: brand.display, fontSize: (isVertical ? 72 : 100) * u, color: brand.accent2, whiteSpace: 'nowrap', visibility: frame >= toAt ? undefined : 'hidden'}}>
           <Write text={toText} frame={frame} fps={fps} start={toAt} cps={12} wordGap="0.2em" />
-          {(() => { const w = ringWin(scene, fps, toDone); return w ? <Ring width={figureWidth(toText, (isVertical ? 72 : 100) * u)} height={figureHeight((isVertical ? 72 : 100) * u)} stroke={brand.accent2} win={w} thickness={6 * u} seed={scene.id * 3 + 2} /> : null; })()}
+          {(() => { const w = ringWin(scene, fps, toDone); return w ? <Ring width={figureWidth(toText, (isVertical ? 72 : 100) * u, brand.display)} height={figureHeight((isVertical ? 72 : 100) * u)} stroke={brand.accent2} win={w} thickness={6 * u} seed={scene.id * 3 + 2} /> : null; })()}
         </div>
       </div>
       <div style={{fontFamily: hand(brand), fontSize: 54 * u, color: brand.accent2, marginTop: 30 * u, transform: 'rotate(-1deg)', transformOrigin: 'left'}}>

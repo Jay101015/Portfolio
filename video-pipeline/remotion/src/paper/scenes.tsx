@@ -217,7 +217,7 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
             <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: size, lineHeight: 1, letterSpacing: brand.board ? 0 : -5 * u, color: brand.ink, fontVariantNumeric: 'tabular-nums', transform: brand.board ? undefined : `scale(${0.85 + 0.15 * s})`, transformOrigin: 'left bottom', opacity: brand.board ? 1 : Math.min(1, s * 1.5)}}>
               {counting ? <span style={{visibility: frame >= numStart ? 'visible' : 'hidden'}}>{display}</span> : brand.board ? <Write text={display} frame={frame} fps={fps} start={numStart} cps={numCps} wordGap="0.2em" /> : display}
             </div>
-            {ringAt !== null && brand.board ? <Ring width={figureWidth(finalText, size)} height={figureHeight(size)} stroke={loss ? brand.accent2 : brand.accent} win={[ringAt, ringAt + Math.round(fps * 0.35)]} thickness={7 * u} seed={scene.id * 3 + 1} /> : null}
+            {ringAt !== null && brand.board ? <Ring width={figureWidth(finalText, size, brand.display, dw(brand))} height={figureHeight(size)} stroke={loss ? brand.accent2 : brand.accent} win={[ringAt, ringAt + Math.round(fps * 0.35)]} thickness={7 * u} seed={scene.id * 3 + 1} /> : null}
           </div>
           <Underline width={Math.min(size * 2.4, width * 0.5)} stroke={loss ? brand.accent2 : brand.accent} thickness={8 * u} win={[numDone, numDone + fps * 0.5]} easeOut seed={7} style={{marginTop: 8 * u}} />
         </div>
@@ -490,7 +490,11 @@ export const PaperRecap: React.FC<P> = ({scene, brand}) => {
   const sceneLen = scene.end - scene.start;
   const titleDone = writeFrames(title, fps, 22) + 4;
   const delays = items.map((item, i) => {
-    const spoken = findPhraseTime(scene.words, item);
+    // the figure first: the whole line is rarely said word for word, and its first two words match the first row ("Start at 25: about £483 a month"): fall back to its figure, then
+    // its last number, so each row lands on its own word, not on an even share (retirement round 2: all three
+    // age rows were up 5 s before "£1,492" was said)
+    const fig = item.match(/£[\d,.]+(?:\s*(?:million|billion|k))?|\d[\d,.]*%?/gi) ?? [];
+    const spoken = (fig.length ? findPhraseTime(scene.words, fig[fig.length - 1]) : null) ?? findPhraseTime(scene.words, item);
     const delaySec = spoken !== null ? Math.max(0, spoken - scene.start) : titleDone / fps + 0.4 + (i * Math.max(0, sceneLen - titleDone / fps - 2.0)) / Math.max(1, items.length);
     return Math.max(titleDone + 4, Math.round(delaySec * fps));
   });

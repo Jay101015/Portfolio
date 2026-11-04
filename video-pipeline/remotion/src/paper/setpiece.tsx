@@ -281,11 +281,14 @@ export const FootageCards: React.FC<{scene: Scene}> = ({scene}) => {
   // a drawing or a loop on the right half (any board, list, stat or recap): the cards sit top right, above it, two at a time
   const rightArt = !vertical && !chart && scene.type !== 'broll' && ((!!scene.props.art && scene.props.art !== 'off') || !!scene.props.anim || scene.type === 'pie');
   const topRow = !vertical && (scene.type === 'bite' || scene.type === 'news'); // the label or the clipping runs under the column: start at the top edge
-  const left = (underLines && !rightArt) || chart;
+  // a compare fills the page with its two boxes: the cards go in the strip under them, two at a time, so they never
+  // sit on a box's heading (retirement round 2: "most people under 40: a pot" hid "It depends" for 12 s)
+  const compare = !vertical && scene.type === 'compare';
+  const left = (underLines && !rightArt) || chart || compare;
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
-      <Column items={cues.slice(-(lowBand ? 2 : vertical ? 2 : rightArt || topRow || chart ? 2 : underLines ? 2 : left ? 3 : iconBoard ? 3 : 4))} colX={(lowBand ? 0.62 : vertical ? 0.34 : chart ? 0.66 : rightArt ? 0.74 : underLines ? 0.25 : 0.74) * W} y0={(lowBand ? 0.755 : vertical ? 0.6 : chart ? 0.21 : topRow ? 0.03 : rightArt ? 0.06 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H} step={(lowBand ? 0.065 : vertical ? 0.08 : underLines ? 0.1 : 0.118) * H}
-        maxw={(lowBand ? 0.62 : vertical ? 0.56 : left ? 0.42 : 0.44) * W} tq={tq} k={k} left={left} vertical={vertical} W={W} H={H} />
+      <Column items={cues.slice(-(compare ? 2 : lowBand ? 2 : vertical ? 2 : rightArt || topRow || chart ? 2 : underLines ? 2 : left ? 3 : iconBoard ? 3 : 4))} colX={(compare ? 0.5 : lowBand ? 0.62 : vertical ? 0.34 : chart ? 0.66 : rightArt ? 0.74 : underLines ? 0.25 : 0.74) * W} y0={(compare ? 0.82 : lowBand ? 0.755 : vertical ? 0.6 : chart ? 0.21 : topRow ? 0.03 : rightArt ? 0.06 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H} step={(compare ? 0.075 : lowBand ? 0.065 : vertical ? 0.08 : underLines ? 0.1 : 0.118) * H}
+        maxw={(compare ? 0.84 : lowBand ? 0.62 : vertical ? 0.56 : left ? 0.42 : 0.44) * W} tq={tq} k={k} left={left} vertical={vertical} W={W} H={H} />
     </AbsoluteFill>
   );
 };
