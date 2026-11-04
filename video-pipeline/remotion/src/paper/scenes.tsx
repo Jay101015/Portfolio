@@ -787,7 +787,10 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
     body = (
       <>
         {bars.map((b, i) => {
-          const at = lineAt + i * (brand.board ? Math.round(fps * 0.7) : 8);
+          const seq = lineAt + i * (brand.board ? Math.round(fps * 0.7) : 8);
+          // a Short: each bar grows as its figure is said ("just 9%"), not all three before the voice gets there
+          const said = isVertical ? figureTime(scene.words, String(b.value)) : null;
+          const at = said !== null ? Math.max(seq, Math.round((said - scene.start) * fps) - Math.round(fps * 0.3)) : seq;
           const grow = brand.board ? lin(frame, at, at + fps * 0.6) : ease(frame, 8 + i * 8, 8 + i * 8 + fps * 0.9);
           const h = Math.max(0, (b.value / yMax) * plotH * grow);
           const hq = Math.round(h / 3) * 3; // the sketch only redraws when the bar has visibly grown, so it does not boil

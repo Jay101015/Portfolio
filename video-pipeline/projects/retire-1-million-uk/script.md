@@ -57,7 +57,7 @@ And if you'll retire in London, every one of those numbers is higher. Pensions U
 [broll lib="save-money-coins-graphic" caption="Everything in today's money" cards="ink:today's money@today's; ink:allowing for inflation@inflation; ink:otherwise the numbers lie@lie"]
 One important thing. All of these are in today's money. So when we work out what you need, we'll keep everything in today's money too, and allow for inflation along the way. Otherwise the numbers lie to you.
 
-[stat value="£0" count=off label="What these budgets include for rent or a mortgage" sub="they assume you own your home outright" source="Pensions UK Retirement Living Standards: the detail" anim=house-build art_at=r art_size=0.5 cards="red:no rent, no mortgage@rent; red:renting needs far more@renting; ink:the most important number in the video@important"]
+[stat value="£0" count=off label="What these budgets include for rent or a mortgage" sub="they assume you own your home outright" source="Pensions UK Retirement Living Standards: the detail" anim=house-build art_at=r art_size=0.5 cards="ink:no rent, no mortgage@rent; red:renting needs far more@renting; ink:the most important number in the video@important"]
 And here's the part almost nobody mentions. All of these budgets assume you own your home outright by the time you retire. There's nothing in them for rent or a mortgage. So if you're renting when you retire, you need a lot more. We'll come back to exactly how much, because for a lot of people watching this, it's the most important number in the video.
 
 [takeaway title="What the state pension covers" n="2" of="6"]
