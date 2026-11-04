@@ -316,10 +316,11 @@ def snap_spans(spans: list[tuple[float, float]], wav16k: str, look: float = 0.8)
         return s
 
     out = [(start_at(a), end_at(b)) for a, b in spans]
-    # pieces that now touch or overlap become one
+    # pieces that now touch or overlap become one; a piece from earlier in the take (a Short that reorders: the method
+    # first, its rule after) stays its own piece (it was merged away, and Short 3 lost its second half)
     merged: list[tuple[float, float]] = []
     for a, b in out:
-        if merged and a <= merged[-1][1]:
+        if merged and merged[-1][0] <= a <= merged[-1][1]:
             merged[-1] = (merged[-1][0], max(merged[-1][1], b))
         else:
             merged.append((a, b))

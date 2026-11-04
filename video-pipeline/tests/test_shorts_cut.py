@@ -22,3 +22,16 @@ def test_words_and_cues_shift_with_their_scene():
     cut, _ = cut_short(_sb(), [2], "hook")
     sc = cut["scenes"][0]
     assert sc["words"][0]["s"] == 1.4 and sc["cues"][0]["t"] == 2.4
+
+
+def test_snap_spans_keeps_a_reordered_piece(tmp_path):
+    import numpy as np
+    from pipeline import voice
+    sr = 16000
+    x = np.zeros(sr * 20, dtype=np.float32)
+    for a, b in [(1, 4), (6, 9), (12, 15)]:
+        x[int(a * sr):int(b * sr)] = 0.3 * np.sin(np.arange(int((b - a) * sr)) * 0.2)
+    p = tmp_path / "v.wav"
+    voice.write(str(p), x, sr) if hasattr(voice, "write") else __import__("scipy.io.wavfile", fromlist=["write"]).write(str(p), sr, (x * 32767).astype(np.int16))
+    out = voice.snap_spans([(12.0, 15.0), (1.0, 4.0)], str(p))
+    assert len(out) == 2 and out[0][0] > 11 and out[1][1] < 5
