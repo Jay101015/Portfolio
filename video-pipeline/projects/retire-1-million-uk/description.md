@@ -2,13 +2,12 @@ The full state pension pays about £12,548 a year. A comfortable retirement for 
 
 Chapters
 0:00 The gap the state pension leaves
-0:42 What retirement actually costs
-2:51 What the state pension covers
-4:23 The pot you need (and why renters need far more)
-6:53 What to put away a month, from your age
-8:25 Three levers that make it cheaper
-11:29 So, do you need £1 million?
-13:21 Recap
+0:41 What retirement actually costs
+2:47 What the state pension covers
+4:17 The pot you need (and why renters need far more)
+6:43 What to put away a month, from your age
+8:13 Three levers that make it cheaper
+11:14 So, do you need £1 million?
 
 Sources and workings
 - Retirement costs: Pensions UK (formerly PLSA) Retirement Living Standards, June 2026 update, outside London, after tax. They assume you own your home outright: https://www.retirementlivingstandards.org.uk/
@@ -18,6 +17,8 @@ Sources and workings
 - Lost pension pots (3.3 million, £31.1 billion): Pensions Policy Institute, Briefing Note 138, October 2024. Find yours with the Pension Tracing Service: https://www.gov.uk/find-pension-contact-details
 - Average UK private rent £1,406 a month: ONS, October 2026.
 - Pots worked out with 2026-27 income tax and the 4% rule of thumb (a rough guide, not a guarantee; the 25% tax-free lump sum would lower them a little). Monthly savings assume 4% a year growth after inflation, so they are in today's money. Illustrations only.
+
+Stock footage from Pixabay (Pixabay Content License).
 
 Nothing here is financial advice. Pensions and investments can go down as well as up. For guidance at retirement, Pension Wise is free from age 50.
 
