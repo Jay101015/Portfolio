@@ -14,19 +14,17 @@ Topic: how much a UK retirement actually costs at three living standards, what t
 | 22 | | already in media/: 22-pensioners-walking-in-uk-town-high-stree.mp4 | | |
 | 28 | | already in media/: 28-elderly-woman-blowing-out-birthday-cake-.mp4 | | |
 | 30 | | already in media/: 30-retired-couple-looking-at-laptop-togethe.mp4 | | |
-| 31 | | already in media/: 31-to-let-sign-outside-house.mp4 | | |
+| 31 |  | library uk-flats-block-drone |  |  |
 | 39 | | already in media/: 39-middle-aged-woman-working-on-laptop-in-o.mp4 | | |
 | 40 | | already in media/: 40-older-man-working-in-hardware-shop-servi.mp4 | | |
 | 41 | | already in media/: 41-colleagues-working-at-desks-in-modern-of.mp4 | | |
 | 47 | | already in media/: 47-office-worker-opening-payslip-envelope-a.mp4 | | |
 | 48 | | already in media/: 48-man-smiling-checking-banking-app-on-phon.mp4 | | |
-| 51 | | already in media/: 51-shoebox-of-old-letters-and-paperwork.mp4 | | |
 | 52 | | already in media/: 52-person-searching-on-laptop-at-kitchen-ta.mp4 | | |
 | 53 |  | library vuag-holdings-app |  |  |
 | 54 | | already in media/: 54-person-logging-into-app-on-smartphone-at.mp4 | | |
-| 58 | | already in media/: 58-retired-couple-reviewing-documents-with-.mp4 | | |
 | 59 | | already in media/: 59-older-man-on-phone-call-at-home-desk.mp4 | | |
-| 61 | | already in media/: 61-retired-man-gardening-in-back-garden-uk.mp4 | | |
+| 62 | | already in media/: 61-retired-man-gardening-in-back-garden-uk.mp4 | | |
 
 ## What counts as free use here
 

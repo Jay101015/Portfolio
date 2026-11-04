@@ -1,6 +1,6 @@
 # Real figures report
 
-Filled on 2026-11-03. Every figure on the board carries its publisher and the month it was published.
+Filled on 2026-11-04. Every figure on the board carries its publisher and the month it was published.
 
 ## Figures
 
@@ -22,7 +22,6 @@ These sentences state a figure or a UK/US claim and the scene has no source on t
 - scene 36: Your money grows by 4% a year above inflation.
 - scene 46: A Lifetime ISA adds a 25% government bonus on up to £4,000 a year, so up to £1,000 a year free.
 - scene 47: Every time you get a pay rise, put 1% more into your pension before you get used to the money.
-- scene 51: And while you're checking: in 2024, the Pensions Policy Institute estimated there were about 3.3 million lost pension pots in the UK, holding about £31.1 billio
 - scene 57: Take off the state pension, about £12,548.
 
 ## The catalogue
