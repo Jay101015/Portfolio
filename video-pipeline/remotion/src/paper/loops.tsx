@@ -795,13 +795,13 @@ export const LoopLayer: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}
   const name = scene.props.anim ? String(scene.props.anim) : '';
   if (!name || !brand.board || !(LOOPS as readonly string[]).includes(name)) return null;
   // on a Short's stat or board the band between the figure (or the lines) and the cards was bare paper: the drawing
-  // fills it, bigger, from 40% down to 70%, and the cards stay in their band under it (retirement Shorts, round 1)
+  // fills it, bigger, from 47% down to 73% (at 40% it sat on a long figure and its source line), and the cards stay in their band under it (retirement Shorts, round 1)
   const midBand = isVertical && ['stat', 'text', 'hook'].includes(scene.type);
   const at = isVertical ? 'bl' : String(scene.props.art_at ?? 'tr');
-  const size = height * (isVertical ? (midBand ? 0.3 : Math.min(0.22, Number(scene.props.art_size ?? 0.22))) : Math.max(0.14, Math.min(0.64, Number(scene.props.art_size ?? 0.34))));
+  const size = height * (isVertical ? (midBand ? 0.26 : Math.min(0.22, Number(scene.props.art_size ?? 0.22))) : Math.max(0.14, Math.min(0.64, Number(scene.props.art_size ?? 0.34))));
   const start = Math.round(Number(scene.props.art_start ?? 0.6) * fps);
   const free = scene.props.art_x !== undefined && scene.props.art_y !== undefined;
-  const place: React.CSSProperties = free ? {left: Number(scene.props.art_x) * width - size / 2, top: Number(scene.props.art_y) * height - size / 2} : midBand ? {top: height * 0.4, left: (width - size) / 2} : PLACE[at] ?? PLACE.tr;
+  const place: React.CSSProperties = free ? {left: Number(scene.props.art_x) * width - size / 2, top: Number(scene.props.art_y) * height - size / 2} : midBand ? {top: height * 0.47, left: (width - size) / 2} : PLACE[at] ?? PLACE.tr;
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
       <div style={{position: 'absolute', ...place, width: size, height: size}}>
