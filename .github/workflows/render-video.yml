@@ -20,6 +20,10 @@ on:
         description: "Only cut and render the Shorts (shorts.json), not the main video"
         type: boolean
         default: false
+      footage_only:
+        description: "Only find the footage and publish footage-check.png (three frames a clip) to look at before the long render"
+        type: boolean
+        default: false
   # a recording on its own is transcribed by transcribe.yml (minutes); the video is rendered when the script ships
   push:
     paths:
@@ -35,6 +39,9 @@ permissions:
 
 jobs:
   render:
+    # a merge commit made by pulling before a push carries no [skip ci] of its own, and it started 55-minute
+    # renders nobody asked for (twice, on the retirement video): only a real script or Shorts change renders
+    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'Merge ')
     runs-on: ubuntu-latest
     timeout-minutes: 90
     defaults:
@@ -112,6 +119,7 @@ jobs:
         run: python -m pipeline.find_facts "projects/$PROJECT" || echo "facts step failed; the board keeps what the script says"
 
       - name: Render
+        if: github.event.inputs.footage_only != 'true'
         env:
           PROJECT: ${{ steps.pick.outputs.project }}
         run: |

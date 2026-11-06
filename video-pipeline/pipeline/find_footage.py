@@ -316,6 +316,20 @@ def slugify(s: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")[:40] or "clip"
 
 
+def stale_pin(scene_id: int, src: str, search: Any) -> bool:
+    """True when `src` is a file this finder downloaded for a different search than the scene's search= now says
+    ("40-older-man-working-in-hardware-shop-servi.mp4" under search="senior man working carpentry workshop").
+    Files it did not name (library clips, uploads, hand-picked files) are never stale."""
+    if not search:
+        return False
+    m = re.match(r"^(\d+)-(?:broll-)?([a-z0-9-]+)\.[a-z0-9]+$", os.path.basename(src))
+    if not m:
+        return False
+    want = slugify(str(search)).strip("-")
+    have = m.group(2).strip("-")
+    return not (want.startswith(have) or have.startswith(want))
+
+
 def find(project: str, providers: list[str], dry_run: bool = False, get: Callable = _get_json, download: Callable = _download, top_n: int = 3, sheet: bool = False) -> dict[str, Any]:
     """`top_n` candidates per footage scene go on footage-candidates.png; `sheet` writes that sheet on a dry run too
     (a scouting run: search only, the preview frames come from the libraries' thumbnails)."""
@@ -408,6 +422,12 @@ def find(project: str, providers: list[str], dry_run: bool = False, get: Callabl
             report["scenes"].append({"id": sc["id"], "status": "library", "src": p["lib"]})
             continue
         src = p.get("src")
+        if src and os.path.exists(os.path.join(media, src)) and stale_pin(sc["id"], str(src), p.get("search")):
+            # the search was changed after this clip was found for an older one: the old clip kept winning and the
+            # new words were never searched (retirement round 2 lost every footage fix to it). Search again; the
+            # old clip's credit stays in `used`, so the same clip cannot come back.
+            print(f"scene {sc['id']}: {src} was found for an older search; searching '{p.get('search')}' again", flush=True)
+            src = None
         if src and os.path.exists(os.path.join(media, src)):
             report["scenes"].append({"id": sc["id"], "status": "present", "src": src})
             continue
@@ -538,6 +558,14 @@ def write_candidates_sheet(project: str, report: dict[str, Any], download: Calla
     return out if os.path.exists(out) else None
 
 
+def _duration(path: str) -> float:
+    try:
+        out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path], capture_output=True, text=True, timeout=30).stdout.strip()
+        return float(out)
+    except (ValueError, subprocess.SubprocessError, OSError):
+        return 0.0
+
+
 def write_check_sheet(project: str, sb: dict[str, Any], out_name: str = "footage-check.png") -> str | None:
     """footage-check.png: one frame from every piece of footage next to the words it plays under, so a clip that does
     not show the idea (a London Eye for "top up your emergency fund") is caught by eye before the video goes out.
@@ -547,10 +575,16 @@ def write_check_sheet(project: str, sb: dict[str, Any], out_name: str = "footage
     for sc in sb["scenes"]:
         p = sc["props"]
         src = p.get("src") if sc["type"] in ("broll", "clip", "still", "image") else p.get("clip_src")
-        if not src or not os.path.exists(os.path.join(media, str(src))):
+        path = os.path.join(media, str(src)) if src else ""
+        if p.get("lib") and not (src and os.path.exists(path)):
+            # a library clip is copied into media/ only at build time: show it from the library
+            from .footage_library import LIB, manifest
+            e = manifest().get(str(p["lib"]))
+            path = os.path.join(LIB, e["file"]) if e else ""
+        if not path or not os.path.exists(path):
             continue
-        cap = str(p.get("caption") or p.get("board") or p.get("clip") or p.get("search") or "")
-        tiles.append((sc["id"], os.path.join(media, str(src)), cap, " ".join(sc["narration"].split())[:90]))
+        cap = str(p.get("caption") or p.get("board") or p.get("clip") or p.get("search") or p.get("lib") or "")
+        tiles.append((sc["id"], path, cap, " ".join(sc["narration"].split())[:90]))
     if not tiles:
         return None
     tmp = os.path.join(project, ".cache", "footage-check")
@@ -563,16 +597,30 @@ def write_check_sheet(project: str, sb: dict[str, Any], out_name: str = "footage
             f.write(f"scene {sid}: {cap}")
         with open(os.path.join(tmp, f"w{i}.txt"), "w", encoding="utf-8") as f:
             f.write(words)
+        # three frames across the clip, not one: a clip that walks off, cuts to a green screen or changes subject
+        # halfway shows it (one frame at 1.5 s passed a door against a green screen as "a garden")
+        dur = _duration(path)
+        times = [1.5] if dur <= 0 else [max(0.0, dur * f) for f in (0.15, 0.5, 0.85)]
+        for k, t in enumerate(times):
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{t:.2f}", "-i", path, "-frames:v", "1", "-vf", "scale=320:180:force_original_aspect_ratio=decrease,pad=320:180:(ow-iw)/2:(oh-ih)/2:white", os.path.join(tmp, f"p{i:02d}{k}.png")], check=False)
+        parts = [os.path.join(tmp, f"p{i:02d}{k}.png") for k in range(len(times)) if os.path.exists(os.path.join(tmp, f"p{i:02d}{k}.png"))]
+        if not parts:
+            continue
+        strip_w = 320 * len(parts)
         vf = (
-            "scale=480:270:force_original_aspect_ratio=decrease,pad=480:330:(ow-iw)/2:0:white,"
-            f"drawtext={fontopt}textfile={os.path.join(tmp, f't{i}.txt')}:fontsize=18:fontcolor=black:x=6:y=276,"
-            f"drawtext={fontopt}textfile={os.path.join(tmp, f'w{i}.txt')}:fontsize=13:fontcolor=0x555555:x=6:y=302"
+            (f"hstack=inputs={len(parts)}," if len(parts) > 1 else "")
+            + f"pad={strip_w}:240:0:0:white,"
+            f"drawtext={fontopt}textfile={os.path.join(tmp, f't{i}.txt')}:fontsize=18:fontcolor=black:x=6:y=186,"
+            f"drawtext={fontopt}textfile={os.path.join(tmp, f'w{i}.txt')}:fontsize=13:fontcolor=0x555555:x=6:y=212"
         )
-        subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", "1.5", "-i", path, "-frames:v", "1", "-vf", vf, os.path.join(tmp, f"f{i:02d}.png")], check=False)
+        ins: list[str] = []
+        for q in parts:
+            ins += ["-i", q]
+        subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex" if len(parts) > 1 else "-vf", vf, "-frames:v", "1", os.path.join(tmp, f"f{i:02d}.png")], check=False)
     made = sorted(fn for fn in os.listdir(tmp) if fn.startswith("f") and fn.endswith(".png"))
     if not made:
         return None
-    cols = 3
+    cols = 2
     rows = (len(made) + cols - 1) // cols
     out = os.path.join(project, out_name)
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-framerate", "1", "-i", os.path.join(tmp, "f%02d.png"), "-vf", f"tile={cols}x{rows}:padding=6:color=white", "-frames:v", "1", out], check=False)

@@ -792,3 +792,11 @@ class AlignTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_stale_pin_searches_again_when_the_search_changed():
+    from pipeline.find_footage import stale_pin
+    assert stale_pin(40, "40-older-man-working-in-hardware-shop-servi.mp4", "senior man working carpentry workshop")
+    assert not stale_pin(10, "10-senior-woman-drinking-tea-at-kitchen-win.mp4", "senior woman drinking tea at kitchen window")
+    assert not stale_pin(31, "uk-flats-block-drone.mp4", "flats")  # a library or hand-picked file is never stale
+    assert not stale_pin(3, "03-anything.mp4", None)
