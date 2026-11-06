@@ -169,6 +169,13 @@ buttons: a Short's page is laid out in bands between them, and nothing sits on a
 - The sticker is a claim or a comparison with the figure in it ("Chase the hottest stock: £30. Do nothing:
   £1,280"), never a label a cold viewer cannot place ("hype pot vs boring pot").
 
+## Footage: look before the long render
+
+After changing any footage scene, run the Render video workflow with `footage_only` ticked: it finds the clips, pins
+them in script.md and publishes footage-check.png (three frames from each clip, beside the words it plays under) to
+the release in a few minutes. Look at every strip; re-search or use a library clip or a board for any wrong one; then
+render. A search= changed under an old src= is searched again on its own.
+
 ## No clones (docs/formats.md)
 
 Every long video picks a format, a signature device, a chapter device, an opening and an ending that the last

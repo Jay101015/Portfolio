@@ -799,7 +799,7 @@ export const LoopLayer: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}
   const midBand = isVertical && ['stat', 'text', 'hook'].includes(scene.type);
   const at = isVertical ? 'bl' : String(scene.props.art_at ?? 'tr');
   const size = height * (isVertical ? (midBand ? 0.22 : Math.min(0.22, Number(scene.props.art_size ?? 0.22))) : Math.max(0.14, Math.min(0.64, Number(scene.props.art_size ?? 0.34))));
-  const start = Math.round(Number(scene.props.art_start ?? 0.6) * fps);
+  const start = Math.round(Number(scene.props.art_start ?? 0.2) * fps); // on the cut, as a drawing (art.tsx)
   const free = scene.props.art_x !== undefined && scene.props.art_y !== undefined;
   const place: React.CSSProperties = free ? {left: Number(scene.props.art_x) * width - size / 2, top: Number(scene.props.art_y) * height - size / 2} : PLACE[at] ?? PLACE.tr;
   return (

@@ -406,3 +406,15 @@ one change at a time where possible, so a result can be read.
   the ElevenLabs take went through the phone-memo chain (noise removal, +2.5 dB at 3 kHz, a 3:1 compressor): 2-8 kHz
   came out 4 dB brighter than the take and the loudness range was 3.1 LU. An ElevenLabs (or any clean) take is
   always `voice: natural`, which only sets the level. Every script header carries a `voice:` line.
+
+## Studio fixes after the retirement video
+- Board lines land where they are said (remotion/src/paper/lineMatch.ts): each line of board="a | b | c" looks for
+  its first two words, then its figure (digit by digit, across split words), then its key word, after the line above;
+  the even share is only the fallback. "Times 25" moved from 17.1 s to "by 25" at 13.6 s; "Retire at 67" from 4.6 s
+  to 9.7 s.
+- No bare page at a change of board: drawings and loops start at 0.2 s (as the board slides in), not 0.8 / 0.6 s;
+  chart axes draw with the title; every chart's bars grow on their spoken figures (long videos too, not only Shorts).
+- Footage: a src= downloaded for an older search is stale and searched again (the old clip cannot come back);
+  footage-check.png shows three frames a clip (15/50/85%) and library clips. Run the workflow with footage_only=true
+  after changing footage and look at footage-check.png on the release before the long render.
+- render-video.yml skips push runs whose head commit is a merge. Pull with --rebase before pushing anyway.

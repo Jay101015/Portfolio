@@ -14,6 +14,7 @@ import {captionLine, isLoss, keyWords, moneyTint} from './phrase';
 import {Media} from './media';
 import {Loop, Sequence} from 'remotion';
 import {CharacterOn, isPersonArt} from './character';
+import {lineIndices} from './lineMatch';
 
 /**
  * The paper look: every scene is laid out like a page someone wrote on. Big words in a serif, notes in
@@ -82,20 +83,12 @@ const autoArt = (brand: Brand, ...texts: (string | undefined)[]) => (brand.illus
 /** a traced illustration on a scene in the illustrated style is the picture, not a corner note: it gets the right half */
 const bigArt = (brand: Brand, art: string | undefined) => !!(brand.illustrated && art && isTraced(art));
 
-/** board= lines that do not pair one to one with the spoken sentences: each written as the voice reaches its share of
- * the scene, moved onto the nearest clause break (a word ending in punctuation) within a few words. */
-const boardLinesAt = (texts: string[], words: Word[]): {text: string; from: Word | undefined}[] =>
-  texts.map((text, k) => {
-    if (!words.length) return {text, from: undefined};
-    let at = Math.round((k * words.length) / texts.length);
-    if (k > 0) {
-      for (let d = 0; d <= 4; d++) {
-        if (words[at - 1 - d] && /[.,!?;:]$/.test(words[at - 1 - d].w)) { at -= d; break; }
-        if (words[at - 1 + d] && /[.,!?;:]$/.test(words[at - 1 + d].w)) { at += d; break; }
-      }
-    }
-    return {text, from: words[Math.min(words.length - 1, Math.max(0, at))]};
-  });
+/** board= lines that do not pair one to one with the spoken sentences: each written where the voice says it (its
+ * first words, its figure or its key word, after the line above: paper/lineMatch.ts), else at its share of the scene */
+const boardLinesAt = (texts: string[], words: Word[]): {text: string; from: Word | undefined}[] => {
+  const at = lineIndices(texts, words);
+  return texts.map((text, k) => ({text, from: words.length ? words[at[k]] : undefined}));
+};
 
 /** A doodle in the top-right corner of the board, drawn after the headline is written. */
 const CornerDoodle: React.FC<{brand: Brand; name?: string; art?: string; frame: number; fps: number; start: number; seed?: number; color?: string; by?: number}> = ({brand, name, art, frame, fps, start, seed = 1, color, by}) => {
@@ -716,7 +709,8 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
   };
   const drawFrames = Math.round(fps * (isVertical ? Math.min(drawSec, 5) : drawSec)); // a Short has no time for an eight-second draw
   const titleDone = title ? doneAt(brand, title, fps, 4, 2, 24) : 0;
-  const axesAt = brand.board ? titleDone + 2 : 2;
+  // the axes draw while the title is written, not after it: a chart opened on a bare page for a second
+  const axesAt = brand.board ? Math.min(titleDone + 2, Math.round(fps * 0.25)) : 2;
   const axes = brand.board ? lin(frame, axesAt, axesAt + Math.round(fps * 0.5)) : ease(frame, 2, 14);
   const lineAt = brand.board ? axesAt + Math.round(fps * 0.5) + 4 : 10;
   const reveal = brand.board ? lin(frame, lineAt, lineAt + drawFrames) : ease(frame, 10, 10 + drawFrames);
@@ -788,8 +782,8 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
       <>
         {bars.map((b, i) => {
           const seq = lineAt + i * (brand.board ? Math.round(fps * 0.7) : 8);
-          // a Short: each bar grows as its figure is said ("just 9%"), not all three before the voice gets there
-          const said = isVertical ? figureTime(scene.words, String(b.value)) : null;
+          // each bar grows as its figure is said ("just 9%"), not all three before the voice gets there
+          const said = figureTime(scene.words, String(b.value));
           const at = said !== null ? Math.max(seq, Math.round((said - scene.start) * fps) - Math.round(fps * 0.3)) : seq;
           const grow = brand.board ? lin(frame, at, at + fps * 0.6) : ease(frame, 8 + i * 8, 8 + i * 8 + fps * 0.9);
           const h = Math.max(0, (b.value / yMax) * plotH * grow);
