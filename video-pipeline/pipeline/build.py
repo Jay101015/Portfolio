@@ -1058,6 +1058,11 @@ def main(argv: list[str] | None = None) -> int:
     write_timing(project, sb, slug, voice_preview(project, audio) if audio else None)
     write_preview(sb, os.path.join(project, "storyboard.html"), align_report)
     print(f"wrote {sb_path} and storyboard.html")
+    if audio:
+        # captions for YouTube's Subtitles: most first views are muted autoplay, and the automatic captions garble figures
+        from .srt import write_srt
+        n = write_srt(sb, os.path.join(project, f"{slug}.srt"))
+        print(f"captions: {slug}.srt, {n} lines from the script's words (upload in Studio, Subtitles)")
     if args.no_render:
         return 0
 

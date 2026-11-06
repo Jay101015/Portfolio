@@ -800,3 +800,12 @@ def test_stale_pin_searches_again_when_the_search_changed():
     assert not stale_pin(10, "10-senior-woman-drinking-tea-at-kitchen-win.mp4", "senior woman drinking tea at kitchen window")
     assert not stale_pin(31, "uk-flats-block-drone.mp4", "flats")  # a library or hand-picked file is never stale
     assert not stale_pin(3, "03-anything.mp4", None)
+
+
+def test_srt_lines_follow_the_words(tmp_path):
+    from pipeline.srt import write_srt
+    sb = {"scenes": [{"words": [{"w": "The", "s": 0.4, "e": 0.5}, {"w": "pension", "s": 0.6, "e": 1.0}, {"w": "£12,548.", "s": 1.1, "e": 2.0},
+                                {"w": "Comfortable", "s": 3.5, "e": 4.0}, {"w": "costs", "s": 4.1, "e": 4.4}]}]}
+    n = write_srt(sb, str(tmp_path / "x.srt"))
+    text = (tmp_path / "x.srt").read_text()
+    assert n == 2 and "00:00:00,400 --> " in text and "The pension £12,548." in text and "Comfortable costs" in text

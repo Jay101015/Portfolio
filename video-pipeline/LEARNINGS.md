@@ -423,5 +423,8 @@ one change at a time where possible, so a result can be read.
 - 2 days: 445 views, 1.6k impressions, 4.0% CTR, 99.1% Browse (home feed), a third impressions wave rising. The best
   start of any long video so far (the earlier long videos had ~1.2k views between them). Thumbnail: the whiteboard
   hourglass with a hopeful young man ("£1M ENOUGH?"), after AI-stock and cartoon versions were rejected.
-- Reviewers predicted (round 2): retention 7.5, ~28% average view, ~60% at 0:30. Fill in average view duration and
-  the 0:30 retention from Studio when Jeffrey sends the Engagement tab.
+- Reviewers predicted (round 2): retention 7.5, ~28% average view, ~60% at 0:30. Real, day 2: 82 engaged views of
+  445 (the rest are home-feed autoplay, mostly muted), 2.8 h watch time: about 2:03 per engaged view, ~15% of 13:32.
+  The reviewers were optimistic by about half. The retention graph needs more data.
+- Muted autoplay is most first contact: every long video now gets <slug>.srt from the script's words (pipeline/srt.py)
+  for Studio > Subtitles, so the muted preview shows the real words and figures, not YouTube's guesses.
