@@ -418,3 +418,10 @@ one change at a time where possible, so a result can be read.
   footage-check.png shows three frames a clip (15/50/85%) and library clips. Run the workflow with footage_only=true
   after changing footage and look at footage-check.png on the release before the long render.
 - render-video.yml skips push runs whose head commit is a merge. Pull with --rebase before pushing anyway.
+
+## Real results: retire-1-million-uk ("Is £1 Million Enough to Retire in the UK?")
+- 2 days: 445 views, 1.6k impressions, 4.0% CTR, 99.1% Browse (home feed), a third impressions wave rising. The best
+  start of any long video so far (the earlier long videos had ~1.2k views between them). Thumbnail: the whiteboard
+  hourglass with a hopeful young man ("£1M ENOUGH?"), after AI-stock and cartoon versions were rejected.
+- Reviewers predicted (round 2): retention 7.5, ~28% average view, ~60% at 0:30. Fill in average view duration and
+  the 0:30 retention from Studio when Jeffrey sends the Engagement tab.
