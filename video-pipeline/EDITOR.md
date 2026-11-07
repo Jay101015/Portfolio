@@ -169,6 +169,16 @@ buttons: a Short's page is laid out in bands between them, and nothing sits on a
 - The sticker is a claim or a comparison with the figure in it ("Chase the hottest stock: £30. Do nothing:
   £1,280"), never a label a cold viewer cannot place ("hype pot vs boring pot").
 
+## The first 30 seconds, muted (retirement video's real retention)
+
+Most first views of a long video are muted autoplay in the home feed; the retirement video kept ~20% past 0:40 and
+almost all of them to the end, so the opening is where a video is won or lost, and it must work with the sound off:
+- Frame one shows the title's question and its number in huge type ("£1M?"), not handwriting starting to appear.
+- The first sentence says the title's number; a question title gets its short answer inside 30 seconds (the reasons
+  follow). Viewers skipped to the answer near the end when it came at 11 minutes.
+- One teaser line of about 8 seconds, not a list of promises; the title card at most a beat.
+- The captions file (<slug>.srt) goes up with the video.
+
 ## Footage: look before the long render
 
 After changing any footage scene, run the Render video workflow with `footage_only` ticked: it finds the clips, pins

@@ -428,3 +428,11 @@ one change at a time where possible, so a result can be read.
   The reviewers were optimistic by about half. The retention graph needs more data.
 - Muted autoplay is most first contact: every long video now gets <slug>.srt from the script's words (pipeline/srt.py)
   for Studio > Subtitles, so the muted preview shows the real words and figures, not YouTube's guesses.
+- Day 3 retention (514 views): average view 1:46 (13.1%), 39% at 0:30 ("below typical"). The curve falls to ~20% by
+  0:40 and then stays nearly flat to the end (~10-15%), with three spikes near the end (people skipping to the
+  answer). The ~20% plateau is about the engaged views (82 of 445 on day 2): almost everyone who chooses to watch
+  stays; the loss is muted home-feed autoplay in the first 20-30 s. Reviewers predicted 60% at 0:30 and 28% average
+  view: optimistic by about half, mostly because they did not allow for muted autoplay.
+- Rules from it (EDITOR.md, "The first 30 seconds, muted"): the title's question and number on screen in huge type at
+  0:00; the title's number said in the first sentence; a question title gets its short answer in the first 30 s;
+  the teaser is one line (~8 s), no list of four promises; captions file uploaded with every long video.

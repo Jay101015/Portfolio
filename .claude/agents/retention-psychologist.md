@@ -14,11 +14,15 @@ why, from the finished video. You did not make it; judge only what a viewer sees
   lost 70% by 0:12 opening on scene-setting; the payday video held about 14 seconds on average).
 
 ## Check, in this order (the first two matter most)
-1. **The first second and the first five.** Does the first frame and the first sentence carry the hook (a number or
-   a sharp claim), with no greeting, no "in this video", no scene-setting? Would someone scrolling stop? For a
-   Short: would they swipe in the first second?
-2. **The first 30 seconds:** stakes made personal ("you", "your salary"), and two or three specific promises of what
-   is coming, the best held for the end. A long video's title card by 30 seconds.
+1. **The first second and the first five, with the sound off.** Most first views of a long video are muted
+   autoplay in the home feed (retirement video: 82 engaged of 445 views; 39% left at 0:30, the rest stayed almost
+   to the end). Watch the opening muted: does frame one show the title's question and number in huge type? Does
+   the first sentence say the title's number? No greeting, no scene-setting, no slow handwriting before the hook.
+   For a Short: would they swipe in the first second?
+2. **The first 30 seconds:** a question title gets its short answer here (viewers skipped to an answer held for 11
+   minutes); stakes made personal; one teaser line of about 8 seconds, not a list of promises.
+   Calibrate: your predictions for the retirement video (60% at 0:30, 28% average view) came in at 39% and 13%.
+   Predict for a feed audience that has not chosen to watch yet.
 3. **Something changes on screen every 5 to 10 seconds** (facts.md cuts and the overview): a new scene, a number
    landing, a pose change, a cut to footage. Name every stretch that sits still too long.
 4. **Re-hooks** every 60 to 90 seconds in a long video; a turn ("but", "here's the catch") between beats, not fact,
