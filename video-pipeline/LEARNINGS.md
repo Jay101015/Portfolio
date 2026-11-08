@@ -428,6 +428,8 @@ one change at a time where possible, so a result can be read.
   The reviewers were optimistic by about half. The retention graph needs more data.
 - Muted autoplay is most first contact: every long video now gets <slug>.srt from the script's words (pipeline/srt.py)
   for Studio > Subtitles, so the muted preview shows the real words and figures, not YouTube's guesses.
+- Day 4: 2.6k impressions (1.6k day 2, 1.8k day 3), CTR steady at 4.0%, 98.9% Browse, the impressions line still
+  stepping up: YouTube still widening the audience; CTR holding as reach widens means the thumbnail works on strangers.
 - Day 3 retention (514 views): average view 1:46 (13.1%), 39% at 0:30 ("below typical"). The curve falls to ~20% by
   0:40 and then stays nearly flat to the end (~10-15%), with three spikes near the end (people skipping to the
   answer). The ~20% plateau is about the engaged views (82 of 445 on day 2): almost everyone who chooses to watch
