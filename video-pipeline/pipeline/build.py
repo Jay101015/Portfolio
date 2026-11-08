@@ -844,7 +844,7 @@ def render_shorts(project: str, sb: dict, audio: str | None, concurrency: str | 
         else:
             cut["audio"] = None
         # the punch-ins on the Short's own clock (the long video's times do not carry over); the header's sfx switch carries
-        cut["sfx"] = sb.get("sfx", True)
+        cut["sfx"] = sb.get("sfx", "light")
         sfx.set_punches(cut, gap=4.0)
         props = os.path.join(project, ".cache", f"{name}.json")
         os.makedirs(os.path.dirname(props), exist_ok=True)
@@ -904,6 +904,10 @@ def main(argv: list[str] | None = None) -> int:
             md = f.read()
     sb = parse_script(md) if md.strip() else None
     audio = find_audio(project)
+    if md.strip():
+        from .preflight import checks
+        for lv, msg in checks(md, project, bool(audio)):
+            print(f"PREFLIGHT {lv}: {msg}", flush=True)
     words = None
     total = 0.0
     wav = None
@@ -1047,11 +1051,12 @@ def main(argv: list[str] | None = None) -> int:
             shutil.rmtree(dst, ignore_errors=True)
             shutil.copytree(src_dir, dst)
 
-    # Jeffrey did not like the effects on the first cut, so they are off unless a script's header says `sfx: on`
+    # sound effects: `light` by default (a ding on the key number, a whoosh on a cut to footage), `sfx: on` for
+    # everything, `sfx: off` for none. Jeffrey turned the full set off on the first cut and later asked for some sounds.
     for note in craft.enrich(sb):  # cards on empty stretches, key words popping up, the set-piece ration
         print(note)
-    sb["sfx"] = _header_lines(md).get("sfx", "off").strip().lower() in ("on", "yes")
-    print(f"punch-ins: {sfx.set_punches(sb)} on key numbers; sound effects: {'on' if sb['sfx'] else 'off'}")
+    sb["sfx"] = sfx.level({"sfx": _header_lines(md).get("sfx", "light").strip().lower()})
+    print(f"punch-ins: {sfx.set_punches(sb)} on key numbers; sound effects: {sb['sfx']} ({len(sfx.events(sb))} sounds)")
     sb_path = os.path.join(project, "storyboard.json")
     with open(sb_path, "w", encoding="utf-8") as f:
         json.dump(sb, f, indent=1)
@@ -1063,6 +1068,8 @@ def main(argv: list[str] | None = None) -> int:
         from .srt import write_srt
         n = write_srt(sb, os.path.join(project, f"{slug}.srt"))
         print(f"captions: {slug}.srt, {n} lines from the script's words (upload in Studio, Subtitles)")
+        from .chapters import write_chapters
+        print(write_chapters(project, sb))
     if args.no_render:
         return 0
 

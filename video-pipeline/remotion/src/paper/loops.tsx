@@ -52,7 +52,9 @@ const wobble = (dt: number, at: number, deg = 4) => (dt >= at && dt < at + 0.5 ?
 
 type Opt = Record<string, unknown>;
 
-export const DrawnLoop: React.FC<{name: string; size: number; brand: Brand; start: number; seed: number; style?: React.CSSProperties}> = ({name, size, brand, start, seed, style}) => {
+/** `quiet`: no written labels or counters in the loop ("month 7", "+ interest", "BILLS", "year 3"), only the
+ * drawing: beside a stat's big figure a second number argued with it (retirement video, rounds 1 and 2) */
+export const DrawnLoop: React.FC<{name: string; size: number; brand: Brand; start: number; seed: number; style?: React.CSSProperties; quiet?: boolean}> = ({name, size, brand, start, seed, style, quiet = false}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const t = (frame - start) / fps;
@@ -73,7 +75,8 @@ export const DrawnLoop: React.FC<{name: string; size: number; brand: Brand; star
   const fine = (stroke: string, k: number, extra: Opt = {}): Opt => o(stroke, k, {strokeWidth: 1.4, ...extra});
   const solid = (fill: string): Opt => ({fill, fillStyle: 'solid'});
   const hatch = (fill: string, gap = 3): Opt => ({fill, fillStyle: 'hachure', hachureGap: gap, fillWeight: 0.9, hachureAngle: -40});
-  const T: React.FC<{x: number; y: number; s?: number; c?: string; children: React.ReactNode; anchor?: 'middle' | 'start' | 'end'; rot?: number}> = ({x, y, s = 9, c = ink, children, anchor = 'middle', rot = 0}) => (
+  const T: React.FC<{x: number; y: number; s?: number; c?: string; children: React.ReactNode; anchor?: 'middle' | 'start' | 'end'; rot?: number}> = ({x, y, s = 9, c = ink, children, anchor = 'middle', rot = 0}) =>
+    quiet && !(typeof children === 'string' && /^[£$%]$/.test(children)) ? null : (
     <text x={x} y={y} textAnchor={anchor} fontFamily={hand} fontSize={s} fill={c} transform={rot ? `rotate(${rot} ${x} ${y})` : undefined}>{children}</text>
   );
   const Shadow: React.FC<{cx: number; cy: number; w: number; k: number}> = ({cx, cy, w, k}) => <SketchEllipse cx={cx} cy={cy} w={w} h={w * 0.16} draw={1} options={fine(slate, k, {...hatch(slate, 2.2), strokeWidth: 0.5})} />;
@@ -800,12 +803,14 @@ export const LoopLayer: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}
   const at = isVertical ? 'bl' : String(scene.props.art_at ?? 'tr');
   const size = height * (isVertical ? (midBand ? 0.22 : Math.min(0.22, Number(scene.props.art_size ?? 0.22))) : Math.max(0.14, Math.min(0.64, Number(scene.props.art_size ?? 0.34))));
   const start = Math.round(Number(scene.props.art_start ?? 0.2) * fps); // on the cut, as a drawing (art.tsx)
+  // beside a figure the loop keeps its labels and counters to itself (anim_labels=on puts them back)
+  const quiet = String(scene.props.anim_labels ?? '') !== 'on' && ['stat', 'pie', 'grow', 'shrink', 'bite', 'chart', 'compare'].includes(scene.type);
   const free = scene.props.art_x !== undefined && scene.props.art_y !== undefined;
   const place: React.CSSProperties = free ? {left: Number(scene.props.art_x) * width - size / 2, top: Number(scene.props.art_y) * height - size / 2} : PLACE[at] ?? PLACE.tr;
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
       <div style={{position: 'absolute', ...place, width: size, height: size}}>
-        <DrawnLoop name={name} size={size} brand={brand} start={start} seed={scene.id * 3 + 2} />
+        <DrawnLoop name={name} size={size} brand={brand} start={start} seed={scene.id * 3 + 2} quiet={quiet} />
       </div>
     </AbsoluteFill>
   );

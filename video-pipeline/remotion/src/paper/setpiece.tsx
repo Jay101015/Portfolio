@@ -243,6 +243,51 @@ export const SetScene: React.FC<{scene: Scene; brand: Brand}> = ({scene}) => {
   );
 };
 
+type Rect = {x: number; y: number; w: number; h: number};
+const overlap = (a: Rect, b: Rect) => Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) * Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
+/** where the scene's drawing or loop sits on a landscape page, as ArtLayer / LoopLayer / the big traced picture place
+ * it, so the cards can keep off it; null when the scene has none */
+const artRect = (scene: Scene, brand: Brand | undefined, W: number, H: number): Rect | null => {
+  const p = scene.props;
+  const art = p.art && p.art !== 'off' ? String(p.art) : '';
+  const anim = p.anim ? String(p.anim) : '';
+  if (!art && !anim) return null;
+  if (p.art_x !== undefined && p.art_y !== undefined) {
+    const size = H * Math.max(0.12, Math.min(0.8, Number(p.art_size ?? 0.3)));
+    return {x: Number(p.art_x) * W - size / 2, y: Number(p.art_y) * H - size / 2, w: size, h: size};
+  }
+  const u = W / 1920;
+  const pad = 70 * u;
+  if (art && brand?.illustrated && (scene.type === 'text' || scene.type === 'hook') && isTraced(art)) {
+    const size = 760 * u; // the big picture on the right half (scenes.tsx CornerDoodle)
+    return {x: W - pad * 0.5 - size, y: H / 2 - size / 2, w: size, h: size};
+  }
+  const size = anim && !art ? H * Math.max(0.14, Math.min(0.64, Number(p.art_size ?? 0.34))) : H * Math.max(0.12, Math.min(0.8, Number(p.art_size ?? 0.3)));
+  const at = String(p.art_at ?? 'tr');
+  const right = W * 0.95 - size;
+  const left = W * 0.05;
+  switch (at) {
+    case 'tl': return {x: left, y: H * 0.08, w: size, h: size};
+    case 'br': return {x: right, y: H * 0.85 - size, w: size, h: size};
+    case 'bl': return {x: left, y: H * 0.85 - size, w: size, h: size};
+    case 'r': return {x: right, y: H * 0.55 - size / 2, w: size, h: size};
+    case 'l': return {x: left, y: H * 0.5 - size / 2, w: size, h: size};
+    case 'c': return {x: W / 2 - size / 2, y: H / 2 - size / 2, w: size, h: size};
+    default: return {x: right, y: H * 0.08, w: size, h: size};
+  }
+};
+/** the card column's slot: the first of the candidates whose column clears the drawing (under about a tenth of its
+ * area on it); the first candidate is the layout's usual place. A wide or centred drawing used to get cards on its
+ * hands and props (retirement Shorts and long video, both review rounds). */
+const pickSlot = (cands: {colX: number; y0: number}[], n: number, step: number, maxw: number, art: Rect | null): {colX: number; y0: number} => {
+  if (!art) return cands[0];
+  for (const c of cands) {
+    const col = {x: c.colX - maxw / 2, y: c.y0 - step / 2, w: maxw, h: step * n};
+    if (overlap(col, art) < 0.1 * col.w * col.h) return c;
+  }
+  return cands[0];
+};
+
 /** The cards and props that have landed, stacked down a column, each squashing as it lands. */
 const Column: React.FC<{items: SetCue[]; colX: number; y0: number; step: number; maxw: number; tq: number; k: number; left: boolean; vertical: boolean; W: number; H: number}> = ({items, colX, y0, step, maxw, tq, k, left, vertical, W, H}) => (
   <>
@@ -294,10 +339,16 @@ export const FootageCards: React.FC<{scene: Scene; brand?: Brand}> = ({scene, br
   // sit on a box's heading (retirement round 2: "most people under 40: a pot" hid "It depends" for 12 s)
   const compare = !vertical && scene.type === 'compare';
   const left = (underLines && !rightArt) || chart || compare;
+  const n = compare ? 2 : aboveArt ? 1 : lowBand ? 2 : vertical ? 2 : rightArt || topRow || chart ? 2 : underLines ? 2 : left ? 3 : iconBoard ? 3 : 4;
+  const step = (compare ? 0.088 : lowBand ? 0.065 : vertical ? 0.08 : underLines ? 0.1 : 0.118) * H;
+  const maxw = (compare ? 0.84 : aboveArt ? 0.84 : lowBand ? 0.5 : vertical ? 0.56 : left ? 0.42 : 0.44) * W;
+  const usual = {colX: (compare ? 0.5 : aboveArt ? 0.5 : lowBand ? 0.73 : vertical ? 0.34 : chart ? 0.66 : rightArt ? 0.74 : underLines ? 0.25 : 0.74) * W, y0: (compare ? 0.81 : aboveArt ? 0.4 : lowBand ? 0.755 : vertical ? 0.6 : chart ? 0.21 : topRow ? 0.03 : rightArt ? 0.06 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H};
+  // on a landscape board the column keeps off the drawing: its usual place first, then top right, bottom left under
+  // the lines, mid left, and the strip along the bottom
+  const slot = vertical || compare || chart ? usual : pickSlot([usual, {colX: 0.74 * W, y0: 0.06 * H}, {colX: 0.25 * W, y0: 0.72 * H}, {colX: 0.25 * W, y0: 0.42 * H}, {colX: 0.5 * W, y0: 0.86 * H}], n, step, maxw, artRect(scene, brand, W, H));
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
-      <Column items={cues.slice(-(compare ? 2 : aboveArt ? 1 : lowBand ? 2 : vertical ? 2 : rightArt || topRow || chart ? 2 : underLines ? 2 : left ? 3 : iconBoard ? 3 : 4))} colX={(compare ? 0.5 : aboveArt ? 0.5 : lowBand ? 0.73 : vertical ? 0.34 : chart ? 0.66 : rightArt ? 0.74 : underLines ? 0.25 : 0.74) * W} y0={(compare ? 0.81 : aboveArt ? 0.4 : lowBand ? 0.755 : vertical ? 0.6 : chart ? 0.21 : topRow ? 0.03 : rightArt ? 0.06 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H} step={(compare ? 0.088 : lowBand ? 0.065 : vertical ? 0.08 : underLines ? 0.1 : 0.118) * H}
-        maxw={(compare ? 0.84 : aboveArt ? 0.84 : lowBand ? 0.5 : vertical ? 0.56 : left ? 0.42 : 0.44) * W} tq={tq} k={k} left={left} vertical={vertical} W={W} H={H} />
+      <Column items={cues.slice(-n)} colX={slot.colX} y0={slot.y0} step={step} maxw={maxw} tq={tq} k={k} left={left || slot.colX < W / 2} vertical={vertical} W={W} H={H} />
     </AbsoluteFill>
   );
 };

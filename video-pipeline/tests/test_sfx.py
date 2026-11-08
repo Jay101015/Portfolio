@@ -23,6 +23,7 @@ def test_punch_lands_on_the_first_number_and_keeps_its_distance():
 
 def test_events_cover_cuts_cards_writing_and_the_key_number():
     sb = _sb()
+    sb["sfx"] = "on"  # the full set; `light` (the default) keeps only the ding and a whoosh on a cut to footage
     sfx.set_punches(sb)
     kinds = [k for _, k, _ in sfx.events(sb)]
     assert kinds.count("whoosh") == 3  # one per cut, none before the first scene
@@ -73,5 +74,18 @@ def test_a_continued_preview_gets_no_whoosh():
         {"id": 1, "type": "broll", "start": 0.0, "end": 5.0, "props": {"next": "on", "src": "x.mp4"}},
         {"id": 2, "type": "broll", "start": 5.0, "end": 12.0, "props": {"next": "on", "src": "x.mp4", "cont": "on"}},
         {"id": 3, "type": "outro", "start": 12.0, "end": 15.0, "props": {}},
-    ]}
+    ], "sfx": "on"}
     assert [k for _, k, _ in sfx.events(sb)] == ["whoosh"]  # only the cut to the outro
+
+
+def test_light_level_keeps_the_ding_and_footage_cuts_only():
+    sb = {"scenes": [
+        {"id": 1, "type": "hook", "start": 0.0, "end": 5.0, "props": {}, "punch": 2.0, "cues": [{"do": "card", "t": 1.0}]},
+        {"id": 2, "type": "text", "start": 5.0, "end": 10.0, "props": {}, "cues": [{"do": "card", "t": 6.0}]},
+        {"id": 3, "type": "broll", "start": 10.0, "end": 15.0, "props": {"src": "x.mp4"}},
+        {"id": 4, "type": "broll", "start": 15.0, "end": 20.0, "props": {"src": "y.mp4"}},
+        {"id": 5, "type": "stat", "start": 20.0, "end": 25.0, "props": {}, "punch": 22.0},
+    ]}
+    assert [k for _, k, _ in sfx.events(sb)] == ["ding", "whoosh", "ding"]  # no pops, no scribble, one whoosh into footage
+    sb["sfx"] = "off"
+    assert sfx.events(sb) == []

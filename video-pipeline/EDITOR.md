@@ -139,15 +139,38 @@ Tags for the script:
 - "tax-free" is not a cost word: the figure in "ISA: £20,000 a year, tax-free" is green. "Spend £1,000" is red
   (spending is money going), so a board about the £1,000 to enjoy says "£1,000 for you".
 
-## Punch-ins (automatic) and sound effects (off)
+## Punch-ins (automatic) and sound effects (light by default)
 
-On the key number of a hook, stat, bite, grow, shrink, pie or compare scene (the spoken number that matches the
-figure on screen, at most one every 6 seconds; a bite's is the figure it loses, so "two hundred" not "thousand")
-a marker ring is drawn round the figure, green on a gain and red on a loss (a hook's figure sits inside a written
-line and gets the punch, not a ring), and a bite takes its slice and writes the lost figure as the number is said (the camera punch-in only
-plays with `brand.motion: on`). The sound effects in
-pipeline/sfx.py (a whoosh on cuts, a pop on cards, a scribble on writing, a ding on the number) are off: Jeffrey
-did not like them on the first cut. `sfx: on` in a script's header is the only thing that turns them on.
+A money or hook scene's key number gets a punch-in as it is said (the figure matched to the spoken number). The sound
+effects (pipeline/sfx.py) have three levels in the script header: `sfx: light` (the default): a soft ding on the
+key number and a quiet whoosh on a cut to footage only, about one sound every 20 to 30 seconds; `sfx: on`: a
+whoosh on every cut, a pop on every card, a scribble as a board starts writing (175 sounds in 7 minutes: Jeffrey
+turned it off); `sfx: off`: none. All sit about 20 dB under the voice.
+
+## Loops beside a figure carry no labels
+
+A loop (`anim=`) on a stat, pie, grow, shrink, bite, chart or compare scene draws without its written labels and
+counters ("month 7", "+ interest", "BILLS", "year 3"): beside the big figure a second number argued with it.
+`anim_labels=on` puts them back. On text, list and recap boards the labels stay.
+
+## Cards keep off the drawing
+
+On a landscape board the card column tries its usual place first and, if that sits on the drawing or loop, moves:
+top right, then bottom left under the lines, then mid left, then the strip along the bottom. On a Short a traced
+drawing's board puts its card above the drawing. Cards still never cover a heading or a figure.
+
+## Chapters and captions are written by the build
+
+After the render's timing is known, the build writes `<slug>.srt` (captions from the script's words, for Studio >
+Subtitles) and the chapter timestamps from the takeaway cards into description.md's "Chapters" block (or
+chapters.txt when there is none), so they never have to be read off frames by hand.
+
+## Preflight
+
+`python -m pipeline.preflight projects/<name>` (also at the start of every build) warns about: a recording with no
+`voice:` line; the first board with no number on it; a first sentence that does not say the title's number;
+"Takeaway" cards or a recap ending two videos in a row (docs/formats.md); no footage scenes. Fix the warnings
+before pushing a script.
 
 ## A Short's page (vertical)
 

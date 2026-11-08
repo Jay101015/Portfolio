@@ -436,3 +436,10 @@ one change at a time where possible, so a result can be read.
 - Rules from it (EDITOR.md, "The first 30 seconds, muted"): the title's question and number on screen in huge type at
   0:00; the title's number said in the first sentence; a question title gets its short answer in the first 30 s;
   the teaser is one line (~8 s), no list of four promises; captions file uploaded with every long video.
+
+## Studio fixes, second batch (Jeffrey: "some sounds, and fix number 4")
+- Sound effects back on at a `light` level: ding on the key number, whoosh on a cut to footage, 31 sounds in the
+  retirement video (2.3 a minute) against 260 for the full set. Demo sent from 0:52-1:42.
+- Loops beside a figure draw without labels (quiet); cards pick a slot that clears the drawing on landscape boards;
+  chapters are written into description.md from the takeaway cards; `pipeline/preflight.py` checks a script before
+  anything renders (voice line, number on frame one and in the first sentence, no repeated format, footage present).

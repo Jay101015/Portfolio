@@ -6,7 +6,12 @@ there is nothing to download or license, and all well under the voice (the loude
     set_punches(sb)                       # scene["punch"]: the time of the key number in money and hook scenes
     lay(track, sb, out) -> out            # the voice track with the effects mixed in (48 kHz mono wav)
 
-`sfx: off` in a script's header turns the effects off for that video (sb["sfx"] False); the punch-ins stay.
+Three levels, from the script's header (sb["sfx"]):
+    light   the default: a ding on the key number of a money scene and a soft whoosh on a cut to footage only;
+            about one sound every 15 to 20 seconds (Jeffrey wanted "some sounds", not the 175 in 7 minutes of
+            the first cut, which he turned off)
+    on      everything: whoosh on every cut, pop on every card, scribble as a board starts writing, ding
+    off     nothing (the punch-ins stay)
 """
 from __future__ import annotations
 
@@ -157,23 +162,41 @@ def set_punches(sb: dict, gap: float = 6.0) -> int:
     return n
 
 
+FOOTAGE_TYPES = {"broll", "clip", "still", "image", "news"}
+
+
+def level(sb: dict) -> str:
+    """the video's effects level: "off", "light" or "on" (older storyboards carry True/False)"""
+    v = sb.get("sfx", "light")
+    if v is False or v in ("off", "no", "none"):
+        return "off"
+    if v is True or v in ("on", "yes", "full", "all"):
+        return "on"
+    return "light"
+
+
 def events(sb: dict) -> list[tuple[float, str, float]]:
     """(time, sound, length) for every effect in the video, earliest first."""
     out: list[tuple[float, str, float]] = []
     scenes = sb.get("scenes", [])
+    lv = level(sb)
+    if lv == "off":
+        return out
     last_whoosh = -1e9
     for i, sc in enumerate(scenes):
         start, end = float(sc["start"]), float(sc["end"])
-        if i > 0 and start - last_whoosh >= 1.5 and sc.get("props", {}).get("cont") != "on":  # a continued preview is no cut
+        cut_to_footage = sc.get("type") in FOOTAGE_TYPES and (i == 0 or scenes[i - 1].get("type") not in FOOTAGE_TYPES)
+        if i > 0 and start - last_whoosh >= 1.5 and sc.get("props", {}).get("cont") != "on" and (lv == "on" or cut_to_footage):
             out.append((max(0.0, start - 0.12), "whoosh", 0.45))  # the swish peaks on the cut itself
             last_whoosh = start
-        if sc.get("type") in WRITE_TYPES:
+        if lv == "on" and sc.get("type") in WRITE_TYPES:
             out.append((start + 0.08, "scribble", min(1.1, max(0.4, (end - start) * 0.25))))
         if sc.get("punch") is not None:
             out.append((float(sc["punch"]) + 0.03, "ding", 0.9))
-        for cue in sc.get("cues") or []:
-            if cue.get("do") == "card" and cue.get("t") is not None:
-                out.append((float(cue["t"]), "pop", 0.12))
+        if lv == "on":
+            for cue in sc.get("cues") or []:
+                if cue.get("do") == "card" and cue.get("t") is not None:
+                    out.append((float(cue["t"]), "pop", 0.12))
     out.sort()
     # a pop right on top of a ding or another pop is one sound too many
     kept: list[tuple[float, str, float]] = []
@@ -273,7 +296,7 @@ def _sound(kind: str, length: float) -> np.ndarray:
 def lay(track: str, sb: dict, out: str) -> str:
     """`out`: the track (48 kHz mono wav) with every effect mixed in at its place. Returns `out`, or `track` when
     the video has effects turned off or has none."""
-    if sb.get("sfx") is False:
+    if level(sb) == "off":
         return track
     evs = events(sb)
     if not evs:

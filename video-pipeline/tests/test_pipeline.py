@@ -809,3 +809,24 @@ def test_srt_lines_follow_the_words(tmp_path):
     n = write_srt(sb, str(tmp_path / "x.srt"))
     text = (tmp_path / "x.srt").read_text()
     assert n == 2 and "00:00:00,400 --> " in text and "The pension £12,548." in text and "Comfortable costs" in text
+
+
+def test_chapters_from_takeaways_and_description_block(tmp_path):
+    from pipeline.chapters import chapters, write_chapters
+    sb = {"scenes": [{"type": "hook", "start": 0, "end": 9}, {"type": "takeaway", "start": 40.6, "end": 44, "props": {"title": "What it costs"}},
+                     {"type": "takeaway", "start": 166.4, "end": 170, "props": {"title": "The pension"}}, {"type": "takeaway", "start": 171.0, "end": 175, "props": {"title": "Too close"}},
+                     {"type": "takeaway", "start": 300.2, "end": 305, "props": {"title": "The pot"}}]}
+    assert chapters(sb) == [(0, "Intro"), (41, "What it costs"), (166, "The pension"), (300, "The pot")]
+    (tmp_path / "description.md").write_text("Blurb.\n\nChapters\n0:00 The gap\n0:42 Old\n2:51 Older\n\nSources\n- x\n")
+    note = write_chapters(str(tmp_path), sb)
+    text = (tmp_path / "description.md").read_text()
+    assert "4 written" in note and "0:00 The gap\n0:41 What it costs\n2:46 The pension\n5:00 The pot\n\nSources" in text
+
+
+def test_preflight_flags_missing_voice_and_muted_opening(tmp_path):
+    from pipeline.preflight import checks
+    md = "# Is £1 Million Enough?\n\ntheme: whiteboard\nslug: demo\n\n[hook board=\"The state pension\"]\nThe full state pension pays about £12,548 a year.\n\n[takeaway title=\"A\" n=1 of=3]\nx\n"
+    msgs = [m for _, m in checks(md, str(tmp_path), has_audio=True, repo=str(tmp_path))]
+    assert any("voice:" in m for m in msgs) and any("first board has no number" in m for m in msgs) and any("first sentence" in m for m in msgs)
+    md2 = "# Is £1 Million Enough?\n\nvoice: natural\nloudness: -16\nslug: demo\n\n[hook board=\"£1M: enough?\"]\nIs £1 million enough to retire on?\n"
+    assert [lv for lv, _ in checks(md2, str(tmp_path), has_audio=True, repo=str(tmp_path))] == []
