@@ -443,3 +443,15 @@ one change at a time where possible, so a result can be read.
 - Loops beside a figure draw without labels (quiet); cards pick a slot that clears the drawing on landscape boards;
   chapters are written into description.md from the takeaway cards; `pipeline/preflight.py` checks a script before
   anything renders (voice line, number on frame one and in the first sentence, no repeated format, footage present).
+
+## Style demo: "Evening Class" / "Chalk and paper" (2026-11-08)
+- Jeffrey asked to see a different style entirely, made by the personas. Director and animator, briefed separately,
+  both chose `theme: chalkboard`: dark green board, chalk-white drawings, yellow chalk for the key figure and ring,
+  pink only for a loss, footage pinned to the board in a chalk frame, paper cards, one set piece where the lights
+  come up on a paper room. projects/style-demo/script.md is the retirement opening (scenes 1-9, words unchanged)
+  in that look; rendered locally at 95 s with his voice.
+- A single long local render of it timed out twice (loadFont delayRender, at the drone-footage scene); the pipeline's
+  chunked render (450 frames, retries) went through first time. Always render through pipeline.build.render.
+- Chalkboard notes: set pieces render on paper whatever the theme (setpiece.tsx), so a set piece on the dark board is
+  a hard cut to a white room; the renderer's `finance`/`movie` presets drop the drawings and loops (gated on
+  brand.board), so they are not an option for this channel's toolbox.
