@@ -192,6 +192,12 @@ buttons: a Short's page is laid out in bands between them, and nothing sits on a
 - The sticker is a claim or a comparison with the figure in it ("Chase the hottest stock: £30. Do nothing:
   £1,280"), never a label a cold viewer cannot place ("hype pot vs boring pot").
 
+## Length: 8 to 9 minutes
+
+Every long video over 10 minutes has averaged about 13% watched; every one under 8 has averaged 30% or more (three
+videos each way by 2026-11-09). Until a 10-minute video holds over 20%, a long video is 8 to 9 minutes: about
+1,450 to 1,650 spoken words. Still over the 8-minute mid-roll line.
+
 ## The first 30 seconds, muted (retirement video's real retention)
 
 Most first views of a long video are muted autoplay in the home feed; the retirement video kept ~20% past 0:40 and

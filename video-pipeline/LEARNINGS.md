@@ -27,6 +27,7 @@ one change at a time where possible, so a result can be read.
 | How Much House Can You Afford (Can You Afford a Home?) | 10:01 | ~2026-10-28 | 270 impressions, 4.8% CTR (4 days, Studio) | 1:21, 13% | 73% home feed, 14% search; 12-second title card at 0:05 the likely leak; busy photo thumbnail |
 | You'd Need £83,000 a Year… (Is the Dream Dead for Gen Z?) | 7:22 | ~2026-10-30 | 589 impressions, 5.6% CTR, curve accelerating (~3.5 days, Studio) | 2:14, 30%; 62% at 0:31 | taking off; 95% home feed; title card at 0:27 after the promises; one-number thumbnail; Jeffrey: 8/10 |
 | I Bought the Best Stock Every Year Since 2000 (chasing-winners) | 5:58 | 2026-11-01 | | | 3 footage scenes of 23 (Jeffrey noticed); 4 Shorts; numbers at the 7-day review |
+| Is £1 Million Enough to Retire in the UK? (retire-1-million-uk) | 13:32 | 2026-11-04 | 514 views, 2.6k impressions, 4.0% CTR (4 days, Studio); still climbing | 1:46, 13.1%; 39% at 0:30, then flat ~20% to the end | 99% home feed; 82 engaged of 445 views on day 2 (muted autoplay); ElevenLabs clone of Jeffrey's voice; hourglass + hopeful young man thumbnail; best start of any long video |
 
 ## Lessons so far
 - Weekly review, 2026-11-02 (Jeffrey's Studio screenshots; vidIQ at 0 credits until 27 Nov, so no retention
@@ -378,7 +379,14 @@ one change at a time where possible, so a result can be read.
 ## Tests to run next (one at a time)
 1. 10 minutes vs 7 to 8: does the longer house video keep a similar average view percentage? Leans no (13% at 10:01
    against 33% at 7:38), but not a clean result: the two openings differ too, so the length is not proven guilty.
-2. Thumbnail: a face (Jeffrey) vs no face, once Canva thumbnails are in use.
+   2026-11-09: the 13:32 retirement video came in at 13.1%, the 7:22 Gen Z video at 30%. Three for three now:
+   every video over 10 minutes sits at 13%, every one under 8 sits at 30%+. Still confounded by the openings, but
+   the pattern is strong enough to act on: the next long video is 8 to 9 minutes, with the muted-opening rules.
+   CONFIRMED (provisionally).
+2. Thumbnail: a face (Jeffrey) vs no face, once Canva thumbnails are in use. 2026-11-09: a drawn face (the hopeful
+   young man, retirement) held 4.0% CTR as reach widened to 2.6k impressions; the one-number no-face thumbnail (Gen Z)
+   did 5.6% at 589 impressions. Not comparable yet (different reach); keep both styles in Test & Compare on the
+   next video. OPEN.
 3. Shorts: open on the number ("£250 free from the government") vs a question.
 4. Recordings cleaned in Descript (fillers and long pauses cut, sound left natural) vs not: compare retention in
    the first 60 seconds.
@@ -457,3 +465,29 @@ one change at a time where possible, so a result can be read.
 - Chalkboard notes: set pieces render on paper whatever the theme (setpiece.tsx), so a set piece on the dark board is
   a hard cut to a white room; the renderer's `finance`/`movie` presets drop the drawings and loops (gated on
   brand.board), so they are not an option for this channel's toolbox.
+
+## Weekly review, 2026-11-09 (from Jeffrey's Studio screenshots: vidIQ credits were 0 of 150 until 27 Nov)
+- **retire-1-million-uk, day 4:** 514+ views, 2.6k impressions, 4.0% CTR holding as reach widened, 99% home feed,
+  average view 1:46 (13.1%), 39% at 0:30.
+  - What worked: the push. Impressions stepped up on days 2, 3 and 4 with no flattening, the best reach of any long
+    video; CTR did not fall as strangers saw it, so the hourglass thumbnail and the question title travel. The
+    middle holds: once past 0:40 the curve is flat to the end, so the content, pacing and the round-two fixes kept
+    the people who chose to watch. Jeffrey's reply to the first comment ("depends who's relying on you... a
+    squeeze") is the kind of personal view the channel needs more of.
+  - What did not: the first 30 seconds with the sound off. Most first views were muted home-feed autoplay (82
+    engaged of 445 on day 2); the opening was handwriting about the state pension with "£1 million" neither on
+    screen nor said until 0:30. Viewers skipped ahead to the answer at 11 minutes (the three spikes near the end).
+  - Where viewers left, against timing.json: 0:00-0:40 (hook, £32,000 stat, teaser board, title card): ~60% gone,
+    almost all of it autoplay that never chose to watch. Nothing after the title card loses a visible share.
+  - Rules it changed (in EDITOR.md "The first 30 seconds, muted", and the retention reviewer): the title's
+    question and number in huge type on frame one; the title's number said in the first sentence; a question title
+    answered inside 30 s; one teaser line; captions file uploaded. New from this review: **long videos at 8 to 9
+    minutes** until a 10+ minute video holds over 20% (test 1).
+- **chasing-winners** (published 2026-11-01): no figures this week (no credits; Jeffrey has not sent its Studio
+  page). Carry to next week.
+- Reviewer calibration: the retention psychologist predicted 60% at 0:30 and 28% average view; real 39% and 13%.
+  Told so in its agent file; its scores are now read as a ceiling.
+- One change for the next video: 8 to 9 minutes, opening on the title's number in huge type, said in the first
+  sentence, with the short answer inside 30 seconds.
+- Process: vidIQ's 150 credits a month cannot cover a weekly pull (about 20 credits a review plus the ad-hoc uses);
+  until 27 Nov the review runs from Jeffrey's Studio screenshots.
