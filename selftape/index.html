@@ -14,6 +14,17 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Cue" />
   <link rel="stylesheet" href="styles.css" />
+  <script>
+    // Register sw.js and reload once so the page comes back cross-origin isolated (lets the voices use all cores).
+    if ('serviceWorker' in navigator && window.isSecureContext) {
+      navigator.serviceWorker.register('sw.js').then(function () {
+        if (window.crossOriginIsolated) { try { sessionStorage.removeItem('coi'); } catch (e) {} return; }
+        try { if (sessionStorage.getItem('coi')) return; sessionStorage.setItem('coi', '1'); } catch (e) { return; }
+        if (navigator.serviceWorker.controller) location.reload();
+        else navigator.serviceWorker.addEventListener('controllerchange', function () { location.reload(); });
+      }).catch(function () {});
+    }
+  </script>
 </head>
 <body>
   <header class="topbar">
@@ -114,7 +125,7 @@
 
           <button id="toStage" class="btn primary block mt" disabled>Go to the scene →</button>
 
-          <details class="diag mt">
+          <details class="diag mt" id="diag">
             <summary>Something wrong? Problem report</summary>
             <p class="hint">Copy this and send it to me so I can see exactly what your phone is doing.</p>
             <textarea id="diagOut" readonly rows="8"></textarea>

@@ -281,6 +281,14 @@ It does to me.`;
     return state.readers[name];
   }
 
+  // First-name guess for a character's voice; anything unknown alternates. The actor can always flip it.
+  const F_NAMES = new Set('MARY PATRICIA JENNIFER LINDA ELIZABETH BARBARA SUSAN JESSICA SARAH KAREN LISA NANCY BETTY SANDRA MARGARET ASHLEY KIMBERLY EMILY DONNA MICHELLE CAROL AMANDA MELISSA DEBORAH STEPHANIE REBECCA SHARON LAURA CYNTHIA AMY KATHLEEN ANGELA SHIRLEY ANNA BRENDA PAMELA EMMA NICOLE HELEN SAMANTHA KATHERINE CHRISTINE DEBRA RACHEL CAROLYN JANET MARIA OLIVIA HEATHER DIANE JULIE JOYCE VICTORIA RUTH VIRGINIA LAUREN KELLY CHRISTINA JOAN EVELYN JUDITH ANDREA HANNAH MEGAN CHERYL JACQUELINE MARTHA MADISON TERESA GLORIA SARA JANICE ANN KATHRYN ABIGAIL SOPHIA FRANCES JEAN ALICE JUDY ISABELLA JULIA GRACE AMBER DENISE DANIELLE MARILYN BEVERLY CHARLOTTE NATALIE THERESA DIANA BRITTANY DORIS KAYLA ALEXIS LORI MARIE BIANCA KEISHA MAYA MIA AVA ZOE CHLOE LILY ELLA ARIA LAYLA NORA RILEY ZOEY STELLA HAZEL VIOLET AURORA LUCY ANNE ANNIE KATE KATIE CLAIRE ROSE RUBY IVY NAOMI ELENA EVA EVE LEAH AUDREY BELLA SKYLAR PAISLEY NOVA ELLIE JADE TIFFANY MONICA VANESSA ERICA ERIKA TARA CARMEN ROSA GINA TINA LENA NINA DANA JOY HOPE FAITH IRIS JUNE MAE FIONA MOLLY HOLLY SALLY WENDY PEGGY BETH LIZ JEN JENNY JESS KIM MEG MAGGIE SOPHIE AMELIA HARPER MILA LUNA CAMILA GIANNA PENELOPE ELEANOR SCARLETT MADELINE ALEXA SERENA VENUS TANYA SONIA NADIA PRIYA AISHA FATIMA LEILA YASMIN MEI YUKI MOM MOTHER MAMA GRANDMA NANA AUNT SISTER WIFE GIRL WOMAN LADY MRS MS MISS QUEEN PRINCESS NURSE WAITRESS ACTRESS HOSTESS GIRLFRIEND DAUGHTER BRIDE MADAM MAAM'.split(' '));
+  const M_NAMES = new Set('JAMES ROBERT JOHN MICHAEL DAVID WILLIAM RICHARD JOSEPH THOMAS CHARLES CHRISTOPHER DANIEL MATTHEW ANTHONY MARK DONALD STEVEN STEPHEN PAUL ANDREW JOSHUA KENNETH KEVIN BRIAN GEORGE TIMOTHY RONALD EDWARD JASON JEFFREY RYAN JACOB GARY NICHOLAS ERIC JONATHAN LARRY JUSTIN SCOTT BRANDON BENJAMIN SAMUEL GREGORY ALEXANDER FRANK PATRICK RAYMOND JACK DENNIS JERRY TYLER AARON JOSE ADAM NATHAN HENRY DOUGLAS ZACHARY PETER KYLE ETHAN WALTER NOAH JEREMY CHRISTIAN KEITH ROGER TERRY GERALD HAROLD SEAN AUSTIN CARL ARTHUR LAWRENCE DYLAN JESSE JORDAN BRYAN BILLY JOE BRUCE GABRIEL LOGAN ALBERT WILLIE ALAN JUAN WAYNE ELIJAH RANDY ROY VINCENT RALPH EUGENE RUSSELL BOBBY MASON PHILIP LOUIS ADONIS DAME DAMIAN DEV BEN TOM TIM JIM BOB BILL MIKE DAVE DAN STEVE CHRIS MATT NICK TONY SAM MAX LEO LIAM LUCAS OLIVER OWEN LUKE ISAAC CALEB CONNOR EVAN IAN COLE MILES FELIX HUGO OSCAR OMAR MARCUS MALIK JAMAL DARIUS TYRONE DEVON ANDRE CARLOS LUIS MIGUEL DIEGO MATEO RAFAEL PEDRO ANTONIO MARCO LUCA ENZO IVAN VICTOR VIKTOR NIKOLAI DMITRI AHMED ALI HASSAN RAJ ARJUN WEI KENJI HIRO LEON ROCKY APOLLO CREED DAD FATHER PAPA GRANDPA UNCLE BROTHER HUSBAND BOY MAN GUY MR SIR KING PRINCE WAITER ACTOR HOST BOYFRIEND SON GROOM COP OFFICER DETECTIVE SERGEANT CAPTAIN COACH FATHER PRIEST'.split(' '));
+  function guessGender(name) {
+    for (const w of name.split(/[^A-Z]+/)) { if (F_NAMES.has(w)) return 'f'; if (M_NAMES.has(w)) return 'm'; }
+    return '';
+  }
+
   function bestVoice(gender, exclude) {
     const pool = voices.filter((v) => !gender || voiceGender(v) === gender);
     return pool.find((v) => !exclude.has(v.voiceURI)) || pool[0] || voices[0] || null;
@@ -291,7 +299,10 @@ It does to me.`;
     const used = new Set(), usedStudio = new Set();
     state.characters.filter((c) => c !== state.me).forEach((c, k) => {
       const r = readerFor(c);
-      if (!r.gender) r.gender = k % 2 ? 'm' : 'f';
+      if (!r.gender || (!r.genderChosen && guessGender(c) && r.gender !== guessGender(c))) {
+        const g = guessGender(c) || (k % 2 ? 'm' : 'f');
+        if (r.gender !== g) { r.gender = g; r.voiceURI = ''; r.studioVoice = ''; } // re-pick voices for the corrected guess
+      }
       const current = voices.find((v) => v.voiceURI === r.voiceURI);
       if (!current || used.has(current.voiceURI)) {
         const v = bestVoice(r.gender, used);
@@ -398,8 +409,8 @@ It does to me.`;
     const gpu = typeof navigator !== 'undefined' && !!navigator.gpu;
     return `<label class="field"><span>Quality</span>
       <select data-act="studio-quality">
-        <option value="standard" ${studio.quality !== 'best' ? 'selected' : ''}>Standard — compact model, ~115 MB, any phone</option>
-        <option value="best" ${studio.quality === 'best' ? 'selected' : ''}>Best — full model on the GPU, ~330 MB${gpu ? ', newer phones only' : ' (no GPU access in this browser)'}</option>
+        <option value="standard" ${studio.quality !== 'best' ? 'selected' : ''}>Standard — ~155 MB, any phone</option>
+        <option value="best" ${studio.quality === 'best' ? 'selected' : ''}>GPU — ~330 MB, fastest on newer phones${gpu ? '' : ' (no GPU access in this browser)'}</option>
       </select></label>`;
   }
 
@@ -414,17 +425,18 @@ It does to me.`;
     const voicesList = STUDIO_VOICES.map((v) => `<span class="vchip">${v.name} <small>${v.accent} ${v.gender === 'f' ? 'F' : 'M'}</small></span>`).join('');
     let body;
     if (studio.status === 'loading') {
-      body = `<p class="hint">${studio.downloaded ? 'Starting studio voices…' : `Downloading studio voices… ${pct}%`}</p><div class="bar"><i style="width:${studio.downloaded ? 100 : pct}%"></i></div>`;
+      const fetching = studio.progress > 0 && studio.progress < 1;
+      body = `<p class="hint">${fetching ? `${modelChanged ? 'Updating to faster studio voices' : 'Downloading studio voices'}… ${pct}%` : 'Starting studio voices…'}</p><div class="bar"><i style="width:${fetching ? pct : 100}%"></i></div>`;
     } else if (studio.status === 'error') {
       body = `<p class="hint err">Couldn't load studio voices: ${esc(studio.error)}</p><button class="btn primary sm" data-act="studio-load">Try again</button>`;
     } else if (studio.downloaded) {
-      const running = studio.device === 'webgpu' ? 'full-quality model on the GPU' : studio.device === 'wasm' ? 'compact model on the CPU' : '';
+      const running = studio.device === 'webgpu' ? 'running on the GPU' : studio.device === 'wasm' ? `running on ${studio.threads > 1 ? studio.threads + ' CPU threads' : '1 CPU thread'}` : '';
       body = `<p class="hint ok">✓ Studio voices on this phone${studioReady() ? (running ? ' · ' + running : '') : ' (they start when you rehearse)'}</p>
         ${studio.note ? `<p class="hint">${esc(studio.note)}</p>` : ''}
         ${qualityPicker()}
         <div class="row"><button class="btn ghost sm" data-act="studio-test">▶ Test a line</button><button class="btn ghost sm" data-act="studio-clear">Clear saved lines</button></div>`;
     } else {
-      body = `<p class="hint">Natural, human-sounding reader voices that run on your phone — free, no account, nothing leaves the phone. One-time download (use Wi-Fi), then they work offline.</p>
+      body = `<p class="hint">Natural, human-sounding reader voices that run on your phone — free, no account, nothing leaves the phone. One-time download of about 155 MB (use Wi-Fi), then they work offline.</p>
         ${qualityPicker()}
         <button class="btn primary sm" data-act="studio-load">Download studio voices</button>`;
     }
@@ -458,7 +470,8 @@ It does to me.`;
       `Browser: ${navigator.userAgent}`,
       `Standalone (home screen): ${window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true}`,
       `Workers/WASM: ${studioSupported} · SharedArrayBuffer: ${typeof SharedArrayBuffer !== 'undefined'} · isolated: ${!!window.crossOriginIsolated} · memory: ${navigator.deviceMemory || '?'}GB`,
-      `Studio voices: downloaded=${studio.downloaded} status=${studio.status} progress=${Math.round(studio.progress * 100)}%${studio.error ? ' error=' + studio.error : ''}`,
+      `Studio voices: downloaded=${studio.downloaded} status=${studio.status} model=${studio.model || '?'} device=${studio.device || '?'} threads=${studio.threads || '?'} progress=${Math.round(studio.progress * 100)}%${studio.error ? ' error=' + studio.error : ''}`,
+      `Scene prep: ${prep.done}/${prep.total} chunks ready, ${queue.length} queued`,
       `Phone voices: ${voices.length} (${voices.slice(0, 6).map((v) => v.name).join(', ')}${voices.length > 6 ? '…' : ''})`,
       `Speech recognition: ${!!SpeechRec}${speechRecBroken ? ' (failed)' : ''} · mic meter: ${!!analyser}`,
       `Playing: ${state.me || '(none)'} · readers: ${others.map((c) => { const r = readerFor(c); return `${c}=${usesStudio(r) ? 'studio:' + r.studioVoice : 'phone:' + (r.voiceURI || 'default')}`; }).join(', ') || '(none)'}`,
@@ -709,13 +722,13 @@ It does to me.`;
   }
 
   async function speakLine(line, signal) {
-    const text = spokenText(line.text);
+    let text = spokenText(line.text);
     if (!text) return;
     const r = readerFor(line.character);
     if (usesStudio(r)) {
       try { return await speakStudio(line, signal); } catch (e) {
         if (e.name === 'AbortError') throw e;
-        if (e.name === 'NotReady') status(`${line.character} (phone voice — studio line still generating)`);
+        if (e.name === 'NotReady') { status(`${line.character} (phone voice — the studio voice wasn't ready in time)`); text = e.rest; }
         else {
           console.warn(e);
           if (!studioWarned) { studioWarned = true; studioNotice('Studio voice failed (' + e.message + '). Using the phone voice instead.'); }
@@ -758,13 +771,15 @@ It does to me.`;
     { id: 'bf_emma', name: 'Emma', accent: 'UK', gender: 'f' },
     { id: 'bm_george', name: 'George', accent: 'UK', gender: 'm' },
   ];
-  const APP_VERSION = '1.4.0';
+  const APP_VERSION = '2.0.0';
   const STUDIO_KEY = 'cue:studio';
   const studioSupported = typeof Worker !== 'undefined' && typeof WebAssembly === 'object';
   const studio = { downloaded: false, status: 'idle', progress: 0, error: '', quality: 'standard', device: '', note: '' };
   try { Object.assign(studio, JSON.parse(localStorage.getItem(STUDIO_KEY) || '{}')); } catch { /* ignore */ }
   studio.status = 'idle'; studio.progress = 0; studio.error = ''; studio.note = '';
-  const saveStudio = () => { try { localStorage.setItem(STUDIO_KEY, JSON.stringify({ downloaded: studio.downloaded, quality: studio.quality, device: studio.device })); } catch { /* ignore */ } };
+  const STUDIO_MODEL = 'q4f16'; // the model file the worker loads for Standard quality
+  const modelChanged = studio.downloaded && studio.model !== STUDIO_MODEL; // an earlier, slower model is on this phone
+  const saveStudio = () => { try { localStorage.setItem(STUDIO_KEY, JSON.stringify({ downloaded: studio.downloaded, quality: studio.quality, device: studio.device, model: studio.model })); } catch { /* ignore */ } };
   try { localStorage.removeItem('cue:elevenlabs'); } catch { /* old ElevenLabs key: don't keep it around */ }
   const studioReady = () => studio.status === 'ready';
   const usesStudio = (r) => studioSupported && studio.downloaded && studio.status !== 'error' && r.engine !== 'device' && STUDIO_VOICES.some((v) => v.id === r.studioVoice);
@@ -778,6 +793,7 @@ It does to me.`;
       if (data.type === 'progress') {
         studio.progress = data.total ? data.loaded / data.total : 0;
         renderStudioPanel();
+        renderPrep();
         renderDiag();
         return;
       }
@@ -813,6 +829,8 @@ It does to me.`;
       loadPromise = callWorker({ type: 'load', quality: studio.quality }).then((res) => {
         studio.status = 'ready';
         studio.device = res.device || '';
+        studio.threads = res.threads || 1;
+        studio.model = STUDIO_MODEL;
         if (!studio.downloaded) {
           studio.downloaded = true;
           Object.values(state.readers).forEach((r) => { if (r.engine !== 'device') r.engine = 'studio'; });
@@ -834,65 +852,106 @@ It does to me.`;
     return loadPromise;
   }
 
-  function studioKey(line) {
+  // A reader line is generated and played one sentence-sized chunk at a time, so the reader can start
+  // speaking after the first sentence instead of after the whole speech.
+  function lineChunks(line) {
     const r = readerFor(line.character);
-    return ['kokoro', studio.device || studio.quality, r.studioVoice, Math.round(r.rate * 100), spokenText(line.text)].join('|');
+    const speed = Math.min(1.5, Math.max(0.6, r.rate));
+    return chunkText(spokenText(line.text)).map((text) => ({
+      key: ['k2', r.studioVoice, Math.round(speed * 100), text].join('|'), text, voice: r.studioVoice, speed,
+    }));
   }
-
-  // Generated lines are saved on the phone, so each one is only ever made once.
-  const inflight = new Map();
-  function studioAudioFor(line) {
-    const key = studioKey(line);
-    if (inflight.has(key)) return inflight.get(key);
-    const r = readerFor(line.character);
-    const p = (async () => {
-      const cached = await cacheGet(key);
-      if (cached) { ready.add(key); return cached; }
-      await studioLoad();
-      const { wav } = await callWorker({ type: 'speak', quality: studio.quality, chunks: chunkText(spokenText(line.text)), voice: r.studioVoice, speed: Math.min(1.5, Math.max(0.6, r.rate)) });
-      const blob = new Blob([wav], { type: 'audio/wav' });
-      cachePut(key, blob);
-      ready.add(key);
-      return blob;
-    })();
-    inflight.set(key, p);
-    p.then(() => inflight.delete(key), () => inflight.delete(key));
-    return p;
-  }
-
   function studioLinesFrom(from) {
     return state.lines.slice(from).filter((l) => l.type === 'dialogue' && l.character !== state.me && spokenText(l.text) && usesStudio(readerFor(l.character)));
   }
 
-  // Generate every reader line before the scene starts, so the reader never keeps you waiting mid-take.
-  const ready = new Set(); // studio keys whose audio is generated (in memory or on disk)
-  const prep = { done: 0, total: 0, running: false };
-  function renderPrep() {
-    if (run) return;
-    if (!prep.running || !prep.total) { if (!run && prep.total && prep.done >= prep.total) nowState('Reader voices ready. Tap ▶ Start scene.'); return; }
-    nowState(`Preparing reader voices ${prep.done}/${prep.total}… you can start now — any line that isn't ready yet is read by the phone voice.`);
-  }
+  const ready = new Map();   // chunk key -> audio Blob
+  const jobs = new Map();    // chunk key -> chunk, for everything queued or running
+  const waiters = new Map(); // chunk key -> [{ resolve, reject }]
+  let queue = [];            // chunk keys still to generate, in order
+  let pumping = false;
+  const prep = { total: 0, done: 0 };
 
-  async function prepareScene(from, signal, onProgress) {
-    const lines = studioLinesFrom(from);
-    prep.total = lines.length; prep.done = lines.filter((l) => ready.has(studioKey(l))).length; prep.running = true;
-    renderPrep();
+  function settle(key, blob, err) {
+    (waiters.get(key) || []).forEach((w) => (err ? w.reject(err) : w.resolve(blob)));
+    waiters.delete(key);
+  }
+  async function pump() {
+    if (pumping) return;
+    pumping = true;
     try {
-      for (let k = 0; k < lines.length; k++) {
-        if (signal && signal.aborted) throw abortError();
-        onProgress && onProgress(k, lines.length);
-        if (!ready.has(studioKey(lines[k]))) await studioAudioFor(lines[k]);
-        prep.done = lines.filter((l) => ready.has(studioKey(l))).length;
+      while (queue.length) {
+        const key = queue.shift();
+        const c = jobs.get(key);
+        if (!c) continue;
+        try {
+          let blob = await cacheGet(key); // generated lines are saved on the phone and reused
+          if (!blob) {
+            await studioLoad();
+            const { wav } = await callWorker({ type: 'speak', quality: studio.quality, chunks: [c.text], voice: c.voice, speed: c.speed });
+            blob = new Blob([wav], { type: 'audio/wav' });
+            cachePut(key, blob);
+          }
+          ready.set(key, blob);
+          settle(key, blob);
+        } catch (err) {
+          settle(key, null, err);
+        }
+        jobs.delete(key);
         renderPrep();
       }
-    } finally { prep.running = false; renderPrep(); }
+    } finally { pumping = false; renderPrep(); }
+  }
+  function want(chunk) {
+    if (ready.has(chunk.key)) return Promise.resolve(ready.get(chunk.key));
+    const p = new Promise((resolve, reject) => {
+      if (!waiters.has(chunk.key)) waiters.set(chunk.key, []);
+      waiters.get(chunk.key).push({ resolve, reject });
+    });
+    if (!jobs.has(chunk.key)) { jobs.set(chunk.key, chunk); queue.push(chunk.key); }
+    pump();
+    return p;
+  }
+  // Move these chunks to the front of the queue (the line the scene needs right now).
+  function prioritise(chunks) {
+    const keys = chunks.map((c) => c.key).filter((k) => queue.includes(k));
+    if (keys.length) queue = keys.concat(queue.filter((k) => !keys.includes(k)));
   }
 
-  let bgPrep = null;
-  function prepareInBackground() {
-    if (!studioSupported || !studio.downloaded || !state.me || bgPrep) return;
-    bgPrep = studioLoad().then(() => prepareScene(state.startIndex)).catch(() => {}).finally(() => { bgPrep = null; });
+  function renderPrep() {
+    const chunks = studioLinesFrom(state.startIndex).flatMap(lineChunks);
+    prep.total = chunks.length;
+    prep.done = chunks.filter((c) => ready.has(c.key)).length;
+    const btn = $('#rehearseBtn');
+    const pct = prep.total ? Math.round((prep.done / prep.total) * 100) : 100;
+    const preparing = studio.downloaded && prep.total > 0 && prep.done < prep.total && studio.status !== 'error';
+    if (btn && !run) btn.textContent = preparing ? `▶ Start scene (voices ${pct}%)` : '▶ Start scene';
+    if (run) return;
+    if (preparing) {
+      nowState(studio.status === 'loading' && !studioReady()
+        ? `Loading the reader voices${studio.progress > 0 && studio.progress < 1 ? ` ${Math.round(studio.progress * 100)}%` : ''}…`
+        : `Preparing the reader's lines… ${pct}%. Best to wait for 100% the first time; after that this scene starts instantly.`);
+    } else if (studio.downloaded && prep.total && studio.status !== 'error') {
+      nowState('Reader voices ready. Tap ▶ Start scene — I\'ll read the other parts and wait for yours.');
+    }
   }
+
+  // Queue every reader chunk of the scene, in scene order, dropping work nobody needs any more.
+  function prepareScene(from) {
+    const chunks = studioLinesFrom(from).flatMap(lineChunks);
+    const needed = new Set(chunks.map((c) => c.key));
+    queue = queue.filter((k) => needed.has(k) || waiters.has(k));
+    [...jobs.keys()].forEach((k) => { if (!needed.has(k) && !waiters.has(k) && !queue.includes(k)) jobs.delete(k); });
+    chunks.forEach((c) => { want(c).catch(() => {}); });
+    prioritise(chunks);
+    renderPrep();
+  }
+  function prepareInBackground() {
+    if (!studioSupported || !studio.downloaded || !state.me || studio.status === 'error') return;
+    prepareScene(state.startIndex);
+  }
+  let prepTimer = null;
+  const prepareSoon = () => { clearTimeout(prepTimer); prepTimer = setTimeout(prepareInBackground, 700); };
 
   // One shared <audio>: iOS only lets an element play after a tap has "unlocked" it.
   const player = new Audio();
@@ -902,27 +961,10 @@ It does to me.`;
     try { player.src = SILENT; player.play().catch(() => {}); } catch { /* ignore */ }
   }
 
-  class NotReady extends Error { constructor() { super('not ready'); this.name = 'NotReady'; } }
-  async function speakStudio(line, signal) {
-    let blob = null, err = null;
-    const key = studioKey(line);
-    const isReady = ready.has(key);
-    // A line that is still being generated gets a short grace period, then the phone voice takes it so the
-    // scene never stalls; generation carries on in the background for the lines after it.
-    const grace = isReady ? 15000 : 1500;
-    let timer = null;
-    try {
-      await step(signal, (done, onClean) => {
-        let settled = false;
-        const finish = () => { if (!settled) { settled = true; done(); } };
-        studioAudioFor(line).then((b) => { blob = b; finish(); }, (e) => { err = e; finish(); });
-        timer = setTimeout(() => { if (!settled) { err = new NotReady(); finish(); } }, grace);
-        onClean(() => clearTimeout(timer));
-      });
-    } finally { clearTimeout(timer); }
-    if (err) throw err;
-    if (!blob) return; // skipped with Next while it was generating
-    await step(signal, (done, onClean) => {
+  class NotReady extends Error { constructor(rest) { super('not ready'); this.name = 'NotReady'; this.rest = rest; } }
+  const CHUNK_WAIT_MS = 15000;
+  function playBlob(blob, signal) {
+    return step(signal, (done, onClean) => {
       const url = URL.createObjectURL(blob);
       onClean(() => { player.onended = player.onerror = null; player.pause(); URL.revokeObjectURL(url); });
       player.onended = () => done();
@@ -930,6 +972,33 @@ It does to me.`;
       player.src = url;
       player.play().catch(() => done());
     });
+  }
+  async function speakStudio(line, signal) {
+    const chunks = lineChunks(line);
+    chunks.forEach((c) => { want(c).catch(() => {}); });
+    prioritise(chunks);
+    for (let i = 0; i < chunks.length; i++) {
+      const c = chunks[i];
+      let blob = ready.get(c.key) || null, err = null, skipped = true;
+      if (!blob) {
+        const note = setTimeout(() => nowState(`${line.character} is getting ready…`), 500);
+        let timer = null;
+        try {
+          await step(signal, (done, onClean) => {
+            let settled = false;
+            const finish = (viaSkip) => { if (!settled) { settled = true; skipped = viaSkip; done(); } };
+            want(c).then((b) => { blob = b; finish(false); }, (e) => { err = e; finish(false); });
+            timer = setTimeout(() => { err = new NotReady(chunks.slice(i).map((x) => x.text).join(' ')); finish(false); }, CHUNK_WAIT_MS);
+            onClean(() => { clearTimeout(timer); settled = true; });
+          });
+        } finally { clearTimeout(note); clearTimeout(timer); }
+        if (err) throw err;
+        if (!blob) return; // skipped with Next while it was generating
+        status(`${line.character} is reading…`);
+      }
+      await playBlob(blob, signal);
+      if (i < chunks.length - 1) await sleep(120, signal);
+    }
   }
 
   let studioWarned = false;
@@ -1114,21 +1183,7 @@ It does to me.`;
         }
       }
       if (studio.downloaded && studioLinesFrom(state.startIndex).length) {
-        // Only the first reader line has to be ready before we start; the rest are made in the background.
-        try {
-          const first = studioLinesFrom(state.startIndex)[0];
-          if (!ready.has(studioKey(first))) {
-            nowState('Warming up the reader voice…');
-            await Promise.race([studioAudioFor(first), sleep(6000, ac.signal)]);
-          }
-          if (!bgPrep) bgPrep = prepareScene(state.startIndex).catch(() => {}).finally(() => { bgPrep = null; });
-          nowState('');
-        } catch (e) {
-          if (e.name === 'AbortError') throw e;
-          studioWarned = true;
-          studioNotice('Studio voices unavailable (' + e.message + '). Using the phone voice instead.');
-          renderVoiceBanner();
-        }
+        prepareScene(state.startIndex);
       }
       if (record) {
         const n = Number(state.settings.countdown);
@@ -1161,6 +1216,7 @@ It does to me.`;
       run = null;
       setCurrent(-1);
       setRunning(false, record);
+      renderPrep();
       if (recorder) {
         const { blob, duration } = await recorder.stop();
         if (blob.size) {
@@ -1549,7 +1605,9 @@ It does to me.`;
       if (!box || !e.target.dataset.k) return;
       const r = readerFor(box.dataset.char);
       r[e.target.dataset.k] = e.target.type === 'range' ? Number(e.target.value) : e.target.value;
+      if (e.target.dataset.k === 'studioVoice' || e.target.dataset.k === 'voiceURI') r.genderChosen = true;
       save();
+      prepareSoon();
     });
     $('#readerList').addEventListener('click', (e) => {
       if (e.target.dataset.act === 'engine') {
@@ -1560,6 +1618,7 @@ It does to me.`;
       if (e.target.dataset.act === 'gender') {
         const r = readerFor(e.target.closest('.reader').dataset.char);
         r.gender = e.target.dataset.g;
+        r.genderChosen = true;
         r.voiceURI = r.studioVoice = ''; // let autoAssignVoices pick the best unused voice of that type
         renderCast();
         return;
@@ -1585,6 +1644,7 @@ It does to me.`;
         renderCast();
       }
     });
+    $('#diag').addEventListener('toggle', renderDiag);
     $('#diagCopy').addEventListener('click', async () => {
       renderDiag();
       const text = diagnostics();
@@ -1617,7 +1677,7 @@ It does to me.`;
         // A different model: restart the engine and regenerate lines with it.
         if (worker) { worker.terminate(); worker = null; }
         loadPromise = null; studio.status = 'idle'; studio.device = '';
-        cacheClear().then(() => { renderStudioPanel(); studioLoad().catch(() => {}); });
+        renderStudioPanel(); studioLoad().catch(() => {});
       }
     });
     $$('.tab').forEach((t) => t.addEventListener('click', () => showView(t.dataset.view)));
@@ -1632,6 +1692,7 @@ It does to me.`;
       if (!li || run) return;
       state.startIndex = Number(li.dataset.i);
       renderLines();
+      prepareInBackground();
     });
     $('#rehearseBtn').addEventListener('click', () => runScene(false));
     $('#recordBtn').addEventListener('click', () => runScene(true));

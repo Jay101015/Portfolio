@@ -2,13 +2,16 @@
 import { KokoroTTS, env } from './vendor/kokoro/kokoro.web.js';
 
 env.wasmPaths = new URL('./vendor/kokoro/', import.meta.url).href;
+// Threads need a cross-origin-isolated page (sw.js arranges that); without it the model runs on one core.
+const THREADS = self.crossOriginIsolated ? Math.max(1, Math.min(4, navigator.hardwareConcurrency || 2)) : 1;
+env.numThreads = THREADS;
 
 const MODEL = 'onnx-community/Kokoro-82M-v1.0-ONNX';
 let ttsPromise = null;
 let loadedWith = null; // { device, dtype }
 
-// Best quality first: the full-precision model on the GPU (iOS 26+, Android Chrome). Phones without
-// WebGPU, or where it fails, get the compact model on the CPU — smaller download, slightly flatter sound.
+// Standard: the q4f16 model on the CPU — the fastest variant measured in a browser (about twice the speed
+// of q8) with output indistinguishable from the full model. GPU: the full fp32 model on WebGPU, opt-in.
 async function loadWith(device, dtype, progress) {
   const files = {};
   const tts = await KokoroTTS.from_pretrained(MODEL, {
@@ -31,7 +34,7 @@ function load(quality) {
   if (!ttsPromise) {
     ttsPromise = (async () => {
       const progress = (loaded, total) => postMessage({ type: 'progress', loaded, total });
-      const wantGpu = quality !== 'standard' && typeof navigator !== 'undefined' && !!navigator.gpu;
+      const wantGpu = quality === 'best' && typeof navigator !== 'undefined' && !!navigator.gpu;
       if (wantGpu) {
         try {
           const tts = await loadWith('webgpu', 'fp32', progress);
@@ -41,8 +44,8 @@ function load(quality) {
           postMessage({ type: 'note', message: 'GPU voices unavailable (' + String((err && err.message) || err).slice(0, 120) + '); using the compact model.' });
         }
       }
-      const tts = await loadWith('wasm', 'q8', progress);
-      loadedWith = { device: 'wasm', dtype: 'q8' };
+      const tts = await loadWith('wasm', 'q4f16', progress);
+      loadedWith = { device: 'wasm', dtype: 'q4f16' };
       return tts;
     })();
     ttsPromise.catch(() => { ttsPromise = null; });
@@ -77,7 +80,7 @@ self.onmessage = async ({ data }) => {
   try {
     if (type === 'load') {
       await load(data.quality);
-      postMessage({ id, type: 'ready', device: loadedWith.device, dtype: loadedWith.dtype });
+      postMessage({ id, type: 'ready', device: loadedWith.device, dtype: loadedWith.dtype, threads: loadedWith.device === 'wasm' ? THREADS : 0 });
     } else if (type === 'speak') {
       const tts = await load(data.quality);
       const parts = [];
