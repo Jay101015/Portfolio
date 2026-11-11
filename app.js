@@ -5,6 +5,20 @@
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => [...document.querySelectorAll(sel)];
   const STORE_KEY = 'cue:v1';
+  const APP_VERSION = '3.0.0';
+  const UA = navigator.userAgent;
+  // Every browser on an iPhone or iPad is Safari underneath, whatever its name.
+  const isWebKit = /AppleWebKit/.test(UA) && !/Chrome|Chromium|Edg\/|Android/.test(UA);
+  const isIOS = /iP(hone|ad|od)/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const hasTouch = (navigator.maxTouchPoints || 0) > 0;
+
+  // A running log of what the reader, the microphone and the voice engine did. It goes into the problem report.
+  const events = [];
+  const bootAt = performance.now();
+  function log(msg) {
+    events.push(((performance.now() - bootAt) / 1000).toFixed(1) + 's ' + msg);
+    if (events.length > 120) events.shift();
+  }
 
   const SAMPLE = `INT. DINER - NIGHT
 
@@ -52,6 +66,7 @@ It does to me.`;
     nameInfo: { counts: {}, auto: {}, resolve: (n) => n },
     settings: {
       advanceMode: 'voice',
+      micMode: 'auto',
       silenceMs: 1000,
       sensitivity: 5,
       matchWords: 'off',
@@ -240,6 +255,20 @@ It does to me.`;
     return out;
   }
 
+  // Roughly how many syllables a line has: groups of vowels, less the silent endings.
+  function syllableCount(text) {
+    const words = spokenText(text).toLowerCase().replace(/[^a-z0-9' ]+/g, ' ').split(/\s+/).filter(Boolean);
+    let n = 0;
+    for (let w of words) {
+      w = w.replace(/'/g, '');
+      if (/^\d+$/.test(w)) { n += w.length; continue; }
+      let c = (w.match(/[aeiouy]+/g) || []).length;
+      if (c > 1 && /[^aeiouyl]e$/.test(w)) c--; // silent e
+      if (c > 1 && /[^aeiouytd]ed$/.test(w)) c--; // jumped, pulled
+      n += Math.max(1, c);
+    }
+    return n;
+  }
   const spokenText = (s) => s.replace(/\([^)]*\)|\[[^\]]*\]/g, ' ').replace(/(^|\s)[£©®§¤¢¥€*=|~^@]+\S{0,2}(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
   const wordCount = (s) => (spokenText(s).match(/\S+/g) || []).length;
 
@@ -405,39 +434,29 @@ It does to me.`;
     save();
   }
 
-  function qualityPicker() {
-    const gpu = typeof navigator !== 'undefined' && !!navigator.gpu;
-    return `<label class="field"><span>Quality</span>
-      <select data-act="studio-quality">
-        <option value="standard" ${studio.quality !== 'best' ? 'selected' : ''}>Standard — ~155 MB, any phone</option>
-        <option value="best" ${studio.quality === 'best' ? 'selected' : ''}>GPU — ~330 MB, fastest on newer phones${gpu ? '' : ' (no GPU access in this browser)'}</option>
-      </select></label>`;
-  }
-
   function renderStudioPanel() {
     const p = $('#studioPanel');
     if (!p) return;
     if (!studioSupported) {
-      p.innerHTML = '<p class="hint">Studio voices need a newer browser. Your phone\'s built-in voices are used instead.</p>';
+      p.innerHTML = '<p class="hint">Studio voices need a newer browser. Your phone\'s built-in voice is used instead.</p>';
       return;
     }
     const pct = Math.round(studio.progress * 100);
     const voicesList = STUDIO_VOICES.map((v) => `<span class="vchip">${v.name} <small>${v.accent} ${v.gender === 'f' ? 'F' : 'M'}</small></span>`).join('');
     let body;
     if (studio.status === 'loading') {
-      const fetching = studio.progress > 0 && studio.progress < 1;
-      body = `<p class="hint">${fetching ? `${modelChanged ? 'Updating to faster studio voices' : 'Downloading studio voices'}… ${pct}%` : 'Starting studio voices…'}</p><div class="bar"><i style="width:${fetching ? pct : 100}%"></i></div>`;
+      const fetching = studio.phase === 'download' && studio.progress > 0 && studio.progress < 1;
+      body = `<p class="hint">${fetching ? `${modelChanged ? 'Updating the studio voices' : 'Downloading the studio voices'}… ${pct}%` : 'Starting the studio voices…'}</p><div class="bar"><i style="width:${fetching ? pct : 100}%"></i></div>`;
+    } else if (engineBlocked()) {
+      body = `<p class="hint err">The studio voices closed the page last time they ran on this phone, so they are switched off for now and the phone's own voice is reading.</p><button class="btn primary sm" data-act="studio-retry">Try again</button>`;
     } else if (studio.status === 'error') {
-      body = `<p class="hint err">Couldn't load studio voices: ${esc(studio.error)}</p><button class="btn primary sm" data-act="studio-load">Try again</button>`;
+      body = `<p class="hint err">The studio voices couldn't start: ${esc(studio.error)}</p><button class="btn primary sm" data-act="studio-retry">Try again</button>`;
     } else if (studio.downloaded) {
-      const running = studio.device === 'webgpu' ? 'running on the GPU' : studio.device === 'wasm' ? `running on ${studio.threads > 1 ? studio.threads + ' CPU threads' : '1 CPU thread'}` : '';
-      body = `<p class="hint ok">✓ Studio voices on this phone${studioReady() ? (running ? ' · ' + running : '') : ' (they start when you rehearse)'}</p>
-        ${studio.note ? `<p class="hint">${esc(studio.note)}</p>` : ''}
-        ${qualityPicker()}
+      const speed = studio.genSec > 2 ? ` · a line takes ${(studio.genMs / 1000 / studio.genSec).toFixed(1)}× its length to make` : '';
+      body = `<p class="hint ok">✓ Studio voices are on this phone${speed}</p>
         <div class="row"><button class="btn ghost sm" data-act="studio-test">▶ Test a line</button><button class="btn ghost sm" data-act="studio-clear">Clear saved lines</button></div>`;
     } else {
-      body = `<p class="hint">Natural, human-sounding reader voices that run on your phone — free, no account, nothing leaves the phone. One-time download of about 155 MB (use Wi-Fi), then they work offline.</p>
-        ${qualityPicker()}
+      body = `<p class="hint">Natural, human-sounding reader voices that run on your phone — free, no account, nothing leaves the phone. One-time download of about 90 MB (use Wi-Fi), then they work offline.</p>
         <button class="btn primary sm" data-act="studio-load">Download studio voices</button>`;
     }
     p.innerHTML = `<div class="vchips">${voicesList}</div>${body}<p id="studioMsg" class="hint"></p>`;
@@ -465,19 +484,23 @@ It does to me.`;
 
   function diagnostics() {
     const others = state.characters.filter((c) => c !== state.me);
+    const now = performance.now();
+    const st = mic.track && mic.track.getSettings ? mic.track.getSettings() : {};
     return [
       `Cue ${APP_VERSION} · ${new Date().toISOString()}`,
-      `Browser: ${navigator.userAgent}`,
-      `Standalone (home screen): ${window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true}`,
-      `Workers/WASM: ${studioSupported} · SharedArrayBuffer: ${typeof SharedArrayBuffer !== 'undefined'} · isolated: ${!!window.crossOriginIsolated} · memory: ${navigator.deviceMemory || '?'}GB`,
-      `Studio voices: downloaded=${studio.downloaded} status=${studio.status} model=${studio.model || '?'} device=${studio.device || '?'} threads=${studio.threads || '?'} progress=${Math.round(studio.progress * 100)}%${studio.error ? ' error=' + studio.error : ''}`,
-      `Scene prep: ${prep.done}/${prep.total} chunks ready, ${queue.length} queued`,
+      `Browser: ${UA}`,
+      `Platform: webkit=${isWebKit} ios=${isIOS} home-screen=${window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true} isolated=${!!window.crossOriginIsolated} cores=${navigator.hardwareConcurrency || '?'} wake-lock=${'wakeLock' in navigator ? (wakeLock ? 'held' : 'available') : 'none'}`,
+      `Audio: session=${audioSession ? audioSession.type + '/' + (audioSession.state || '?') : 'n/a'} context=${audioCtx ? audioCtx.state + ' ' + audioCtx.sampleRate + 'Hz' : 'none'} output=${out.path || 'not used yet'} lines-played=${out.lines} web-audio-fails=${out.webAudioFails} element-fails=${out.elementFails}${out.lastError ? ' last=' + out.lastError : ''} reader-heard-by-mic=${out.loopHeard}`,
+      `Mic: state=${mic.state}${mic.error ? ' (' + mic.error + ')' : ''} delivering=${micDelivering(now)} label=${mic.track ? mic.track.label || 'default' : '-'} rate=${st.sampleRate || '?'} muted=${mic.track ? mic.track.muted : '-'} level=${mic.level.toFixed(4)} room=${mic.noise.toFixed(4)} threshold=${thrOn().toFixed(4)} loudest=${mic.maxLevel.toFixed(4)} recoveries=${mic.recoveries} duplex=${useHalf() ? 'half' : 'full'} opens=${mic.opens} last-open=${Math.round(mic.openMs)}ms slow-opens=${mic.slowOpens}`,
+      `Studio voices: supported=${studioSupported} downloaded=${studio.downloaded} status=${studio.status} model=${studio.model || '?'} threads=${studio.threads || '?'} cfg=${engine.cfg ? JSON.stringify(engine.cfg) : '-'} crashes=${studio.crashes} no-threads=${studio.noThreads} phase=${studio.phase || '-'} ${Math.round(studio.progress * 100)}%${studio.error ? ' error=' + studio.error : ''}${studio.genSec ? ` speed=${(studio.genMs / 1000 / studio.genSec).toFixed(2)}x` : ''}`,
+      `Scene prep: ${prep.done}/${prep.total} pieces ready, ${queue.length} queued, storage ${dbTimeouts >= 2 ? 'not responding' : 'ok'}`,
       `Phone voices: ${voices.length} (${voices.slice(0, 6).map((v) => v.name).join(', ')}${voices.length > 6 ? '…' : ''})`,
-      `Speech recognition: ${!!SpeechRec}${speechRecBroken ? ' (failed)' : ''} · mic meter: ${!!analyser}`,
       `Playing: ${state.me || '(none)'} · readers: ${others.map((c) => { const r = readerFor(c); return `${c}=${usesStudio(r) ? 'studio:' + r.studioVoice : 'phone:' + (r.voiceURI || 'default')}`; }).join(', ') || '(none)'}`,
       `Characters found: ${Object.entries(state.nameInfo.counts).map(([n, k]) => `${n}(${k})`).join(', ')}`,
       `Settings: ${JSON.stringify(state.settings)}`,
       `Last error: ${lastError || '(none)'}`,
+      'Recent events:',
+      ...events.slice(-50),
     ].join('\n');
   }
   let lastError = '';
@@ -493,13 +516,16 @@ It does to me.`;
     if (!b) return;
     const others = state.characters.filter((c) => c !== state.me);
     const phoneReaders = others.filter((c) => !usesStudio(readerFor(c)));
-    let msg = '';
-    if (!studioSupported) msg = 'This browser can\'t run studio voices — the phone voice is reading.';
-    else if (studio.status === 'error') msg = `Studio voices failed to load (${studio.error}). The phone voice is reading.`;
-    else if (!studio.downloaded && others.length) msg = 'Studio voices aren\'t downloaded yet — the phone voice is reading.';
-    else if (studio.downloaded && phoneReaders.length && others.length) msg = `${phoneReaders.join(', ')} ${phoneReaders.length > 1 ? 'are' : 'is'} set to the phone voice.`;
-    b.hidden = !msg || !others.length;
-    b.innerHTML = msg ? `<span>⚠ ${esc(msg)}</span><button class="btn sm" data-act="fix-voices">${studio.status === 'error' ? 'Retry' : 'Fix'}</button>` : '';
+    const silentTip = isIOS ? ' If you can\'t hear it, switch off silent mode.' : '';
+    let msg = '', action = '';
+    if (!others.length || !state.me) msg = '';
+    else if (!studioSupported) msg = 'This browser can\'t run the studio voices, so the phone\'s own voice is reading.' + silentTip;
+    else if (engineBlocked()) { msg = 'The studio voices closed the page last time they ran, so the phone\'s own voice is reading for now.' + silentTip; action = 'Try again'; }
+    else if (studio.status === 'error') { msg = `The studio voices couldn't start: ${studio.error}. The phone's own voice is reading.` + silentTip; action = 'Retry'; }
+    else if (!studio.downloaded) { msg = 'The studio voices aren\'t downloaded yet, so the phone\'s own voice is reading.' + silentTip; action = 'Get them'; }
+    else if (phoneReaders.length) { msg = `${phoneReaders.join(', ')} ${phoneReaders.length > 1 ? 'are' : 'is'} set to the phone voice.`; action = 'Use studio voice'; }
+    b.hidden = !msg;
+    b.innerHTML = msg ? `<span>⚠ ${esc(msg)}</span>${action ? `<button class="btn sm" data-act="fix-voices">${action}</button>` : ''}` : '';
   }
 
   function renderRolePickers() {
@@ -512,10 +538,16 @@ It does to me.`;
     $('#rehearseBtn').disabled = $('#recordBtn').disabled = !state.me || !!run;
   }
 
+  // Voices nobody chose by hand are handed out again, so the readers get the first (American) voices of each kind
+  // rather than whatever was left over while every character still counted as a reader.
+  function repickVoices() {
+    Object.values(state.readers).forEach((r) => { if (!r.genderChosen) r.studioVoice = ''; });
+  }
   function setMe(name) {
     if (run) return;
     state.me = name;
     state.startIndex = 0;
+    repickVoices();
     renderCast();
     renderLines();
     save();
@@ -531,7 +563,7 @@ It does to me.`;
       renderLines();
       save();
     };
-    ['advanceMode', 'silenceMs', 'sensitivity', 'matchWords', 'gapMs', 'countdown', 'myLineDisplay'].forEach((k) => {
+    ['advanceMode', 'micMode', 'silenceMs', 'sensitivity', 'gapMs', 'countdown', 'myLineDisplay'].forEach((k) => {
       const el = $('#' + k);
       if (el.type === 'checkbox') el.checked = !!s[k]; else el.value = s[k];
       el.addEventListener('input', () => {
@@ -589,91 +621,533 @@ It does to me.`;
     p.innerHTML = `<span class="who">${l.character === state.me ? 'You · ' : ''}${esc(l.character)}</span>${displayText(l)}`;
   }
 
-  // ---------- media ----------
-  let stream = null;
-  let audioCtx = null, analyser = null, levelBuf = null;
-  let currentLevel = 0;
+  // ---------- audio: one AudioContext carries the reader's voice and the microphone meter ----------
+  const AC = window.AudioContext || window.webkitAudioContext;
+  const audioSession = navigator.audioSession || null; // iOS 17+: lets a page say how it uses audio
+  let audioCtx = null;
+  let outChain = null;
 
-  async function ensureMedia() {
-    if (stream && stream.getAudioTracks().some((t) => t.readyState === 'live')) return stream;
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      throw new Error('This browser cannot use the microphone. Open the app in Safari or Chrome.');
-    }
-    // Echo cancellation off so the reader's voice from your speakers lands on the recording, like a real reader.
-    const s = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
-    if (stream) stream.getTracks().forEach((t) => t.stop());
-    stream = s;
-    setupMeter(s);
-    return s;
+  // iPhones choose the speaker, the volume and whether the silent switch applies from the audio session type.
+  // While the mic is in use it has to be play-and-record; otherwise playback, so the reader is heard with the
+  // ringer switched off.
+  function setSessionType(type) {
+    if (!audioSession) return;
+    try {
+      if (audioSession.type !== type) { audioSession.type = type; log('audio session: ' + type); }
+    } catch (e) { log('audio session ' + type + ' refused: ' + (e && e.message)); }
   }
 
-  // iOS keeps an AudioContext silent unless it is created/resumed inside a tap, so call this first thing in click handlers.
-  function unlockAudio() {
-    try {
-      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state !== 'running') audioCtx.resume();
-    } catch { /* no Web Audio */ }
+  function newContext(quiet) {
+    const ctx = new AC();
+    if (!quiet) ctx.addEventListener('statechange', () => log('audio context ' + ctx.state));
+    return ctx;
   }
 
-  function setupMeter(s) {
+  // resume() can stay pending for ever on iPhone when it isn't allowed, so never wait on it without a time limit.
+  function resumeCtx(ms) {
+    if (!AC) return Promise.resolve(false);
+    if (!audioCtx || audioCtx.state === 'closed') audioCtx = newContext();
+    return resumeOf(audioCtx, ms);
+  }
+  function resumeOf(ctx, ms) {
+    if (ctx.state === 'running') return Promise.resolve(true);
+    return new Promise((resolve) => {
+      let done = false;
+      const fin = () => { if (!done) { done = true; resolve(ctx.state === 'running'); } };
+      try { ctx.resume().then(fin, fin); } catch { fin(); }
+      setTimeout(fin, ms);
+    });
+  }
+
+  // The second way to play the reader: a plain <audio> element. iPhones only let it play after a tap has
+  // "unlocked" it (or while the mic is recording).
+  const player = new Audio();
+  player.setAttribute('playsinline', '');
+  player.preload = 'auto';
+  const SILENT = 'data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//NwwAAAAAAAAAAAAEluZm8AAAAPAAAABAAAAlgAenp6enp6enp6enp6enp6enp6enp6enp6pqampqampqampqampqampqampqampqamptPT09PT09PT09PT09PT09PT09PT09PT09P/////////////////////////////////AAAAAExhdmM2MC4zMQAAAAAAAAAAAAAAACQCcQAAAAAAAAJY+/rsqgAAAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV';
+
+  // Call inside a tap: iPhones only start audio from a user gesture.
+  function unlockAudio(withElement) {
     try {
-      unlockAudio();
-      const track = s.getAudioTracks()[0];
-      const micRate = track && track.getSettings ? track.getSettings().sampleRate : 0;
-      if (micRate && audioCtx.sampleRate !== micRate) {
-        try { audioCtx.close(); } catch { /* ignore */ }
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: micRate });
-        if (audioCtx.state !== 'running') audioCtx.resume();
+      if (AC) {
+        if (!audioCtx || audioCtx.state === 'closed') audioCtx = newContext();
+        if (audioCtx.state !== 'running') { const p = audioCtx.resume(); if (p && p.catch) p.catch(() => {}); }
+        const s = audioCtx.createBufferSource();
+        s.buffer = audioCtx.createBuffer(1, 1, 22050);
+        s.connect(audioCtx.destination);
+        s.start(0);
       }
-      meterSamplesSeen = 0; meterNonZero = 0; noiseFloor = 0.003;
-      const src = audioCtx.createMediaStreamSource(s);
-      analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 1024;
-      levelBuf = new Float32Array(analyser.fftSize);
-      src.connect(analyser);
-      $('#meter').classList.add('on');
-      meterLoop();
-    } catch { analyser = null; }
+    } catch (e) { log('audio unlock: ' + (e && e.message)); }
+    if (withElement) {
+      try { player.src = SILENT; const p = player.play(); if (p && p.catch) p.catch(() => {}); } catch { /* ignore */ }
+    }
+  }
+  const unlockPlayer = () => { unlockAudio(true); unlockSpeech(); };
+  // The phone's own voice needs the same: its first words have to be asked for inside a tap.
+  function unlockSpeech() {
+    if (!('speechSynthesis' in window)) return;
+    try { speechSynthesis.cancel(); speechSynthesis.speak(new SpeechSynthesisUtterance('')); } catch { /* ignore */ }
   }
 
-  function readLevel() {
-    if (!analyser) return 0;
-    analyser.getFloatTimeDomainData(levelBuf);
-    let sum = 0;
-    for (let i = 0; i < levelBuf.length; i++) sum += levelBuf[i] * levelBuf[i];
-    return Math.sqrt(sum / levelBuf.length);
+  // The reader goes through a little extra gain and a limiter: phone speakers are small.
+  function outputNode() {
+    if (!outChain || outChain.ctx !== audioCtx) {
+      const gain = audioCtx.createGain();
+      gain.gain.value = 1.4;
+      let last = gain;
+      try {
+        const limiter = audioCtx.createDynamicsCompressor();
+        limiter.threshold.value = -4; limiter.knee.value = 4; limiter.ratio.value = 14;
+        limiter.attack.value = 0.003; limiter.release.value = 0.12;
+        gain.connect(limiter);
+        last = limiter;
+      } catch { /* no compressor: plain gain */ }
+      last.connect(audioCtx.destination);
+      outChain = { ctx: audioCtx, input: gain };
+    }
+    return outChain.input;
   }
-  // Speech must clear both the sensitivity setting and the room's background noise.
-  let noiseFloor = 0.003;
-  // Speech must stand clearly above the room: a multiple of the measured noise floor (sensitivity 10 = 2×, 1 = 8×),
-  // never below a tiny absolute level so a dead-silent input can't trigger.
-  const threshold = () => Math.max(0.0015, noiseFloor * (2 + (10 - state.settings.sensitivity) * 0.65));
-  function trackNoise(level) {
-    if (run && run.readerSpeaking) return; // the reader's voice through the speaker isn't room noise
-    if (level < noiseFloor) noiseFloor += (level - noiseFloor) * 0.1;
-    else if (level < threshold()) noiseFloor += (level - noiseFloor) * 0.003; // creep up very slowly so soft speech isn't absorbed
-    noiseFloor = Math.min(Math.max(noiseFloor, 0.0005), 0.03);
-  }
-  // Is the meter actually receiving audio? (iOS can hand us a silent analyser if the AudioContext was created
-  // before the mic opened at a different sample rate.)
-  let meterSamplesSeen = 0, meterNonZero = 0;
-  const meterAlive = () => meterSamplesSeen < 30 || meterNonZero > 0;
 
-  let meterRunning = false;
-  function meterLoop() {
-    if (meterRunning) return;
-    meterRunning = true;
-    const bar = $('#meter i'), meter = $('#meter');
-    const tick = () => {
-      currentLevel = readLevel();
-      meterSamplesSeen++;
-      if (currentLevel > 0.00001) meterNonZero++;
-      trackNoise(currentLevel);
-      bar.style.width = Math.min(100, Math.sqrt(currentLevel) * 220) + '%';
-      meter.classList.toggle('speaking', currentLevel > threshold());
-      requestAnimationFrame(tick);
-    };
-    tick();
+  const out = { playing: false, endedAt: 0, path: '', webAudioFails: 0, elementFails: 0, lastError: '', loopPeak: 0, loopHeard: null, lines: 0 };
+
+  const wavRate = (wav) => new DataView(wav).getUint32(24, true);
+  // A clip with nothing in it must never be saved or played as if it were the reader speaking.
+  function wavHasSound(wav) {
+    if (!wav || wav.byteLength < 44 + 2400) return false;
+    const dv = new DataView(wav);
+    for (let o = 44; o + 1 < wav.byteLength; o += 2) { const v = dv.getInt16(o, true); if (v > 300 || v < -300) return true; }
+    return false;
+  }
+  const wavSeconds = (wav) => ((wav.byteLength - 44) / 2) / wavRate(wav);
+  function wavToBuffer(ctx, wav) {
+    const dv = new DataView(wav);
+    const n = (wav.byteLength - 44) >> 1;
+    const buffer = ctx.createBuffer(1, Math.max(1, n), wavRate(wav));
+    const ch = buffer.getChannelData(0);
+    for (let i = 0, o = 44; i < n; i++, o += 2) ch[i] = dv.getInt16(o, true) / 32768;
+    return buffer;
+  }
+
+  async function playWebAudio(wav, signal) {
+    if (!AC) throw new Error('no Web Audio in this browser');
+    if (!(await resumeCtx(500))) throw new Error('audio context is ' + (audioCtx ? audioCtx.state : 'missing'));
+    const ctx = audioCtx;
+    const buffer = wavToBuffer(ctx, wav);
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+    src.connect(outputNode());
+    await step(signal, (done, onClean, fail) => {
+      const startedAt = ctx.currentTime;
+      // A context that claims to run but whose clock stands still is playing nothing.
+      const stalled = setTimeout(() => { if (ctx.currentTime - startedAt < 0.05) fail(new Error('audio context is not advancing (' + ctx.state + ')')); }, 700);
+      const safety = setTimeout(done, buffer.duration * 1000 + 1200);
+      src.onended = () => done();
+      onClean(() => {
+        clearTimeout(stalled); clearTimeout(safety);
+        src.onended = null;
+        try { src.stop(); } catch { /* never started */ }
+        try { src.disconnect(); } catch { /* ignore */ }
+      });
+      src.start();
+    });
+  }
+
+  function playElement(wav, signal) {
+    const url = URL.createObjectURL(new Blob([wav], { type: 'audio/wav' }));
+    const seconds = wavSeconds(wav);
+    return step(signal, (done, onClean, fail) => {
+      let started = false;
+      const onStart = () => { started = true; };
+      const onEnd = () => done();
+      const onError = () => fail(new Error('audio element error ' + (player.error ? player.error.code : '?')));
+      player.addEventListener('playing', onStart);
+      player.addEventListener('timeupdate', onStart);
+      player.addEventListener('ended', onEnd);
+      player.addEventListener('error', onError);
+      const stalled = setTimeout(() => { if (!started && !(player.currentTime > 0)) fail(new Error('audio element did not start')); }, 2500);
+      const safety = setTimeout(done, seconds * 1000 + 3500);
+      onClean(() => {
+        clearTimeout(stalled); clearTimeout(safety);
+        player.removeEventListener('playing', onStart);
+        player.removeEventListener('timeupdate', onStart);
+        player.removeEventListener('ended', onEnd);
+        player.removeEventListener('error', onError);
+        try { player.pause(); } catch { /* ignore */ }
+        URL.revokeObjectURL(url);
+      });
+      player.src = url;
+      let p = null;
+      try { p = player.play(); } catch (e) { fail(e); return; }
+      if (p && p.catch) p.catch((e) => { if (!started) fail(e); });
+    });
+  }
+
+  // Did the microphone pick the reader up? Proof that sound really left the speaker (unless headphones are in).
+  function noteLoopback() {
+    if (!micDelivering(performance.now())) return;
+    const heard = out.loopPeak > Math.max(mic.noise * 4, 0.003);
+    if (heard !== out.loopHeard) { out.loopHeard = heard; log(heard ? 'the mic can hear the reader' : 'the mic cannot hear the reader (volume down or headphones?)'); }
+  }
+
+  // Plays one piece of the reader's speech. With the mic live the same audio context is used for both, which is
+  // what iPhones handle best; without it a plain audio element, which ignores the silent switch.
+  async function playReaderAudio(wav, signal) {
+    let order = micLive() ? ['webaudio', 'element'] : ['element', 'webaudio'];
+    if (order[0] === 'webaudio' && out.webAudioFails >= 2 && out.elementFails < 2) order = ['element', 'webaudio'];
+    if (order[0] === 'element' && out.elementFails >= 2 && out.webAudioFails < 2) order = ['webaudio', 'element'];
+    let lastErr = null;
+    out.playing = true;
+    out.loopPeak = 0;
+    try {
+      for (const path of order) {
+        try {
+          if (path === 'webaudio') { await playWebAudio(wav, signal); out.webAudioFails = 0; } else { await playElement(wav, signal); out.elementFails = 0; }
+          if (out.path !== path) { out.path = path; log('reader audio: ' + (path === 'webaudio' ? 'web audio' : 'audio element')); }
+          return;
+        } catch (e) {
+          if (e && e.name === 'AbortError') throw e;
+          lastErr = e;
+          if (path === 'webaudio') out.webAudioFails++; else out.elementFails++;
+          out.lastError = path + ': ' + (e && e.message);
+          log('reader audio failed (' + out.lastError + ')');
+        }
+      }
+      throw lastErr || new Error('no way to play audio');
+    } finally {
+      out.playing = false;
+      out.endedAt = performance.now();
+      noteLoopback();
+    }
+  }
+
+  // A tap re-enables sound on iPhone, so if both routes were refused ask for one and try again.
+  async function playWav(wav, signal) {
+    try { await playReaderAudio(wav, signal); } catch (e) {
+      if (e && e.name === 'AbortError') throw e;
+      if (run && run.noTap) throw e; // asked once in this scene already and nobody tapped: don't hold every line up
+      const tapped = await askForTap(signal, 'Tap here to turn the reader\'s sound on', 9000);
+      if (!tapped && run) run.noTap = true;
+      await playReaderAudio(wav, signal);
+    }
+  }
+
+  // Resolves true if the button was tapped, false if the time ran out (or Next was pressed).
+  function askForTap(signal, label, ms) {
+    const btn = $('#tapBtn');
+    let tapped = false;
+    return step(signal, (done, onClean) => {
+      const onTap = () => { tapped = true; unlockAudio(true); unlockSpeech(); done(); };
+      btn.textContent = label;
+      btn.hidden = false;
+      btn.addEventListener('click', onTap);
+      const t = setTimeout(done, ms);
+      onClean(() => { clearTimeout(t); btn.removeEventListener('click', onTap); btn.hidden = true; });
+    }).then(() => tapped);
+  }
+
+  // Keep the screen on: an iPhone locks after 30 seconds without a touch, which would end a hands-free scene.
+  let wakeLock = null, wakeWanted = false, wakeBusy = false, wakeFailed = false;
+  async function keepAwake(on) {
+    wakeWanted = on;
+    if (wakeBusy) return;
+    wakeBusy = true;
+    try {
+      if (wakeWanted && !wakeLock && navigator.wakeLock && !document.hidden) {
+        const lock = await navigator.wakeLock.request('screen');
+        wakeLock = lock;
+        lock.addEventListener('release', () => { if (wakeLock === lock) wakeLock = null; });
+      }
+      if (!wakeWanted && wakeLock) {
+        const lock = wakeLock;
+        wakeLock = null;
+        await lock.release();
+      }
+    } catch (e) {
+      if (!wakeFailed) { wakeFailed = true; log('wake lock: ' + (e && e.message)); }
+    }
+    wakeBusy = false;
+  }
+  const stageVisible = () => $('#view-stage').classList.contains('active') && !document.hidden;
+  function updateAwake() {
+    keepAwake(!!run || !!micTest || (pumping && stageVisible()));
+  }
+
+  // ---------- microphone ----------
+  // iPhones play a page's sound badly while its microphone is open: quietly, out of the earpiece, or crackling,
+  // depending on the iOS version. So there the mic is only open during the actor's own lines ("half duplex") and
+  // the reader always has the loudspeaker to itself. Recording a take needs the mic throughout, so it stays open then.
+  // A setting can force either way, in case a phone behaves differently from what is expected here.
+  const useHalf = () => state.settings.micMode === 'half' || (state.settings.micMode !== 'full' && isIOS);
+
+  const mic = {
+    state: 'off', // off | starting | live | denied | error
+    error: '', stream: null, track: null, nodes: null, buf: null,
+    level: 0, noise: 0.001, hist: [], maxLevel: 0,
+    openedAt: 0, lastSignalAt: 0, closedAt: 0, recoveries: 0, timer: null, releaseTimer: null, listener: null,
+    half: false,   // opened for one of the actor's lines only: the meter then runs on an audio context of its own
+    ownCtx: null, shareCtx: false, gen: 0, opening: null, granted: false, opens: 0, openMs: 0, slowOpens: 0, fails: 0, calibrated: false,
+  };
+  const micLive = () => mic.state === 'live' && !!mic.track && mic.track.readyState === 'live';
+  // Real microphones are never perfectly silent: a run of exact zeros means no sound is arriving at all.
+  const micDelivering = (now) => micLive() && !!mic.nodes && (now - mic.lastSignalAt < 1500 || now - mic.openedAt < 1500);
+
+  // A line starts when the level stands clearly above the room (sensitivity 5 = 4x the background, 10 = 1.9x,
+  // 1 = 5.7x). Once it is under way, anything a little above the room counts as still talking: missing soft speech
+  // would make the reader interrupt, which is far worse than the reader waiting a moment longer.
+  const ABS_MIN = 0.0012;
+  const thrFactor = () => 1.9 + (10 - state.settings.sensitivity) * 0.42;
+  const thrOn = () => Math.max(ABS_MIN, mic.noise * thrFactor());
+  const thrOff = () => Math.max(ABS_MIN * 0.6, mic.noise * Math.max(1.6, thrFactor() * 0.45));
+
+  function teardownMicGraph() {
+    const n = mic.nodes;
+    if (n) ['src', 'hp', 'an', 'sink'].forEach((k) => { try { n[k].disconnect(); } catch { /* ignore */ } });
+    mic.nodes = null;
+    if (mic.ownCtx) {
+      const c = mic.ownCtx;
+      mic.ownCtx = null;
+      try { const p = c.close(); if (p && p.catch) p.catch(() => {}); } catch { /* ignore */ }
+    }
+  }
+  async function buildMicGraph() {
+    teardownMicGraph();
+    const stream = mic.stream;
+    let ctx = null;
+    if (mic.half && !mic.shareCtx) {
+      // A context made now, after recording has begun: the arrangement iPhones most reliably feed with mic audio.
+      const own = mic.ownCtx = newContext(true);
+      const running = await resumeOf(own, 500);
+      if (mic.ownCtx !== own || mic.stream !== stream) return; // closed again meanwhile
+      if (running) ctx = own;
+      else {
+        // It won't start without a tap: use the context the Start tap unlocked instead, from now on.
+        mic.shareCtx = true;
+        mic.ownCtx = null;
+        try { const p = own.close(); if (p && p.catch) p.catch(() => {}); } catch { /* ignore */ }
+        log('mic meter: a context of its own would not start (' + own.state + '), sharing the playback one');
+      }
+    }
+    if (!ctx) {
+      await resumeCtx(600); // starting to record can interrupt the context on iPhone
+      ctx = audioCtx;
+    }
+    if (!mic.stream || mic.stream !== stream) return;
+    const src = ctx.createMediaStreamSource(mic.stream);
+    const hp = ctx.createBiquadFilter(); // rumble and handling noise aren't speech
+    hp.type = 'highpass';
+    hp.frequency.value = 110;
+    const an = ctx.createAnalyser();
+    an.fftSize = 2048;
+    an.smoothingTimeConstant = 0;
+    // Safari only processes nodes that lead to the output, so finish the chain with a silent gain.
+    const sink = ctx.createGain();
+    sink.gain.value = 0;
+    src.connect(hp); hp.connect(an); an.connect(sink); sink.connect(ctx.destination);
+    mic.nodes = { ctx, src, hp, an, sink };
+    mic.buf = new Float32Array(an.fftSize);
+    mic.openedAt = performance.now();
+    mic.lastSignalAt = 0;
+  }
+
+  // Switches the microphone on. Calls made while it is already starting share the same attempt; a closeMic() in
+  // the meantime cancels it (the promise then rejects with an AbortError).
+  function openMic() {
+    clearTimeout(mic.releaseTimer);
+    if (mic.opening) return mic.opening;
+    if (micLive() && !mic.track.muted) return Promise.resolve();
+    const attempt = (async () => {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        mic.state = 'error';
+        mic.error = 'this browser has no microphone access';
+        throw new Error('This browser cannot use the microphone.');
+      }
+      closeMic(true);
+      const gen = mic.gen;
+      const stale = () => gen !== mic.gen;
+      mic.state = 'starting';
+      mic.half = useHalf() && !(run && run.recording);
+      setSessionType('play-and-record');
+      const t0 = performance.now();
+      let s;
+      try {
+        // Raw audio: with echo cancellation on, iPhones play everything at phone-call volume.
+        s = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+      } catch (e) {
+        if (stale()) throw abortError();
+        mic.fails++;
+        mic.state = e && e.name === 'NotAllowedError' ? 'denied' : 'error';
+        mic.error = (e && e.name) + ': ' + (e && e.message);
+        log('mic refused (' + mic.error + ')');
+        setSessionType('playback');
+        throw e;
+      }
+      const drop = () => { s.getTracks().forEach((t) => { try { t.stop(); } catch { /* ignore */ } }); };
+      if (stale()) { drop(); throw abortError(); } // no longer wanted
+      mic.stream = s;
+      mic.track = s.getAudioTracks()[0];
+      mic.track.addEventListener('mute', () => log('mic muted by the system'));
+      mic.track.addEventListener('unmute', () => log('mic unmuted'));
+      mic.track.addEventListener('ended', () => { if (mic.stream !== s) return; log('mic ended by the system'); if (mic.state === 'live') mic.state = 'off'; });
+      try { await buildMicGraph(); } catch (e) { log('mic meter: ' + (e && e.message)); }
+      if (stale()) { if (mic.stream === s) { mic.stream = null; mic.track = null; } drop(); throw abortError(); }
+      mic.state = 'live';
+      mic.error = '';
+      mic.fails = 0;
+      mic.hist = [];
+      if (!mic.opens) mic.maxLevel = 0;
+      const took = performance.now() - t0;
+      mic.opens++;
+      mic.openMs = took;
+      const st = mic.track.getSettings ? mic.track.getSettings() : {};
+      const ctx = mic.nodes && mic.nodes.ctx;
+      if (!mic.granted || !mic.half) log(`mic on (${mic.track.label || 'default'}, ${st.sampleRate || '?'} Hz; context ${ctx ? ctx.sampleRate + ' Hz ' + ctx.state : 'none'}; ${Math.round(took)} ms)`);
+      if (mic.granted && took > 1500) { mic.slowOpens++; log(`the mic took ${(took / 1000).toFixed(1)}s to come back (was the phone asking for permission again?)`); }
+      mic.granted = true;
+      if (!mic.timer) mic.timer = setInterval(meterTick, 40);
+    })();
+    mic.opening = attempt;
+    const clear = () => { if (mic.opening === attempt) mic.opening = null; };
+    attempt.then(clear, clear);
+    return attempt;
+  }
+
+  function closeMic(keepSession) {
+    clearTimeout(mic.releaseTimer);
+    mic.gen++;
+    mic.opening = null;
+    teardownMicGraph();
+    if (mic.stream) {
+      mic.stream.getTracks().forEach((t) => { try { t.stop(); } catch { /* ignore */ } });
+      mic.closedAt = performance.now();
+      if (!mic.half) log('mic off');
+    }
+    mic.stream = null;
+    mic.track = null;
+    if (mic.state === 'live' || mic.state === 'starting') mic.state = 'off';
+    clearInterval(mic.timer);
+    mic.timer = null;
+    mic.level = 0;
+    renderMeter();
+    if (!keepSession) setSessionType('playback');
+  }
+
+  // The stream is open but nothing is arriving. Either the audio graph isn't being fed (rebuild it on a fresh
+  // context, created now that recording has started) or the system took the microphone away (ask for it again).
+  async function recoverMic() {
+    mic.recoveries++;
+    log('no sound from the mic: recovering');
+    try {
+      if (mic.track && mic.track.readyState === 'live' && !mic.track.muted) {
+        if (mic.half) {
+          mic.shareCtx = !mic.shareCtx; // whichever kind of context it was on heard nothing: try the other
+          log('mic meter: trying ' + (mic.shareCtx ? 'the playback context' : 'a context of its own'));
+          await buildMicGraph();
+        } else {
+          const old = audioCtx;
+          audioCtx = newContext();
+          await buildMicGraph();
+          try { if (old) { const p = old.close(); if (p && p.catch) p.catch(() => {}); } } catch { /* ignore */ }
+        }
+      } else {
+        closeMic(true);
+        await openMic();
+      }
+    } catch (e) { log('mic recovery failed: ' + (e && e.message)); }
+  }
+
+  // Safari forgets a page's microphone permission about a minute after the mic was last on. During a long stretch
+  // of reader lines the mic is switched on for a moment between lines, so the actor isn't asked again mid-scene.
+  async function micKeepAlive(signal) {
+    let done = false;
+    const opened = openMic().then(() => { done = true; }, () => { done = true; });
+    await Promise.race([opened, sleep(1500, signal)]);
+    if (!done) log('mic keep-alive: the mic did not come on in time');
+    closeMic();
+  }
+
+  function meterTick() {
+    const an = mic.nodes && mic.nodes.an;
+    if (!an || mic.state !== 'live') return;
+    const b = mic.buf;
+    an.getFloatTimeDomainData(b);
+    let sum = 0, peak = 0;
+    for (let i = 0; i < b.length; i++) { const v = b[i]; sum += v * v; const a = v < 0 ? -v : v; if (a > peak) peak = a; }
+    const now = performance.now();
+    const rms = Math.sqrt(sum / b.length);
+    if (peak > 1e-6) mic.lastSignalAt = now;
+    mic.level = rms;
+    if (rms > mic.maxLevel) mic.maxLevel = rms;
+    if (out.playing) {
+      if (rms > out.loopPeak) out.loopPeak = rms; // the reader, coming back through the mic
+    } else if (now - out.endedAt > 350 && peak > 1e-6) {
+      // Room level = the quietest tenth of the last four seconds. Speech always has gaps that reach down to the
+      // room; a steady hum or fan sits there the whole time. It follows a quieter room quickly, a louder one slowly.
+      const h = mic.hist;
+      h.push(rms);
+      if (h.length > 100) h.shift();
+      if (h.length >= 10) {
+        const s = h.slice().sort((x, y) => x - y);
+        const p10 = s[Math.floor(s.length * 0.1)];
+        if (!mic.calibrated) { mic.noise = p10; mic.calibrated = true; } // the first measure of this room: take it as it is
+        else mic.noise += (p10 - mic.noise) * (p10 < mic.noise ? 0.3 : 0.04);
+        mic.noise = Math.min(Math.max(mic.noise, 2e-5), 0.06);
+      }
+    }
+    if (mic.listener) mic.listener(rms, now);
+    renderMeter();
+  }
+
+  // -72 dBFS .. -10 dBFS across the bar.
+  const dbPos = (v) => Math.max(0, Math.min(1, (20 * Math.log10(Math.max(v, 1e-6)) + 72) / 62));
+  function renderMeter() {
+    const el = $('#meter');
+    if (!el) return;
+    const on = micLive();
+    el.classList.toggle('on', on);
+    if (!on) return;
+    el.firstElementChild.style.width = (dbPos(mic.level) * 100).toFixed(1) + '%';
+    el.lastElementChild.style.left = (dbPos(thrOn()) * 100).toFixed(1) + '%';
+    el.classList.toggle('speaking', mic.level > thrOn());
+  }
+
+  function micBlockedText(e) {
+    const denied = e && e.name === 'NotAllowedError';
+    return denied
+      ? 'The microphone is blocked for this site. To let me listen: tap the page menu in the address bar → Website Settings → Microphone → Allow, then reload.'
+      : 'The microphone could not start (' + ((e && (e.message || e.name)) || 'unknown') + ').';
+  }
+
+  // A way to see that the app hears you, without starting a scene.
+  let micTest = null;
+  function stopMicTest(keepMic) {
+    if (!micTest) return;
+    clearInterval(micTest);
+    micTest = null;
+    $('#micBtn').textContent = '🎤 Test my mic';
+    if (!keepMic) { closeMic(); renderPrep(); }
+    updateAwake();
+  }
+  async function toggleMicTest() {
+    if (run) return;
+    if (micTest) { stopMicTest(); return; }
+    unlockAudio(false);
+    try { await openMic(); } catch (e) { setTurn('idle', micBlockedText(e)); renderStrip(); return; }
+    const started = performance.now();
+    let voiced = 0, heard = false;
+    $('#micBtn').textContent = 'Stop mic test';
+    setTurn('me', '🎤 Say something…');
+    micTest = setInterval(() => {
+      const now = performance.now();
+      if (now - started > 30000) { stopMicTest(); return; }
+      if (!micDelivering(now)) {
+        if (now - started > 2500 && !heard) setTurn('me', '⚠ The mic is on but no sound is arriving from it.');
+        return;
+      }
+      if (mic.level > thrOn()) voiced += 40;
+      if (voiced >= 300 && !heard) { heard = true; log('mic test: heard you'); setTurn('hearing', '✓ I can hear you. You\'re set.'); }
+      renderStrip();
+    }, 40);
+    updateAwake();
   }
 
   // ---------- run engine ----------
@@ -681,7 +1155,8 @@ It does to me.`;
 
   function abortError() { return new DOMException('Stopped', 'AbortError'); }
 
-  // A wait that ends when `setup` calls done(), when Next is pressed, or rejects when the run is stopped.
+  // A wait that ends when `setup` calls done(), when Next is pressed, rejects with fail(err), or rejects when the
+  // run is stopped.
   function step(signal, setup) {
     return new Promise((resolve, reject) => {
       const cleanups = [];
@@ -693,13 +1168,13 @@ It does to me.`;
         if (run && run.skip === skip) run.skip = null;
         err ? reject(err) : resolve();
       };
-      const skip = () => finish();
+      const skip = () => { if (run) run.skipped = true; finish(); };
       const onAbort = () => finish(abortError());
       if (signal.aborted) return onAbort();
       signal.addEventListener('abort', onAbort, { once: true });
       cleanups.push(() => signal.removeEventListener('abort', onAbort));
       if (run) run.skip = skip;
-      setup(() => finish(), (fn) => cleanups.push(fn));
+      setup(() => finish(), (fn) => cleanups.push(fn), (err) => finish(err || new Error('failed')));
     });
   }
 
@@ -708,60 +1183,148 @@ It does to me.`;
     onClean(() => clearTimeout(t));
   });
 
-  function chunkText(text) {
+  // Split a speech into pieces short enough to make quickly. With quickStart the first piece is a single
+  // sentence, so the reader can begin speaking as soon as possible.
+  function chunkText(text, max, quickStart) {
+    max = max || 160;
     const sentences = text.match(/[^.!?…]+[.!?…]+["')\]]*|\S[^.!?…]*$/g) || [text];
-    const chunks = [];
+    const parts = [];
     sentences.forEach((s) => {
       s = s.trim();
       if (!s) return;
+      if (s.length > max * 1.6) {
+        // A very long sentence is cut at commas and dashes instead.
+        let cur = '';
+        (s.match(/[^,;:—–]+[,;:—–]*\s*/g) || [s]).forEach((piece) => {
+          if (cur && (cur + piece).length > max) { parts.push(cur.trim()); cur = piece; } else cur += piece;
+        });
+        if (cur.trim()) parts.push(cur.trim());
+      } else parts.push(s);
+    });
+    const chunks = [];
+    parts.forEach((p) => {
       const last = chunks[chunks.length - 1];
-      if (last && last.length + s.length < 160) chunks[chunks.length - 1] = last + ' ' + s;
-      else chunks.push(s);
+      const keepFirstShort = quickStart && chunks.length === 1 && last.length >= 12;
+      if (last && !keepFirstShort && last.length + p.length < max) chunks[chunks.length - 1] = last + ' ' + p;
+      else chunks.push(p);
     });
     return chunks;
   }
 
-  async function speakLine(line, signal) {
+  let studioWarned = false;
+  // Says one reader line. The actor is never left waiting: a studio line that isn't made yet (and won't be within a
+  // moment) is read in the phone's own voice instead, while the engine gets on with the lines that come next.
+  async function speakLine(line, signal, opts) {
+    opts = opts || {};
     let text = spokenText(line.text);
     if (!text) return;
     const r = readerFor(line.character);
+    let standIn = false;
     if (usesStudio(r)) {
-      try { return await speakStudio(line, signal); } catch (e) {
-        if (e.name === 'AbortError') throw e;
-        if (e.name === 'NotReady') { status(`${line.character} (phone voice — the studio voice wasn't ready in time)`); text = e.rest; }
-        else {
-          console.warn(e);
-          if (!studioWarned) { studioWarned = true; studioNotice('Studio voice failed (' + e.message + '). Using the phone voice instead.'); }
+      const chunks = lineChunks(line);
+      chunks.forEach((c) => { want(c).catch(() => {}); });
+      prioritise(chunks);
+      await fetchSaved(chunks);
+      if (signal.aborted) throw abortError();
+      const delay = opts.patient ? 0 : studioDelay(chunks);
+      if (delay <= PATIENCE_MS) {
+        try {
+          await speakStudio(line, chunks, signal, opts.patient ? CHUNK_WAIT_MS : 3500);
+          out.lines++;
+          return;
+        } catch (e) {
+          if (e && e.name === 'AbortError') throw e;
+          if (e && e.rest) text = e.rest;
+          log(`${line.character}: studio voice unavailable for this line (${(e && e.message) || e}), using the phone voice`);
+          if (!(e && e.name === 'NotReady') && !studioWarned) { studioWarned = true; studioNotice('The studio voice failed (' + ((e && e.message) || e) + '). Using the phone voice instead.'); }
+          renderVoiceBanner();
         }
+      } else {
+        log(`${line.character}: studio voice not ready (${delay === Infinity ? 'engine ' + studio.status : 'about ' + (delay / 1000).toFixed(1) + 's away'}), using the phone voice for this line`);
       }
+      standIn = usesStudio(r); // still being prepared, as opposed to broken
+      if (opts.index !== undefined) frontload(opts.index + 1);
     }
-    if (!hasTTS) return sleep(1000 + wordCount(text) * 400 / r.rate, signal);
+    if (run && run.skipped) return;
+    setTurn('reader', `🔊 ${line.character} is speaking` + (standIn ? ` · phone voice until the studio voice is ready (${prepPct()}%)` : ' · phone voice')
+      + (isIOS ? '. Can\'t hear it? Switch the ringer on.' : ''));
+    await speakDevice(text, r, signal);
+    out.lines++;
+  }
 
+  // The phone's own text-to-speech: used when the studio voice isn't ready or can't run.
+  let keepUtterance = null; // a reference, so the utterance isn't garbage-collected mid-speech (Chrome bug)
+  // Speaks one piece. Resolves with 'ok', 'blocked' (the browser wants a tap first), 'error' or 'skipped'.
+  function utter(chunk, voice, r, signal) {
+    let outcome = 'ok';
     return step(signal, (done, onClean) => {
-      const chunks = chunkText(text);
-      const voice = voices.find((v) => v.voiceURI === r.voiceURI);
-      let idx = 0, stopped = false;
-      onClean(() => { stopped = true; speechSynthesis.cancel(); });
-      const next = () => {
-        if (stopped) return;
-        if (idx >= chunks.length) return done();
-        const chunk = chunks[idx++];
-        const u = new SpeechSynthesisUtterance(chunk);
-        if (voice) { u.voice = voice; u.lang = voice.lang; }
-        u.rate = r.rate;
-        u.pitch = r.pitch;
-        let fired = false;
-        // Some engines occasionally never fire onend; fall back to a generous estimate.
-        const fallback = setTimeout(() => fin(), 4000 + (wordCount(chunk) / (1.8 * r.rate)) * 1000);
-        function fin() { if (fired) return; fired = true; clearTimeout(fallback); next(); }
-        u.onend = fin;
-        u.onerror = fin;
-        run.utterance = u; // keep a reference so it isn't garbage-collected mid-speech (Chrome bug)
-        speechSynthesis.speak(u);
+      const u = new SpeechSynthesisUtterance(chunk);
+      try { if (voice) { u.voice = voice; u.lang = voice.lang; } } catch { /* a stale voice: the default will do */ }
+      u.rate = r.rate;
+      u.pitch = r.pitch;
+      let over = false;
+      const fin = (how) => { if (over) return; over = true; if (how) outcome = how; done(); };
+      // Some engines occasionally never fire onend. Notice that the voice has stopped by itself, and failing that
+      // fall back to a generous estimate.
+      const fallback = setTimeout(() => { try { speechSynthesis.cancel(); } catch { /* ignore */ } fin(); }, 4000 + (wordCount(chunk) / (1.8 * r.rate)) * 1000);
+      let heard = false, idle = 0;
+      const poll = setInterval(() => {
+        let busy = false;
+        try { busy = speechSynthesis.speaking || speechSynthesis.pending; } catch { /* ignore */ }
+        if (busy) { heard = true; idle = 0; } else if (heard && ++idle >= 3) fin();
+      }, 250);
+      u.onstart = () => { heard = true; };
+      u.onend = () => fin();
+      u.onerror = (e) => {
+        const kind = e && e.error;
+        if (kind === 'interrupted' || kind === 'canceled') return fin();
+        log('phone voice error: ' + (kind || 'unknown'));
+        fin(kind === 'not-allowed' ? 'blocked' : 'error');
       };
-      speechSynthesis.cancel();
-      next();
-    });
+      onClean(() => {
+        clearTimeout(fallback);
+        clearInterval(poll);
+        u.onstart = u.onend = u.onerror = null;
+        if (!over) { over = true; outcome = 'skipped'; try { speechSynthesis.cancel(); } catch { /* ignore */ } } // Next or Stop
+      });
+      keepUtterance = u;
+      speechSynthesis.speak(u);
+    }).then(() => outcome);
+  }
+  async function speakDevice(text, r, signal) {
+    if (!hasTTS) return sleep(1000 + wordCount(text) * 400 / r.rate, signal);
+    const chunks = chunkText(text);
+    const voice = voices.find((v) => v.voiceURI === r.voiceURI);
+    out.playing = true; // the mic must not take the reader's voice for the actor's, or for the room
+    out.loopPeak = 0;
+    try {
+      // Clear anything left over, but only if there is something: on iPhone a speak() straight after a cancel()
+      // can be swallowed, so give it a moment.
+      let busy = false;
+      try { busy = speechSynthesis.speaking || speechSynthesis.pending; } catch { /* ignore */ }
+      if (busy) { try { speechSynthesis.cancel(); } catch { /* ignore */ } await sleep(120, signal); }
+      for (let i = 0; i < chunks.length; i++) {
+        let res = await utter(chunks[i], voice, r, signal);
+        if (res === 'blocked' && !(run && run.noTap)) {
+          // iPhones only let a page talk after a tap.
+          const tapped = await askForTap(signal, 'Tap here to turn the reader\'s sound on', 9000);
+          if (!tapped && run) run.noTap = true;
+          res = await utter(chunks[i], voice, r, signal);
+        }
+        if (res === 'skipped') return;
+        if (res !== 'ok') {
+          // No voice at all for this piece: give the actor the time to read it on screen instead.
+          out.path = '';
+          setTurn('reader', '🔇 No voice available for this line — read it on screen');
+          await sleep(600 + wordCount(chunks[i]) * 380 / r.rate, signal);
+          if (run && run.skipped) return;
+        } else if (out.path !== 'device') { out.path = 'device'; log('reader audio: phone voice'); }
+      }
+    } finally {
+      out.playing = false;
+      out.endedAt = performance.now();
+      noteLoopback();
+    }
   }
 
   // ---------- studio voices: Kokoro neural TTS running on the device ----------
@@ -771,139 +1334,358 @@ It does to me.`;
     { id: 'bf_emma', name: 'Emma', accent: 'UK', gender: 'f' },
     { id: 'bm_george', name: 'George', accent: 'UK', gender: 'm' },
   ];
-  const APP_VERSION = '2.0.0';
   const STUDIO_KEY = 'cue:studio';
+  const STUDIO_MODEL = 'q8'; // the model file voice-worker.js loads
   const studioSupported = typeof Worker !== 'undefined' && typeof WebAssembly === 'object';
-  const studio = { downloaded: false, status: 'idle', progress: 0, error: '', quality: 'standard', device: '', note: '' };
-  try { Object.assign(studio, JSON.parse(localStorage.getItem(STUDIO_KEY) || '{}')); } catch { /* ignore */ }
-  studio.status = 'idle'; studio.progress = 0; studio.error = ''; studio.note = '';
-  const STUDIO_MODEL = 'q4f16'; // the model file the worker loads for Standard quality
-  const modelChanged = studio.downloaded && studio.model !== STUDIO_MODEL; // an earlier, slower model is on this phone
-  const saveStudio = () => { try { localStorage.setItem(STUDIO_KEY, JSON.stringify({ downloaded: studio.downloaded, quality: studio.quality, device: studio.device, model: studio.model })); } catch { /* ignore */ } };
+  const studio = { downloaded: false, model: '', crashes: 0, noThreads: false, msPerChar: 0, status: 'idle', progress: 0, phase: '', error: '', threads: 0, genMs: 0, genSec: 0 };
+  try {
+    const saved = JSON.parse(localStorage.getItem(STUDIO_KEY) || '{}');
+    ['downloaded', 'model', 'crashes', 'noThreads', 'msPerChar'].forEach((k) => { if (k in saved) studio[k] = saved[k]; });
+  } catch { /* ignore */ }
+  const modelChanged = studio.downloaded && studio.model !== STUDIO_MODEL; // an earlier model is on this phone
+  if (modelChanged) { studio.crashes = 0; studio.noThreads = false; studio.msPerChar = 0; } // a different engine: judge it afresh
+  const saveStudio = () => {
+    try { localStorage.setItem(STUDIO_KEY, JSON.stringify({ downloaded: studio.downloaded, model: studio.model, crashes: studio.crashes, noThreads: studio.noThreads, msPerChar: Math.round(studio.msPerChar) })); } catch { /* ignore */ }
+  };
   try { localStorage.removeItem('cue:elevenlabs'); } catch { /* old ElevenLabs key: don't keep it around */ }
-  const studioReady = () => studio.status === 'ready';
-  const usesStudio = (r) => studioSupported && studio.downloaded && studio.status !== 'error' && r.engine !== 'device' && STUDIO_VOICES.some((v) => v.id === r.studioVoice);
 
-  let worker = null, workerSeq = 0;
-  const pending = new Map();
-  function studioWorker() {
-    if (worker) return worker;
-    worker = new Worker('voice-worker.js', { type: 'module' });
-    worker.onmessage = ({ data }) => {
+  // iPhones close a page that uses too much memory. A crumb is left while the voice engine works; finding one at
+  // start-up means the page died mid-work. After that the engine no longer starts by itself (the phone's voice
+  // reads, and a button offers another try), so the app can never get stuck in a crash loop.
+  const CRUMB_KEY = 'cue:engineBusy';
+  try {
+    const crumb = Number(localStorage.getItem(CRUMB_KEY) || 0);
+    if (crumb && Date.now() - crumb < 30 * 60 * 1000) {
+      studio.crashes = (studio.crashes || 0) + 1;
+      log('the page closed while the voice engine was working (' + studio.crashes + ' time' + (studio.crashes > 1 ? 's' : '') + ')');
+      saveStudio();
+    }
+    localStorage.removeItem(CRUMB_KEY);
+  } catch { /* ignore */ }
+  const setCrumb = (on) => {
+    try { if (on) localStorage.setItem(CRUMB_KEY, String(Date.now())); else localStorage.removeItem(CRUMB_KEY); } catch { /* ignore */ }
+  };
+  const engineBlocked = () => studio.crashes >= 1;
+
+  const studioReady = () => studio.status === 'ready';
+  const usesStudio = (r) => studioSupported && studio.downloaded && studio.status !== 'error' && !engineBlocked()
+    && r.engine !== 'device' && STUDIO_VOICES.some((v) => v.id === r.studioVoice);
+
+  const engine = { worker: null, seq: 0, pending: new Map(), cfg: null, idleTimer: null, fails: 0 };
+
+  // Fastest setting first, safest last. Safari runs the model on one thread: several threads there have a
+  // history of running out of memory or hanging.
+  function engineLadder() {
+    const cap = isWebKit ? 20480 : 0; // a 1.25 GB memory ceiling on iPhone / Safari
+    const threads = !isWebKit && window.crossOriginIsolated && !studio.noThreads ? Math.max(1, Math.min(4, navigator.hardwareConcurrency || 2)) : 1;
+    const ladder = [];
+    if (threads > 1) ladder.push({ threads, capPages: cap });
+    ladder.push({ threads: 1, capPages: cap });
+    if (isWebKit) ladder.push({ threads: 1, capPages: 12288 }); // 768 MB: still enough, easier for the phone to grant
+    return ladder;
+  }
+
+  function stopWorker(why) {
+    if (engine.worker) { try { engine.worker.terminate(); } catch { /* ignore */ } }
+    engine.worker = null;
+    engine.cfg = null;
+    const err = Object.assign(new Error(why || 'the voice engine was restarted'), { name: 'EngineGone' });
+    engine.pending.forEach((p) => { clearTimeout(p.timer); p.reject(err); });
+    engine.pending.clear();
+  }
+  function killEngine(why) {
+    stopWorker(why);
+    loadPromise = null;
+    if (studio.status !== 'error') studio.status = 'idle';
+  }
+
+  function engineWorker() {
+    if (engine.worker) return engine.worker;
+    const w = new Worker('voice-worker.js?v=' + APP_VERSION, { type: 'module' });
+    w.onmessage = ({ data }) => {
+      if (w !== engine.worker) return;
+      engine.pending.forEach((p) => p.arm()); // any message proves the engine is alive
       if (data.type === 'progress') {
         studio.progress = data.total ? data.loaded / data.total : 0;
-        renderStudioPanel();
-        renderPrep();
-        renderDiag();
+        studio.phase = studio.progress < 1 ? 'download' : 'start';
+        renderEngineUi();
         return;
       }
-      if (data.type === 'note') { studio.note = data.message; lastError = 'studio: ' + data.message; renderStudioPanel(); renderDiag(); return; }
-      const p = pending.get(data.id);
+      if (data.type === 'phase') { studio.phase = data.phase; renderEngineUi(); return; }
+      const p = engine.pending.get(data.id);
       if (!p) return;
-      pending.delete(data.id);
-      if (data.type === 'error') p.reject(new Error(data.message));
+      engine.pending.delete(data.id);
+      clearTimeout(p.timer);
+      if (data.type === 'error') p.reject(Object.assign(new Error(data.message), { name: 'EngineError' }));
       else p.resolve(data);
     };
-    worker.onerror = (e) => {
-      lastError = 'worker: ' + (e.message || 'failed to start') + (e.filename ? ` @${e.filename.split('/').pop()}:${e.lineno}` : '');
-      pending.forEach((p) => p.reject(new Error(e.message || 'Voice engine failed to start')));
-      pending.clear();
-      worker = null;
+    w.onerror = (e) => {
+      if (w !== engine.worker) return;
+      const msg = (e && e.message) || 'the voice engine failed to start';
+      lastError = 'voice worker: ' + msg;
+      log('voice worker error: ' + msg);
+      stopWorker(msg);
+      // Outside a start-up attempt nothing else will notice, so forget the dead engine here.
+      if (studio.status !== 'loading') { loadPromise = null; if (studio.status !== 'error') studio.status = 'idle'; }
     };
-    return worker;
+    engine.worker = w;
+    return w;
   }
-  function callWorker(msg) {
+
+  // A request to the engine that gives up if the worker goes silent for stallMs.
+  function callEngine(msg, stallMs) {
     return new Promise((resolve, reject) => {
-      const id = ++workerSeq;
-      pending.set(id, { resolve, reject });
-      studioWorker().postMessage(Object.assign({ id }, msg));
+      const id = ++engine.seq;
+      const p = { resolve, reject, timer: null, arm: null };
+      p.arm = () => {
+        clearTimeout(p.timer);
+        p.timer = setTimeout(() => {
+          if (engine.pending.delete(id)) reject(Object.assign(new Error('the voice engine stopped responding'), { name: 'EngineStall' }));
+        }, stallMs);
+      };
+      p.arm();
+      engine.pending.set(id, p);
+      try { engineWorker().postMessage(Object.assign({ id }, msg)); } catch (e) {
+        engine.pending.delete(id);
+        clearTimeout(p.timer);
+        reject(e);
+      }
     });
+  }
+
+  function friendlyEngineError(err) {
+    const m = String((err && err.message) || err || 'unknown error');
+    if (/out of memory|RangeError|allocation|memory/i.test(m)) return 'not enough free memory for the voice engine (close other tabs and apps, then try again)';
+    if (/fetch|network|load failed|NetworkError/i.test(m)) return 'the voice download failed (check the connection, then try again)';
+    return m;
+  }
+
+  // Earlier versions used other variants of the voice model; their files are 80-330 MB each and no use now.
+  function dropOldModels() {
+    if (!window.caches) return;
+    caches.open('transformers-cache').then((c) => c.keys().then((keys) => keys.forEach((req) => {
+      if (/Kokoro-82M/.test(req.url) && /\/onnx\/model[^/]*\.onnx/.test(req.url) && !/\/onnx\/model_quantized\.onnx/.test(req.url)) {
+        c.delete(req);
+        log('removed an old voice model file');
+      }
+    }))).catch(() => {});
   }
 
   let loadPromise = null;
   function studioLoad() {
-    if (!loadPromise) {
-      studio.status = 'loading';
-      studio.error = '';
-      renderStudioPanel();
-      loadPromise = callWorker({ type: 'load', quality: studio.quality }).then((res) => {
-        studio.status = 'ready';
-        studio.device = res.device || '';
-        studio.threads = res.threads || 1;
-        studio.model = STUDIO_MODEL;
-        if (!studio.downloaded) {
-          studio.downloaded = true;
-          Object.values(state.readers).forEach((r) => { if (r.engine !== 'device') r.engine = 'studio'; });
+    if (loadPromise) return loadPromise;
+    studio.status = 'loading';
+    studio.error = '';
+    studio.progress = 0;
+    studio.phase = 'start';
+    renderEngineUi();
+    const attempt = (async () => {
+      const ladder = engineLadder();
+      let lastErr = null;
+      for (const cfg of ladder) {
+        try {
+          setCrumb(true);
+          log(`voice engine starting (${cfg.threads} thread${cfg.threads > 1 ? 's' : ''}${cfg.capPages ? ', ' + Math.round(cfg.capPages / 16) + ' MB ceiling' : ''})`);
+          const res = await callEngine(Object.assign({ type: 'load' }, cfg), 90000);
+          engine.cfg = cfg;
+          studio.threads = res.threads || 1;
+          log(`voice engine ready in ${(res.ms / 1000).toFixed(1)}s`);
+          return;
+        } catch (e) {
+          lastErr = e;
+          log('voice engine failed to start: ' + ((e && e.message) || e));
+          stopWorker();
+          if (cfg.threads > 1) { studio.noThreads = true; saveStudio(); }
         }
-        saveStudio();
-        renderCast();
-        prepareInBackground();
-      }, (err) => {
-        studio.status = 'error';
-        studio.error = err.message || String(err);
-        lastError = 'studio: ' + studio.error;
-        loadPromise = null;
-        renderStudioPanel();
-        renderVoiceBanner();
-        renderDiag();
-        throw err;
-      });
-    }
+      }
+      throw lastErr || new Error('the voice engine could not start');
+    })();
+    loadPromise = attempt.then(() => {
+      studio.status = 'ready';
+      studio.model = STUDIO_MODEL;
+      studio.phase = '';
+      if (!studio.downloaded) {
+        studio.downloaded = true;
+        Object.values(state.readers).forEach((r) => { if (r.engine !== 'device') r.engine = 'studio'; });
+      }
+      saveStudio();
+      dropOldModels();
+      if (!pumping) setCrumb(false);
+      renderCast();
+      prepareInBackground();
+      scheduleUnload();
+    }, (err) => {
+      setCrumb(false);
+      studio.status = 'error';
+      studio.error = friendlyEngineError(err);
+      lastError = 'studio: ' + ((err && err.message) || err);
+      loadPromise = null;
+      failQueue(err);
+      renderCast();
+      renderEngineUi();
+      throw err;
+    });
     return loadPromise;
   }
 
-  // A reader line is generated and played one sentence-sized chunk at a time, so the reader can start
-  // speaking after the first sentence instead of after the whole speech.
+  // A reader line is made and played one sentence-sized piece at a time, so the reader can start speaking after
+  // the first sentence instead of after the whole speech.
   function lineChunks(line) {
     const r = readerFor(line.character);
     const speed = Math.min(1.5, Math.max(0.6, r.rate));
-    return chunkText(spokenText(line.text)).map((text) => ({
-      key: ['k2', r.studioVoice, Math.round(speed * 100), text].join('|'), text, voice: r.studioVoice, speed,
+    return chunkText(spokenText(line.text), 160, true).filter((text) => /[A-Za-z0-9]/.test(text)).map((text) => ({
+      key: ['k3', r.studioVoice, Math.round(speed * 100), text].join('|'), text, voice: r.studioVoice, speed,
     }));
   }
   function studioLinesFrom(from) {
     return state.lines.slice(from).filter((l) => l.type === 'dialogue' && l.character !== state.me && spokenText(l.text) && usesStudio(readerFor(l.character)));
   }
 
-  const ready = new Map();   // chunk key -> audio Blob
-  const jobs = new Map();    // chunk key -> chunk, for everything queued or running
-  const waiters = new Map(); // chunk key -> [{ resolve, reject }]
-  let queue = [];            // chunk keys still to generate, in order
+  const ready = new Map();   // piece key -> WAV bytes (ArrayBuffer)
+  const jobs = new Map();    // piece key -> piece, for everything queued or being made
+  const waiters = new Map(); // piece key -> [{ resolve, reject }]
+  let queue = [];            // piece keys still to make, in order
   let pumping = false;
+  let making = null;         // the piece the engine is working on: { key, at, est }
   const prep = { total: 0, done: 0 };
+  const prepPct = () => (prep.total ? Math.round((prep.done / prep.total) * 100) : 100);
 
-  function settle(key, blob, err) {
-    (waiters.get(key) || []).forEach((w) => (err ? w.reject(err) : w.resolve(blob)));
+  // The longest silence the actor is asked to sit through for a studio line. Anything slower is read in the phone's
+  // voice, because a scene partner who answers late is worse than one who sounds plainer.
+  const PATIENCE_MS = 2000;
+  const pieceMs = (c) => 250 + c.text.length * (studio.msPerChar || 140); // time to make it
+  const speechMs = (c) => { const w = ready.get(c.key); return w ? wavSeconds(w) * 1000 + 140 : c.text.length * 70; }; // time to say it
+
+  // How long the actor would wait in silence if this line were left to the studio voice: 0 when every piece exists,
+  // Infinity when the engine isn't running. Pieces made while earlier ones are being spoken cost nothing.
+  function studioDelay(chunks) {
+    if (chunks.every((c) => ready.has(c.key))) return 0;
+    if (studio.status !== 'ready' || !engine.worker) return Infinity;
+    const now = performance.now();
+    let free = making ? Math.max(200, making.est - (now - making.at)) : 0; // when the engine can take the next piece
+    let spoken = 0, worst = 0;
+    chunks.forEach((c) => {
+      if (!ready.has(c.key)) {
+        if (!(making && making.key === c.key)) free += pieceMs(c);
+        worst = Math.max(worst, free - spoken);
+      }
+      spoken += speechMs(c);
+    });
+    return worst;
+  }
+
+  // Bring pieces saved on the phone by an earlier visit straight into memory.
+  async function fetchSaved(chunks) {
+    const missing = chunks.filter((c) => !ready.has(c.key));
+    if (!missing.length) return;
+    await Promise.all(missing.map(async (c) => {
+      const wav = await cacheGet(c.key);
+      if (wav && !ready.has(c.key)) { ready.set(c.key, wav); settle(c.key, wav); }
+    }));
+    renderPrep();
+  }
+
+  function settle(key, wav, err) {
+    (waiters.get(key) || []).forEach((w) => (err ? w.reject(err) : w.resolve(wav)));
     waiters.delete(key);
   }
+  function failQueue(err) {
+    queue = [];
+    [...waiters.keys()].forEach((k) => settle(k, null, err));
+    jobs.clear();
+  }
+
+  async function generate(c) {
+    let lastErr = null;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      await studioLoad();
+      if (making && making.key === c.key) making.at = performance.now(); // the clock starts once the engine is up
+      try {
+        const res = await callEngine(Object.assign({ type: 'speak', text: c.text, voice: c.voice, speed: c.speed }, engine.cfg || {}), Math.max(40000, c.text.length * 700));
+        studio.genMs += res.ms;
+        studio.genSec += res.seconds;
+        if (c.text.length >= 12) {
+          const per = res.ms / c.text.length; // how fast this phone makes speech, to judge whether a line will be in time
+          studio.msPerChar = studio.msPerChar ? studio.msPerChar * 0.7 + per * 0.3 : per;
+        }
+        engine.fails = 0;
+        return res.wav;
+      } catch (e) {
+        lastErr = e;
+        log('voice engine: ' + ((e && e.message) || e));
+        if (e && (e.name === 'EngineStall' || e.name === 'EngineGone')) { killEngine(); continue; } // restart it once and retry
+        break;
+      }
+    }
+    if (++engine.fails >= 2) {
+      // It keeps failing: stop using it rather than making the actor wait on every line.
+      stopWorker();
+      loadPromise = null;
+      studio.status = 'error';
+      studio.error = friendlyEngineError(lastErr);
+      lastError = 'studio: ' + ((lastErr && lastErr.message) || lastErr);
+    }
+    throw lastErr || new Error('the voice engine failed');
+  }
+
   async function pump() {
     if (pumping) return;
     pumping = true;
+    clearTimeout(engine.idleTimer);
+    updateAwake();
     try {
       while (queue.length) {
         const key = queue.shift();
         const c = jobs.get(key);
         if (!c) continue;
+        if (ready.has(key)) { jobs.delete(key); settle(key, ready.get(key)); continue; }
         try {
-          let blob = await cacheGet(key); // generated lines are saved on the phone and reused
-          if (!blob) {
-            await studioLoad();
-            const { wav } = await callWorker({ type: 'speak', quality: studio.quality, chunks: [c.text], voice: c.voice, speed: c.speed });
-            blob = new Blob([wav], { type: 'audio/wav' });
-            cachePut(key, blob);
+          let wav = await cacheGet(key); // lines already made are saved on the phone and reused
+          if (!wav && ready.has(key)) wav = ready.get(key);
+          if (!wav) {
+            setCrumb(true);
+            making = { key, at: performance.now(), est: pieceMs(c) };
+            wav = await generate(c);
+            if (!wavHasSound(wav)) throw new Error('the voice model produced no sound for this line');
+            cachePut(key, wav);
           }
-          ready.set(key, blob);
-          settle(key, blob);
+          ready.set(key, wav);
+          settle(key, wav);
         } catch (err) {
           settle(key, null, err);
+          if (studio.status === 'error') { making = null; failQueue(err); renderCast(); break; }
         }
+        making = null;
         jobs.delete(key);
         renderPrep();
       }
-    } finally { pumping = false; renderPrep(); }
+      if (studio.status !== 'error' && studio.crashes) { studio.crashes = 0; }
+      if (studio.status !== 'error') saveStudio();
+    } finally {
+      pumping = false;
+      making = null;
+      setCrumb(false);
+      renderPrep();
+      scheduleUnload();
+    }
   }
+
+  // The model holds several hundred MB. Once every line is made it isn't needed, and iPhones close pages that
+  // hold too much memory, so let it go; it reloads from the phone's storage when another line is wanted.
+  function scheduleUnload() {
+    clearTimeout(engine.idleTimer);
+    if (!engine.worker) return;
+    engine.idleTimer = setTimeout(() => {
+      if (pumping || engine.pending.size || queue.length || studio.status === 'loading') return;
+      log('voice engine unloaded (idle)');
+      killEngine();
+      renderEngineUi();
+    }, 30000);
+  }
+
   function want(chunk) {
     if (ready.has(chunk.key)) return Promise.resolve(ready.get(chunk.key));
+    if (studio.status === 'error') return Promise.reject(new Error(studio.error || 'the voice engine is unavailable'));
     const p = new Promise((resolve, reject) => {
       if (!waiters.has(chunk.key)) waiters.set(chunk.key, []);
       waiters.get(chunk.key).push({ resolve, reject });
@@ -912,31 +1694,46 @@ It does to me.`;
     pump();
     return p;
   }
-  // Move these chunks to the front of the queue (the line the scene needs right now).
+  // Move these pieces to the front of the queue (the line the scene needs right now).
   function prioritise(chunks) {
-    const keys = chunks.map((c) => c.key).filter((k) => queue.includes(k));
+    const keys = [...new Set(chunks.map((c) => c.key))].filter((k) => queue.includes(k));
     if (keys.length) queue = keys.concat(queue.filter((k) => !keys.includes(k)));
+  }
+  // The engine works on the lines the scene reaches next, in order; anything already passed goes to the back.
+  function frontload(fromIndex) {
+    prioritise(studioLinesFrom(fromIndex).flatMap(lineChunks));
   }
 
   function renderPrep() {
-    const chunks = studioLinesFrom(state.startIndex).flatMap(lineChunks);
+    const chunks = state.me ? studioLinesFrom(state.startIndex).flatMap(lineChunks) : [];
     prep.total = chunks.length;
     prep.done = chunks.filter((c) => ready.has(c.key)).length;
-    const btn = $('#rehearseBtn');
-    const pct = prep.total ? Math.round((prep.done / prep.total) * 100) : 100;
-    const preparing = studio.downloaded && prep.total > 0 && prep.done < prep.total && studio.status !== 'error';
-    if (btn && !run) btn.textContent = preparing ? `▶ Start scene (voices ${pct}%)` : '▶ Start scene';
-    if (run) return;
-    if (preparing) {
-      nowState(studio.status === 'loading' && !studioReady()
-        ? `Loading the reader voices${studio.progress > 0 && studio.progress < 1 ? ` ${Math.round(studio.progress * 100)}%` : ''}…`
-        : `Preparing the reader's lines… ${pct}%. Best to wait for 100% the first time; after that this scene starts instantly.`);
-    } else if (studio.downloaded && prep.total && studio.status !== 'error') {
-      nowState('Reader voices ready. Tap ▶ Start scene — I\'ll read the other parts and wait for yours.');
+    const pct = prepPct();
+    const working = prep.total > 0 && prep.done < prep.total && studio.status !== 'error' && !engineBlocked();
+    updateAwake();
+    renderStrip();
+    if (run || micTest) return;
+    if (!state.me) { setTurn('idle', 'Choose who you\'re playing to begin.'); return; }
+    if (working) {
+      const what = studio.status === 'loading'
+        ? (studio.phase === 'download' && studio.progress > 0 && studio.progress < 1
+          ? `Downloading the studio voices… ${Math.round(studio.progress * 100)}% (one time only).`
+          : 'Starting the studio voices…')
+        : `Preparing the studio voices… ${pct}%.`;
+      setTurn('idle', `${what} You can start now — until they're ready I'll read in the phone's voice.`);
+    } else if (prep.total && studio.status !== 'error') {
+      setTurn('idle', 'Ready. Tap ▶ Start scene — I\'ll speak the other parts and listen for yours.');
+    } else {
+      setTurn('idle', 'Tap ▶ Start scene — I\'ll speak the other parts and listen for yours.');
     }
   }
+  function renderEngineUi() {
+    renderStudioPanel();
+    renderVoiceBanner();
+    renderPrep();
+  }
 
-  // Queue every reader chunk of the scene, in scene order, dropping work nobody needs any more.
+  // Queue every reader piece of the scene, in scene order, dropping work nobody needs any more.
   function prepareScene(from) {
     const chunks = studioLinesFrom(from).flatMap(lineChunks);
     const needed = new Set(chunks.map((c) => c.key));
@@ -946,172 +1743,198 @@ It does to me.`;
     prioritise(chunks);
     renderPrep();
   }
+  let booted = false; // set a moment after start-up, so nothing heavy begins while the page may still reload
   function prepareInBackground() {
-    if (!studioSupported || !studio.downloaded || !state.me || studio.status === 'error') return;
+    if (!booted || !studioSupported || !studio.downloaded || !state.me || studio.status === 'error' || engineBlocked()) return;
     prepareScene(state.startIndex);
   }
   let prepTimer = null;
   const prepareSoon = () => { clearTimeout(prepTimer); prepTimer = setTimeout(prepareInBackground, 700); };
 
-  // One shared <audio>: iOS only lets an element play after a tap has "unlocked" it.
-  const player = new Audio();
-  player.setAttribute('playsinline', '');
-  const SILENT = 'data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//NwwAAAAAAAAAAAAEluZm8AAAAPAAAABAAAAlgAenp6enp6enp6enp6enp6enp6enp6enp6pqampqampqampqampqampqampqampqamptPT09PT09PT09PT09PT09PT09PT09PT09P/////////////////////////////////AAAAAExhdmM2MC4zMQAAAAAAAAAAAAAAACQCcQAAAAAAAAJY+/rsqgAAAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV';
-  function unlockPlayer() {
-    try { player.src = SILENT; player.play().catch(() => {}); } catch { /* ignore */ }
-  }
-
-  class NotReady extends Error { constructor(rest) { super('not ready'); this.name = 'NotReady'; this.rest = rest; } }
-  const CHUNK_WAIT_MS = 15000;
-  function playBlob(blob, signal) {
-    return step(signal, (done, onClean) => {
-      const url = URL.createObjectURL(blob);
-      onClean(() => { player.onended = player.onerror = null; player.pause(); URL.revokeObjectURL(url); });
-      player.onended = () => done();
-      player.onerror = () => done();
-      player.src = url;
-      player.play().catch(() => done());
-    });
-  }
-  async function speakStudio(line, signal) {
-    const chunks = lineChunks(line);
+  class NotReady extends Error { constructor() { super('the line was not ready in time'); this.name = 'NotReady'; } }
+  const CHUNK_WAIT_MS = 90000;
+  // Plays a line in the studio voice, piece by piece. A piece that isn't made within waitMs gives up with NotReady.
+  async function speakStudio(line, chunks, signal, waitMs) {
     chunks.forEach((c) => { want(c).catch(() => {}); });
     prioritise(chunks);
     for (let i = 0; i < chunks.length; i++) {
       const c = chunks[i];
-      let blob = ready.get(c.key) || null, err = null, skipped = true;
-      if (!blob) {
-        const note = setTimeout(() => nowState(`${line.character} is getting ready…`), 500);
-        let timer = null;
-        try {
-          await step(signal, (done, onClean) => {
-            let settled = false;
-            const finish = (viaSkip) => { if (!settled) { settled = true; skipped = viaSkip; done(); } };
-            want(c).then((b) => { blob = b; finish(false); }, (e) => { err = e; finish(false); });
-            timer = setTimeout(() => { err = new NotReady(chunks.slice(i).map((x) => x.text).join(' ')); finish(false); }, CHUNK_WAIT_MS);
-            onClean(() => { clearTimeout(timer); settled = true; });
-          });
-        } finally { clearTimeout(note); clearTimeout(timer); }
-        if (err) throw err;
-        if (!blob) return; // skipped with Next while it was generating
-        status(`${line.character} is reading…`);
+      try {
+        let wav = ready.get(c.key) || null;
+        if (!wav) {
+          let err = null;
+          const waitStart = performance.now();
+          const note = setTimeout(() => setTurn('wait', `⏳ ${line.character} is getting ready…`), 350);
+          try {
+            await step(signal, (done, onClean) => {
+              let settled = false;
+              const finish = () => { if (!settled) { settled = true; done(); } };
+              want(c).then((w) => { wav = w; finish(); }, (e) => { err = e; finish(); });
+              const timer = setTimeout(() => { err = new NotReady(); finish(); }, waitMs || CHUNK_WAIT_MS);
+              onClean(() => { clearTimeout(timer); settled = true; });
+            });
+          } finally { clearTimeout(note); }
+          if (err) throw err;
+          if (!wav) return; // skipped with Next while it was being made
+          log(`${line.character}: waited ${((performance.now() - waitStart) / 1000).toFixed(1)}s for a line to be made`);
+        }
+        setTurn('reader', `🔊 ${line.character} is speaking`);
+        await playWav(wav, signal);
+        if (run && run.skipped) return; // Next skips the rest of the speech, not just this sentence
+        if (i < chunks.length - 1) await sleep(140, signal);
+      } catch (e) {
+        if (e && e.name !== 'AbortError') e.rest = chunks.slice(i).map((x) => x.text).join(' ');
+        throw e;
       }
-      await playBlob(blob, signal);
-      if (i < chunks.length - 1) await sleep(120, signal);
     }
   }
 
-  let studioWarned = false;
   function studioNotice(msg) {
     status(msg);
     const m = $('#studioMsg');
     if (m) m.textContent = msg;
   }
 
-  // ---------- following the actor's words ----------
-  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-  let speechRecBroken = false; // set after a permission/network failure so we stop retrying every line
-
-  const toWords = (s) => spokenText(s).toLowerCase()
-    .replace(/[’']/g, '').replace(/[^a-z0-9]+/g, ' ').split(' ').filter(Boolean);
-
-  function similar(a, b) {
-    if (a === b) return true;
-    if (a.length >= 4 && b.length >= 4 && (a.startsWith(b.slice(0, 4)) || b.startsWith(a.slice(0, 4)))) return true;
-    return false;
-  }
-
-  // How far through the expected line the heard words have got, matching in order and tolerating skipped words.
-  function lineProgress(expected, heard) {
-    let pos = 0, matched = 0, last = -1;
-    for (const w of heard) {
-      for (let j = pos; j < Math.min(expected.length, pos + 4); j++) {
-        if (similar(expected[j], w)) { matched++; last = j; pos = j + 1; break; }
-      }
-    }
-    const n = expected.length || 1;
-    return { ratio: matched / n, matched, atEnd: last >= n - Math.min(2, n) };
-  }
-
-  function startListening(onWords) {
-    const m = state.settings.matchWords;
-    // Recognition can take the mic away from the recorder on some phones, so by default it's rehearsal-only.
-    if (!SpeechRec || speechRecBroken || m === 'off' || (m !== 'always' && run && run.recording)) return null;
-    let stopped = false, finalText = '';
-    const rec = new SpeechRec();
-    rec.continuous = true;
-    rec.interimResults = true;
-    rec.lang = 'en-US';
-    rec.onresult = (e) => {
-      let interim = '';
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        if (e.results[i].isFinal) finalText += ' ' + e.results[i][0].transcript;
-        else interim += ' ' + e.results[i][0].transcript;
-      }
-      onWords(toWords(finalText + ' ' + interim));
-    };
-    rec.onerror = (e) => {
-      if (e.error === 'not-allowed' || e.error === 'service-not-allowed' || e.error === 'network') speechRecBroken = true;
-    };
-    rec.onend = () => { if (!stopped && !speechRecBroken) { try { rec.start(); } catch { /* already restarting */ } } };
-    try { rec.start(); } catch { return null; }
-    return () => { stopped = true; try { rec.abort(); } catch { /* ignore */ } };
-  }
-
-  function waitForMe(line, signal) {
+  // ---------- listening for the actor's line ----------
+  // Resolves when the actor has finished: they spoke and then went quiet. It can never hang: a dead microphone is
+  // timed instead, and there are limits for "never started" and "never stopped".
+  async function waitForMe(line, signal) {
     const mode = state.settings.advanceMode;
-    if (mode === 'timed') return sleep(1200 + wordCount(line.text) * 420, signal);
-    if (mode !== 'voice') return step(signal, () => {}); // manual: only Next advances
+    const words = wordCount(line.text);
+    const timedMs = 1200 + words * 420;
+    const tapHint = hasTouch ? 'tap here' : 'press Space';
+    if (mode === 'timed') {
+      setTurn('me', `Your line (timed). ${hasTouch ? 'Tap here' : 'Press Space'} to move on sooner.`);
+      await sleep(timedMs, signal);
+      return { reason: 'timed' };
+    }
+    if (mode !== 'voice') {
+      setTurn('me', `Your line — ${tapHint} when you've finished.`);
+      await step(signal, () => {});
+      return { reason: 'tap' };
+    }
 
-    const expected = toWords(line.text);
-    return step(signal, (done, onClean) => {
+    // How far through the line the actor is, judged by counting syllables against the number the line has. It doesn't
+    // depend on how fast they speak or how long they pause. Early in a line a pause is a breath or a beat, and has to
+    // be long before the reader comes in; once nearly all the syllables have been heard, a short pause is the end.
+    const expSyl = syllableCount(line.text);
+    const ratio = Math.min(1.1, Math.max(0.6, state.settings.sylRatio || 0.78)); // share of syllables the meter catches
+    const shortQuiet = state.settings.silenceMs;
+    const midQuiet = Math.max(shortQuiet, Math.min(shortQuiet * 2, 2200));
+    const longQuiet = Math.max(4000, shortQuiet * 3.5);
+    // Long speeches are counted more accurately, and they are where the long pauses are, so they stay patient longer.
+    const nearEnd = expSyl >= 40 ? 0.85 : 0.8;
+    const pastMiddle = expSyl >= 40 ? 0.72 : 0.5;
+    const noVoiceLimit = Math.max(12000, words * 600 + 8000);
+    const hardLimit = Math.max(25000, words * 1500 + 12000);
+    const result = { reason: 'tap', voicedMs: 0, peak: 0, syl: 0, expSyl, progress: 0 };
+    setTurn('me', '🎤 Your line — I\'m listening');
+
+    await step(signal, (done, onClean) => {
       const start = performance.now();
-      let voicedMs = 0, lastVoice = 0, prev = start;
-      let progress = { ratio: 0, matched: 0, atEnd: false }, lastHeard = 0;
-      const stopListening = startListening((heard) => {
-        progress = lineProgress(expected, heard);
-        lastHeard = performance.now();
-        status(`Listening… ${progress.matched}/${expected.length} words`);
-      });
-      if (stopListening) onClean(stopListening);
-      status(stopListening ? 'Listening for your line…' : (analyser ? 'Your line — I\'ll cue when you finish.' : 'Your line — press Space when done.'));
+      const guardUntil = Math.max(start, out.endedAt + 350); // let the reader's last word die away first
+      let voicedMs = 0, firstVoice = 0, lastVoice = 0, prev = 0, inVoice = false;
+      let syl = 0, lastSyl = 0, rising = false, valley = Infinity, peakDb = -Infinity;
+      let recovering = false, tried = 0, timedNote = false, hinted = false, shown = '', lead = 3;
+      const finish = (reason) => { result.reason = reason; result.voicedMs = Math.round(voicedMs); result.syl = syl; done(); };
+      const show = (kind, text) => { if (shown !== text) { shown = text; setTurn(kind, text); } };
+      const progressNow = () => Math.max(syl / Math.max(1, expSyl * ratio), firstVoice ? (lastVoice - firstVoice) / Math.max(1500, words * 900) : 0);
 
-      const timedMs = 1200 + wordCount(line.text) * 420;
-      let fellBack = false, hinted = false;
+      // Every reading of the mic meter (25 a second) lands here.
+      mic.listener = (level, now) => {
+        if (now < guardUntil || now - mic.openedAt < 150) { prev = now; return; } // skip the click of the mic coming on
+        const dt = prev ? Math.min(200, now - prev) : 40;
+        prev = now;
+        if (lead > 0) {
+          // The mic came on to find the actor already talking (three readings in a row, so not just the click of
+          // it switching on): count the part of the line it missed.
+          if (level <= thrOn()) lead = 0;
+          else if (--lead === 0 && mic.half && now - start < 2500) voicedMs += Math.min(250, mic.openMs || 0);
+        }
+        if (level > result.peak) result.peak = level;
+        if (level > thrOn()) {
+          voicedMs += dt;
+          if (!firstVoice) firstVoice = now;
+          lastVoice = now;
+          inVoice = true;
+        } else if (level > thrOff() && (inVoice || voicedMs >= 250)) lastVoice = now;
+        else inVoice = false;
+        // A syllable is a rise in level of 3 dB or more followed by a fall of 3 dB.
+        const db = 20 * Math.log10(Math.max(level, 1e-7));
+        if (!rising) {
+          if (db < valley) valley = db;
+          if (db > valley + 3 && level > thrOff()) { rising = true; peakDb = db; }
+        } else {
+          if (db > peakDb) peakDb = db;
+          if (db < peakDb - 3) {
+            if (now - lastSyl >= 90) { syl++; lastSyl = now; }
+            rising = false;
+            valley = db;
+          }
+        }
+      };
+
       const iv = setInterval(() => {
         const now = performance.now();
-        const dt = now - prev; prev = now;
-        if (now - start < 300) return; // ignore the tail of the reader's audio
-        const hasMic = !!analyser && meterAlive();
-        const level = hasMic ? readLevel() : 0;
-        const hearing = hasMic && level > threshold();
-        if (hearing) { voicedMs += dt; lastVoice = now; if (!hinted) nowState('Hearing you… I\'ll cue when you finish.'); }
-        const quietFor = hasMic && voicedMs > 250 ? now - lastVoice : 0;
-        const following = stopListening && !speechRecBroken && lastHeard > 0;
+        const elapsed = now - start;
+        if (elapsed > hardLimit) { finish('limit'); return; }
 
-        if (!hasMic && !following) {
-          // Nothing to listen with: time the line by its length and say so, rather than waiting forever.
-          if (!fellBack) { fellBack = true; status(analyser ? 'Mic isn\'t delivering sound — timing your line instead. Tap Next to skip.' : 'No mic — timing your line. Tap Next to skip.'); }
-          if (now - start > timedMs) done();
+        if (mic.state === 'starting') {
+          // The mic is being switched on. If that drags on, the phone is asking for permission.
+          if (elapsed > 2500) {
+            show('me', `Your line — waiting for the microphone (tap Allow if your phone is asking). ${hasTouch ? 'Tap here' : 'Press Space'} when you've finished.`);
+            if (elapsed > Math.max(timedMs, 8000)) finish('timed');
+          }
           return;
         }
-        if (hasMic && !following && voicedMs === 0 && now - start > 8000 && !hinted) {
-          hinted = true;
-          nowState('I can\'t hear you yet — speak up, move closer, or tap Next when you\'re done.');
+        if (!micDelivering(now)) {
+          // No microphone, or one that has sent nothing for a second and a half. Try to get it back (once per line,
+          // twice per scene); failing that, time the line so the scene still moves.
+          if (mic.state === 'live' && !recovering && tried < 1 && mic.recoveries < 2) {
+            recovering = true;
+            tried++;
+            recoverMic().then(() => { recovering = false; });
+          }
+          if (!recovering) {
+            if (!timedNote) {
+              timedNote = true;
+              log('your line: no sound from the mic, timing it instead');
+              show('me', `Your line — the mic isn't picking anything up, so I'm timing it. ${hasTouch ? 'Tap here' : 'Press Space'} when you've finished.`);
+            }
+            if (elapsed > timedMs) finish('timed');
+          }
+          return;
         }
+        if (now < guardUntil) return;
 
-        if (following && progress.atEnd && progress.ratio >= 0.5) {
-          // Reached the last words: cue once they stop talking.
-          if (!hasMic ? now - lastHeard > 700 : quietFor > Math.min(state.settings.silenceMs, 600)) done();
-        } else if (following) {
-          // Mid-line pause: only cue on a long silence, in case recognition missed the ending.
-          if (quietFor > Math.max(state.settings.silenceMs * 2.5, 2500)) done();
-        } else if (quietFor > state.settings.silenceMs) {
-          done(); // no recognition available: fall back to silence detection
+        if (voicedMs >= 250) {
+          const quiet = now - lastVoice;
+          const progress = progressNow();
+          const need = expSyl <= 4 || progress >= nearEnd ? shortQuiet : progress >= pastMiddle ? midQuiet : longQuiet;
+          if (quiet >= need) { result.progress = progress; finish('quiet'); return; }
+          show('hearing', quiet < 300 ? '🎤 Hearing you…' : '🎤 Listening… (pause when you\'re done)');
+        } else {
+          if (voicedMs > 0 && now - lastVoice > 1500) { voicedMs = 0; firstVoice = 0; syl = 0; } // a click or a cough, not a line
+          if (elapsed > noVoiceLimit) { finish('no-voice'); return; }
+          if (!hinted && elapsed > 7000) {
+            hinted = true;
+            show('me', `🎤 I can't hear you yet — speak up or move closer, or ${tapHint} when you've finished.`);
+          }
         }
       }, 40);
-      onClean(() => clearInterval(iv));
+      onClean(() => { clearInterval(iv); mic.listener = null; });
     });
+    // Learn what share of this actor's syllables the meter catches (it depends on the voice, the mic and the room).
+    // It may rise freely but only falls a little per line, so one line that was cut short can't make the next worse.
+    if (result.reason === 'quiet' && expSyl >= 10 && result.syl > 0) {
+      const seen = result.syl / expSyl;
+      if (seen >= 0.4 && seen <= 1.4) {
+        const next = seen > ratio ? ratio * 0.5 + seen * 0.5 : Math.max(ratio * 0.93, ratio * 0.8 + seen * 0.2);
+        state.settings.sylRatio = +Math.min(1.1, Math.max(0.6, next)).toFixed(3);
+        save();
+      }
+    }
+    return result;
   }
 
   async function countdown(n, signal) {
@@ -1134,7 +1957,7 @@ It does to me.`;
   function startRecorder() {
     const mime = pickMime();
     if (mime === null) throw new Error('Recording is not supported in this browser.');
-    const rec = new MediaRecorder(stream, mime ? { mimeType: mime, audioBitsPerSecond: 128_000 } : undefined);
+    const rec = new MediaRecorder(mic.stream, mime ? { mimeType: mime, audioBitsPerSecond: 128_000 } : undefined);
     const chunks = [];
     const started = Date.now();
     rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
@@ -1160,32 +1983,77 @@ It does to me.`;
     $('#stageRole').disabled = on;
     $('#nextBtn').disabled = !on;
     $('#stopBtn').disabled = !on;
+    $('#micBtn').hidden = on;
     $$('.tab').forEach((t) => { if (t.dataset.view !== 'stage') t.disabled = on && record; });
   }
-  const status = (msg) => { $('#status').textContent = msg || ''; if (msg) nowState(msg); };
+  const status = (msg) => { $('#status').textContent = msg || ''; };
   const nowState = (msg) => { const el = $('#nowState'); if (el) el.textContent = msg || ''; };
+  // What the big card says and how it looks: idle | reader | wait | me | hearing.
+  function setTurn(kind, text) {
+    const card = $('#nowCard');
+    if (card) card.dataset.turn = kind;
+    nowState(text);
+  }
+
+  function renderStrip() {
+    const el = $('#strip');
+    if (!el) return;
+    const bits = [];
+    const others = state.characters.filter((c) => c !== state.me);
+    if (others.length && state.me) {
+      if (others.some((c) => usesStudio(readerFor(c)))) bits.push(studio.status === 'loading' ? 'reader: studio voice starting' : `reader: studio voice ${prep.done}/${prep.total}`);
+      else bits.push('reader: phone voice');
+    }
+    const now = performance.now();
+    bits.push('mic: ' + (mic.state === 'live' ? (micDelivering(now) ? 'on' : 'on but silent') : mic.state === 'off' && run && run.half ? 'paused' : mic.state));
+    if (out.path) bits.push('sound: ' + (out.path === 'webaudio' ? 'web audio' : out.path === 'device' ? 'phone voice' : 'audio element'));
+    bits.push('v' + APP_VERSION);
+    el.textContent = bits.join(' · ');
+  }
 
   async function runScene(record) {
     if (run || !state.lines.length || !state.me) return;
-    // iOS only lets speech start from a user gesture: prime the engine before any await.
-    if (hasTTS) speechSynthesis.speak(new SpeechSynthesisUtterance(''));
-    unlockAudio();
-    unlockPlayer();
+    const wantsMic = record || state.settings.advanceMode === 'voice';
+    const half = wantsMic && useHalf() && !record; // iPhone: the mic is on for the actor's lines only
+    const readers = state.characters.filter((c) => c !== state.me).map(readerFor);
+    // Everything an iPhone only allows from a tap happens here, before the first wait.
+    unlockAudio(!wantsMic || half);
+    if (readers.length) unlockSpeech(); // the phone's voice stands in whenever a studio line isn't ready
+    stopMicTest(true);
     const ac = new AbortController();
-    run = { ac, skip: null, recording: record };
+    run = { ac, skip: null, skipped: false, recording: record, half, turn: '' };
+    const mineNext = (from) => { for (let k = from; k < state.lines.length; k++) if (state.lines[k].type === 'dialogue') return state.lines[k].character === state.me; return false; };
+    const micUsable = () => wantsMic && mic.state !== 'denied' && mic.fails < 3; // a passing failure may be retried
+    let settleUntil = 0; // after the mic goes off an iPhone needs a moment to give the loudspeaker back
     setRunning(true, record);
+    status('');
+    setTurn('idle', record ? 'Getting ready to record…' : 'Starting…');
+    updateAwake();
+    studioWarned = false;
+    mic.recoveries = 0;
+    mic.fails = 0;
+    mic.slowOpens = 0;
+    let failed = '';
+    log(`scene started (${record ? 'recording' : 'rehearsal'}, cue: ${state.settings.advanceMode}, from line ${state.startIndex})`);
     let recorder = null;
     try {
-      if (record || state.settings.advanceMode === 'voice') {
-        try { await ensureMedia(); } catch (e) {
-          if (record) throw new Error('Microphone blocked (' + (e.message || e.name) + '). Allow the mic in your browser settings to record.');
-          status('No mic — press Space after your lines.');
+      if (wantsMic) {
+        // Asked for now, while the actor is still at the phone, even if the first line is the reader's.
+        try { await openMic(); } catch (e) {
+          if (ac.signal.aborted || (e && e.name === 'AbortError')) throw abortError();
+          if (record) throw new Error(micBlockedText(e));
+          status(micBlockedText(e) + ' Until then I\'ll time your lines.');
         }
-      }
-      if (studio.downloaded && studioLinesFrom(state.startIndex).length) {
-        prepareScene(state.startIndex);
-      }
+        // A moment of listening to the room, so the first line is judged against the right background level.
+        if (micLive() && !mic.calibrated) {
+          setTurn('idle', 'Listening to the room…');
+          const t0 = performance.now();
+          while (!mic.calibrated && performance.now() - t0 < 900 && micLive()) await sleep(60, ac.signal);
+        }
+      } else setSessionType('playback');
+      if (studio.downloaded && !engineBlocked() && studioLinesFrom(state.startIndex).length) prepareScene(state.startIndex);
       if (record) {
+        if (isIOS) status('Recording keeps the mic on, and an iPhone then plays the reader more quietly. Headphones avoid that.');
         const n = Number(state.settings.countdown);
         if (n) await countdown(n, ac.signal);
         recorder = startRecorder();
@@ -1195,28 +2063,60 @@ It does to me.`;
         const l = state.lines[i];
         if (l.type !== 'dialogue') continue;
         setCurrent(i);
+        run.skipped = false;
         if (l.character === state.me) {
-          if (state.settings.advanceMode !== 'voice') status('Your line — press Space when done.');
-          await waitForMe(l, ac.signal);
+          // On iPhone the mic is usually on its way already; elsewhere this brings back a mic the system took away.
+          // waitForMe copes while it starts.
+          if (micUsable() && (half || !micLive())) openMic().catch(() => {});
+          run.turn = 'me';
+          const r = await waitForMe(l, ac.signal);
+          run.turn = '';
+          log(`your line ${i} (${wordCount(l.text)} words): ended by ${r.reason}${r.voicedMs !== undefined ? ` (heard ${(r.voicedMs / 1000).toFixed(1)}s of speech, ${r.syl} of ~${r.expSyl} syllables, loudest ${r.peak.toFixed(4)}, room ${mic.noise.toFixed(4)}${half ? ', mic on in ' + Math.round(mic.openMs) + ' ms' : ''})` : ''}`);
+          if (half && !mineNext(i + 1)) { closeMic(); settleUntil = performance.now() + 350; }
         } else {
-          status(`${l.character} is reading…`);
-          run.readerSpeaking = true;
-          try { await speakLine(l, ac.signal); } finally { if (run) run.readerSpeaking = false; }
+          if (half) {
+            if (micLive() || mic.state === 'starting') { closeMic(); settleUntil = performance.now() + 350; }
+            // Would the mic have been off for most of a minute by the end of this line? Then refresh its permission now.
+            const off = performance.now() - mic.closedAt;
+            if (mic.granted && micUsable() && off > 3000 && (off > 40000 || off + wordCount(l.text) * 420 > 52000)) { await micKeepAlive(ac.signal); settleUntil = performance.now() + 350; }
+            const wait = settleUntil - performance.now();
+            if (wait > 0) await sleep(wait, ac.signal);
+          }
+          run.turn = 'reader';
+          setTurn('reader', `🔊 ${l.character} is speaking`);
+          try { await speakLine(l, ac.signal, { index: i }); } catch (e) {
+            if (e && e.name === 'AbortError') throw e;
+            // Whatever went wrong with this one line, the scene goes on: hold it on screen for as long as it takes to read.
+            lastError = 'reader line: ' + ((e && e.message) || e);
+            log(`${l.character}: line ${i} could not be spoken (${(e && e.message) || e})`);
+            setTurn('reader', `🔇 ${l.character}'s line couldn't be spoken — read it on screen`);
+            await sleep(800 + wordCount(l.text) * 380, ac.signal);
+          }
+          run.turn = '';
+          if (half && micUsable() && mineNext(i + 1)) openMic().catch(() => {}); // the mic comes back on during the gap
         }
+        renderStrip();
         if (state.settings.gapMs) await sleep(state.settings.gapMs, ac.signal);
       }
       status('Scene complete.');
-      setTimeout(renderPrep, 2500);
+      setTurn('idle', 'Scene complete.');
+      log('scene complete');
       if (record) await sleep(1200, ac.signal);
     } catch (err) {
-      if (err.name === 'AbortError') status('Stopped.');
-      else { status(err.message || String(err)); nowState('⚠ ' + (err.message || String(err))); lastError = 'scene: ' + (err.message || err); renderDiag(); console.error(err); }
+      if (err && err.name === 'AbortError') { status('Stopped.'); log('scene stopped'); }
+      else {
+        const msg = (err && err.message) || String(err);
+        failed = msg;
+        status(msg);
+        lastError = 'scene: ' + msg;
+        log('scene error: ' + msg);
+        console.error(err);
+      }
     } finally {
-      if (hasTTS) speechSynthesis.cancel();
+      if (hasTTS) { try { speechSynthesis.cancel(); } catch { /* ignore */ } }
       run = null;
       setCurrent(-1);
       setRunning(false, record);
-      renderPrep();
       if (recorder) {
         const { blob, duration } = await recorder.stop();
         if (blob.size) {
@@ -1224,11 +2124,29 @@ It does to me.`;
           status(`Saved take (${fmtDur(duration)}). See Takes.`);
         }
       }
+      // Keep the mic for a minute in case another run-through follows, then let it go. (On iPhone it goes off at
+      // once: the mic being on is what spoils the sound there.)
+      if (half) {
+        closeMic();
+        // Each of those was most likely the phone asking for the microphone again.
+        if (mic.slowOpens >= 2 && !failed) status('Your phone kept asking for the microphone. To stop that: page menu in the address bar → Website Settings → Microphone → Allow.');
+      } else if (micLive()) mic.releaseTimer = setTimeout(() => { if (!run && !micTest) closeMic(); renderStrip(); }, 60000);
+      updateAwake();
+      renderDiag();
+      setTimeout(() => { if (!run) renderPrep(); }, failed ? 6000 : 2500);
+      if (failed) setTurn('idle', '⚠ ' + failed);
+      renderStrip();
     }
   }
 
-  // ---------- takes (IndexedDB) ----------
+  // ---------- storage (IndexedDB) ----------
+  // IndexedDB has a history of hanging on iPhone, and nothing here may wait on it for ever.
+  const withTimeout = (p, ms, what) => new Promise((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error(what + ' timed out')), ms);
+    p.then((v) => { clearTimeout(t); resolve(v); }, (e) => { clearTimeout(t); reject(e); });
+  });
   let dbp = null;
+  let dbTimeouts = 0;
   function db() {
     if (!dbp) {
       dbp = new Promise((resolve, reject) => {
@@ -1240,26 +2158,50 @@ It does to me.`;
         };
         req.onsuccess = () => resolve(req.result);
         req.onerror = () => reject(req.error);
+        req.onblocked = () => reject(new Error('storage is blocked by another tab'));
       });
     }
     return dbp;
   }
-  async function tx(mode, fn, store = 'takes') {
-    const d = await db();
-    return new Promise((resolve, reject) => {
+  function tx(mode, fn, store = 'takes', ms = 6000) {
+    if (dbTimeouts >= 2) return Promise.reject(new Error('storage is not responding'));
+    const work = db().then((d) => new Promise((resolve, reject) => {
       const t = d.transaction(store, mode);
       const r = fn(t.objectStore(store));
       t.oncomplete = () => resolve(r && r.result);
       t.onerror = () => reject(t.error);
+      t.onabort = () => reject(t.error || new Error('storage transaction aborted'));
+    }));
+    return withTimeout(work, ms, 'storage').catch((e) => {
+      if (/timed out/.test(e.message) && ++dbTimeouts >= 2) log('phone storage is not responding: working without it');
+      throw e;
     });
   }
+  // Saved reader audio. Raw bytes rather than Blobs: Blobs kept in IndexedDB are unreliable on iPhone.
   async function cacheGet(key) {
-    try { const row = await tx('readonly', (s) => s.get(key), 'tts'); return row ? row.blob : null; } catch { return null; }
+    try {
+      const row = await tx('readonly', (s) => s.get(key), 'tts', 1500);
+      const wav = row && row.wav;
+      return wav && wavHasSound(wav) ? wav : null;
+    } catch { return null; }
   }
-  function cachePut(key, blob) {
-    tx('readwrite', (s) => s.put({ key, blob, created: Date.now() }), 'tts').catch(() => {});
+  function cachePut(key, wav) {
+    tx('readwrite', (s) => s.put({ key, wav, created: Date.now() }), 'tts').catch(() => {});
   }
   function cacheClear() { return tx('readwrite', (s) => s.clear(), 'tts').catch(() => {}); }
+  // Audio saved by earlier versions (different loudness, stored as Blobs) is no use any more.
+  function cachePrune() {
+    tx('readwrite', (s) => {
+      const req = s.openCursor();
+      req.onsuccess = () => {
+        const cur = req.result;
+        if (!cur) return;
+        if (!String(cur.key).startsWith('k3|')) cur.delete();
+        cur.continue();
+      };
+      return req;
+    }, 'tts').catch(() => {});
+  }
 
   const memTakes = []; // fallback if IndexedDB is unavailable (e.g. some private windows)
 
@@ -1546,6 +2488,9 @@ It does to me.`;
     } catch (err) {
       console.error(err);
       st.textContent = 'Could not read that image: ' + (err.message || err);
+    } finally {
+      // The text reader's memory isn't needed any more, and iPhones may refuse the voice engine its own while it is held.
+      if (ocrWorker) { try { ocrWorker.terminate(); } catch { /* ignore */ } ocrWorker = null; }
     }
   }
 
@@ -1554,17 +2499,26 @@ It does to me.`;
     $$('.tab').forEach((t) => t.classList.toggle('active', t.dataset.view === name));
     $$('.view').forEach((v) => v.classList.toggle('active', v.id === 'view-' + name));
     if (name === 'takes') renderTakes();
-    if (name === 'stage') prepareInBackground();
+    if (name === 'stage') { prepareInBackground(); renderPrep(); }
+    try { window.scrollTo(0, 0); } catch { /* ignore */ }
+    updateAwake();
   }
 
   function init() {
     // Ask the browser not to evict saved scripts and takes under storage pressure.
     if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
     load();
+    if (modelChanged) repickVoices(); // every line is made again for this version anyway
     $('#scriptInput').value = state.script || SAMPLE;
     onScriptChange();
     bindSettings();
     renderTakes();
+    cachePrune();
+    // Straight to the scene when a script and a role are already set.
+    if (state.me && state.lines.some((l) => l.type === 'dialogue')) showView('stage');
+    // Start making the reader's lines a moment after start-up.
+    setTimeout(() => { booted = true; prepareInBackground(); renderPrep(); }, 1200);
+    setInterval(renderStrip, 1000);
 
     if (hasTTS) {
       refreshVoices();
@@ -1624,24 +2578,32 @@ It does to me.`;
         return;
       }
       if (e.target.dataset.act !== 'test') return;
+      if (run) return;
       unlockPlayer();
       const name = e.target.closest('.reader').dataset.char;
       const line = state.lines.find((l) => l.character === name) || { character: name, text: 'Hi, I\'ll be reading with you today.' };
-      if (!hasTTS || run) return;
-      const tmp = { ac: new AbortController(), skip: null };
-      const prev = run; run = tmp;
-      speakLine(line, tmp.ac.signal).catch(() => {}).finally(() => { if (run === tmp) run = prev; });
+      const tmp = { ac: new AbortController(), skip: null, test: true };
+      run = tmp;
+      speakLine(line, tmp.ac.signal, { patient: true }).catch(() => {}).finally(() => { if (run === tmp) { run = null; renderPrep(); } });
     });
 
     $('#voiceBanner').addEventListener('click', (e) => {
       if (e.target.dataset.act !== 'fix-voices') return;
-      if (studio.status === 'error' || !studio.downloaded) {
+      if (engineBlocked() || studio.status === 'error') {
+        studio.crashes = 0;
+        saveStudio();
+        studio.status = 'idle';
+        engine.fails = 0;
+        renderCast();
+        studioLoad().catch(() => {});
+      } else if (!studio.downloaded) {
         showView('script');
         $('#voices').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        if (studio.status === 'error') studioLoad().catch(() => {});
+        studioLoad().catch(() => {});
       } else {
         state.characters.filter((c) => c !== state.me).forEach((c) => { readerFor(c).engine = 'studio'; });
         renderCast();
+        prepareInBackground();
       }
     });
     $('#diag').addEventListener('toggle', renderDiag);
@@ -1655,29 +2617,29 @@ It does to me.`;
     $('#studioPanel').addEventListener('click', async (e) => {
       const act = e.target.dataset.act;
       if (act === 'studio-load') studioLoad().catch(() => {});
-      else if (act === 'studio-clear') { await cacheClear(); studioNotice('Saved lines cleared.'); }
-      else if (act === 'studio-test') {
+      else if (act === 'studio-retry') {
+        studio.crashes = 0;
+        saveStudio();
+        studio.status = 'idle';
+        engine.fails = 0;
+        renderCast();
+        studioLoad().catch(() => {});
+      } else if (act === 'studio-clear') {
+        await cacheClear();
+        ready.clear();
+        studioNotice('Saved lines cleared.');
+        prepareInBackground();
+      } else if (act === 'studio-test') {
+        if (run) return;
         unlockPlayer();
-        const other = state.characters.find((c) => c !== state.me);
+        const other = state.characters.find((c) => c !== state.me && usesStudio(readerFor(c)));
         const line = { type: 'dialogue', character: other || '__test', text: 'You were a kid. Anybody would have run. That\'s not on you.' };
         if (!other) state.readers.__test = { engine: 'studio', studioVoice: 'am_michael', gender: 'm', rate: 1, pitch: 1 };
-        if (run) return;
-        const tmp = { ac: new AbortController(), skip: null };
+        const tmp = { ac: new AbortController(), skip: null, test: true };
         run = tmp;
-        studioNotice('Generating a test line…');
-        speakStudio(line, tmp.ac.signal).then(() => studioNotice(''), (e) => studioNotice('Test failed: ' + (e.message || e))).finally(() => { if (run === tmp) run = null; });
-      }
-    });
-    $('#studioPanel').addEventListener('change', (e) => {
-      if (e.target.dataset.act !== 'studio-quality') return;
-      const prev = studio.quality;
-      studio.quality = e.target.value;
-      saveStudio();
-      if (prev !== studio.quality && studio.downloaded) {
-        // A different model: restart the engine and regenerate lines with it.
-        if (worker) { worker.terminate(); worker = null; }
-        loadPromise = null; studio.status = 'idle'; studio.device = '';
-        renderStudioPanel(); studioLoad().catch(() => {});
+        studioNotice('Making a test line…');
+        speakStudio(line, lineChunks(line), tmp.ac.signal, CHUNK_WAIT_MS).then(() => studioNotice(''), (err) => studioNotice('Test failed: ' + ((err && err.message) || err)))
+          .finally(() => { delete state.readers.__test; if (run === tmp) { run = null; renderPrep(); } });
       }
     });
     $$('.tab').forEach((t) => t.addEventListener('click', () => showView(t.dataset.view)));
@@ -1694,6 +2656,26 @@ It does to me.`;
       renderLines();
       prepareInBackground();
     });
+    $('#micBtn').addEventListener('click', toggleMicTest);
+    // During your own line the whole card is a "done" button, in case the mic misses the end of it.
+    $('#nowCard').addEventListener('click', (e) => {
+      if (run && run.turn === 'me' && run.skip && !e.target.closest('button')) run.skip();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        // A locked or backgrounded phone suspends the page: end cleanly rather than freeze mid-line.
+        if (run && !run.test) { log('the app went to the background: scene stopped'); run.ac.abort(); }
+        stopMicTest();
+        closeMic();
+        setCrumb(false);
+      } else {
+        if (audioCtx && audioCtx.state !== 'running') { const p = audioCtx.resume(); if (p && p.catch) p.catch(() => {}); }
+        if (pumping) setCrumb(true);
+        updateAwake();
+        renderPrep();
+      }
+    });
+    window.addEventListener('pagehide', () => setCrumb(false));
     $('#rehearseBtn').addEventListener('click', () => runScene(false));
     $('#recordBtn').addEventListener('click', () => runScene(true));
     $('#nextBtn').addEventListener('click', () => run && run.skip && run.skip());
@@ -1717,5 +2699,5 @@ It does to me.`;
   }
 
   init();
-  window.__cue = { pageToBlocks, blocksToScript, parseScript }; // for automated tests
+  window.__cue = { pageToBlocks, blocksToScript, parseScript, chunkText, mic, out, studio, engine, events, state, prep, ready }; // for automated tests
 })();
