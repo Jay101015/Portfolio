@@ -35,7 +35,7 @@ import {FACES, POSES, defaultAvatar, defaultFaceFor, type AvatarConfig, type Fac
 
 const SceneSwitch: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}) => {
   if (scene.type === 'set') return <SetScene scene={scene} brand={brand} />;
-  if (['bite', 'grow', 'pie', 'shrink', 'takeaway', 'recap', 'hook', 'broll', 'news'].includes(scene.type)) return <PaperSwitch scene={scene} brand={brand} />; // the money pictures and the takeaway cards are drawn the same in every look
+  if (['bite', 'grow', 'pie', 'shrink', 'takeaway', 'recap', 'hook', 'broll', 'news', 'receipt'].includes(scene.type)) return <PaperSwitch scene={scene} brand={brand} />; // the money pictures and the takeaway cards are drawn the same in every look
   if (brand.paper && ['title', 'stat', 'text', 'list', 'compare', 'chart', 'quote', 'outro', 'still', 'image', 'clip', 'art'].includes(scene.type)) return <PaperSwitch scene={scene} brand={brand} />;
   switch (scene.type) {
     case 'title':

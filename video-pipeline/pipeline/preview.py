@@ -27,6 +27,9 @@ def _visual_summary(sc: dict[str, Any]) -> str:
     if t == "list":
         items = "".join(f"<li>{e(i)}</li>" for i in p.get("items", []))
         return f"<b>List</b> {e(str(p.get('title','')))}<ol>{items}</ol>"
+    if t == "receipt":
+        rows = "".join(f"<li>{'' if r.get('kept') else '<b>'}{e(r['label'])}: {e(r['amount'])}{'' if r.get('kept') else '</b>'}</li>" for r in p.get("rows", []))
+        return f"<b>Receipt</b> {e(str(p.get('title','')))}<ul>{rows}</ul>{e(str(p.get('left','Left')))}: £{p.get('after', 0):,.0f}"
     if t == "chart":
         if p.get("chartType") == "bar":
             body = ", ".join(f"{b['label']}={b['value']}" for b in p.get("bars", []))

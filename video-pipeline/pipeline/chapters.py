@@ -1,6 +1,6 @@
 """Chapter timestamps for the YouTube description, from the render's own scene times.
 
-The takeaway cards are the chapters; the first chapter is 0:00. If description.md has a "Chapters" block, its lines
+The takeaway cards are the chapters, and so is any scene with part="..."; the first chapter is 0:00. If description.md has a "Chapters" block, its lines
 are replaced in place (the 0:00 line keeps its wording); otherwise chapters.txt is written. YouTube wants the first
 at 0:00, at least three, each 10 seconds or longer.
 """
@@ -19,10 +19,12 @@ def _mmss(t: float) -> str:
 def chapters(sb: dict[str, Any], first: str = "Intro") -> list[tuple[int, str]]:
     out: list[tuple[int, str]] = [(0, first)]
     for sc in sb.get("scenes", []):
-        if sc.get("type") == "takeaway" and sc.get("props", {}).get("title"):
+        props = sc.get("props", {})
+        name = props.get("part") or (props.get("title") if sc.get("type") == "takeaway" else None)  # part= on any scene, or a takeaway card
+        if name:
             t = int(round(float(sc["start"])))
             if t - out[-1][0] >= 10:
-                out.append((t, str(sc["props"]["title"])))
+                out.append((t, str(name)))
     return out
 
 
@@ -31,7 +33,7 @@ def write_chapters(project: str, sb: dict[str, Any]) -> str:
     desc = os.path.join(project, "description.md")
     chs = chapters(sb)
     if len(chs) < 3:
-        return "chapters: fewer than three takeaway cards, none written"
+        return "chapters: fewer than three takeaway cards or part= scenes, none written"
     if os.path.exists(desc):
         with open(desc, encoding="utf-8") as f:
             text = f.read()

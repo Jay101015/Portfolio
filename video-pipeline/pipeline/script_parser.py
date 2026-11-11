@@ -36,7 +36,7 @@ from . import craft
 
 WORDS_PER_SEC = 2.6  # typical YouTube narration pace; replaced by real timings after alignment
 SCENE_GAP_SEC = 0.35
-SCENE_TYPES = {"title", "text", "stat", "list", "chart", "compare", "quote", "image", "still", "clip", "poster", "score", "avatar", "outro", "art", "bite", "grow", "pie", "shrink", "takeaway", "recap", "hook", "broll", "news", "set"}
+SCENE_TYPES = {"title", "text", "stat", "list", "chart", "compare", "quote", "image", "still", "clip", "poster", "score", "avatar", "outro", "art", "bite", "grow", "pie", "shrink", "takeaway", "recap", "hook", "broll", "news", "set", "receipt"}
 
 TAG_RE = re.compile(r"^\[(\w+)([^\]]*)\]\s*$")
 ATTR_RE = re.compile(r'(\w+)=(?:"([^"]*)"|(\S+))')
@@ -128,6 +128,13 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
             p["title"] = a["title"]
         if a.get("unnumbered") or a.get("checks"):
             p["numbered"] = False
+    elif b.type == "receipt":
+        # one month's money as a till receipt that keeps printing: this scene's `- Label: -£624` lines print as they are
+        # said, under the lines the earlier receipt scenes printed (fill_receipts); fresh=on starts a new one
+        p["items"] = b.items
+        for k in ("title", "left", "fresh", "headline", "board", "source", "note"):
+            if k in a:
+                p[k] = a[k]
     elif b.type == "chart":
         p["chartType"] = "bar" if (a.get("bar") or b.bars) else "line"
         for k in ("title", "source"):
@@ -252,6 +259,8 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
     if "dur" in a:
         p["dur"] = float(a["dur"])
     # The character can be placed and posed on any scene; a doodle (icon=) can be drawn on any scene on the board.
+    if a.get("part"):
+        p["part"] = a["part"]  # part="The payslip" on any scene: a new part of the video starts here (a chapter, a longer pause in a made voice)
     for k in ("pos", "pose", "face", "scale", "icon", "keep", "transition", "tint", "anim", "screen"):  # anim=coins-jar: a drawn loop where a drawing would go; screen=laptop: footage in a drawn laptop  # tint=red: every figure on the board in red (bad news)  # keep=yes|arrow|strike builds on the board before; transition=wipe|slide|cut picks how it comes in
         if k in a:
             p[k] = a[k]
@@ -325,6 +334,50 @@ def fill_recaps(scenes: list[dict[str, Any]]) -> None:
     for sc in scenes:
         if sc["type"] == "recap" and not sc["props"].get("items"):
             sc["props"]["items"] = list(titles)
+
+
+_ROW_RE = re.compile(r"^(?P<label>.*?):\s*(?P<sign>[-−–+])?\s*£(?P<num>[\d,]+(?:\.\d+)?)\s*$")
+
+
+def receipt_row(line: str) -> dict[str, Any] | None:
+    """`Income tax: -£624` -> {"label": "Income tax", "amount": "−£624", "value": -624.0}; None when it is not a row."""
+    m = _ROW_RE.match(line.strip())
+    if not m:
+        return None
+    v = float(m.group("num").replace(",", ""))
+    neg = m.group("sign") in ("-", "−", "–")
+    return {"label": m.group("label").strip(), "amount": ("−" if neg else "") + "£" + m.group("num"), "value": -v if neg else v}
+
+
+def fill_receipts(scenes: list[dict[str, Any]]) -> list[str]:
+    """The receipt keeps printing through the video: every receipt scene gets the rows printed before it (kept) and
+    its own (new), with the running total before and after, so the renderer can draw the whole strip in any scene.
+    Returns problems: a line that is not `Label: £amount`, a new line whose figure the scene never says."""
+    problems: list[str] = []
+    printed: list[dict[str, Any]] = []
+    title, left = "", "Left"
+    for sc in scenes:
+        if sc["type"] != "receipt":
+            continue
+        p = sc["props"]
+        if str(p.get("fresh", "")).lower() in ("on", "yes", "true", "1"):
+            printed, title, left = [], "", "Left"
+        title, left = p.get("title") or title, p.get("left") or left
+        rows = [dict(r, kept=True) for r in printed]
+        said = re.sub(r"[^0-9£ ]", "", sc.get("narration") or "")
+        for line in p.get("items") or []:
+            row = receipt_row(line)
+            if row is None:
+                problems.append(f"scene {sc['id']}: receipt line '{line}' is not 'Label: £amount' (a cost is written -£624)")
+                continue
+            if "£" + re.sub(r"[^0-9]", "", row["amount"]) not in said.replace(" ", ""):
+                problems.append(f"scene {sc['id']}: receipt line '{line}' prints a figure the scene never says")
+            rows.append(dict(row, kept=False))
+            printed.append(row)
+        p["rows"], p["title"], p["left"] = rows, title, left
+        p["before"] = round(sum(r["value"] for r in rows if r["kept"]), 2)
+        p["after"] = round(sum(r["value"] for r in rows), 2)
+    return problems
 
 
 def number_takeaways(scenes: list[dict[str, Any]]) -> None:
@@ -643,6 +696,7 @@ def parse_script(md: str) -> dict[str, Any]:
 
     number_takeaways(scenes)
     fill_recaps(scenes)
+    problems += fill_receipts(scenes)
     duration = estimate_timings(scenes)
     slug = header.get("slug") or re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-") or "video"
     return {

@@ -788,7 +788,7 @@ def long_scenes(sb: dict, limit: float = 20.0) -> list[str]:
         if sc["type"] in ("outro", "broll", "clip"):
             continue
         run = float(sc["end"]) - float(sc["start"])
-        cap = limit * 2 if sc["type"] in ("list", "recap") else limit
+        cap = limit * 2 if sc["type"] in ("list", "recap", "receipt") else limit
         if run > cap:
             out.append(f"LONG SCENE: {sc['id']} ({sc['type']}) runs {run:.0f}s on one board: split it at a sentence, or put a [broll] scene between")
     return out

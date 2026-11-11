@@ -25,7 +25,7 @@ from .voice import SR, read, write
 # the scenes whose key number gets a punch-in and a ding
 PUNCH_TYPES = {"hook", "stat", "bite", "grow", "shrink", "pie", "compare"}
 # the scenes that open by writing on the board
-WRITE_TYPES = {"hook", "text", "takeaway", "recap", "list", "quote"}
+WRITE_TYPES = {"hook", "text", "takeaway", "recap", "list", "quote", "receipt"}
 NUMBER_WORDS = {
     "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen",
     "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "thirty", "forty", "fifty",

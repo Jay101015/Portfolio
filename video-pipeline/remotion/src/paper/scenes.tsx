@@ -14,7 +14,8 @@ import {captionLine, isLoss, keyWords, moneyTint} from './phrase';
 import {Media} from './media';
 import {Loop, Sequence} from 'remotion';
 import {CharacterOn, isPersonArt} from './character';
-import {lineIndices} from './lineMatch';
+import {figureTime, lineIndices} from './lineMatch';
+import {PaperReceipt} from './receipt';
 
 /**
  * The paper look: every scene is laid out like a page someone wrote on. Big words in a serif, notes in
@@ -521,24 +522,6 @@ export const PaperRecap: React.FC<P> = ({scene, brand}) => {
 };
 
 // ------------------------------------------------------------------ list
-/** when a figure is said: "£1,492" matched against the words as heard, which the transcriber may split ("1" ",492")
- * or drop the "£" from */
-const figureTime = (words: Word[] | undefined, fig: string): number | null => {
-  if (!words?.length) return null;
-  const digits = fig.replace(/[^0-9]/g, '');
-  if (!digits) return null;
-  for (let i = 0; i < words.length; i++) {
-    if (!/[0-9]/.test(words[i].w)) continue;
-    let acc = '';
-    for (let j = i; j < Math.min(words.length, i + 3); j++) {
-      acc += words[j].w.replace(/[^0-9]/g, '');
-      if (acc === digits) return words[i].s;
-      if (!digits.startsWith(acc)) break;
-    }
-  }
-  return null;
-};
-
 export const PaperList: React.FC<P> = ({scene, brand}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
@@ -1262,6 +1245,8 @@ export const PaperSwitch: React.FC<P> = ({scene, brand}) => {
       return <PaperText scene={scene} brand={brand} />;
     case 'list':
       return <PaperList scene={scene} brand={brand} />;
+    case 'receipt':
+      return <PaperReceipt scene={scene} brand={brand} />;
     case 'compare':
       return <PaperCompare scene={scene} brand={brand} />;
     case 'chart':

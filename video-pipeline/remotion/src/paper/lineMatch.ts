@@ -61,3 +61,21 @@ export const lineIndices = (texts: string[], words: LineWord[]): number[] => {
   });
   return out;
 };
+
+/** when a figure is said: "£1,492" matched against the words as heard, which the transcriber may split ("1" ",492")
+ * or drop the "£" from */
+export const figureTime = (words: LineWord[] | undefined, fig: string): number | null => {
+  if (!words?.length) return null;
+  const digits = fig.replace(/[^0-9]/g, '');
+  if (!digits) return null;
+  for (let i = 0; i < words.length; i++) {
+    if (!/[0-9]/.test(words[i].w)) continue;
+    let acc = '';
+    for (let j = i; j < Math.min(words.length, i + 3); j++) {
+      acc += words[j].w.replace(/[^0-9]/g, '');
+      if (acc === digits) return words[i].s;
+      if (!digits.startsWith(acc)) break;
+    }
+  }
+  return null;
+};

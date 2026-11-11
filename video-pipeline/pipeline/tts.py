@@ -142,13 +142,13 @@ def respellings(header: dict[str, str]) -> dict[str, str]:
 # ------------------------------------------------------------------------------------------------------- the chunks
 
 def plan(sb: dict[str, Any], target: int = CHUNK, respell: dict[str, str] | None = None) -> list[dict[str, Any]]:
-    """Scenes grouped into chunks of about `target` characters, never cutting inside a scene; a takeaway or title card
-    always starts a new chunk (and a longer pause). One chunk is one request, one cached file, one thing to redo."""
+    """Scenes grouped into chunks of about `target` characters, never cutting inside a scene; a takeaway or title card,
+    or a scene with part="...", always starts a new chunk (and a longer pause). One chunk is one request, one cached file, one thing to redo."""
     chunks: list[dict[str, Any]] = []
     cur: dict[str, Any] | None = None
     new_section = False
     for sc in sb["scenes"]:
-        if sc["type"] in SECTION_TYPES:
+        if sc["type"] in SECTION_TYPES or (sc.get("props") or {}).get("part"):
             new_section = bool(chunks or cur)
             if cur:
                 chunks.append(cur)

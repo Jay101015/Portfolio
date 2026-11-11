@@ -54,6 +54,7 @@ export type SceneType =
   | 'news' // a real headline on a clipping card: outlet, date, the line
   | 'set' // a set piece: the character acting out a moment in a whole drawn room (paper/setpiece.tsx)
   | 'recap'
+  | 'receipt' // one month's money as a till receipt that keeps printing through the video (paper/receipt.tsx)
   | 'bite'
   | 'grow'
   | 'pie'
