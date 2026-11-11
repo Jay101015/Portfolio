@@ -764,11 +764,13 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
     const barColors: string[] = scene.props.barColors ?? [];
     // a bar whose own figure is never said (a share price) lands where its label is: "Monday 9 Nov" on "Monday"
     let from = 0;
+    let lastAt: number | null = null;
     const labelAt = bars.map((b) => {
       const i = lineIndex(b.label, scene.words ?? [], from);
-      if (i === null) return null;
+      if (i === null) return lastAt === null ? null : (lastAt += 0.7); // no word of its own: just after the bar before
       from = i + 1;
-      return (scene.words ?? [])[i].s;
+      lastAt = (scene.words ?? [])[i].s;
+      return lastAt;
     });
     const gap = 40 * u;
     const bw = (plotW - gap * (bars.length + 1)) / Math.max(1, bars.length);
