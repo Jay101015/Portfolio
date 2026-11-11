@@ -48,7 +48,11 @@ Now, I want to be careful here. That's an allegation. Nobody's been charged, and
 [news outlet="NBC News" date="10 November 2026" url="https://www.nbcnews.com/business/corporations/ex-prosecutor-probe-jensen-huang-chinese-spy-affair-nvidia-rcna608628" headline="Nvidia hires former acting U.S. attorney to probe Jensen Huang affair" board="A former US prosecutor runs the investigation" cards="ink:the board: no reason to believe secrets were compromised@reason; ink:or national security@national; ink:it still has confidence in him@confidence; ink:still the CEO, as I record this@recording; ink:a former US prosecutor is brought in@brought"]
 The board says it's got no reason to believe any company secrets or national security were compromised, and it says it still has confidence in him. As I'm recording this, he's still the CEO. And they've brought in a former US prosecutor to run the investigation.
 
-[broll search="courthouse columns steps exterior" caption="Since then" cards="ink:the president: the FBI is looking into it@FBI; ink:investors have filed a lawsuit@lawsuit; ink:what we don't know@know; ink:no timetable (Reuters)@timetable; ink:weeks, or months@weeks" src="12-courthouse-columns-steps-exterior.mp4" credit="Video 3171 by Coverr-Free-Footage via Pixabay"]
+[list title="Since then" unnumbered anim=calendar-flip art_at=r art_size=0.45 art_start=7]
+- The FBI is looking into it
+- Investors have filed a lawsuit
+- No timetable (Reuters)
+- Weeks, or months
 Since then, the president has said the FBI is looking into it, and a group of investors has filed a lawsuit. And here's what we don't know. Reuters says there's no timetable for the investigation. These things can take weeks, or months.
 
 [chart bar title="Nvidia's share price at the close" y="$" ymin=150 colors="ink,red,red" source="Nasdaq closing prices, 6 to 10 November 2026" cards="red:Monday: down 4.3%@4.3%; red:Tuesday: another 5.5%@5.5%"]
@@ -67,7 +71,7 @@ Because those chips are pretty much what AI runs on. Most of the big AI systems 
 [news outlet="CNBC" date="10 November 2026" url="https://www.cnbc.com/2026/11/10/jensen-huang-nvidia-china-ties.html" headline="Jensen Huang's affair with alleged Chinese spy further complicates Nvidia's China problem" board="The fight over selling chips to China" cards="ink:US limits on its chips@limits; ink:what can be sold to China@China; ink:he pushed to loosen those rules@loosen; ink:direct access to the president@access; ink:a chip analyst, to CNBC@analyst; ink:35 years@35; ink:this much influence on export policy@influence"]
 And here's the thing. The US limits which of those chips can be sold to China. Jensen Huang has publicly pushed to loosen those rules, and he's had direct access to the president. One chip analyst told CNBC that in 35 years, he's never seen a chip CEO with this much influence on export policy.
 
-[broll search="shipping containers port cranes" caption="If you believe the reporting" cards="ink:not only about secrets@secrets; ink:about influence@influence; ink:how he thinks about selling to China@thinks; ink:but that's the claim@claim; ink:what the investigation is for@investigation" src="18-shipping-containers-port-cranes.mp4" credit="Video 214809 by Peter_Hanzo via Pixabay"]
+[broll search="shipping containers port cranes" pick=2 caption="If you believe the reporting" cards="ink:not only about secrets@secrets; ink:about influence@influence; ink:how he thinks about selling to China@thinks; ink:but that's the claim@claim; ink:what the investigation is for@investigation"]
 So if you believe the reporting, this wasn't only about secrets. It was about influence: shaping how the most important man in AI chips thinks about selling to China. But again, that's the claim. That's what the investigation is for.
 
 [text board="What does it mean? | For AI, and for your money" part="What it means"]
@@ -88,7 +92,7 @@ But to be fair, there are 2 real risks here. The first one is the man himself. A
 > Jensen is Nvidia, Nvidia is Jensen.
 One of them put it like this: Jensen is Nvidia, Nvidia is Jensen.
 
-[broll search="empty office chair desk window" caption="Risk one: the man himself" cards="ink:unlike Zuckerberg at Meta@Zuckerberg; ink:Reuters: he doesn't control the votes@votes; ink:the board could remove him@remove; ink:then nobody knows who runs it@nobody" src="24-empty-office-chair-desk-window.mp4" credit="Video 42305 by CycleZyklusCiclo via Pixabay"]
+[broll src="08-empty-boardroom-table-chairs.mp4" from=4 credit="Video 1191 by Vimeo-Free-Videos via Pixabay" caption="Risk one: the man himself" cards="ink:unlike Zuckerberg at Meta@Zuckerberg; ink:Reuters: he doesn't control the votes@votes; ink:the board could remove him@remove; ink:then nobody knows who runs it@nobody"]
 And Reuters made a point I hadn't thought about. Unlike Mark Zuckerberg at Meta, he doesn't control the votes. So the board really could remove him. And if it did, nobody knows who runs the most valuable company in AI.
 
 [news outlet="The Hill" date="November 2026" url="https://thehill.com/policy/technology/6211351-chip-export-restrictions-momentum-nvidia-huang/" headline="Nvidia's Jensen Huang scandal fuels push for strict AI chip export bills" board="Risk 2: Washington" cards="ink:two: politics@politics; ink:new momentum for bills in Congress@momentum; ink:tighter rules on selling AI chips abroad@tighten"]
@@ -154,7 +158,7 @@ And I try to {explain} stick to a plan. Because back in 2021, I {chart-down} wat
 [text board="I don't know how this ends | Why I don't want too much on one company" cards="ink:he might be fine@fine; ink:he might not@might; ink:even one I like@like"]
 I don't know how this ends, I really don't. He might be fine, he might not. And I guess that's why I don't want too much riding on any one company, even one I like.
 
-[broll search="stock market trading screen numbers" caption="Not advice" cards="ink:not a financial advisor@advisor; ink:this isn't advice@advice; ink:I've got money in this@money; ink:so I'm not exactly neutral@neutral" src="43-stock-market-trading-screen-numbers.mp4" credit="Video 349089 by MuhammadAhmad10 via Pixabay"]
+[broll search="stock market trading screen numbers" pick=2 caption="Not advice" cards="ink:not a financial advisor@advisor; ink:this isn't advice@advice; ink:I've got money in this@money; ink:so I'm not exactly neutral@neutral"]
 And just so it's said, I'm not a financial advisor, this isn't advice, and like I said, I've got money in this, so I'm not exactly neutral.
 
 [broll search="hands typing on smartphone close up" caption="Tell me in the comments" cards="ink:buying?@buying; ink:selling?@selling; ink:or just leaving it?@leaving; ink:next: chasing the hottest stock@chase; ink:see you in the next one@see" src="44-hands-typing-on-smartphone-close-up.mp4" credit="Video 3176 by Coverr-Free-Footage via Pixabay"]
