@@ -52,13 +52,23 @@ def _sb():
     return parse_script(SCRIPT)
 
 
-def test_chunks_never_cut_a_scene_and_a_section_starts_a_new_one():
+def test_chunks_never_cut_a_sentence_and_a_section_starts_a_new_one():
     chunks = tts.plan(_sb(), target=1500)
     assert [c["scenes"] for c in chunks] == [[1, 2], [3, 4]]
     assert [c["section"] for c in chunks] == [False, True]
     assert "Fifty thousand pounds" in chunks[0]["text"] and "£" not in chunks[0]["text"]
     small = tts.plan(_sb(), target=60)
-    assert [c["scenes"] for c in small] == [[1], [2], [3], [4]]  # each scene whole, however small the target
+    assert all(c["text"][-1] in ".!?" for c in small)  # every chunk ends where a sentence does, however small the target
+    assert " ".join(c["text"] for c in small) == " ".join(c["text"] for c in chunks)  # and no word is lost or moved
+    assert [c["section"] for c in small].count(True) == 1
+
+
+def test_recutting_the_scenes_leaves_the_chunks_alone():
+    from pipeline.script_parser import parse_script
+    recut = SCRIPT.replace("£50,000 a year sounds like a lot. In 2010 it was.", "£50,000 a year sounds like a lot.\n\n[text board=\"2010\"]\nIn 2010 it was.")
+    assert recut != SCRIPT
+    before, after = tts.plan(_sb(), target=90), tts.plan(parse_script(recut), target=90)
+    assert [c["text"] for c in before] == [c["text"] for c in after]  # the same requests, so nothing is paid for again
 
 
 class FakeVoice:

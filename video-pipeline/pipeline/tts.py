@@ -157,43 +157,51 @@ def respellings(header: dict[str, str]) -> dict[str, str]:
 
 # ------------------------------------------------------------------------------------------------------- the chunks
 
+_SENTENCE = re.compile(r"(?<=[.!?])\s+(?=[A-Z\"'\[])")
+
+
 def plan(sb: dict[str, Any], target: int = CHUNK, respell: dict[str, str] | None = None) -> list[dict[str, Any]]:
-    """Scenes grouped into chunks of about `target` characters, never cutting inside a scene; a takeaway or title card,
-    or a scene with part="...", always starts a new chunk (and a longer pause). One chunk is one request, one cached file, one thing to redo."""
-    chunks: list[dict[str, Any]] = []
+    """The words grouped into chunks of about `target` characters, never cutting inside a sentence; a takeaway or
+    title card, or a scene with part="...", always starts a new chunk (and a longer pause). One chunk is one request,
+    one cached file, one thing to redo. Chunks are cut by sentence, not by scene, so re-cutting the scenes (a
+    paragraph split in two, two merged) leaves every chunk as it was and costs nothing."""
+    sections: list[dict[str, Any]] = []
     cur: dict[str, Any] | None = None
-    new_section = False
     for sc in sb["scenes"]:
         if sc["type"] in SECTION_TYPES or (sc.get("props") or {}).get("part"):
-            new_section = bool(chunks or cur)
-            if cur:
-                chunks.append(cur)
-                cur = None
+            cur = None
         text = say((sc.get("narration") or "").strip(), respell)
         if not text:
             continue
-        if cur and len(cur["text"]) + 1 + len(text) > target:
-            chunks.append(cur)
-            cur = None
         if cur is None:
-            cur = {"scenes": [], "text": "", "section": new_section}
-            new_section = False
-        cur["scenes"].append(sc["id"])
-        cur["text"] = (cur["text"] + " " + text).strip()
-    if cur:
-        chunks.append(cur)
-    # a few lines left over at the end of a section join the chunk before: a very short chunk is read in a different voice
-    merged: list[dict[str, Any]] = []
-    for c in chunks:
-        prev = merged[-1] if merged else None
-        if prev and not c["section"] and len(c["text"]) < 400 and len(prev["text"]) + 1 + len(c["text"]) <= target * 1.35:
-            prev["scenes"] += c["scenes"]
-            prev["text"] += " " + c["text"]
-        else:
-            merged.append(c)
-    for i, c in enumerate(merged):
+            cur = {"section": bool(sections), "sentences": []}
+            sections.append(cur)
+        cur["sentences"] += [(sc["id"], t) for t in _SENTENCE.split(text) if t.strip()]
+    chunks: list[dict[str, Any]] = []
+    for sec in sections:
+        first = len(chunks)
+        c: dict[str, Any] | None = None
+        for scene_id, sentence in sec["sentences"]:
+            if c and len(c["text"]) + 1 + len(sentence) > target:
+                chunks.append(c)
+                c = None
+            if c is None:
+                c = {"scenes": [], "text": "", "section": False}
+            if scene_id not in c["scenes"]:
+                c["scenes"].append(scene_id)
+            c["text"] = (c["text"] + " " + sentence).strip()
+        if c:
+            chunks.append(c)
+        # a few lines left over at the end of a section join the chunk before: a very short chunk is read in a different voice
+        if len(chunks) - first >= 2 and len(chunks[-1]["text"]) < 400 and len(chunks[-2]["text"]) + 1 + len(chunks[-1]["text"]) <= target * 1.35:
+            last = chunks.pop()
+            chunks[-1]["scenes"] += [i for i in last["scenes"] if i not in chunks[-1]["scenes"]]
+            chunks[-1]["text"] += " " + last["text"]
+        if len(chunks) > first:
+            chunks[first]["section"] = sec["section"]
+    for i, c in enumerate(chunks):
         c["n"] = i + 1
-    return merged
+    return chunks
 
 
 def chunk_sha(text: str, voice_id: str, model: str, settings: dict[str, Any] | None) -> str:
