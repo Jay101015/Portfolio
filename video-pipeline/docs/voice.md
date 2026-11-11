@@ -14,8 +14,9 @@ not a presenter reading.
 - Owns his mistakes: "I did almost everything wrong", "that was my biggest mistake", "I haven't learned my lesson".
 - A normal person, not a finance guy: "I'm not a financial advisor", "I'm pretty much a normal person".
 - Says where he stands and why: what he holds, what he is doing, what he would not do again.
-- Signs off: "tell me in the comments", "I'll see you in the next one". After the hook: "I'm Jeffrey, and this is The
-  Everyday Investor."
+- Signs off: "tell me in the comments", "I'll see you in the next one".
+- No intro: he does not say his name or the channel's name in a video, and the title card carries no channel name
+  either (Jeffrey, 11 November 2026). The subscribe page at the end still names the channel.
 
 ## What he has said on camera about his own money (safe to build on; confirm anything newer with him)
 - The core is the S&P 500: "it's boring, it's broad, but it does all the heavy lifting".
@@ -27,6 +28,13 @@ not a presenter reading.
   years at a private bank, now a consultant; works with AI. Saving for a first home. Road to £100K.
 - No balances or holdings values on screen. A new claim about what he holds or has done goes in [BRACKETS] until he
   confirms it.
+
+## A news story: lean on the finance press
+Jeffrey, on the Nvidia script: "follow other finance reporters for help on this". For a story in the news, the
+script is built from what named finance reporters and analysts have published, and says who said it: "Reuters says",
+"City AM ran this headline", "AJ Bell says", "one chip analyst told CNBC". Their structure too: what we know, what we
+don't know yet, what it means for investors, what happens next. The UK finance press first (City AM, Yahoo Finance
+UK, the platforms' own figures) for what it means to a viewer here. A real headline goes on screen as a [news] card.
 
 ## Keeping it him without overdoing it
 - Light touch on fillers: one "you know", one or two "right?", two or three "honestly" or "to be fair" in a video. The

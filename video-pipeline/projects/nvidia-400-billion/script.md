@@ -15,13 +15,13 @@ topic: Nvidia's two-day fall after its CEO admitted an affair and the board open
 [hook board="Nvidia: $400 billion gone in 2 days" art=phone-balance-drop art_at=r art_size=0.5]
 Nvidia just lost over $400 billion in 2 days. And I'll be up front with you: I own Nvidia shares, so some of that was mine. And if you've got a tracker fund, some of it was yours as well.
 
-[stat value="£70" count=off label="What Nvidia's fall took off £10,000 in an S&P 500 tracker" sub="Nvidia is about 7% of the index" source="Estimate: Nvidia's index weight (7.8% on 23 October, about 7% by 6 November) and its closing prices, 6 and 10 November 2026" art=sam-thinking art_at=r art_size=0.5]
+[stat value="£70" count=off label="What Nvidia's fall took off £10,000 in an S&P 500 tracker" sub="about £7 of every £100 in the fund is Nvidia" source="Bestinvest (Evelyn Partners), quoted in City AM, November 2026; Nvidia's closing prices, 6 and 10 November 2026" art=sam-thinking art_at=r art_size=0.5]
 So should you panic? Honestly, no. If you had 10 grand in an S&P 500 tracker, Nvidia's fall took about £70 off it. That's it. But the story behind it is a lot bigger: the CEO, an affair he's admitted to, and an alleged Chinese spy.
 
 [text board="What happened | Why Nvidia | What it means | What I'm doing" art=crossroads art_at=r art_size=0.5]
-So I'm going to walk you through what happened, why it's Nvidia of all companies, what it means for AI and the stock market, and then what I'm actually doing with my own money. I'm Jeffrey, and this is The Everyday Investor.
+So I'm going to walk you through what happened, why it's Nvidia of all companies, what it means for AI and the stock market, and then what I'm actually doing with my own money.
 
-[title dur=2 kicker="The Everyday Investor" title="Nvidia lost $400 billion in 2 days" subtitle="What it means for your money"]
+[title dur=2 title="Nvidia lost $400 billion in 2 days" subtitle="What it means for your money"]
 
 [news outlet="CNN" date="8 November 2026" url="https://www.cnn.com/2026/11/08/business/nvidia-investigation-ceo-jensen-huang" headline="Nvidia CEO Jensen Huang admits affair as company launches investigation into foreign spy accusations" board="Nvidia's CEO admits an affair" part="What happened"]
 So here's what happened. On Sunday the 8th of November, Jensen Huang, the guy who runs Nvidia, sent a letter to every single employee. He said he'd been unfaithful to his wife. He apologised, and he said he takes full responsibility.
@@ -35,6 +35,9 @@ So according to those reports, and the New York Times had it first, US intellige
 [news outlet="NBC News" date="10 November 2026" url="https://www.nbcnews.com/business/corporations/ex-prosecutor-probe-jensen-huang-chinese-spy-affair-nvidia-rcna608628" headline="Nvidia hires former acting U.S. attorney to probe Jensen Huang affair" board="A former US prosecutor runs the investigation"]
 The board says it's got no reason to believe any company secrets or national security were compromised, and it says it still has confidence in him. As I'm recording this, he's still the CEO. And they've brought in a former US prosecutor to run the investigation.
 
+[broll search="courthouse steps building exterior" caption="What we don't know yet" cards="ink:the FBI is looking into it@FBI; ink:investors have filed a lawsuit@lawsuit; ink:weeks or months@months"]
+Since then, the president has said the FBI is looking into it, and a group of investors has filed a lawsuit. And here's what we don't know. Reuters says there's no timetable for the investigation. These things can take weeks, or months.
+
 [chart bar title="Nvidia's share price at the close" y="$" source="Nasdaq closing prices, 6 to 10 November 2026" cards="red:down 4.3% on Monday@4.3%; red:another 5.5% on Tuesday@5.5%; red:roughly $428 billion@$428"]
 bars: Friday 6 Nov:186.64, Monday 9 Nov:178.67, Tuesday 10 Nov:168.89
 But the market didn't wait around. On Monday, the shares dropped 4.3%. On Tuesday, another 5.5%. So that's about 9.5% in 2 days. Roughly $428 billion, gone.
@@ -43,31 +46,31 @@ But the market didn't wait around. On Monday, the shares dropped 4.3%. On Tuesda
 So why would a spy even care about a company that makes chips?
 
 [broll search="server room data centre racks" caption="What AI runs on"]
-Because those chips are pretty much what AI runs on. Most of the big AI systems in the world are trained on Nvidia's chips. I work with AI in my day job, and it all runs on chips like these. So if you're a country that wants to win at AI, this is the thing you want.
+Because those chips are pretty much what AI runs on. Most of the big AI systems in the world are trained on Nvidia's chips. So if you're a country that wants to win at AI, this is the thing you want.
 
 [news outlet="CNBC" date="10 November 2026" url="https://www.cnbc.com/2026/11/10/jensen-huang-nvidia-china-ties.html" headline="Jensen Huang's affair with alleged Chinese spy further complicates Nvidia's China problem" board="The fight over selling chips to China"]
 And here's the thing. The US limits which of those chips can be sold to China. Jensen Huang has publicly pushed to loosen those rules, and he's had direct access to the president. One chip analyst told CNBC that in 35 years, he's never seen a chip CEO with this much influence on export policy.
 
 [text board="Not only secrets: influence" art=scam-call art_at=r art_size=0.5]
-So if you believe the reporting, this wasn't only about stealing secrets. It was about influence. Getting close to the most important man in AI chips, and shaping how he thinks about selling to China. But again, that's the claim. That's what the investigation is there to find out.
+So if you believe the reporting, this wasn't only about secrets. It was about influence: shaping how the most important man in AI chips thinks about selling to China. But again, that's the claim. That's what the investigation is for.
 
 [compare title="Monday 9 November" good=right source="Closing prices, 9 November 2026" part="What it means"]
 left: Nvidia | Down 4.3% | The scandal
 right: Nasdaq | Up 2.7% | The rest of US tech
-So what does this actually mean for AI, and for your money? First thing I noticed: on Monday, while Nvidia dropped 4.3%, the Nasdaq, which is the main US tech index, went up 2.7%. So investors are treating this as an Nvidia problem. Not an AI problem.
+So what does this actually mean for AI, and for your money? First thing I noticed: on Monday, while Nvidia dropped 4.3%, the Nasdaq, which is the main US tech index, went up 2.7%. And CNBC reported that the other big chip makers all rose that day as well. So investors are treating this as an Nvidia problem. Not an AI problem.
 
 [stat value="$96.2 billion" count=off label="Nvidia's sales in its last reported quarter" sub="more than double the year before" source="Nvidia second-quarter results, fiscal 2027, August 2026" art=stock-chart-laptop art_at=r art_size=0.5]
 And the business hasn't changed, right? Last quarter, Nvidia made $96.2 billion in sales. That's more than double the year before. The companies buying these chips aren't going to stop because of the CEO's private life.
 
 [news outlet="CNBC" date="9 November 2026" url="https://www.cnbc.com/2026/11/09/jensen-huang-affair-nvidia-succession.html" headline="Jensen Huang's affair highlights Nvidia's key man risk with no heir" board="Risk 1: one man"]
-But to be fair, there are 2 real risks here. The first one is the man himself. Analysts are saying Nvidia doesn't have a clear successor. One of them put it like this: Jensen is Nvidia, Nvidia is Jensen. So if this investigation forced him out, nobody really knows who runs the most valuable company in AI.
+But to be fair, there are 2 real risks here. The first one is the man himself. Analysts are saying Nvidia doesn't have a clear successor. One of them put it like this: Jensen is Nvidia, Nvidia is Jensen. And Reuters made a point I hadn't thought about. Unlike Mark Zuckerberg at Meta, he doesn't control the votes. So the board really could remove him. And if it did, nobody knows who runs the most valuable company in AI.
 
 [news outlet="The Hill" date="November 2026" url="https://thehill.com/policy/technology/6211351-chip-export-restrictions-momentum-nvidia-huang/" headline="Nvidia's Jensen Huang scandal fuels push for strict AI chip export bills" board="Risk 2: Washington"]
 The second one is politics. This whole thing has given new momentum to bills in Congress that would tighten the rules on selling AI chips abroad. So the lasting damage might not come from the boardroom at all. It might come from Washington.
 
 [chart bar title="Nvidia's share price" y="$" source="Nasdaq: record high 6 October 2026; closes 6 and 10 November 2026" cards="red:already down 23%@23%; red:then another 9.5%@9.5%"]
 bars: Record 6 Oct:243.37, Before the letter:186.64, Tuesday 10 Nov:168.89
-And here's the bit the headlines are skipping. Nvidia was already falling. From its record high on the 6th of October to the Friday before any of this came out, the shares had already dropped 23%. And that was largely people worrying about how long the AI spending boom can last. So the scandal took 9.5%. The spending worry had already taken 23%.
+And here's the bit the headlines are skipping. Nvidia was already falling. From its record high on the 6th of October to the Friday before any of this came out, the shares had dropped 23%, largely on worries about how long the AI spending boom can last. So the scandal took 9.5%. The spending worry had already taken 23%.
 
 [broll search="united states capitol building washington" caption="17 and 18 November"]
 There are 2 dates I'm watching. Nvidia's due to report its results on the 17th of November. And members of Congress have asked Jensen Huang for a briefing on the 18th.
@@ -77,10 +80,16 @@ left: McDonald's, 2019 | Up 12% | CEO fired over a relationship
 right: Intel, 2018 | Down 4% | CEO resigned over a relationship
 And if you look at history, it's actually kind of reassuring. McDonald's fired its CEO over a relationship with an employee back in 2019. A year later, the shares were about 12% higher. Intel's CEO resigned for a similar reason in 2018. A year later, they were about 4% lower. So in both cases, what the business did next mattered way more than the scandal.
 
-[broll lib="vuag-holdings-app" phone=on caption="An S&P 500 fund's biggest holding" marks="ink:circle 27,37@Nvidia" part="What I'm doing"]
-So what am I doing about it? I've said this before on the channel: the core of what I invest is the S&P 500. It's boring, it's broad, and it does the heavy lifting. And Nvidia is the biggest company in it, about 7% of the index. So about £7 of every £100 in that fund is Nvidia.
+[news outlet="City AM" date="10 November 2026" url="https://www.cityam.com/nvidia-scandal-leaves-uk-savers-exposed-to-fallout/" headline="Nvidia scandal leaves UK savers 'exposed' to fallout" board="UK savers are in this too" part="What I'm doing"]
+So what about us, over here? City AM ran this headline: the Nvidia scandal leaves UK savers exposed. Because millions of people in the UK own Nvidia without ever buying it, through a pension, an ISA, or a tracker fund.
 
-[compare title="What Nvidia's fall cost £10,000" good=left source="Worked out from closing prices, 6 and 10 November 2026, and an index weight of about 7%"]
+[news outlet="Yahoo Finance UK" date="November 2026" url="https://uk.finance.yahoo.com/news/british-investors-buy-dip-nvidia-121854862.html" headline="British investors buy the dip on Nvidia at record pace despite Jensen Huang scandal" board="Buying the dip, or selling?"]
+And people here are split. AJ Bell says Nvidia was the most bought share on its platform between the 5th and the 9th of November. But IG says its sell trades jumped 157%. So some people are buying the dip, and some are getting out.
+
+[broll lib="vuag-holdings-app" phone=on caption="An S&P 500 fund's biggest holding" marks="ink:circle 27,37@Nvidia"]
+So here's where I stand. I've said this before on the channel: the core of what I invest is the S&P 500. It's boring, it's broad, and it does the heavy lifting. And Nvidia is the biggest company in it. One UK investment firm puts it at around £7 of every £100 in the fund.
+
+[compare title="What Nvidia's fall cost £10,000" good=left source="Worked out from closing prices, 6 and 10 November 2026, and about £7 in every £100 (Bestinvest, via City AM)"]
 left: In an S&P 500 tracker | About £70 | 500 companies
 right: All in Nvidia | About £950 | 1 company
 And that's exactly why Nvidia's fall only took about £70 off 10 grand in a tracker. If that 10 grand was all in Nvidia, you'd be down about £950. The other 499 companies did their job.

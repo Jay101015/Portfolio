@@ -8,7 +8,7 @@ Nvidia just lost over $400 billion in 2 days. And I'll be up front with you: I o
 
 So should you panic? Honestly, no. If you had 10 grand in an S&P 500 tracker, Nvidia's fall took about £70 off it. That's it. But the story behind it is a lot bigger: the CEO, an affair he's admitted to, and an alleged Chinese spy.
 
-So I'm going to walk you through what happened, why it's Nvidia of all companies, what it means for AI and the stock market, and then what I'm actually doing with my own money. I'm Jeffrey, and this is The Everyday Investor.
+So I'm going to walk you through what happened, why it's Nvidia of all companies, what it means for AI and the stock market, and then what I'm actually doing with my own money.
 
 **What happened**
 
@@ -20,29 +20,31 @@ So according to those reports, and the New York Times had it first, US intellige
 
 The board says it's got no reason to believe any company secrets or national security were compromised, and it says it still has confidence in him. As I'm recording this, he's still the CEO. And they've brought in a former US prosecutor to run the investigation.
 
+Since then, the president has said the FBI is looking into it, and a group of investors has filed a lawsuit. And here's what we don't know. Reuters says there's no timetable for the investigation. These things can take weeks, or months.
+
 But the market didn't wait around. On Monday, the shares dropped 4.3%. On Tuesday, another 5.5%. So that's about 9.5% in 2 days. Roughly $428 billion, gone.
 
 **Why Nvidia**
 
 So why would a spy even care about a company that makes chips?
 
-Because those chips are pretty much what AI runs on. Most of the big AI systems in the world are trained on Nvidia's chips. I work with AI in my day job, and it all runs on chips like these. So if you're a country that wants to win at AI, this is the thing you want.
+Because those chips are pretty much what AI runs on. Most of the big AI systems in the world are trained on Nvidia's chips. So if you're a country that wants to win at AI, this is the thing you want.
 
 And here's the thing. The US limits which of those chips can be sold to China. Jensen Huang has publicly pushed to loosen those rules, and he's had direct access to the president. One chip analyst told CNBC that in 35 years, he's never seen a chip CEO with this much influence on export policy.
 
-So if you believe the reporting, this wasn't only about stealing secrets. It was about influence. Getting close to the most important man in AI chips, and shaping how he thinks about selling to China. But again, that's the claim. That's what the investigation is there to find out.
+So if you believe the reporting, this wasn't only about secrets. It was about influence: shaping how the most important man in AI chips thinks about selling to China. But again, that's the claim. That's what the investigation is for.
 
 **What it means**
 
-So what does this actually mean for AI, and for your money? First thing I noticed: on Monday, while Nvidia dropped 4.3%, the Nasdaq, which is the main US tech index, went up 2.7%. So investors are treating this as an Nvidia problem. Not an AI problem.
+So what does this actually mean for AI, and for your money? First thing I noticed: on Monday, while Nvidia dropped 4.3%, the Nasdaq, which is the main US tech index, went up 2.7%. And CNBC reported that the other big chip makers all rose that day as well. So investors are treating this as an Nvidia problem. Not an AI problem.
 
 And the business hasn't changed, right? Last quarter, Nvidia made $96.2 billion in sales. That's more than double the year before. The companies buying these chips aren't going to stop because of the CEO's private life.
 
-But to be fair, there are 2 real risks here. The first one is the man himself. Analysts are saying Nvidia doesn't have a clear successor. One of them put it like this: Jensen is Nvidia, Nvidia is Jensen. So if this investigation forced him out, nobody really knows who runs the most valuable company in AI.
+But to be fair, there are 2 real risks here. The first one is the man himself. Analysts are saying Nvidia doesn't have a clear successor. One of them put it like this: Jensen is Nvidia, Nvidia is Jensen. And Reuters made a point I hadn't thought about. Unlike Mark Zuckerberg at Meta, he doesn't control the votes. So the board really could remove him. And if it did, nobody knows who runs the most valuable company in AI.
 
 The second one is politics. This whole thing has given new momentum to bills in Congress that would tighten the rules on selling AI chips abroad. So the lasting damage might not come from the boardroom at all. It might come from Washington.
 
-And here's the bit the headlines are skipping. Nvidia was already falling. From its record high on the 6th of October to the Friday before any of this came out, the shares had already dropped 23%. And that was largely people worrying about how long the AI spending boom can last. So the scandal took 9.5%. The spending worry had already taken 23%.
+And here's the bit the headlines are skipping. Nvidia was already falling. From its record high on the 6th of October to the Friday before any of this came out, the shares had dropped 23%, largely on worries about how long the AI spending boom can last. So the scandal took 9.5%. The spending worry had already taken 23%.
 
 There are 2 dates I'm watching. Nvidia's due to report its results on the 17th of November. And members of Congress have asked Jensen Huang for a briefing on the 18th.
 
@@ -50,7 +52,11 @@ And if you look at history, it's actually kind of reassuring. McDonald's fired i
 
 **What I'm doing**
 
-So what am I doing about it? I've said this before on the channel: the core of what I invest is the S&P 500. It's boring, it's broad, and it does the heavy lifting. And Nvidia is the biggest company in it, about 7% of the index. So about £7 of every £100 in that fund is Nvidia.
+So what about us, over here? City AM ran this headline: the Nvidia scandal leaves UK savers exposed. Because millions of people in the UK own Nvidia without ever buying it, through a pension, an ISA, or a tracker fund.
+
+And people here are split. AJ Bell says Nvidia was the most bought share on its platform between the 5th and the 9th of November. But IG says its sell trades jumped 157%. So some people are buying the dip, and some are getting out.
+
+So here's where I stand. I've said this before on the channel: the core of what I invest is the S&P 500. It's boring, it's broad, and it does the heavy lifting. And Nvidia is the biggest company in it. One UK investment firm puts it at around £7 of every £100 in the fund.
 
 And that's exactly why Nvidia's fall only took about £70 off 10 grand in a tracker. If that 10 grand was all in Nvidia, you'd be down about £950. The other 499 companies did their job.
 
