@@ -36,6 +36,17 @@ script is built from what named finance reporters and analysts have published, a
 don't know yet, what it means for investors, what happens next. The UK finance press first (City AM, Yahoo Finance
 UK, the platforms' own figures) for what it means to a viewer here. A real headline goes on screen as a [news] card.
 
+## The beginning and the end must not sound "too perfect"
+Jeffrey, on the Nvidia draft: "I don't like the end or the beginning, it's sounding too perfect, but the rest is good."
+The middle (facts, told plainly) was fine; the opening and the close read like copywriting. There, especially:
+- No slogans or neat mirror lines ("some of that was mine... some of it was yours", "You don't have to predict it if
+  no single company can sink you", "a plan, not a panic").
+- No staged question and answer ("So should you panic? Honestly, no. That's it.").
+- No "One... Two... Three... And four" list of rules to close. He says what he does in a run of ordinary sentences.
+- He thinks aloud and hedges: "I worked it out", "it's not the end of the world", "honestly, I couldn't believe it",
+  "I guess", "I really don't", "I'm trying not to make that mistake again", "So yeah".
+- The frame-one board and the title's number in the first sentence still stand: plain does not mean vague.
+
 ## Keeping it him without overdoing it
 - Light touch on fillers: one "you know", one or two "right?", two or three "honestly" or "to be fair" in a video. The
   made voice reads every word, and a filler in every line sounds fake.

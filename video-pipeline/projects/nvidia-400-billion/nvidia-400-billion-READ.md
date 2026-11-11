@@ -4,11 +4,11 @@
 
 **Opening**
 
-Nvidia just lost over $400 billion in 2 days. And I'll be up front with you: I own Nvidia shares, so some of that was mine. And if you've got a tracker fund, some of it was yours as well.
+So Nvidia has lost over $400 billion in 2 days. And I'm going to be honest, I own Nvidia shares, so I've been watching this one pretty closely.
 
-So should you panic? Honestly, no. If you had 10 grand in an S&P 500 tracker, Nvidia's fall took about £70 off it. That's it. But the story behind it is a lot bigger: the CEO, an affair he's admitted to, and an alleged Chinese spy.
+And if you've got a pension or a tracker fund, you probably own some as well, even if you've never bought it. I worked it out, and on 10 grand in an S&P 500 tracker, it's taken off about £70. So it's not the end of the world. But the story behind it, honestly, I couldn't believe it when I first read it. The CEO, an affair he's admitted to, and an alleged Chinese spy.
 
-So I'm going to walk you through what happened, why it's Nvidia of all companies, what it means for AI and the stock market, and then what I'm actually doing with my own money.
+So I want to go through what actually happened, why Nvidia, what I think it means for AI and the stock market, and then what I'm doing with my own money.
 
 **What happened**
 
@@ -64,8 +64,8 @@ Now, I do own Nvidia shares on their own as well. About 20 to 30% of what I inve
 
 But I'm going to be honest about the limits of this. The 10 biggest companies now make up about 39% of the S&P 500, and most of them are big tech. So owning 500 companies isn't the same as owning 500 equal bets.
 
-So here's how I hedge. One, the boring fund stays at the core. Two, individual stocks stay a slice, so one company having a terrible week can't wreck me. Three, my emergency fund sits completely away from my investments, so I never have to sell at a bad time. And four, I've got a plan. Back in 2021, I watched 11 grand in crypto slide all the way down to four and a half, and I sold out of emotion. That was my biggest mistake. So I'm not doing that again.
+So how am I hedging against something like this? Honestly, it's nothing clever. Most of what I invest stays in the boring fund. The individual stocks are the smaller part, so if one of them has a terrible week, like this one, it hurts, but it doesn't wreck me. I keep my emergency fund completely separate, so I'm never forced to sell when things are down. And I try to stick to a plan. Because back in 2021, I watched 11 grand in crypto go all the way down to four and a half, and I panicked and sold. I still think about that. So I'm trying not to make that mistake again.
 
-Look, I don't know how this ends for Jensen Huang. Nobody does. And that's kind of the point. You don't have to predict it, if no single company can sink you. And just so it's said: I'm not a financial advisor, this is education, not advice, and like I said, I own Nvidia shares myself.
+I don't know how this ends, I really don't. He might be fine, he might not. And I guess that's why I don't want too much riding on any one company, even one I like. And just so it's said, I'm not a financial advisor, this isn't advice, and like I said, I own the shares, so I'm not exactly neutral.
 
-So tell me in the comments: are you buying, selling, or doing nothing? I read all of them. And if you want to see what happens when you chase the hottest stock every single year, that video's on screen now. I'll see you in the next one.
+So yeah, let me know in the comments what you're doing: buying, selling, or just leaving it. I'm genuinely curious. And if you want to see what happens when you chase the hottest stock every year, I made a video on that, and it's on screen now. I'll see you in the next one.
