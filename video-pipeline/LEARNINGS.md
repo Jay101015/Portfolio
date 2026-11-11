@@ -522,4 +522,15 @@ one change at a time where possible, so a result can be read.
 - **New in the renderer:** bar charts take `ymin=` and `colors=` and a bar lands on its label's word; drawing pins
   are blue (red only for a loss); a dollar figure is written as said; cards on a clipping or a bite clear the top edge.
 - A workflow run can end "startup_failure" with no jobs and nothing wrong in the file: the next dispatch ran.
-- Review scores and real results: to come.
+- Review: editor 6, animator 7, retention 7.5, director 7.5 (round 2; round 1 was 6, 5, 7, 5). Retention predicts
+  about 45% at 0:30 and a 22% average view.
+- **What the reviewers caught that the plan did not:** the drawing picker put an older man with a letter beside
+  "Jensen Huang" (a bare board must say art=off on a story about a real person); the "empty boardroom" stock clip
+  opened on a woman's legs in heels under lines about the affair (no stock footage with any part of a person on
+  such a story: objects, buildings, clippings and his own recordings only); a compare with no good= crossed
+  "Admitted" and ticked "Alleged" (a compare always marks one side right: two facts that are not good against bad
+  go on a board); loops carry their own labels on boards and lists ("+7%" beside "up 12%", a calendar on MAR under
+  November dates): anim_labels=off.
+- Open with Jeffrey: Intel "about 4% lower a year later" is from month-end prices in the cited piece; from the day of
+  the resignation it looks nearer 9%. His call whether to remake that passage.
+- Real results: to come.
