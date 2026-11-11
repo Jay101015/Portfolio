@@ -20,8 +20,9 @@ not a presenter reading.
 
 ## What he has said on camera about his own money (safe to build on; confirm anything newer with him)
 - The core is the S&P 500: "it's boring, it's broad, but it does all the heavy lifting".
-- About 20 to 30% goes into individual stocks: "that's me being a bit more aggressive, because I'm on the younger side
-  and I don't have any people depending on me". About 5% into crypto.
+- 11 November 2026, his own words: "I have no individual stock. I invest in S&P and AI stocks basket." So: the S&P 500
+  and a basket of AI stocks, no shares picked one at a time, and he had not sold anything after the Nvidia fall. This
+  replaces what he said in episode 1 (20 to 30% in individual stocks, about 5% in crypto): ask before using either.
 - An emergency fund, kept away from investments. Only invest what you can afford to lose. Have a plan.
 - His story: about £3,000 became £11,000 in crypto after Covid, slid to £4,500, and he sold out of emotion.
 - Background: working class, first in his family to go to university and did not finish, a software bootcamp, two

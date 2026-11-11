@@ -13,7 +13,7 @@ slug: nvidia-400-billion
 topic: Nvidia's two-day fall after its CEO admitted an affair and the board opened an investigation into reports he was the target of a foreign intelligence operation: what happened, why Nvidia is a target, what it means for AI and for a UK tracker investor, and how Jeffrey hedges with diversification; in Jeffrey's own way of talking (docs/voice.md)
 
 [hook board="Nvidia: $400 billion gone in 2 days" art=phone-balance-drop art_at=r art_size=0.5]
-So Nvidia has lost over $400 billion in 2 days. And I'm going to be honest, I own Nvidia shares, so I've been watching this one pretty closely.
+So Nvidia has lost over $400 billion in 2 days. And I'm going to be honest, I've got money riding on this one, so I've been watching it pretty closely.
 
 [stat value="£70" count=off label="What Nvidia's fall took off £10,000 in an S&P 500 tracker" sub="about £7 of every £100 in the fund is Nvidia" source="Bestinvest (Evelyn Partners), quoted in City AM, November 2026; Nvidia's closing prices, 6 and 10 November 2026" art=sam-thinking art_at=r art_size=0.5]
 And if you've got a pension or a tracker fund, you probably own some as well, even if you've never bought it. I worked it out, and on 10 grand in an S&P 500 tracker, it's taken off about £70. So it's not the end of the world. But the story behind it, honestly, I couldn't believe it when I first read it. The CEO, an affair he's admitted to, and an alleged Chinese spy.
@@ -94,21 +94,21 @@ left: In an S&P 500 tracker | About £70 | 500 companies
 right: All in Nvidia | About £950 | 1 company
 And that's exactly why Nvidia's fall only took about £70 off 10 grand in a tracker. If that 10 grand was all in Nvidia, you'd be down about £950. The other 499 companies did their job.
 
-[broll lib="nvda-max-chart-app" phone=on caption="My own Nvidia shares"]
-Now, I do own Nvidia shares on their own as well. About 20 to 30% of what I invest goes into individual stocks. That's me being a bit more aggressive, because, you know, I'm on the younger side and nobody's depending on me. [And no, I haven't sold any of them.]
+[broll lib="nvda-max-chart-app" phone=on caption="A basket, not one stock"]
+Now, I don't buy individual stocks. The only other thing I invest in is a basket of AI stocks. So yes, I've got Nvidia in there as well. But it's a basket, so it's one company out of a bunch, not my whole bet. And no, I haven't sold anything.
 
 [pie value="39%" label="of the S&P 500 is its 10 biggest companies" sub="most of them big tech" source="S&P 500 weights, October 2026"]
-But I'm going to be honest about the limits of this. The 10 biggest companies now make up about 39% of the S&P 500, and most of them are big tech. So owning 500 companies isn't the same as owning 500 equal bets.
+But I'm going to be honest about the limits of this. The 10 biggest companies now make up about 39% of the S&P 500, and most of them are big tech. And my other pot is all AI. So if the whole AI trade falls, I'm going to feel it. What I'm covered for is one company going wrong. Not the whole sector.
 
 [list title="How I'm hedging" unnumbered art=rainy-day-umbrella art_at=r art_size=0.45]
-- Most of it in the boring fund
-- Individual stocks: the smaller part
+- The S&P 500 at the core
+- A basket, not one stock
 - Emergency fund, kept separate
 - Stick to the plan
-So how am I hedging against something like this? Honestly, it's nothing clever. Most of what I invest stays in the boring fund. The individual stocks are the smaller part, so if one of them has a terrible week, like this one, it hurts, but it doesn't wreck me. I keep my emergency fund completely separate, so I'm never forced to sell when things are down. And I try to stick to a plan. Because back in 2021, I watched 11 grand in crypto go all the way down to four and a half, and I panicked and sold. I still think about that. So I'm trying not to make that mistake again.
+So how am I hedging against something like this? Honestly, it's nothing clever. The S&P 500 stays at the core. For AI, I use a basket instead of picking one company, so if one of them has a terrible week, like this one, it hurts, but it doesn't wreck me. I keep my emergency fund completely separate, so I'm never forced to sell when things are down. And I try to stick to a plan. Because back in 2021, I watched 11 grand in crypto go all the way down to four and a half, and I panicked and sold. I still think about that. So I'm trying not to make that mistake again.
 
 [text board="I don't know how this ends" art=sleep-grow art_at=r art_size=0.5]
-I don't know how this ends, I really don't. He might be fine, he might not. And I guess that's why I don't want too much riding on any one company, even one I like. And just so it's said, I'm not a financial advisor, this isn't advice, and like I said, I own the shares, so I'm not exactly neutral.
+I don't know how this ends, I really don't. He might be fine, he might not. And I guess that's why I don't want too much riding on any one company, even one I like. And just so it's said, I'm not a financial advisor, this isn't advice, and like I said, I've got money in this, so I'm not exactly neutral.
 
 [broll search="person typing comment on phone sofa" caption="Buying, selling or leaving it?"]
 So yeah, let me know in the comments what you're doing: buying, selling, or just leaving it. I'm genuinely curious. And if you want to see what happens when you chase the hottest stock every year, I made a video on that, and it's on screen now. I'll see you in the next one.
