@@ -71,7 +71,7 @@ Because those chips are pretty much what AI runs on. Most of the big AI systems 
 [news outlet="CNBC" date="10 November 2026" url="https://www.cnbc.com/2026/11/10/jensen-huang-nvidia-china-ties.html" headline="Jensen Huang's affair with alleged Chinese spy further complicates Nvidia's China problem" board="The fight over selling chips to China" cards="ink:US limits on its chips@limits; ink:what can be sold to China@China; ink:he pushed to loosen those rules@loosen; ink:direct access to the president@access; ink:a chip analyst, to CNBC@analyst; ink:35 years@35; ink:this much influence on export policy@influence"]
 And here's the thing. The US limits which of those chips can be sold to China. Jensen Huang has publicly pushed to loosen those rules, and he's had direct access to the president. One chip analyst told CNBC that in 35 years, he's never seen a chip CEO with this much influence on export policy.
 
-[broll search="shipping containers port cranes" pick=2 caption="If you believe the reporting" cards="ink:not only about secrets@secrets; ink:about influence@influence; ink:how he thinks about selling to China@thinks; ink:but that's the claim@claim; ink:what the investigation is for@investigation"]
+[broll search="shipping containers port cranes" pick=2 caption="If you believe the reporting" cards="ink:not only about secrets@secrets; ink:about influence@influence; ink:how he thinks about selling to China@thinks; ink:but that's the claim@claim; ink:what the investigation is for@investigation" src="18-shipping-containers-port-cranes.mp4" credit="Video 23008 by bellergy via Pixabay"]
 So if you believe the reporting, this wasn't only about secrets. It was about influence: shaping how the most important man in AI chips thinks about selling to China. But again, that's the claim. That's what the investigation is for.
 
 [text board="What does it mean? | For AI, and for your money" part="What it means"]
@@ -98,7 +98,7 @@ And Reuters made a point I hadn't thought about. Unlike Mark Zuckerberg at Meta,
 [news outlet="The Hill" date="November 2026" url="https://thehill.com/policy/technology/6211351-chip-export-restrictions-momentum-nvidia-huang/" headline="Nvidia's Jensen Huang scandal fuels push for strict AI chip export bills" board="Risk 2: Washington" cards="ink:two: politics@politics; ink:new momentum for bills in Congress@momentum; ink:tighter rules on selling AI chips abroad@tighten"]
 The second one is politics. This whole thing has given new momentum to bills in Congress that would tighten the rules on selling AI chips abroad.
 
-[broll search="united states capitol building washington" caption="The lasting damage" cards="ink:not from the boardroom@boardroom; ink:from Washington@Washington" src="26-united-states-capitol-building-washingto.mp4" credit="Video 239278 by InOldNews via Pixabay"]
+[broll search="united states capitol building washington" caption="The lasting damage" cards="ink:not from the boardroom@boardroom; ink:from Washington@Washington" src="26-united-states-capitol-building-washingto.mp4" credit="Video 239282 by InOldNews via Pixabay"]
 So the lasting damage might not come from the boardroom at all. It might come from Washington.
 
 [chart bar title="Nvidia's share price" y="$" ymin=150 colors="ink,red,red" source="Nasdaq: record high 6 October 2026; closes 6 and 10 November 2026" cards="ink:what the headlines are skipping@skipping; red:already falling@already; ink:record high: 6 October@record; ink:the Friday before the letter@Friday; red:down 23%@23%; ink:worries about the AI spending boom@worries; ink:how long can it last?@long; red:the scandal: 9.5%@9.5%; red:the spending worry: 23%@worry"]
@@ -158,7 +158,7 @@ And I try to {explain} stick to a plan. Because back in 2021, I {chart-down} wat
 [text board="I don't know how this ends | Why I don't want too much on one company" cards="ink:he might be fine@fine; ink:he might not@might; ink:even one I like@like"]
 I don't know how this ends, I really don't. He might be fine, he might not. And I guess that's why I don't want too much riding on any one company, even one I like.
 
-[broll search="stock market trading screen numbers" pick=2 caption="Not advice" cards="ink:not a financial advisor@advisor; ink:this isn't advice@advice; ink:I've got money in this@money; ink:so I'm not exactly neutral@neutral"]
+[broll search="stock market trading screen numbers" pick=2 caption="Not advice" cards="ink:not a financial advisor@advisor; ink:this isn't advice@advice; ink:I've got money in this@money; ink:so I'm not exactly neutral@neutral" src="43-stock-market-trading-screen-numbers.mp4" credit="Video 308077 by gofurxp via Pixabay"]
 And just so it's said, I'm not a financial advisor, this isn't advice, and like I said, I've got money in this, so I'm not exactly neutral.
 
 [broll search="hands typing on smartphone close up" caption="Tell me in the comments" cards="ink:buying?@buying; ink:selling?@selling; ink:or just leaving it?@leaving; ink:next: chasing the hottest stock@chase; ink:see you in the next one@see" src="44-hands-typing-on-smartphone-close-up.mp4" credit="Video 3176 by Coverr-Free-Footage via Pixabay"]
