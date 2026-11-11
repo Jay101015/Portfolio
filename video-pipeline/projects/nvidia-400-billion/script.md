@@ -99,7 +99,7 @@ And Reuters made a point I hadn't thought about. Unlike Mark Zuckerberg at Meta,
 [news outlet="The Hill" date="November 2026" url="https://thehill.com/policy/technology/6211351-chip-export-restrictions-momentum-nvidia-huang/" headline="Nvidia's Jensen Huang scandal fuels push for strict AI chip export bills" board="Risk 2: Washington" cards="ink:two: politics@politics; ink:new momentum for bills in Congress@momentum; ink:tighter rules on selling AI chips abroad@tighten"]
 The second one is politics. This whole thing has given new momentum to bills in Congress that would tighten the rules on selling AI chips abroad.
 
-[broll search="united states capitol building washington" pick=1 caption="The lasting damage" cards="ink:not from the boardroom@boardroom; ink:from Washington@Washington"]
+[broll search="united states capitol building washington" pick=1 caption="The lasting damage" cards="ink:not from the boardroom@boardroom; ink:from Washington@Washington" src="26-united-states-capitol-building-washingto.mp4" credit="Video 239278 by InOldNews via Pixabay"]
 So the lasting damage might not come from the boardroom at all. It might come from Washington.
 
 [chart bar title="Nvidia's share price" y="$" ymin=150 colors="ink,red,red" source="Nasdaq: record high 6 October 2026; closes 6 and 10 November 2026; the axis starts at $150" cards="ink:what the headlines are skipping@skipping; red:already falling@already; ink:record high: 6 October@record; ink:the Friday before the letter@Friday; red:down 23%@23%; ink:worries about the AI spending boom@worries; ink:how long can it last?@long; red:the scandal: 9.5%@9.5%; red:the spending worry: 23%@worry"]

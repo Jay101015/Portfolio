@@ -4,7 +4,7 @@ Recorded 11 November 2026. This is a developing story: the spying claims are all
 
 Chapters
 0:00 $400 billion in 2 days
-0:48 What happened
+0:47 What happened
 2:17 Why Nvidia
 3:07 What it means
 5:22 What I'm doing
