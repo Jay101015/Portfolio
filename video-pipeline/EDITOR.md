@@ -172,6 +172,24 @@ chapters.txt when there is none), so they never have to be read off frames by ha
 "Takeaway" cards or a recap ending two videos in a row (docs/formats.md); no footage scenes. Fix the warnings
 before pushing a script.
 
+## The voice from ElevenLabs (python -m pipeline.tts)
+
+Jeffrey's cloned voice can be made by the pipeline instead of pasted in by hand:
+- `python -m pipeline.tts projects/<name> --dry-run` lists the chunks and the characters they cost; without
+  `--dry-run` it makes `voiceover.m4a` and `voice.json`. Only chunks whose words changed are paid for again (the
+  cache is in `.cache/tts`; in a new container unchanged chunks are cut from the take on the branch). `--redo 4,7`
+  makes a new take of those chunks.
+- The words are sent as said: figures spelled out the British way ("twelve thousand, five hundred and forty-eight
+  pounds"), tax years as "twenty twenty-six to twenty-seven". Digits, symbols or [BRACKETS] left in the narration
+  stop the run. `tts.say: ISA=eye-sah` in the header respells a word the voice gets wrong.
+- Chunks are a few scenes each (about 1,500 characters), never cut inside a scene; a takeaway or title card starts a
+  new chunk and a longer pause (`tts.gap` 0.45 s, `tts.section_gap` 0.9 s). Chunks are matched in level before joining.
+- The repo is public: the key and the voice ID are read from `ELEVENLABS_API_KEY` / `ELEVENLABS_VOICE_ID` or from
+  `~/.config/everyday-investor/`, never from the repo, and never printed. `voice.json` holds neither.
+- The words are Jeffrey's: no voice is made until he has approved the script. The script carries `voice: natural`.
+- Lines printed as `LISTEN:` (a chunk read much faster or slower than the rest, a hole inside a chunk, a chunk that
+  came back at a different level) are listened to before the render.
+
 ## A Short's page (vertical)
 
 The phone's top 8% is its status bar and the Shorts header, the bottom 15% the title strip, the right 15% its
