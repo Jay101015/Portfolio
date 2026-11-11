@@ -26,10 +26,10 @@ So I want to go through what actually happened, why Nvidia, what I think it mean
 [news outlet="CNN" date="8 November 2026" url="https://www.cnn.com/2026/11/08/business/nvidia-investigation-ceo-jensen-huang" headline="Nvidia CEO Jensen Huang admits affair as company launches investigation into foreign spy accusations" board="Nvidia's CEO admits an affair" part="What happened"]
 So here's what happened. On Sunday the 8th of November, Jensen Huang, the guy who runs Nvidia, sent a letter to every single employee. He said he'd been unfaithful to his wife. He apologised, and he said he takes full responsibility.
 
-[broll search="boardroom meeting table executives" caption="An independent investigation" cards="ink:not really about the affair@affair; ink:a foreign intelligence operation@intelligence"]
+[broll search="boardroom meeting table executives" caption="An independent investigation" cards="ink:not really about the affair@affair; ink:a foreign intelligence operation@intelligence" src="06-boardroom-meeting-table-executives.mp4" credit="Video 3132 by Life-Of-Vids via Pixabay"]
 That same day, Nvidia's board opened an independent investigation. And to be clear, it's not really about the affair. It's about reports that he was the target of a foreign intelligence operation.
 
-[broll search="computer chip circuit board close up" caption="An allegation, not a finding" cards="ink:nobody has been charged@charged; ink:China denies it@denies"]
+[broll search="computer chip circuit board close up" caption="An allegation, not a finding" cards="ink:nobody has been charged@charged; ink:China denies it@denies" src="07-computer-chip-circuit-board-close-up.mp4" credit="Video 47215 by nanoslavic via Pixabay"]
 So according to those reports, and the New York Times had it first, US intelligence believes the woman involved was working for China. She's a businesswoman, and her company had reportedly bought billions of dollars' worth of Nvidia's chips. Now, I want to be careful here. That's an allegation. Nobody's been charged, and China denies it.
 
 [news outlet="NBC News" date="10 November 2026" url="https://www.nbcnews.com/business/corporations/ex-prosecutor-probe-jensen-huang-chinese-spy-affair-nvidia-rcna608628" headline="Nvidia hires former acting U.S. attorney to probe Jensen Huang affair" board="A former US prosecutor runs the investigation"]
@@ -45,7 +45,7 @@ But the market didn't wait around. On Monday, the shares dropped 4.3%. On Tuesda
 [text board="Why would a spy care about a chip company?" art=look-closer art_at=r art_size=0.5 part="Why Nvidia"]
 So why would a spy even care about a company that makes chips?
 
-[broll search="server room data centre racks" caption="What AI runs on"]
+[broll search="server room data centre racks" caption="What AI runs on" src="12-server-room-data-centre-racks.mp4" credit="Video 14906 by cipnt via Pixabay"]
 Because those chips are pretty much what AI runs on. Most of the big AI systems in the world are trained on Nvidia's chips. So if you're a country that wants to win at AI, this is the thing you want.
 
 [news outlet="CNBC" date="10 November 2026" url="https://www.cnbc.com/2026/11/10/jensen-huang-nvidia-china-ties.html" headline="Jensen Huang's affair with alleged Chinese spy further complicates Nvidia's China problem" board="The fight over selling chips to China"]
@@ -72,7 +72,7 @@ The second one is politics. This whole thing has given new momentum to bills in 
 bars: Record 6 Oct:243.37, Before the letter:186.64, Tuesday 10 Nov:168.89
 And here's the bit the headlines are skipping. Nvidia was already falling. From its record high on the 6th of October to the Friday before any of this came out, the shares had dropped 23%, largely on worries about how long the AI spending boom can last. So the scandal took 9.5%. The spending worry had already taken 23%.
 
-[broll search="united states capitol building washington" caption="17 and 18 November"]
+[broll search="united states capitol building washington" caption="17 and 18 November" src="20-united-states-capitol-building-washingto.mp4" credit="Video 239278 by InOldNews via Pixabay"]
 There are 2 dates I'm watching. Nvidia's due to report its results on the 17th of November. And members of Congress have asked Jensen Huang for a briefing on the 18th.
 
 [compare title="A year after the CEO left" good=left source="Yahoo Finance, November 2026: share prices a year after each exit"]
@@ -110,7 +110,7 @@ So how am I hedging? Honestly, it's nothing clever. The S&P 500 stays at the cor
 [text board="I don't know how this ends" art=sleep-grow art_at=r art_size=0.5]
 I don't know how this ends, I really don't. He might be fine, he might not. And I guess that's why I don't want too much riding on any one company, even one I like. And just so it's said, I'm not a financial advisor, this isn't advice, and like I said, I've got money in this, so I'm not exactly neutral.
 
-[broll search="person typing comment on phone sofa" caption="Buying, selling or leaving it?"]
+[broll search="person typing comment on phone sofa" caption="Buying, selling or leaving it?" src="30-person-typing-comment-on-phone-sofa.mp4" credit="Video 10822 by Coverr-Free-Footage via Pixabay"]
 So yeah, let me know in the comments what you're doing: buying, selling, or just leaving it. I'm genuinely curious. And if you want to see what happens when you chase the hottest stock every year, I made a video on that, and it's on screen now. I'll see you in the next one.
 
 [outro title="The Everyday Investor" cta="Subscribe for the next one" dur=20 cards=on]
