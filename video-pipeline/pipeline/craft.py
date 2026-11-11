@@ -76,10 +76,14 @@ def figure_text(words: list[dict], i0: int, i1: int) -> tuple[str, float] | None
         pence = sfx.spoken_value([words[i1 + 1]]) if i1 + 1 < len(words) and sfx._is_number(str(words[i1 + 1]["w"])) else None  # "fifty", not "a"
         if pence is not None and 0 < pence < 100 and not sfx._is_number(str(words[i1 + 2]["w"]) if i1 + 2 < len(words) else ""):
             return f"£{v + pence / 100:.2f}" + tail, v + pence / 100  # "three pound fifty"
+    dollars = any(x.startswith("$") for x in toks) or any(x in ("dollars", "dollar") for x in toks) or nxt in ("dollars", "dollar")
+    big = next((f"{v / scale:g} {name}" for scale, name in ((1e12, "trillion"), (1e9, "billion"), (1e6, "million")) if abs(v) >= scale), None)
     if pct:
         return f"{num}%" + tail, v
     if pounds:
-        return f"£{num}" + tail, v
+        return f"£{big or num}" + tail, v
+    if dollars:
+        return f"${big or num}" + tail, v  # "$96.2 billion", never "96,200,000,000"
     if times:
         return f"{num}×", v
     if nxt in UNITS:  # "eighteen years", "ten minutes": the unit makes the figure
@@ -88,7 +92,7 @@ def figure_text(words: list[dict], i0: int, i1: int) -> tuple[str, float] | None
         return f"{num} {nxt}", v
     if v < 1000:
         return None  # "22", "39": a bare small number says nothing on its own
-    return num + tail, v
+    return (big or num) + tail, v
 
 
 def _card_values(cues: list[dict]) -> list[tuple[float, float]]:

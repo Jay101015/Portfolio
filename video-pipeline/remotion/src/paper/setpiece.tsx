@@ -334,7 +334,7 @@ export const FootageCards: React.FC<{scene: Scene; brand?: Brand}> = ({scene, br
   const chart = !vertical && scene.type === 'chart';
   // a drawing or a loop on the right half (any board, list, stat or recap): the cards sit top right, above it, two at a time
   const rightArt = !vertical && !chart && scene.type !== 'broll' && ((!!scene.props.art && scene.props.art !== 'off') || !!scene.props.anim || scene.type === 'pie');
-  const topRow = !vertical && (scene.type === 'bite' || scene.type === 'news'); // the label or the clipping runs under the column: start at the top edge
+  const topRow = !vertical && (scene.type === 'bite' || scene.type === 'news'); // the label or the clipping runs under the column: start at the top, a card's half-height clear of the edge (at 0.03 the top card was cut in half)
   // a compare fills the page with its two boxes: the cards go in the strip under them, two at a time, so they never
   // sit on a box's heading (retirement round 2: "most people under 40: a pot" hid "It depends" for 12 s)
   const compare = !vertical && scene.type === 'compare';
@@ -342,10 +342,10 @@ export const FootageCards: React.FC<{scene: Scene; brand?: Brand}> = ({scene, br
   const n = compare ? 2 : aboveArt ? 1 : lowBand ? 2 : vertical ? 2 : rightArt || topRow || chart ? 2 : underLines ? 2 : left ? 3 : iconBoard ? 3 : 4;
   const step = (compare ? 0.088 : lowBand ? 0.065 : vertical ? 0.08 : underLines ? 0.1 : 0.118) * H;
   const maxw = (compare ? 0.84 : aboveArt ? 0.84 : lowBand ? 0.5 : vertical ? 0.56 : left ? 0.42 : 0.44) * W;
-  const usual = {colX: (compare ? 0.5 : aboveArt ? 0.5 : lowBand ? 0.73 : vertical ? 0.34 : chart ? 0.66 : rightArt ? 0.74 : underLines ? 0.25 : 0.74) * W, y0: (compare ? 0.81 : aboveArt ? 0.4 : lowBand ? 0.755 : vertical ? 0.6 : chart ? 0.21 : topRow ? 0.03 : rightArt ? 0.06 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H};
+  const usual = {colX: (compare ? 0.5 : aboveArt ? 0.5 : lowBand ? 0.73 : vertical ? 0.34 : chart ? 0.66 : rightArt ? 0.74 : underLines ? 0.25 : 0.74) * W, y0: (compare ? 0.81 : aboveArt ? 0.4 : lowBand ? 0.755 : vertical ? 0.6 : chart ? 0.21 : topRow ? 0.075 : rightArt ? 0.075 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H};
   // on a landscape board the column keeps off the drawing: its usual place first, then top right, bottom left under
   // the lines, mid left, and the strip along the bottom
-  const slot = vertical || compare || chart ? usual : pickSlot([usual, {colX: 0.74 * W, y0: 0.06 * H}, {colX: 0.25 * W, y0: 0.72 * H}, {colX: 0.25 * W, y0: 0.42 * H}, {colX: 0.5 * W, y0: 0.86 * H}], n, step, maxw, artRect(scene, brand, W, H));
+  const slot = vertical || compare || chart ? usual : pickSlot([usual, {colX: 0.74 * W, y0: 0.075 * H}, {colX: 0.25 * W, y0: 0.72 * H}, {colX: 0.25 * W, y0: 0.42 * H}, {colX: 0.5 * W, y0: 0.86 * H}], n, step, maxw, artRect(scene, brand, W, H));
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
       <Column items={cues.slice(-n)} colX={slot.colX} y0={slot.y0} step={step} maxw={maxw} tq={tq} k={k} left={left || slot.colX < W / 2} vertical={vertical} W={W} H={H} />

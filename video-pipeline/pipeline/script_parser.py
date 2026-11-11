@@ -176,6 +176,10 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
                 label, val = pair.rsplit(":", 1)
                 bars.append({"label": label.strip(), "value": _num(val)})
             p["bars"] = bars
+            if "ymin" in a:
+                p["yMin"] = _num(a["ymin"])  # a share price never starts at nought: ymin=150 makes $186 against $169 a visible step
+            if a.get("colors"):
+                p["barColors"] = [c.strip() for c in str(a["colors"]).split(",")]  # colors="ink,red,red": red only for a fall
     elif b.type == "compare":
         if "title" in a:
             p["title"] = a["title"]

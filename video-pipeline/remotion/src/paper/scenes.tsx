@@ -14,7 +14,7 @@ import {captionLine, isLoss, keyWords, moneyTint} from './phrase';
 import {Media} from './media';
 import {Loop, Sequence} from 'remotion';
 import {CharacterOn, isPersonArt} from './character';
-import {figureTime, lineIndices} from './lineMatch';
+import {figureTime, lineIndex, lineIndices} from './lineMatch';
 import {PaperReceipt} from './receipt';
 
 /**
@@ -426,7 +426,7 @@ const ClipCard: React.FC<{src: string; props: Record<string, any>; frame: number
           {dur > 0 && dur * fps < total ? <Loop durationInFrames={Math.max(1, Math.round(dur * fps))}>{inner}</Loop> : inner}
         </div>
       </div>
-      <div style={{position: 'absolute', left: '50%', top: -20 * u, width: 50 * u, height: 50 * u, borderRadius: '50%', background: `radial-gradient(circle at 35% 30%, #ff8a80, ${brand.accent2} 70%)`, boxShadow: `0 ${4 * u}px ${8 * u}px rgba(0,0,0,0.3)`, transform: 'translateX(-50%)'}} />
+      <div style={{position: 'absolute', left: '50%', top: -20 * u, width: 50 * u, height: 50 * u, borderRadius: '50%', background: `radial-gradient(circle at 35% 30%, #9db4ff, ${brand.blue ?? '#3b5bdb'} 70%)`, boxShadow: `0 ${4 * u}px ${8 * u}px rgba(0,0,0,0.3)`, transform: 'translateX(-50%)'}} />
       {props.clip_credit && brand.creditsOnScreen ? <div style={{position: 'absolute', right: 8 * u, bottom: -40 * u, fontFamily: hand(brand), fontSize: 24 * u, color: brand.muted}}>{String(props.clip_credit)}</div> : null}
     </div>
   );
@@ -461,7 +461,7 @@ export const PaperHook: React.FC<P> = ({scene, brand}) => {
         <Write text={line} frame={frame} fps={fps} start={at} cps={cps} tint={moneyTint(line, brand.accent, brand.accent2)} />
       </div>
       <svg width={w} height={30 * u} viewBox={`0 0 ${w} ${30 * u}`} style={{overflow: 'visible', marginTop: 10 * u}}>
-        <SketchPath d={`M${w * 0.04},${16 * u} Q${w * 0.5},${6 * u} ${w * 0.96},${18 * u}`} win={[done, done + Math.round(fps * 0.5)]} easeOut options={{stroke: brand.accent, strokeWidth: 9 * u, seed: scene.id * 5 + 2, roughness: 1.5}} />
+        <SketchPath d={`M${w * 0.04},${16 * u} Q${w * 0.5},${6 * u} ${w * 0.96},${18 * u}`} win={[done, done + Math.round(fps * 0.5)]} easeOut options={{stroke: isLoss(line) ? brand.accent2 : brand.accent, strokeWidth: 9 * u, seed: scene.id * 5 + 2, roughness: 1.5}} />
       </svg>
       {art ? (
         <div style={{position: 'absolute', width: size, height: size, ...(isVertical ? {bottom: pad + 170 * u, left: '50%', transform: 'translateX(-50%)'} : {right: pad * 0.5, top: '50%', transform: 'translateY(-50%)'})}}>
@@ -698,6 +698,7 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
   const lineAt = brand.board ? axesAt + Math.round(fps * 0.5) + 4 : 10;
   const reveal = brand.board ? lin(frame, lineAt, lineAt + drawFrames) : ease(frame, 10, 10 + drawFrames);
   let yMax = 1;
+  let yMin = 0; // a bar chart's floor (ymin=150); line charts keep nought
   let ticks = 4;
   let body: React.ReactNode = null;
   const yLab = (v: number) => compactNum(v, yFormat);
@@ -756,9 +757,19 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
     );
   } else {
     const bars: Bar[] = scene.props.bars ?? [];
-    const axis = niceAxis(Math.max(...bars.map((b) => b.value), 0));
-    yMax = axis.max;
+    yMin = Number(scene.props.yMin ?? 0) || 0;
+    const axis = niceAxis(Math.max(...bars.map((b) => b.value - yMin), 0));
+    yMax = yMin + axis.max;
     ticks = axis.ticks;
+    const barColors: string[] = scene.props.barColors ?? [];
+    // a bar whose own figure is never said (a share price) lands where its label is: "Monday 9 Nov" on "Monday"
+    let from = 0;
+    const labelAt = bars.map((b) => {
+      const i = lineIndex(b.label, scene.words ?? [], from);
+      if (i === null) return null;
+      from = i + 1;
+      return (scene.words ?? [])[i].s;
+    });
     const gap = 40 * u;
     const bw = (plotW - gap * (bars.length + 1)) / Math.max(1, bars.length);
     body = (
@@ -766,18 +777,18 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
         {bars.map((b, i) => {
           const seq = lineAt + i * (brand.board ? Math.round(fps * 0.7) : 8);
           // each bar grows as its figure is said ("just 9%"), not all three before the voice gets there
-          const said = figureTime(scene.words, String(b.value));
+          const said = figureTime(scene.words, String(b.value)) ?? labelAt[i];
           const at = said !== null ? Math.max(seq, Math.round((said - scene.start) * fps) - Math.round(fps * 0.3)) : seq;
           const grow = brand.board ? lin(frame, at, at + fps * 0.6) : ease(frame, 8 + i * 8, 8 + i * 8 + fps * 0.9);
-          const h = Math.max(0, (b.value / yMax) * plotH * grow);
+          const h = Math.max(0, ((b.value - yMin) / Math.max(1e-9, yMax - yMin)) * plotH * grow);
           const hq = Math.round(h / 3) * 3; // the sketch only redraws when the bar has visibly grown, so it does not boil
           const x = left + gap + i * (bw + gap);
           const y = top + plotH - hq;
-          const c = b.color ?? colors[i % colors.length];
+          const c = b.color ?? (barColors[i] ? named[barColors[i]] ?? barColors[i] : colors[i % colors.length]);
           return (
             <g key={i}>
               {hq > 2 ? <SketchRect x={x} y={y} w={bw} h={hq} options={{stroke: c, strokeWidth: 3.5 * u, seed: 70 + i, fill: c, fillStyle: 'hachure', hachureGap: 12 * u, fillWeight: 2.5 * u, hachureAngle: -41, roughness: 1}} /> : null}
-              <text x={x + bw / 2} y={y - 16 * u} textAnchor="middle" fontFamily={hand(brand)} fontSize={40 * u} fontWeight={700} fill={brand.ink} opacity={grow}>{yLab(b.value * grow)}</text>
+              <text x={x + bw / 2} y={y - 16 * u} textAnchor="middle" fontFamily={hand(brand)} fontSize={40 * u} fontWeight={700} fill={brand.ink} opacity={grow}>{yLab(yMin + (b.value - yMin) * grow)}</text>
               <text x={x + bw / 2} y={H - 18 * u} textAnchor="middle" fontFamily={hand(brand)} fontSize={30 * u} fill={brand.muted} {...labelWipe(axesAt + Math.round(fps * 0.5) + i * 3)}>{b.label}</text>
             </g>
           );
@@ -794,7 +805,7 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
       ) : null}
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{overflow: 'visible'}}>
         {Array.from({length: ticks + 1}).map((_, i) => {
-          const v = (yMax * i) / ticks;
+          const v = yMin + ((yMax - yMin) * i) / ticks;
           const y = top + plotH - (i / ticks) * plotH;
           return (
             <g key={i} opacity={axes}>
@@ -927,7 +938,7 @@ export const PaperStill: React.FC<P> = ({scene, brand}) => {
         </div>
         {brand.board ? (
           // a round magnet holds the photo to the board
-          <div style={{position: 'absolute', left: '50%', top: -22 * u, width: 56 * u, height: 56 * u, borderRadius: '50%', background: `radial-gradient(circle at 35% 30%, #ff8a80, ${brand.accent2} 70%)`, boxShadow: `0 ${4 * u}px ${8 * u}px rgba(0,0,0,0.3)`, transform: 'translateX(-50%)'}} />
+          <div style={{position: 'absolute', left: '50%', top: -22 * u, width: 56 * u, height: 56 * u, borderRadius: '50%', background: `radial-gradient(circle at 35% 30%, #9db4ff, ${brand.blue ?? '#3b5bdb'} 70%)`, boxShadow: `0 ${4 * u}px ${8 * u}px rgba(0,0,0,0.3)`, transform: 'translateX(-50%)'}} />
         ) : (
           // a strip of tape over the top edge
           <div style={{position: 'absolute', left: '50%', top: -16 * u, width: 180 * u, height: 44 * u, background: marker(brand), opacity: 0.75, transform: 'translateX(-50%) rotate(-3deg)'}} />
@@ -1187,7 +1198,7 @@ export const PaperNews: React.FC<P> = ({scene, brand}) => {
           {domain ? <div style={{marginTop: 22 * u, fontFamily: hand(brand), fontSize: 26 * u, color: brand.muted, opacity: fadeIn(frame, lineAt + 10, 10)}}>{domain}</div> : null}
         </div>
         {brand.board ? (
-          <div style={{position: 'absolute', left: '50%', top: -22 * u, width: 56 * u, height: 56 * u, borderRadius: '50%', background: `radial-gradient(circle at 35% 30%, #ff8a80, ${brand.accent2} 70%)`, boxShadow: `0 ${4 * u}px ${8 * u}px rgba(0,0,0,0.3)`, transform: 'translateX(-50%)'}} />
+          <div style={{position: 'absolute', left: '50%', top: -22 * u, width: 56 * u, height: 56 * u, borderRadius: '50%', background: `radial-gradient(circle at 35% 30%, #9db4ff, ${brand.blue ?? '#3b5bdb'} 70%)`, boxShadow: `0 ${4 * u}px ${8 * u}px rgba(0,0,0,0.3)`, transform: 'translateX(-50%)'}} />
         ) : null}
         {caption ? (
           <div style={{position: 'absolute', left: 30 * u, bottom: -74 * u, fontFamily: hand(brand), fontSize: 48 * u, color: noteColor(brand), transform: 'rotate(1deg)'}}>
