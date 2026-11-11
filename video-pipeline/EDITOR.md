@@ -34,6 +34,13 @@ every 60 to 90 seconds, something useful before the title card, an ending with a
 recorded, so the pass changes none of them: it reads the draft against that list and writes each miss as a
 `WRITING:` line in the notes for Jeffrey (the lines are listed in WRITING.md), so the next recording has it.
 
+## His voice (docs/voice.md)
+
+A script is Jeffrey talking, not an article read out. docs/voice.md holds how he talks (from his own unscripted
+recording), what he has said on camera about his own money, and how far to take the fillers when the voice is made by
+ElevenLabs. Write every script against it; a new claim about what he holds or has done stays in [BRACKETS] until he
+confirms it.
+
 ## Re-cut the scenes first
 
 A scene is one idea. Move the paragraph breaks so every scene starts where a new thought starts (a step, an amount, a
