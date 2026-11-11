@@ -14,7 +14,7 @@ No `[news]` scene with a search=.
 
 These sentences state a figure or a UK/US claim and the scene has no source on the board. Give the scene a `[stat fact=...]`, a `source=` with publisher and date, or a `[news]` scene; or leave it as the host's own experience.
 
-- scene 24: One UK investment firm puts it at around £7 of every £100 in the fund.
+- scene 33: One UK investment firm puts it at around £7 of every £100 in the fund.
 
 ## The catalogue
 

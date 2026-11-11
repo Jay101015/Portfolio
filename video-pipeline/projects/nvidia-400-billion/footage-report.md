@@ -4,14 +4,18 @@ Topic: Nvidia's two-day fall after its CEO admitted an affair and the board open
 
 | scene | query | result | licence | attribution |
 |---|---|---|---|---|
-| 6 | boardroom meeting table executives | downloaded 06-boardroom-meeting-table-executives.mp4 | Pixabay Content License | Video 3132 by Life-Of-Vids via Pixabay |
-| 7 | computer chip circuit board close up | downloaded 07-computer-chip-circuit-board-close-up.mp4 | Pixabay Content License | Video 47215 by nanoslavic via Pixabay |
-| 9 | courthouse steps building exterior | no candidate passed the quality gate |  |  |
-| 12 | server room data centre racks | downloaded 12-server-room-data-centre-racks.mp4 | Pixabay Content License | Video 14906 by cipnt via Pixabay |
-| 20 | united states capitol building washington | downloaded 20-united-states-capitol-building-washingto.mp4 | Pixabay Content License | Video 239278 by InOldNews via Pixabay |
-| 24 |  | library vuag-holdings-app |  |  |
-| 26 |  | library nvda-max-chart-app |  |  |
-| 30 | person typing comment on phone sofa | downloaded 30-person-typing-comment-on-phone-sofa.mp4 | Pixabay Content License | Video 10822 by Coverr-Free-Footage via Pixabay |
+| 2 |  | library vuag-holdings-app |  |  |
+| 8 | empty boardroom table chairs | downloaded 08-empty-boardroom-table-chairs.mp4 | Pixabay Content License | Video 1191 by Vimeo-Free-Videos via Pixabay |
+| 9 | computer chip circuit board macro | downloaded 09-computer-chip-circuit-board-macro.mp4 | Pixabay Content License | Video 13461 by onijake via Pixabay |
+| 12 | courthouse columns steps exterior | downloaded 12-courthouse-columns-steps-exterior.mp4 | Pixabay Content License | Video 3171 by Coverr-Free-Footage via Pixabay |
+| 16 | server room data centre racks | downloaded 16-server-room-data-centre-racks.mp4 | Pixabay Content License | Video 14906 by cipnt via Pixabay |
+| 18 | shipping containers port cranes | downloaded 18-shipping-containers-port-cranes.mp4 | Pixabay Content License | Video 214809 by Peter_Hanzo via Pixabay |
+| 24 | empty office chair desk window | downloaded 24-empty-office-chair-desk-window.mp4 | Pixabay Content License | Video 42305 by CycleZyklusCiclo via Pixabay |
+| 26 | united states capitol building washington | downloaded 26-united-states-capitol-building-washingto.mp4 | Pixabay Content License | Video 239278 by InOldNews via Pixabay |
+| 33 |  | library vuag-max-chart-app |  |  |
+| 38 | supermarket aisle shoppers trolley | downloaded 38-supermarket-aisle-shoppers-trolley.mp4 | Pixabay Content License | Video 1735 by Buvrix27 via Pixabay |
+| 43 | stock market trading screen numbers | downloaded 43-stock-market-trading-screen-numbers.mp4 | Pixabay Content License | Video 349089 by MuhammadAhmad10 via Pixabay |
+| 44 | hands typing on smartphone close up | downloaded 44-hands-typing-on-smartphone-close-up.mp4 | Pixabay Content License | Video 3176 by Coverr-Free-Footage via Pixabay |
 
 ## What counts as free use here
 

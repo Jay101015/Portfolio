@@ -36,10 +36,10 @@ So I want to go through what actually happened, why Nvidia, what I think it mean
 [text board="What happened? | A letter to every employee | Unfaithful to his wife" cards="ink:Sunday 8 November@Sunday; ink:Jensen Huang, who runs Nvidia@Jensen; ink:he apologised@apologised; ink:he takes full responsibility@responsibility" part="What happened"]
 So here's what happened. On Sunday the 8th of November, Jensen Huang, the guy who runs Nvidia, sent a letter to every single employee. He said he'd been unfaithful to his wife. He apologised, and he said he takes full responsibility.
 
-[broll search="empty boardroom table chairs" caption="The same day" cards="ink:an independent investigation@independent; ink:not really about the affair@affair; ink:reports of a foreign intelligence operation@reports"]
+[broll search="empty boardroom table chairs" caption="The same day" cards="ink:an independent investigation@independent; ink:not really about the affair@affair; ink:reports of a foreign intelligence operation@reports" src="08-empty-boardroom-table-chairs.mp4" credit="Video 1191 by Vimeo-Free-Videos via Pixabay"]
 That same day, Nvidia's board opened an independent investigation. And to be clear, it's not really about the affair. It's about reports that he was the target of a foreign intelligence operation.
 
-[broll search="computer chip circuit board macro" caption="An allegation, not a finding" marks="ink:circle 50,50@chips" cards="ink:according to the reports@reports; ink:first reported by the New York Times@York; ink:what US intelligence is said to believe@intelligence; ink:reportedly: billions of dollars of chips@reportedly"]
+[broll search="computer chip circuit board macro" caption="An allegation, not a finding" marks="ink:circle 50,50@chips" cards="ink:according to the reports@reports; ink:first reported by the New York Times@York; ink:what US intelligence is said to believe@intelligence; ink:reportedly: billions of dollars of chips@reportedly" src="09-computer-chip-circuit-board-macro.mp4" credit="Video 13461 by onijake via Pixabay"]
 So according to those reports, and the New York Times had it first, US intelligence believes the woman involved was working for China. She's a businesswoman, and her company had reportedly bought billions of dollars' worth of Nvidia's chips.
 
 [text board="Careful: that's an allegation | Nobody's been charged | China denies it"]
@@ -48,7 +48,7 @@ Now, I want to be careful here. That's an allegation. Nobody's been charged, and
 [news outlet="NBC News" date="10 November 2026" url="https://www.nbcnews.com/business/corporations/ex-prosecutor-probe-jensen-huang-chinese-spy-affair-nvidia-rcna608628" headline="Nvidia hires former acting U.S. attorney to probe Jensen Huang affair" board="A former US prosecutor runs the investigation" cards="ink:the board: no reason to believe secrets were compromised@reason; ink:or national security@national; ink:it still has confidence in him@confidence; ink:still the CEO, as I record this@recording; ink:a former US prosecutor is brought in@brought"]
 The board says it's got no reason to believe any company secrets or national security were compromised, and it says it still has confidence in him. As I'm recording this, he's still the CEO. And they've brought in a former US prosecutor to run the investigation.
 
-[broll search="courthouse columns steps exterior" caption="Since then" cards="ink:the president: the FBI is looking into it@FBI; ink:investors have filed a lawsuit@lawsuit; ink:what we don't know@know; ink:no timetable (Reuters)@timetable; ink:weeks, or months@weeks"]
+[broll search="courthouse columns steps exterior" caption="Since then" cards="ink:the president: the FBI is looking into it@FBI; ink:investors have filed a lawsuit@lawsuit; ink:what we don't know@know; ink:no timetable (Reuters)@timetable; ink:weeks, or months@weeks" src="12-courthouse-columns-steps-exterior.mp4" credit="Video 3171 by Coverr-Free-Footage via Pixabay"]
 Since then, the president has said the FBI is looking into it, and a group of investors has filed a lawsuit. And here's what we don't know. Reuters says there's no timetable for the investigation. These things can take weeks, or months.
 
 [chart bar title="Nvidia's share price at the close" y="$" ymin=150 colors="ink,red,red" source="Nasdaq closing prices, 6 to 10 November 2026" cards="red:Monday: down 4.3%@4.3%; red:Tuesday: another 5.5%@5.5%"]
@@ -61,13 +61,13 @@ So that's about 9.5% in 2 days. Roughly $428 billion, gone.
 [text board="Why Nvidia? | A company that makes chips" part="Why Nvidia"]
 So why would a spy even care about a company that makes chips?
 
-[broll search="server room data centre racks" caption="Nvidia's chips" cards="ink:what AI runs on@runs; ink:most big AI systems: trained on Nvidia's chips@trained; ink:the thing you want@thing"]
+[broll search="server room data centre racks" caption="Nvidia's chips" cards="ink:what AI runs on@runs; ink:most big AI systems: trained on Nvidia's chips@trained; ink:the thing you want@thing" src="16-server-room-data-centre-racks.mp4" credit="Video 14906 by cipnt via Pixabay"]
 Because those chips are pretty much what AI runs on. Most of the big AI systems in the world are trained on Nvidia's chips. So if you're a country that wants to win at AI, this is the thing you want.
 
 [news outlet="CNBC" date="10 November 2026" url="https://www.cnbc.com/2026/11/10/jensen-huang-nvidia-china-ties.html" headline="Jensen Huang's affair with alleged Chinese spy further complicates Nvidia's China problem" board="The fight over selling chips to China" cards="ink:US limits on its chips@limits; ink:what can be sold to China@China; ink:he pushed to loosen those rules@loosen; ink:direct access to the president@access; ink:a chip analyst, to CNBC@analyst; ink:35 years@35; ink:this much influence on export policy@influence"]
 And here's the thing. The US limits which of those chips can be sold to China. Jensen Huang has publicly pushed to loosen those rules, and he's had direct access to the president. One chip analyst told CNBC that in 35 years, he's never seen a chip CEO with this much influence on export policy.
 
-[broll search="shipping containers port cranes" caption="If you believe the reporting" cards="ink:not only about secrets@secrets; ink:about influence@influence; ink:how he thinks about selling to China@thinks; ink:but that's the claim@claim; ink:what the investigation is for@investigation"]
+[broll search="shipping containers port cranes" caption="If you believe the reporting" cards="ink:not only about secrets@secrets; ink:about influence@influence; ink:how he thinks about selling to China@thinks; ink:but that's the claim@claim; ink:what the investigation is for@investigation" src="18-shipping-containers-port-cranes.mp4" credit="Video 214809 by Peter_Hanzo via Pixabay"]
 So if you believe the reporting, this wasn't only about secrets. It was about influence: shaping how the most important man in AI chips thinks about selling to China. But again, that's the claim. That's what the investigation is for.
 
 [text board="What does it mean? | For AI, and for your money" part="What it means"]
@@ -88,13 +88,13 @@ But to be fair, there are 2 real risks here. The first one is the man himself. A
 > Jensen is Nvidia, Nvidia is Jensen.
 One of them put it like this: Jensen is Nvidia, Nvidia is Jensen.
 
-[broll search="empty office chair desk window" caption="Risk one: the man himself" cards="ink:unlike Zuckerberg at Meta@Zuckerberg; ink:Reuters: he doesn't control the votes@votes; ink:the board could remove him@remove; ink:then nobody knows who runs it@nobody"]
+[broll search="empty office chair desk window" caption="Risk one: the man himself" cards="ink:unlike Zuckerberg at Meta@Zuckerberg; ink:Reuters: he doesn't control the votes@votes; ink:the board could remove him@remove; ink:then nobody knows who runs it@nobody" src="24-empty-office-chair-desk-window.mp4" credit="Video 42305 by CycleZyklusCiclo via Pixabay"]
 And Reuters made a point I hadn't thought about. Unlike Mark Zuckerberg at Meta, he doesn't control the votes. So the board really could remove him. And if it did, nobody knows who runs the most valuable company in AI.
 
 [news outlet="The Hill" date="November 2026" url="https://thehill.com/policy/technology/6211351-chip-export-restrictions-momentum-nvidia-huang/" headline="Nvidia's Jensen Huang scandal fuels push for strict AI chip export bills" board="Risk 2: Washington" cards="ink:two: politics@politics; ink:new momentum for bills in Congress@momentum; ink:tighter rules on selling AI chips abroad@tighten"]
 The second one is politics. This whole thing has given new momentum to bills in Congress that would tighten the rules on selling AI chips abroad.
 
-[broll search="united states capitol building washington" caption="The lasting damage" cards="ink:not from the boardroom@boardroom; ink:from Washington@Washington"]
+[broll search="united states capitol building washington" caption="The lasting damage" cards="ink:not from the boardroom@boardroom; ink:from Washington@Washington" src="26-united-states-capitol-building-washingto.mp4" credit="Video 239278 by InOldNews via Pixabay"]
 So the lasting damage might not come from the boardroom at all. It might come from Washington.
 
 [chart bar title="Nvidia's share price" y="$" ymin=150 colors="ink,red,red" source="Nasdaq: record high 6 October 2026; closes 6 and 10 November 2026" cards="ink:what the headlines are skipping@skipping; red:already falling@already; ink:record high: 6 October@record; ink:the Friday before the letter@Friday; red:down 23%@23%; ink:worries about the AI spending boom@worries; ink:how long can it last?@long; red:the scandal: 9.5%@9.5%; red:the spending worry: 23%@worry"]
@@ -139,7 +139,7 @@ Now, I don't buy individual stocks. The only other thing I invest in is a basket
 [pie value="39%" label="of the S&P 500 is its 10 biggest companies" sub="most of them big tech" source="S&P 500 weights, October 2026" cards="ink:my other pot is all AI@pot; red:if the AI trade falls, I'll feel it@falls; ink:but I've hedged@hedged"]
 The 10 biggest companies now make up about 39% of the S&P 500, and most of them are big tech. And my other pot is all AI. So if the whole AI trade falls, I will feel it. But I've hedged against that as well.
 
-[broll search="supermarket aisle shoppers trolley" caption="How I'm hedging" cards="ink:nothing clever@clever; ink:the S&P 500 at the core@core; ink:it isn't only tech@tech; ink:hundreds of companies, nothing to do with AI@hundreds"]
+[broll search="supermarket aisle shoppers trolley" caption="How I'm hedging" cards="ink:nothing clever@clever; ink:the S&P 500 at the core@core; ink:it isn't only tech@tech; ink:hundreds of companies, nothing to do with AI@hundreds" src="38-supermarket-aisle-shoppers-trolley.mp4" credit="Video 1735 by Buvrix27 via Pixabay"]
 So how am I hedging? Honestly, it's nothing clever. The S&P 500 stays at the core, and it isn't only tech. There are hundreds of companies in there that have nothing to do with AI.
 
 [text board="For AI: a basket, not one company | It hurts. It doesn't wreck me" art=index-fund-basket art_at=r art_size=0.5 cards="red:a terrible week, like this one@terrible"]
@@ -154,10 +154,10 @@ And I try to {explain} stick to a plan. Because back in 2021, I {chart-down} wat
 [text board="I don't know how this ends | Why I don't want too much on one company" cards="ink:he might be fine@fine; ink:he might not@might; ink:even one I like@like"]
 I don't know how this ends, I really don't. He might be fine, he might not. And I guess that's why I don't want too much riding on any one company, even one I like.
 
-[broll search="stock market trading screen numbers" caption="Not advice" cards="ink:not a financial advisor@advisor; ink:this isn't advice@advice; ink:I've got money in this@money; ink:so I'm not exactly neutral@neutral"]
+[broll search="stock market trading screen numbers" caption="Not advice" cards="ink:not a financial advisor@advisor; ink:this isn't advice@advice; ink:I've got money in this@money; ink:so I'm not exactly neutral@neutral" src="43-stock-market-trading-screen-numbers.mp4" credit="Video 349089 by MuhammadAhmad10 via Pixabay"]
 And just so it's said, I'm not a financial advisor, this isn't advice, and like I said, I've got money in this, so I'm not exactly neutral.
 
-[broll search="hands typing on smartphone close up" caption="Tell me in the comments" cards="ink:buying?@buying; ink:selling?@selling; ink:or just leaving it?@leaving; ink:next: chasing the hottest stock@chase; ink:see you in the next one@see"]
+[broll search="hands typing on smartphone close up" caption="Tell me in the comments" cards="ink:buying?@buying; ink:selling?@selling; ink:or just leaving it?@leaving; ink:next: chasing the hottest stock@chase; ink:see you in the next one@see" src="44-hands-typing-on-smartphone-close-up.mp4" credit="Video 3176 by Coverr-Free-Footage via Pixabay"]
 So yeah, let me know in the comments what you're doing: buying, selling, or just leaving it. I'm genuinely curious. And if you want to see what happens when you chase the hottest stock every year, I made a video on that, and it's on screen now. I'll see you in the next one.
 
 [outro title="The Everyday Investor" cta="Subscribe for the next one" dur=20 cards=on]
