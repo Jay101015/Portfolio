@@ -5,12 +5,10 @@ Topic: Nvidia's two-day fall after its CEO admitted an affair and the board open
 | scene | query | result | licence | attribution |
 |---|---|---|---|---|
 | 2 |  | library vuag-holdings-app |  |  |
-| 8 | | already in media/: 08-empty-boardroom-table-chairs.mp4 | | |
 | 9 | | already in media/: 09-computer-chip-circuit-board-macro.mp4 | | |
 | 16 | | already in media/: 16-server-room-data-centre-racks.mp4 | | |
 | 18 | | already in media/: 18-shipping-containers-port-cranes.mp4 | | |
-| 24 | | already in media/: 08-empty-boardroom-table-chairs.mp4 | | |
-| 26 | united states capitol building washington | downloaded 26-united-states-capitol-building-washingto.mp4 | Pixabay Content License | Video 239278 by InOldNews via Pixabay |
+| 26 | united states capitol building washington | downloaded 26-united-states-capitol-building-washingto.mp4 | Pixabay Content License | Video 239282 by InOldNews via Pixabay |
 | 33 |  | library vuag-max-chart-app |  |  |
 | 37 | | already in media/: 38-supermarket-aisle-shoppers-trolley.mp4 | | |
 | 42 | | already in media/: 43-stock-market-trading-screen-numbers.mp4 | | |
