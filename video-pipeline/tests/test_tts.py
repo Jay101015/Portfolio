@@ -37,6 +37,10 @@ def test_figures_are_said_the_british_way():
     assert tts.say("See GOV.UK", {"GOV.UK": "x"}) == "See gov dot UK"
     assert tts.say("an ISA", {"ISA": "eye-sah"}) == "an eye-sah"
     assert tts.leftover(tts.say("£105 and 9 in 10")) == []
+    assert tts.say("It closed at $178.67, and $428 billion went in 2 days. $1 buys less.") == "It closed at one hundred and seventy-eight dollars sixty-seven, and four hundred and twenty-eight billion dollars went in two days. One dollar buys less."
+    assert tts.say("worth $4.3 trillion") == "worth four point three trillion dollars"
+    assert tts.say("On the 8th, the 21st, the 30th and the 3rd, the S&P 500 fell") == "On the eighth, the twenty-first, the thirtieth and the third, the S and P five hundred fell"
+    assert [tts.ordinal(n) for n in (1, 2, 5, 9, 12, 17, 20, 22)] == ["first", "second", "fifth", "ninth", "twelfth", "seventeenth", "twentieth", "twenty-second"]
 
 
 def test_what_the_voice_would_guess_at_is_found():

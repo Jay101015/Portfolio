@@ -30,11 +30,14 @@ chapter device or opening. Shorts follow the same rule across a set: no two Shor
 - **Timeline**: a year-by-year or age-by-age walk (25, 30, 35...), a calendar or age counter as the device.
 - **Jeffrey's own numbers**: his real situation as the spine (no balances or holdings values on screen).
 - **Answer the comments**: viewers' questions from earlier videos, one per section.
+- **News explainer**: one story in four questions (what happened, why, what it means, what I'm doing), built on real
+  headline clippings with outlet and date. For a story with a deadline; 5 to 7 minutes; admitted and alleged kept apart.
 
 ## Ledger (newest first)
 
 | video | format | signature device | chapter device | opening | ending |
 |---|---|---|---|---|---|
+| nvidia-400-billion (script drafted, not voiced) | news explainer | headline clippings, share-price bars | the four questions (part=) | the number, "some of it was yours" | Jeffrey's own position + comment question |
 | retire-1-million-uk | explainer with chapters | hourglass / pots (weak) | Takeaway 1-6 | stat vs stat | answer + comment question |
 | chasing-winners | experiment | two pots racing since 2000 | Takeaway cards | stat (£1,000 to £30) | study + recap |
 | is-the-dream-dead-gen-z | explainer with chapters | set pieces, character | Takeaway cards | stat | recap |

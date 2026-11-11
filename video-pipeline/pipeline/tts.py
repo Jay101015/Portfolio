@@ -83,19 +83,34 @@ def year(y: int | str) -> str:
     return number(y // 100) + " " + (number(y % 100) if y % 100 >= 10 else "oh " + ONES[y % 100])
 
 
+_ORD = {"one": "first", "two": "second", "three": "third", "five": "fifth", "eight": "eighth", "nine": "ninth", "twelve": "twelfth"}
+
+
+def ordinal(n: int | str) -> str:
+    """8 -> "eighth", 21 -> "twenty-first", 30 -> "thirtieth" (dates: "the 8th of November")."""
+    words = number(n)
+    head, sep, last = words.rpartition("-") if "-" in words.split(" ")[-1] else words.rpartition(" ")
+    last = _ORD.get(last) or (last[:-1] + "ieth" if last.endswith("y") else last + "th")
+    return head + sep + last
+
+
 def _amount(num: str) -> str:
     return decimal(num) if "." in num else number(num)
 
 
 def _money(m: re.Match) -> str:
-    num, scale = m.group(1).replace(",", ""), (m.group(2) or "").strip().lower()
-    scale = {"k": "thousand", "m": "million", "bn": "billion"}.get(scale, scale)
+    """£12,548 / $178.67 / £1.2 million / $4.8 billion, said the British way."""
+    unit, cents = ("pound", "pence") if m.group(1) == "£" else ("dollar", "cents")
+    num, scale = m.group(2).replace(",", ""), (m.group(3) or "").strip().lower()
+    scale = {"k": "thousand", "m": "million", "bn": "billion", "tn": "trillion"}.get(scale, scale)
     if scale:
-        return _amount(num) + " " + scale + " pounds"
+        return _amount(num) + " " + scale + " " + unit + "s"
     if "." in num:
-        pounds, pence = num.split(".")
-        return number(pounds) + " pounds" + (" " + number(int(pence)) if int(pence) else "")
-    return number(num) + (" pound" if num == "1" else " pounds")
+        whole, part = num.split(".")
+        if unit == "pound":
+            return number(whole) + " pounds" + (" " + number(int(part)) if int(part) else "")
+        return number(whole) + " dollars" + (" " + number(int(part)) if int(part) else "")
+    return number(num) + " " + unit + ("" if num == "1" else "s")
 
 
 def _sub(pattern: str, how, t: str) -> str:
@@ -109,14 +124,15 @@ def _sub(pattern: str, how, t: str) -> str:
 
 def say(text: str, respell: dict[str, str] | None = None) -> str:
     """The narration as it is said: no digits, no £ or %, so the voice cannot read a figure the American way."""
-    t = text.replace("GOV.UK", "gov dot UK")
+    t = text.replace("GOV.UK", "gov dot UK").replace("S&P", "S and P")
     for word, how in (respell or {}).items():
         t = re.sub(rf"(?<![\w]){re.escape(word)}(?![\w])", how, t)
-    t = _sub(r"£(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(\s(?:million|billion|thousand)\b|[Kk]\b|m\b|bn\b)?", _money, t)
+    t = _sub(r"([£$])(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(\s(?:million|billion|trillion|thousand)\b|[Kk]\b|m\b|bn\b|tn\b)?", _money, t)
     t = _sub(r"(\d+(?:\.\d+)?)%", lambda m: _amount(m.group(1)) + " percent", t)
     t = _sub(r"\b(\d+)p\b", lambda m: number(m.group(1)) + " pence", t)
     t = _sub(r"\b((?:19|20)\d\d)[-–](\d\d)\b", lambda m: year(m.group(1)) + " to " + number(m.group(2)), t)  # tax years
     t = _sub(r"\b(19|20)(\d\d)\b", lambda m: year(m.group(0)), t)
+    t = _sub(r"\b(\d{1,2})(?:st|nd|rd|th)\b", lambda m: ordinal(m.group(1)), t)
     t = _sub(r"\b(\d+)[Kk]\b", lambda m: number(m.group(1)) + " thousand", t)
     t = _sub(r"\b\d+\.\d+\b", lambda m: decimal(m.group(0)), t)
     t = _sub(r"\b\d{1,3}(?:,\d{3})+\b", lambda m: number(m.group(0).replace(",", "")), t)
