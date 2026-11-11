@@ -13,17 +13,32 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Cue" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=3.0.0" />
   <script>
-    // Register sw.js and reload once so the page comes back cross-origin isolated (lets the voices use all cores).
-    if ('serviceWorker' in navigator && window.isSecureContext) {
+    // sw.js makes the page "cross-origin isolated", which lets the voice engine use several CPU cores in Chrome,
+    // Edge and Firefox. Safari (every browser on iPhone) runs the engine on one core and doesn't need it, so there
+    // any earlier copy is removed.
+    (function () {
+      if (!('serviceWorker' in navigator) || !window.isSecureContext) return;
+      var ua = navigator.userAgent;
+      var webkit = /AppleWebKit/.test(ua) && !/Chrome|Chromium|Edg\/|Android/.test(ua);
+      var once = function (key) { try { if (sessionStorage.getItem(key)) return false; sessionStorage.setItem(key, '1'); return true; } catch (e) { return false; } };
+      if (webkit) {
+        navigator.serviceWorker.getRegistrations().then(function (regs) {
+          if (!regs.length) return;
+          return Promise.all(regs.map(function (r) { return r.unregister(); })).then(function () {
+            if (navigator.serviceWorker.controller && once('cue-sw-gone')) location.reload();
+          });
+        }).catch(function () {});
+        return;
+      }
       navigator.serviceWorker.register('sw.js').then(function () {
         if (window.crossOriginIsolated) { try { sessionStorage.removeItem('coi'); } catch (e) {} return; }
-        try { if (sessionStorage.getItem('coi')) return; sessionStorage.setItem('coi', '1'); } catch (e) { return; }
+        if (!once('coi')) return;
         if (navigator.serviceWorker.controller) location.reload();
         else navigator.serviceWorker.addEventListener('controllerchange', function () { location.reload(); });
       }).catch(function () {});
-    }
+    })();
   </script>
 </head>
 <body>
@@ -80,26 +95,26 @@
           <label class="field">
             <span>Advance after my lines</span>
             <select id="advanceMode">
-              <option value="voice">When I finish my line (listens to me)</option>
-              <option value="manual">When I tap / press Space</option>
+              <option value="voice">When I finish my line (it listens to me)</option>
+              <option value="manual">When I tap the screen / press Space</option>
               <option value="timed">Timed by word count</option>
             </select>
           </label>
           <label class="field" data-show="voice">
-            <span>Pause before cue <b id="silenceVal"></b></span>
+            <span>Microphone while the reader speaks</span>
+            <select id="micMode">
+              <option value="auto">Automatic (recommended)</option>
+              <option value="half">Off: on for my lines only</option>
+              <option value="full">On all the time</option>
+            </select>
+          </label>
+          <label class="field" data-show="voice">
+            <span>How long I pause before the reader comes in <b id="silenceVal"></b></span>
             <input id="silenceMs" type="range" min="400" max="2500" step="100" />
           </label>
           <label class="field" data-show="voice">
             <span>Mic sensitivity</span>
             <input id="sensitivity" type="range" min="1" max="10" step="1" />
-          </label>
-          <label class="field" data-show="voice">
-            <span>Follow my words (lets me pause mid-line)</span>
-            <select id="matchWords">
-              <option value="rehearse">When rehearsing</option>
-              <option value="always">Always — check your first take has sound</option>
-              <option value="off">Off — just listen for silence</option>
-            </select>
           </label>
           <label class="field">
             <span>Gap between lines <b id="gapVal"></b></span>
@@ -144,14 +159,19 @@
       </div>
       <div id="voiceBanner" class="banner" hidden></div>
       <div class="stage">
-        <div class="now card">
+        <div id="nowCard" class="now card" data-turn="idle">
           <div id="countdownOverlay" class="overlay" hidden></div>
           <div class="now-top">
             <span id="recBadge" class="rec" hidden><span></span>REC <b id="recTime">0:00</b></span>
-            <span id="nowState" class="hint">Tap ▶ Start scene — I'll read the other parts and wait for yours.</span>
-            <span id="meter" class="meter" title="Mic level"><i></i></span>
+            <span id="nowState" class="now-state">Tap ▶ Start scene — I'll speak the other parts and listen for yours.</span>
           </div>
           <div id="prompter" class="prompter" hidden></div>
+          <button id="tapBtn" class="btn primary block" hidden></button>
+          <div class="microw">
+            <span id="meter" class="meter" title="Microphone level"><i></i><b></b></span>
+            <button id="micBtn" class="btn ghost sm">🎤 Test my mic</button>
+          </div>
+          <div id="strip" class="strip"></div>
         </div>
 
         <aside class="scriptpane card">
@@ -166,7 +186,7 @@
       <div class="controls">
         <button id="rehearseBtn" class="btn primary">▶ Start scene</button>
         <button id="recordBtn" class="btn rec-btn">● Record audio</button>
-        <button id="nextBtn" class="btn ghost" disabled>Next ⏭ <kbd>Space</kbd></button>
+        <button id="nextBtn" class="btn ghost" disabled>Next line ⏭ <kbd>Space</kbd></button>
         <button id="stopBtn" class="btn ghost" disabled>■ Stop <kbd>Esc</kbd></button>
         <span id="status" class="status"></span>
       </div>
@@ -183,6 +203,6 @@
     </section>
   </main>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=3.0.0"></script>
 </body>
 </html>
