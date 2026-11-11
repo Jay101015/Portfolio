@@ -12,19 +12,19 @@ tts.model: eleven_v4
 slug: nvidia-400-billion
 topic: Nvidia's two-day fall after its CEO admitted an affair and the board opened an investigation into reports he was the target of a foreign intelligence operation: what happened, why Nvidia is a target, what it means for AI and for a UK tracker investor, and how Jeffrey hedges with diversification; in Jeffrey's own way of talking (docs/voice.md)
 
-[hook board="Nvidia: $400 billion gone in 2 days" art=off anim=money-flies art_at=r art_size=0.5 cards="ink:I've got money riding on this@riding; ink:watching it closely@watching"]
+[hook board="Nvidia: $400 billion gone in 2 days" art=off anim=money-flies anim_labels=off art_at=r art_size=0.5 cards="ink:I've got money riding on this@riding; ink:watching it closely@watching"]
 So Nvidia has lost over $400 billion in 2 days. And I'm going to be honest, I've got money riding on this one, so I've been watching it pretty closely.
 
 [broll lib="vuag-holdings-app" phone=on caption="Top of an S&P 500 fund: Nvidia" marks="ink:circle 30,42@own" cards="ink:a pension@pension; ink:or a tracker fund@tracker; ink:you probably own some@own"]
 And if you've got a pension or a tracker fund, you probably own some as well, even if you've never bought it.
 
-[stat value="£70" label="What Nvidia's fall took off" sub="so it's not the end of the world" source="Bestinvest (Evelyn Partners), quoted in City AM, November 2026; Nvidia's closing prices, 6 and 10 November 2026" anim=coins-jar art_at=r art_size=0.45 art_start=1 cards="ink:£10,000 in an S&P 500 tracker@10; ink:not the end of the world@end"]
+[stat value="£70" label="What Nvidia's fall took off" sub="so it's not the end of the world" source="Bestinvest (Evelyn Partners), quoted in City AM, November 2026; Nvidia's closing prices, 6 and 10 November 2026" anim=coins-jar anim_labels=off art_at=r art_size=0.45 art_start=1 cards="ink:£10,000 in an S&P 500 tracker@10; ink:not the end of the world@end"]
 I worked it out, and on 10 grand in an S&P 500 tracker, it's taken off about £70. So it's not the end of the world.
 
 [news outlet="CNN" date="8 November 2026" url="https://www.cnn.com/2026/11/08/business/nvidia-investigation-ceo-jensen-huang" headline="Nvidia CEO Jensen Huang admits affair as company launches investigation into foreign spy accusations" board="Nvidia's CEO admits an affair" cards="ink:I couldn't believe it@believe; ink:the CEO@CEO; ink:an affair: admitted@admitted; ink:a spy claim: alleged@alleged"]
 But the story behind it, honestly, I couldn't believe it when I first read it. The CEO, an affair he's admitted to, and an alleged Chinese spy.
 
-[list title="What I want to go through" anim=bar-race art_at=r art_size=0.4 cards="ink:for AI and the stock market@stock; ink:and my own money@own"]
+[list title="What I want to go through" anim=bar-race anim_labels=off art_at=r art_size=0.4 cards="ink:for AI and the stock market@stock; ink:and my own money@own"]
 - What happened
 - Why Nvidia
 - What it means
@@ -33,7 +33,7 @@ So I want to go through what actually happened, why Nvidia, what I think it mean
 
 [title dur=1.2 title="Nvidia lost $400 billion in 2 days" subtitle="What it means for your money"]
 
-[text board="What happened? | A letter to every employee | Unfaithful to his wife" art=off anim=phone-ping art_at=r art_size=0.45 cards="ink:Sunday 8 November@Sunday; ink:Jensen Huang, who runs Nvidia@Jensen; ink:he apologised@apologised; ink:he takes full responsibility@responsibility" part="What happened"]
+[text board="What happened? | A letter to every employee | Unfaithful to his wife" art=off anim=phone-ping anim_labels=off art_at=r art_size=0.45 cards="ink:Sunday 8 November@Sunday; ink:Jensen Huang, who runs Nvidia@Jensen; ink:he apologised@apologised; ink:he takes full responsibility@responsibility" part="What happened"]
 So here's what happened. On Sunday the 8th of November, Jensen Huang, the guy who runs Nvidia, sent a letter to every single employee. He said he'd been unfaithful to his wife. He apologised, and he said he takes full responsibility.
 
 [broll search="empty boardroom table chairs" caption="The same day" cards="ink:an independent investigation@independent; ink:not really about the affair@affair; ink:reports of a foreign intelligence operation@reports" src="08-empty-boardroom-table-chairs.mp4" credit="Video 1191 by Vimeo-Free-Videos via Pixabay"]
@@ -42,15 +42,13 @@ That same day, Nvidia's board opened an independent investigation. And to be cle
 [broll search="computer chip circuit board macro" caption="An allegation, not a finding" marks="ink:circle 50,50@chips" cards="ink:according to the reports@reports; ink:first reported by the New York Times@York; ink:what US intelligence is said to believe@intelligence; ink:reportedly: billions of dollars of chips@reportedly" src="09-computer-chip-circuit-board-macro.mp4" credit="Video 13461 by onijake via Pixabay"]
 So according to those reports, and the New York Times had it first, US intelligence believes the woman involved was working for China. She's a businesswoman, and her company had reportedly bought billions of dollars' worth of Nvidia's chips.
 
-[compare title="Keep these apart"]
-left: Admitted | The affair | His own letter
-right: Alleged | The spy claim | Nobody charged. China denies it
+[text board="Admitted: the affair | Alleged: the spy claim" art=off cards="ink:his own letter@careful; ink:nobody charged@charged; ink:China denies it@denies"]
 Now, I want to be careful here. That's an allegation. Nobody's been charged, and China denies it.
 
 [news outlet="NBC News" date="10 November 2026" url="https://www.nbcnews.com/business/corporations/ex-prosecutor-probe-jensen-huang-chinese-spy-affair-nvidia-rcna608628" headline="Nvidia hires former acting U.S. attorney to probe Jensen Huang affair" board="A former US prosecutor runs the investigation" cards="ink:the board: no reason to believe secrets were compromised@reason; ink:or national security@national; ink:it still has confidence in him@confidence; ink:still the CEO, as I record this@recording; ink:a former US prosecutor is brought in@brought"]
 The board says it's got no reason to believe any company secrets or national security were compromised, and it says it still has confidence in him. As I'm recording this, he's still the CEO. And they've brought in a former US prosecutor to run the investigation.
 
-[list title="Since then" unnumbered anim=clock art_at=r art_size=0.45 art_start=0.5]
+[list title="Since then" unnumbered anim=clock anim_labels=off art_at=r art_size=0.45 art_start=0.5]
 - The FBI is looking into it
 - Investors have filed a lawsuit
 - No timetable (Reuters)
@@ -76,7 +74,7 @@ And here's the thing. The US limits which of those chips can be sold to China. J
 [broll search="shipping containers port cranes" pick=2 caption="If you believe the reporting" cards="ink:not only about secrets@secrets; ink:about influence@influence; ink:how he thinks about selling to China@thinks; ink:but that's the claim@claim; ink:what the investigation is for@investigation" src="18-shipping-containers-port-cranes.mp4" credit="Video 23008 by bellergy via Pixabay"]
 So if you believe the reporting, this wasn't only about secrets. It was about influence: shaping how the most important man in AI chips thinks about selling to China. But again, that's the claim. That's what the investigation is for.
 
-[text board="What does it mean? | For AI, and for your money" art=off anim=scales art_at=r art_size=0.45 part="What it means"]
+[text board="What does it mean? | For AI, and for your money" art=off anim=scales anim_labels=off art_at=r art_size=0.45 part="What it means"]
 So what does this actually mean for AI, and for your money?
 
 [compare title="Monday 9 November" good=right source="Closing prices, 9 November 2026" cards="ink:the main US tech index@index; green:the other big chip makers rose too@makers; ink:all rose that day@rose; ink:an Nvidia problem@problem; ink:not an AI problem@Not"]
@@ -84,7 +82,7 @@ left: Nvidia | Down 4.3% | The scandal
 right: Nasdaq | Up 2.7% | The rest of US tech
 First thing I noticed: on Monday, while Nvidia dropped 4.3%, the Nasdaq, which is the main US tech index, went up 2.7%. And CNBC reported that the other big chip makers all rose that day as well. So investors are treating this as an Nvidia problem. Not an AI problem.
 
-[stat value="$96.2bn" label="Nvidia's sales in its last reported quarter" sub="more than double the year before" source="Nvidia second-quarter results, fiscal 2027, August 2026" anim=arrow-up art_at=r art_size=0.5 art_start=2.2 cards="ink:the business hasn't changed@changed; ink:the companies buying these chips@companies; ink:aren't going to stop@stop"]
+[stat value="$96.2bn" label="Nvidia's sales in its last reported quarter" sub="more than double the year before" source="Nvidia second-quarter results, fiscal 2027, August 2026" anim=arrow-up anim_labels=off art_at=r art_size=0.5 art_start=2.2 cards="ink:the business hasn't changed@changed; ink:the companies buying these chips@companies; ink:aren't going to stop@stop"]
 And the business hasn't changed, right? Last quarter, Nvidia made $96.2 billion in sales. That's more than double the year before. The companies buying these chips aren't going to stop because of the CEO's private life.
 
 [news outlet="CNBC" date="9 November 2026" url="https://www.cnbc.com/2026/11/09/jensen-huang-affair-nvidia-succession.html" headline="Jensen Huang's affair highlights Nvidia's key man risk with no heir" board="Risk 1: one man" cards="ink:2 real risks@risks; ink:one: the man himself@man; ink:no clear successor@successor"]
@@ -106,12 +104,12 @@ So the lasting damage might not come from the boardroom at all. It might come fr
 bars: Record 6 Oct:243.37, Before the letter:186.64, Scandal 10 Nov:168.89
 And here's the bit the headlines are skipping. Nvidia was already falling. From its record high on the 6th of October to the Friday before any of this came out, the shares had dropped 23%, largely on worries about how long the AI spending boom can last. So the scandal took 9.5%. The spending worry had already taken 23%.
 
-[list title="Two dates I'm watching" unnumbered]
-- 17 November: Nvidia's results
-- 18 November: a briefing for Congress
+[list title="Two dates I'm watching" unnumbered anim=hourglass anim_labels=off art_at=r art_size=0.45 art_start=0 cards="ink:17 November: results@17th; ink:18 November: Congress@18th"]
+- Nvidia's results: 17 November
+- Members of Congress: 18 November
 There are 2 dates I'm watching. Nvidia's due to report its results on the 17th of November. And members of Congress have asked Jensen Huang for a briefing on the 18th.
 
-[text board="What history says | McDonald's fired its CEO, 2019 | A year later: up 12%" art=off anim=arrow-up art_at=r art_size=0.45 art_start=6 cards="ink:kind of reassuring@reassuring; ink:over a relationship with an employee@relationship"]
+[text board="What history says | McDonald's fired its CEO, 2019 | A year later: up 12%" art=off anim=arrow-up anim_labels=off art_at=r art_size=0.45 art_start=1 cards="ink:kind of reassuring@reassuring; ink:over a relationship with an employee@relationship"]
 And if you look at history, it's actually kind of reassuring. McDonald's fired its CEO over a relationship with an employee back in 2019. A year later, the shares were about 12% higher.
 
 [compare title="A year after the CEO left" good=left source="Yahoo Finance, November 2026: share prices a year after each exit" cards="ink:what the business did next@business; ink:mattered more than the scandal@scandal"]
@@ -122,7 +120,7 @@ Intel's CEO resigned for a similar reason in 2018. A year later, they were about
 [news outlet="City AM" date="10 November 2026" url="https://www.cityam.com/nvidia-scandal-leaves-uk-savers-exposed-to-fallout/" headline="Nvidia scandal leaves UK savers 'exposed' to fallout" board="UK savers are in this too" part="What I'm doing" cards="ink:what about us, over here?@us; ink:City AM@City; ink:its headline, 10 November@headline; ink:UK savers, exposed@savers; ink:millions of people in the UK@millions; ink:a pension@pension; ink:an ISA@ISA; ink:a tracker fund@tracker"]
 So what about us, over here? City AM ran this headline: the Nvidia scandal leaves UK savers exposed. Because millions of people in the UK own Nvidia without ever buying it, through a pension, an ISA, or a tracker fund.
 
-[compare title="UK investors, this week" source="AJ Bell and IG figures, reported by Yahoo Finance UK, November 2026" cards="ink:people here are split@split; ink:some buying the dip@buying; ink:some getting out@getting"]
+[compare title="UK investors, this week" good=both source="AJ Bell and IG figures, reported by Yahoo Finance UK, November 2026" cards="ink:people here are split@split; ink:some buying the dip@buying; ink:some getting out@getting"]
 left: AJ Bell | Most bought share | 5 to 9 November
 right: IG | Sell trades up 157% | Selling
 And people here are split. AJ Bell says Nvidia was the most bought share on its platform between the 5th and the 9th of November. But IG says its sell trades jumped 157%. So some people are buying the dip, and some are getting out.
@@ -135,7 +133,7 @@ left: In a tracker | Down £70 | 500 companies
 right: All in Nvidia | Down £950 | 1 company
 And that's exactly why Nvidia's fall only took about £70 off 10 grand in a tracker. If that 10 grand was all in Nvidia, you'd be down about £950. The other 499 companies did their job.
 
-[list title="Where I stand" unnumbered anim=stack-grow art_at=r art_size=0.42 art_start=3 cards="ink:but it's a basket@But; ink:one company out of a bunch@bunch; ink:not my whole bet@bet; ink:but: the limits of this@limits"]
+[list title="Where I stand" unnumbered anim=stack-grow anim_labels=off art_at=r art_size=0.42 art_start=0 cards="ink:but it's a basket@But; ink:one company out of a bunch@bunch; ink:not my whole bet@bet; ink:but: the limits of this@limits"]
 - I don't buy individual stocks
 - A basket of AI stocks
 - Yes, I've got Nvidia in there
@@ -151,7 +149,7 @@ So how am I hedging? Honestly, it's nothing clever. The S&P 500 stays at the cor
 [text board="For AI: a basket, not one company | It hurts. It doesn't wreck me" art=index-fund-basket art_at=r art_size=0.5 cards="red:a terrible week, like this one@terrible"]
 For AI, I use a basket instead of picking one company, so if one of them has a terrible week, like this one, it hurts, but it doesn't wreck me.
 
-[text board="Emergency fund, kept separate" art=off anim=piggy-bank art_at=r art_size=0.45 cards="ink:never forced to sell@forced"]
+[text board="Emergency fund, kept separate" art=off anim=piggy-bank anim_labels=off art_at=r art_size=0.45 art_start=0.3 cards="ink:never forced to sell@forced"]
 I keep my emergency fund completely separate, so I'm never forced to sell when things are down.
 
 [set room=living-room walk cards="ink:stick to a plan@stick; ink:crypto, 2021@2021; red:all the way down@down; red:I panicked and sold@panicked; ink:I still think about that@think; ink:not that mistake again@mistake"]

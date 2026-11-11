@@ -265,7 +265,7 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
     # The character can be placed and posed on any scene; a doodle (icon=) can be drawn on any scene on the board.
     if a.get("part"):
         p["part"] = a["part"]  # part="The payslip" on any scene: a new part of the video starts here (a chapter, a longer pause in a made voice)
-    for k in ("pos", "pose", "face", "scale", "icon", "keep", "transition", "tint", "anim", "screen"):  # anim=coins-jar: a drawn loop where a drawing would go; screen=laptop: footage in a drawn laptop  # tint=red: every figure on the board in red (bad news)  # keep=yes|arrow|strike builds on the board before; transition=wipe|slide|cut picks how it comes in
+    for k in ("pos", "pose", "face", "scale", "icon", "keep", "transition", "tint", "anim", "anim_labels", "screen"):  # anim=coins-jar: a drawn loop where a drawing would go; screen=laptop: footage in a drawn laptop  # tint=red: every figure on the board in red (bad news)  # keep=yes|arrow|strike builds on the board before; transition=wipe|slide|cut picks how it comes in
         if k in a:
             p[k] = a[k]
     if "dur" in a and "dur" not in p:  # dur=6.4 on any scene: its length in seconds when there is no recording to time it

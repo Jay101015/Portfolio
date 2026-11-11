@@ -804,7 +804,8 @@ export const LoopLayer: React.FC<{scene: Scene; brand: Brand}> = ({scene, brand}
   const size = height * (isVertical ? (midBand ? 0.22 : Math.min(0.22, Number(scene.props.art_size ?? 0.22))) : Math.max(0.14, Math.min(0.64, Number(scene.props.art_size ?? 0.34))));
   const start = Math.round(Number(scene.props.art_start ?? 0.2) * fps); // on the cut, as a drawing (art.tsx)
   // beside a figure the loop keeps its labels and counters to itself (anim_labels=on puts them back)
-  const quiet = String(scene.props.anim_labels ?? '') !== 'on' && ['stat', 'pie', 'grow', 'shrink', 'bite', 'chart', 'compare'].includes(scene.type);
+  // anim_labels=off: no labels on any scene (a savings loop's "+ interest" or "+7%" beside a news line says the wrong thing)
+  const quiet = String(scene.props.anim_labels ?? '') === 'off' || (String(scene.props.anim_labels ?? '') !== 'on' && ['stat', 'pie', 'grow', 'shrink', 'bite', 'chart', 'compare'].includes(scene.type));
   const free = scene.props.art_x !== undefined && scene.props.art_y !== undefined;
   const place: React.CSSProperties = free ? {left: Number(scene.props.art_x) * width - size / 2, top: Number(scene.props.art_y) * height - size / 2} : PLACE[at] ?? PLACE.tr;
   return (
