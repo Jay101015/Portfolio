@@ -491,3 +491,35 @@ one change at a time where possible, so a result can be read.
   sentence, with the short answer inside 30 seconds.
 - Process: vidIQ's 150 credits a month cannot cover a weekly pull (about 20 credits a review plus the ad-hoc uses);
   until 27 Nov the review runs from Jeffrey's Studio screenshots.
+
+## Nvidia Lost $400 Billion in 2 Days (nvidia-400-billion, built 2026-11-11): the first voice made by the pipeline
+- **The voice is made here now** (`python -m pipeline.tts`, EDITOR.md "The voice from ElevenLabs"). Jeffrey's key is
+  kept outside the repo; the environment allows api.elevenlabs.io. His clone is "Jeffrey", an instant clone; the
+  retirement video was made in the web page with Eleven v4, so `tts.model: eleven_v4` matches it (193 words a minute).
+- **What it costs:** through the API both Eleven v4 and Multilingual v2 were billed 0.4 credits a character (45
+  credits for 113 characters, confirmed in the account's history). This video: 8,101 characters, 3,240 credits. The
+  retirement video cost 28,462 in the web page: each part was generated twice at about 1 credit a character. His plan
+  is Starter, 40,000 credits a month, reset on the 3rd.
+- **Order that worked:** credits and a one-sentence sample first (he asked to see both before anything was made),
+  then the script to read, then "go", then the audio to listen to, then the render. Nothing voiced before "go".
+- **A made take is checked without ears:** a local transcription compared word for word with the script
+  (faster-whisper base.en downloads here with `HF_HUB_DISABLE_XET=1`, so a local build with real timings works
+  too). 16 differences, all spelling and how figures are written; no misread.
+- **Chunks are cut by sentence, not by scene:** the director re-cut 31 scenes into 45 after the voice was made and
+  no chunk changed, so nothing was paid for twice.
+- **The words, three corrections from Jeffrey in an hour** (docs/voice.md): "talk more like me" (written from his
+  unscripted episode 1), no intro of his name or the channel, "follow other finance reporters" (Reuters, CNBC, City
+  AM, AJ Bell and IG named in the script), and the beginning and end "too perfect" (no slogans, no mirrored lines,
+  no numbered list of rules to close). His holdings were not what episode 1 said: ask, never assume.
+- **A story about a real person:** admitted (his letter) and alleged (the spying claim) kept apart in every line,
+  the woman and her company never named, no drawn person beside the allegation, real headline clippings with
+  outlet and date. Facts re-checked against the day's news just before voicing.
+- **Footage, checked before the long render:** of ten searches six were right. Wrong: "courthouse columns steps
+  exterior" (a man walking in an orchard), "shipping containers port cranes" (an upright clip of open sea; pick=2 was
+  the port), "empty office chair desk window" (every candidate a person at a desk), "stock market trading screen
+  numbers" (a man fist-pumping at a laptop; pick=2 was a hand and a screen). A search with "empty" in it still
+  returns people: look every time.
+- **New in the renderer:** bar charts take `ymin=` and `colors=` and a bar lands on its label's word; drawing pins
+  are blue (red only for a loss); a dollar figure is written as said; cards on a clipping or a bite clear the top edge.
+- A workflow run can end "startup_failure" with no jobs and nothing wrong in the file: the next dispatch ran.
+- Review scores and real results: to come.
