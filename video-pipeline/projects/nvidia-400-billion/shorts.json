@@ -1,0 +1,9 @@
+{
+ "shorts": [
+  {"name": "short-1", "scenes": [1, 2, 3, 4], "hook": "Nvidia lost $400 billion in 2 days", "speed": 1},
+  {"name": "short-2", "scenes": [17, 18, 19, 20], "hook": "Why would a spy care about a chip company?", "speed": 1},
+  {"name": "short-3", "scenes": [29, 30], "hook": "Nvidia was already falling", "speed": 1},
+  {"name": "short-4", "scenes": [36, 37, 38], "hook": "Same fall: £70 or £950", "speed": 1},
+  {"name": "short-5", "scenes": [42, 43], "hook": "The mistake I won't make again", "speed": 1}
+ ]
+}
