@@ -4,6 +4,7 @@ remotion/node_modules/
 remotion/public/projects/
 projects/*/.cache/
 projects/*/*.mp4
+projects/*/shorts/
 projects/*/storyboard.json
 projects/*/storyboard.html
 projects/*/media/kit/*.mp4
