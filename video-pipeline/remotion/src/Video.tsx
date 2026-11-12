@@ -515,7 +515,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
       {brand.board && sb.hand ? <PenHand brand={brand} /> : null}
       {brand.board ? <Grain /> : null}
       {brand.board && String(flags.comingup ?? 'on').toLowerCase() !== 'off' ? <ComingUp sb={sb} brand={brand} /> : null}
-      {brand.board && brand.progress !== false && String(flags.progress ?? 'on').toLowerCase() !== 'off' ? <ProgressLine color={brand.fill ?? brand.accent} /> : null}
+      {brand.board && !sb.short && brand.progress !== false && String(flags.progress ?? 'on').toLowerCase() !== 'off' ? <ProgressLine color={brand.fill ?? brand.accent} /> : null}
     </AbsoluteFill>
     </BoilContext.Provider>
     </CharacterOn.Provider>

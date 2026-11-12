@@ -445,6 +445,9 @@ def resolve_media(sb: dict, project: str, slug: str) -> list[str]:
                 if sc["type"] in ("clip", "broll"):
                     notes.extend(fit_clip(sc, os.path.join(src_dir, src)))
                 p["src"] = f"projects/{slug}/{folder}/{src}"
+            vsrc = p.get("vsrc")  # the upright cut's own crop of the picture (a Short)
+            if vsrc and not vsrc.startswith("projects/") and os.path.exists(os.path.join(src_dir, vsrc)):
+                p["vsrc"] = f"projects/{slug}/{folder}/{vsrc}"
             sticker = p.get("sticker")
             if sticker and not str(sticker).startswith("projects/") and os.path.exists(os.path.join(src_dir, sticker)):
                 p["sticker"] = f"projects/{slug}/{folder}/{sticker}"

@@ -1015,7 +1015,8 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
   const {fps} = useVideoConfig();
   const {u, pad, width, height, isVertical} = useLayout();
   const total = Math.max(1, Math.round((scene.end - scene.start) * fps));
-  const src: string | undefined = scene.props.src;
+  // `vsrc=`: a second crop of a page or photo for the upright cut (a wide page loses its headline when it fills a Short)
+  const src: string | undefined = (isVertical && scene.props.vsrc) || scene.props.src;
   const caption: string | undefined = scene.props.caption;
   const credit: string | undefined = brand.creditsOnScreen ? scene.props.credit : undefined; // credits go to credits.txt unless asked for on screen
   const s = pop(frame, fps, Math.round(fps * 0.35), 12);
@@ -1038,10 +1039,11 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
     )
   ) : null);
   const media = mediaAt(width, height);
-  if (src && String(scene.props.phone ?? '') === 'on' && isVertical) {
+  const fitted = String(scene.props.vfit ?? '') === 'contain'; // `vfit=contain`: the whole picture on the page of a Short, not cropped to fill it
+  if (src && (String(scene.props.phone ?? '') === 'on' || fitted) && isVertical) {
     // a Short: the phone's whole screen fitted between the caption band and the Shorts title strip (29% to 84% of the
     // height: 72% of the width on a 1080x1480 recording), its marks on it, the caption label on its lower right
-    const cw = width * 0.72;
+    const cw = width * (fitted ? 0.94 : 0.72);
     const ch = cw * (Number(scene.props.h) > 0 && Number(scene.props.w) > 0 ? Number(scene.props.h) / Number(scene.props.w) : 1480 / 1080);
     const cx = (width - cw) / 2;
     const cy = height * 0.29;

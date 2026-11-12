@@ -1,9 +1,59 @@
 {
  "shorts": [
-  {"name": "short-1", "scenes": [1, 2, 3, 4], "hook": "Nvidia lost $400 billion in 2 days", "speed": 1},
-  {"name": "short-2", "scenes": [17, 18, 19, 20], "hook": "Why would a spy care about a chip company?", "speed": 1},
-  {"name": "short-3", "scenes": [29, 30], "hook": "Nvidia was already falling", "speed": 1},
-  {"name": "short-4", "scenes": [36, 37, 38], "hook": "Same fall: £70 or £950", "speed": 1},
-  {"name": "short-5", "scenes": [42, 43], "hook": "The mistake I won't make again", "speed": 1}
+  {
+   "name": "short-1",
+   "scenes": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "hook": "Nvidia lost $400 billion in 2 days",
+   "speed": 1
+  },
+  {
+   "name": "short-2",
+   "spans": [
+    [
+     138.05,
+     173.35
+    ]
+   ],
+   "hook": "Why would a spy care about a chip company?",
+   "speed": 1
+  },
+  {
+   "name": "short-3",
+   "spans": [
+    [
+     269.76,
+     289.23
+    ]
+   ],
+   "hook": "Already down 23% before the scandal",
+   "speed": 1
+  },
+  {
+   "name": "short-4",
+   "spans": [
+    [
+     372.02,
+     400.9
+    ]
+   ],
+   "hook": "Same fall: £70 or £950",
+   "speed": 1
+  },
+  {
+   "name": "short-5",
+   "spans": [
+    [
+     440.97,
+     460.65
+    ]
+   ],
+   "hook": "£11,000 → £4,500",
+   "speed": 1
+  }
  ]
 }
