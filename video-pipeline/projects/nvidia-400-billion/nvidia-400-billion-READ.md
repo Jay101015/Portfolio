@@ -48,7 +48,7 @@ And here's the bit the headlines are skipping. Nvidia was already falling. From 
 
 There are 2 dates I'm watching. Nvidia's due to report its results on the 17th of November. And members of Congress have asked Jensen Huang for a briefing on the 18th.
 
-And if you look at history, it's actually kind of reassuring. McDonald's fired its CEO over a relationship with an employee back in 2019. A year later, the shares were about 12% higher. Intel's CEO resigned for a similar reason in 2018. A year later, they were about 4% lower. So in both cases, what the business did next mattered way more than the scandal.
+And if you look at history, it's actually kind of reassuring. McDonald's fired its CEO over a relationship with an employee back in 2019. A year later, the shares were about 12% higher. Intel's CEO resigned for a similar reason in 2018. A year later, they were lower. So in both cases, what the business did next mattered way more than the scandal.
 
 **What I'm doing**
 

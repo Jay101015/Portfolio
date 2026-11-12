@@ -1,5 +1,7 @@
 Nvidia lost more than $400 billion of its value in 2 days after its CEO, Jensen Huang, admitted an affair and the board opened an investigation into reports that he was the target of a foreign intelligence operation. If you hold a pension, an ISA or a tracker fund in the UK, you probably own Nvidia too. Here's what happened, why Nvidia, what it means for AI and the stock market, and what I'm doing with my own money.
 
+UPDATE, 12 November 2026: since I recorded this, Jensen Huang has resigned as Nvidia's CEO and left the board. Nvidia's finance chief, Colette Kress, is interim CEO while the board looks for a permanent replacement (Nvidia's own announcement and SEC filing). The company gave no reason. NBC News and CNBC report it followed claims of a second relationship, with an executive who reported to him. The shares fell sharply again on Thursday morning, and CNBC says he has agreed to testify to Congress before Thanksgiving. So where I say "he's still the CEO" and "the board could remove him", that has now happened. Results are still due on 17 November. The spying claims are still allegations and nobody has been charged. What I'm doing with my own money hasn't changed: I haven't sold.
+
 Recorded 11 November 2026. This is a developing story: the spying claims are allegations, nobody has been charged, China denies them, and Nvidia's board says it has no reason to believe company secrets or national security were compromised.
 
 Chapters
@@ -10,6 +12,7 @@ Chapters
 5:22 What I'm doing
 
 Sources
+- Update, 12 November: Nvidia, "NVIDIA Announces CEO Transition" and Form 8-K; NBC News, CNBC, Al Jazeera, 12 November 2026.
 - The letter and the board's investigation: Nvidia, "A Message to Our Company" and "Statement from NVIDIA Board of Directors", 8 November 2026; CNN, NBC News, Bloomberg, 8 to 10 November 2026.
 - The intelligence allegation: first reported by the New York Times; Reuters said it could not independently verify it.
 - No timetable for the investigation; Jensen Huang does not hold majority voting control: Reuters, November 2026.
