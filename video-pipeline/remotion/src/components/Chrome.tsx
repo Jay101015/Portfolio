@@ -14,7 +14,7 @@ export const Chrome: React.FC<{brand: Brand; durationSec: number}> = ({brand, du
     return (
       <AbsoluteFill style={{pointerEvents: 'none'}}>
         {brand.corner !== false && brand.name ? <div style={{position: 'absolute', top: (isVertical ? 36 : 30) * u, right: pad, fontFamily: brand.hand, fontSize: 30 * u, color: brand.muted, transform: 'rotate(2deg)'}}>{brand.name.toLowerCase()}</div> : null}
-        <div style={{position: 'absolute', bottom: 0, left: 0, height: 5 * u, width: `${progress * 100}%`, background: brand.accent, opacity: 0.6}} />
+        {isVertical ? null : <div style={{position: 'absolute', bottom: 0, left: 0, height: 5 * u, width: `${progress * 100}%`, background: brand.accent, opacity: 0.6}} />}
       </AbsoluteFill>
     );
   }
