@@ -20,7 +20,7 @@ Sources
 - Bills on AI chip exports: The Hill, November 2026.
 - UK savers and "around £7 of every £100 in an S&P 500 fund": Jason Hollands, Bestinvest, quoted in City AM, 10 November 2026.
 - What UK investors did: AJ Bell and IG figures, reported by Yahoo Finance UK, November 2026.
-- McDonald's (2019) and Intel (2018) a year after their CEOs left: Yahoo Finance, November 2026.
+- McDonald's (2019) and Intel (2018) a year after their CEOs left: Yahoo Finance, November 2026. Intel's fall depends on the start date, so no figure is given.
 - The 10 largest companies as about 39% of the S&P 500: index weights, October 2026.
 - £70 and £950 are my own sums: a 9.5% fall on about 7% of a £10,000 S&P 500 tracker, and on £10,000 held only in Nvidia.
 

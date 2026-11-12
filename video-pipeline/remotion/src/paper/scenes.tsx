@@ -452,12 +452,12 @@ export const PaperHook: React.FC<P> = ({scene, brand}) => {
   // (a viewer deciding in the first second saw "The st" on an empty page)
   const at = scene.start <= 0.01 ? Math.min(at0, Math.round(fps * 0.3) - writeFrames(line, fps, cps)) : at0;
   const done = at + writeFrames(line, fps, cps) + 4;
-  const colW = beside && !isVertical ? width * 0.46 - pad : width - pad * 2;
+  const colW = beside && !isVertical ? width * (scene.start <= 0.01 ? 0.56 : 0.46) - pad : width - pad * 2;
   const w = Math.min(colW, Math.max(360 * u, line.length * (beside ? 36 : 44) * u));
   const size = (isVertical ? 700 : 760) * u;
   return (
     <AbsoluteFill style={{padding: pad, justifyContent: beside && isVertical ? 'flex-start' : 'center', alignItems: beside && !isVertical ? 'flex-start' : 'center', paddingTop: beside && isVertical ? height * 0.2 : pad}}>
-      <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 92 : beside ? 100 : 118) * u, lineHeight: 1.1, color: brand.ink, textAlign: beside && !isVertical ? 'left' : 'center', maxWidth: beside && !isVertical ? colW : '92%'}}>
+      <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 92 : (beside ? 100 : 118) * (scene.start <= 0.01 ? 1.3 : 1)) * u, lineHeight: 1.1, color: brand.ink, textAlign: beside && !isVertical ? 'left' : 'center', maxWidth: beside && !isVertical ? colW : '92%'}}>
         <Write text={line} frame={frame} fps={fps} start={at} cps={cps} tint={moneyTint(line, brand.accent, brand.accent2)} />
       </div>
       <svg width={w} height={30 * u} viewBox={`0 0 ${w} ${30 * u}`} style={{overflow: 'visible', marginTop: 10 * u}}>

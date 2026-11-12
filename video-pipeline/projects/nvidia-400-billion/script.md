@@ -105,8 +105,8 @@ bars: Record 6 Oct:243.37, Before the letter:186.64, Scandal 10 Nov:168.89
 And here's the bit the headlines are skipping. Nvidia was already falling. From its record high on the 6th of October to the Friday before any of this came out, the shares had dropped 23%, largely on worries about how long the AI spending boom can last. So the scandal took 9.5%. The spending worry had already taken 23%.
 
 [list title="Two dates I'm watching" unnumbered anim=hourglass anim_labels=off art_at=r art_size=0.45 art_start=0 cards="ink:17 November: results@17th; ink:18 November: Congress@18th"]
-- Nvidia's results: 17 November
-- Members of Congress: 18 November
+- Nvidia's due to report
+- Members of Congress: a briefing
 There are 2 dates I'm watching. Nvidia's due to report its results on the 17th of November. And members of Congress have asked Jensen Huang for a briefing on the 18th.
 
 [text board="What history says | McDonald's fired its CEO, 2019 | A year later: up 12%" art=off anim=arrow-up anim_labels=off art_at=r art_size=0.45 art_start=1 cards="ink:kind of reassuring@reassuring; ink:over a relationship with an employee@relationship"]
@@ -114,8 +114,8 @@ And if you look at history, it's actually kind of reassuring. McDonald's fired i
 
 [compare title="A year after the CEO left" good=left source="Yahoo Finance, November 2026: share prices a year after each exit" cards="ink:what the business did next@business; ink:mattered more than the scandal@scandal"]
 left: McDonald's, 2019 | Up 12% | CEO fired over a relationship
-right: Intel, 2018 | Down 4% | CEO resigned over a relationship
-Intel's CEO resigned for a similar reason in 2018. A year later, they were about 4% lower. So in both cases, what the business did next mattered way more than the scandal.
+right: Intel, 2018 | Lower | CEO resigned over a relationship
+Intel's CEO resigned for a similar reason in 2018. A year later, they were lower. So in both cases, what the business did next mattered way more than the scandal.
 
 [news outlet="City AM" date="10 November 2026" url="https://www.cityam.com/nvidia-scandal-leaves-uk-savers-exposed-to-fallout/" headline="Nvidia scandal leaves UK savers 'exposed' to fallout" board="UK savers are in this too" part="What I'm doing" cards="ink:what about us, over here?@us; ink:City AM@City; ink:its headline, 10 November@headline; ink:UK savers, exposed@savers; ink:millions of people in the UK@millions; ink:a pension@pension; ink:an ISA@ISA; ink:a tracker fund@tracker"]
 So what about us, over here? City AM ran this headline: the Nvidia scandal leaves UK savers exposed. Because millions of people in the UK own Nvidia without ever buying it, through a pension, an ISA, or a tracker fund.
