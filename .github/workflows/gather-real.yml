@@ -1,0 +1,44 @@
+name: Gather real material
+
+# For a news video: screenshots of the real article pages and free-licence photos from Wikimedia Commons, fetched
+# here because the sandbox cannot reach those sites. Reads projects/<name>/real/wanted.json, writes into real/.
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: "Project folder under video-pipeline/projects"
+        required: true
+  push:
+    paths:
+      - ".github/workflows/gather-real.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  gather:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Gather
+        env:
+          PROJECT: ${{ github.event.inputs.project }}
+        run: |
+          if [ -z "$PROJECT" ]; then echo "registration run"; exit 0; fi
+          pip install -q playwright pillow
+          python -m playwright install --with-deps chromium >/dev/null
+          cd video-pipeline && python scripts/gather_real.py "projects/$PROJECT"
+      - name: Keep
+        env:
+          PROJECT: ${{ github.event.inputs.project }}
+        run: |
+          if [ -z "$PROJECT" ]; then exit 0; fi
+          git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
+          find "video-pipeline/projects/$PROJECT/real" -size +20M -delete
+          git add "video-pipeline/projects/$PROJECT/real"
+          git commit -m "Real material gathered for $PROJECT [skip ci]" || exit 0
+          for i in 1 2 3; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push && break; sleep 5; done
