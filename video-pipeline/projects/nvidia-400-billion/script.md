@@ -21,7 +21,7 @@ And if you've got a pension or a tracker fund, you probably own some as well, ev
 [stat value="£70" label="What Nvidia's fall took off" sub="so it's not the end of the world" source="Bestinvest (Evelyn Partners), quoted in City AM, November 2026; Nvidia's closing prices, 6 and 10 November 2026" cards="ink:£10,000 in an S&P 500 tracker@10; ink:not the end of the world@end"]
 I worked it out, and on 10 grand in an S&P 500 tracker, it's taken off about £70. So it's not the end of the world.
 
-[news outlet="CNN" date="8 November 2026" url="https://www.cnn.com/2026/11/08/business/nvidia-investigation-ceo-jensen-huang" headline="Nvidia CEO Jensen Huang admits affair as company launches investigation into foreign spy accusations" board="Nvidia's CEO admits an affair" cards="ink:I couldn't believe it@believe; ink:the CEO@CEO; ink:an affair: admitted@admitted; ink:a spy claim: alleged@alleged"]
+[broll src="real-aljazeera.jpg" zoom=in caption="Al Jazeera, 9 November 2026" credit="aljazeera.com" cards="ink:I couldn't believe it@believe; ink:the CEO@CEO; ink:an affair: admitted@admitted; ink:a spy claim: alleged@alleged"]
 But the story behind it, honestly, I couldn't believe it when I first read it. The CEO, an affair he's admitted to, and an alleged Chinese spy.
 
 [list title="What I want to go through" anim=bar-race anim_labels=off art_at=r art_size=0.4 cards="ink:for AI and the stock market@stock; ink:and my own money@own"]
@@ -33,10 +33,13 @@ So I want to go through what actually happened, why Nvidia, what I think it mean
 
 [title dur=1.2 title="Nvidia lost $400 billion in 2 days" subtitle="What it means for your money"]
 
-[text board="What happened? | A letter to every employee | Unfaithful to his wife" art=off anim=phone-ping anim_labels=off art_at=r art_size=0.45 cards="ink:Sunday 8 November@Sunday; ink:Jensen Huang, who runs Nvidia@Jensen; ink:he apologised@apologised; ink:he takes full responsibility@responsibility" part="What happened"]
-So here's what happened. On Sunday the 8th of November, Jensen Huang, the guy who runs Nvidia, sent a letter to every single employee. He said he'd been unfaithful to his wife. He apologised, and he said he takes full responsibility.
+[broll src="real-huang-3.jpg" zoom=in caption="Jensen Huang, Nvidia's CEO" credit="Photo: Anderseidesvik, CC BY-SA 4.0, via Wikimedia Commons" cards="ink:Sunday 8 November@Sunday; ink:a letter to every employee@letter" part="What happened"]
+So here's what happened. On Sunday the 8th of November, Jensen Huang, the guy who runs Nvidia, sent a letter to every single employee.
 
-[text board="The same day | An independent investigation" art=off anim=clock anim_labels=off art_at=r art_size=0.4 cards="ink:an independent investigation@independent; ink:not really about the affair@affair; ink:reports of a foreign intelligence operation@reports"]
+[broll src="real-letter.jpg" zoom=in caption="Nvidia's own newsroom, 8 November 2026" credit="nvidianews.nvidia.com" cards="ink:unfaithful to his wife@unfaithful; ink:he apologised@apologised; ink:he takes full responsibility@responsibility"]
+He said he'd been unfaithful to his wife. He apologised, and he said he takes full responsibility.
+
+[broll src="real-board.jpg" zoom=in caption="The board's statement, 8 November 2026" credit="investor.nvidia.com" cards="ink:an independent investigation@independent; ink:not really about the affair@affair; ink:reports of a foreign intelligence operation@reports"]
 That same day, Nvidia's board opened an independent investigation. And to be clear, it's not really about the affair. It's about reports that he was the target of a foreign intelligence operation.
 
 [broll search="computer chip circuit board macro" caption="An allegation, not a finding" marks="ink:circle 50,50@chips" cards="ink:according to the reports@reports; ink:first reported by the New York Times@York; ink:what US intelligence is said to believe@intelligence; ink:reportedly: billions of dollars of chips@reportedly" src="09-computer-chip-circuit-board-macro.mp4" credit="Video 13461 by onijake via Pixabay"]
@@ -45,7 +48,7 @@ So according to those reports, and the New York Times had it first, US intellige
 [text board="Admitted: the affair | Alleged: the spy claim" art=off cards="ink:his own letter@careful; ink:nobody charged@charged; ink:China denies it@denies"]
 Now, I want to be careful here. That's an allegation. Nobody's been charged, and China denies it.
 
-[news outlet="NBC News" date="10 November 2026" url="https://www.nbcnews.com/business/corporations/ex-prosecutor-probe-jensen-huang-chinese-spy-affair-nvidia-rcna608628" headline="Nvidia hires former acting U.S. attorney to probe Jensen Huang affair" board="A former US prosecutor runs the investigation" cards="ink:the board: no reason to believe secrets were compromised@reason; ink:or national security@national; ink:it still has confidence in him@confidence; ink:still the CEO, as I record this@recording; ink:a former US prosecutor is brought in@brought"]
+[broll src="real-nbc.jpg" zoom=in caption="NBC News, 10 November 2026" credit="nbcnews.com" cards="ink:the board: no reason to believe secrets were compromised@reason; ink:or national security@national; ink:it still has confidence in him@confidence; ink:still the CEO, as I record this@recording; ink:a former US prosecutor is brought in@brought"]
 The board says it's got no reason to believe any company secrets or national security were compromised, and it says it still has confidence in him. As I'm recording this, he's still the CEO. And they've brought in a former US prosecutor to run the investigation.
 
 [list title="Since then" unnumbered]
@@ -62,13 +65,13 @@ But the market didn't wait around. On Monday, the shares dropped 4.3%. On Tuesda
 [stat value="$428bn" label="Nvidia's market value, in 2 days" sub="gone" source="Worked out from Nasdaq closing prices, 6 and 10 November 2026" cards="red:about 9.5% in 2 days@9.5%"]
 So that's about 9.5% in 2 days. Roughly $428 billion, gone.
 
-[text board="Why Nvidia? | A company that makes chips" art=off part="Why Nvidia"]
+[broll src="real-hq.jpg" zoom=in caption="Nvidia's headquarters, Santa Clara" credit="Photo: Coolcaesar, CC BY-SA 4.0, via Wikimedia Commons" cards="ink:why Nvidia?@why; ink:a company that makes chips@chips" part="Why Nvidia"]
 So why would a spy even care about a company that makes chips?
 
 [broll search="server room data centre racks" caption="A data centre" cards="ink:what AI runs on@runs; ink:most big AI systems: trained on Nvidia's chips@trained; ink:the thing you want@thing" src="16-server-room-data-centre-racks.mp4" credit="Video 14906 by cipnt via Pixabay"]
 Because those chips are pretty much what AI runs on. Most of the big AI systems in the world are trained on Nvidia's chips. So if you're a country that wants to win at AI, this is the thing you want.
 
-[news outlet="CNBC" date="10 November 2026" url="https://www.cnbc.com/2026/11/10/jensen-huang-nvidia-china-ties.html" headline="Jensen Huang's affair with alleged Chinese spy further complicates Nvidia's China problem" board="The fight over selling chips to China" cards="ink:US limits on its chips@limits; ink:what can be sold to China@China; ink:he pushed to loosen those rules@loosen; ink:direct access to the president@access; ink:a chip analyst, to CNBC@analyst; ink:35 years@35; ink:this much influence on export policy@influence"]
+[broll src="real-cnbc-china.jpg" zoom=in caption="CNBC, 10 November 2026" credit="cnbc.com" cards="ink:US limits on its chips@limits; ink:what can be sold to China@China; ink:he pushed to loosen those rules@loosen; ink:direct access to the president@access; ink:a chip analyst, to CNBC@analyst; ink:35 years@35; ink:this much influence on export policy@influence"]
 And here's the thing. The US limits which of those chips can be sold to China. Jensen Huang has publicly pushed to loosen those rules, and he's had direct access to the president. One chip analyst told CNBC that in 35 years, he's never seen a chip CEO with this much influence on export policy.
 
 [broll search="shipping containers port cranes" pick=2 caption="If you believe the reporting" cards="ink:not only about secrets@secrets; ink:about influence@influence; ink:how he thinks about selling to China@thinks; ink:but that's the claim@claim; ink:what the investigation is for@investigation" src="18-shipping-containers-port-cranes.mp4" credit="Video 23008 by bellergy via Pixabay"]
@@ -85,13 +88,13 @@ First thing I noticed: on Monday, while Nvidia dropped 4.3%, the Nasdaq, which i
 [stat value="$96.2bn" label="Nvidia's sales in its last reported quarter" sub="more than double the year before" source="Nvidia second-quarter results, fiscal 2027, August 2026" anim=arrow-up anim_labels=off art_at=r art_size=0.5 art_start=2.2 cards="ink:the business hasn't changed@changed; ink:the companies buying these chips@companies; ink:aren't going to stop@stop"]
 And the business hasn't changed, right? Last quarter, Nvidia made $96.2 billion in sales. That's more than double the year before. The companies buying these chips aren't going to stop because of the CEO's private life.
 
-[news outlet="CNBC" date="9 November 2026" url="https://www.cnbc.com/2026/11/09/jensen-huang-affair-nvidia-succession.html" headline="Jensen Huang's affair highlights Nvidia's key man risk with no heir" board="Risk 1: one man" cards="ink:2 real risks@risks; ink:one: the man himself@man; ink:no clear successor@successor"]
+[broll src="real-cnbc-succession.jpg" zoom=in caption="CNBC, 9 November 2026" credit="cnbc.com" cards="ink:2 real risks@risks; ink:one: the man himself@man; ink:no clear successor@successor"]
 But to be fair, there are 2 real risks here. The first one is the man himself. Analysts are saying Nvidia doesn't have a clear successor.
 
-[text board="Jensen is Nvidia | Nvidia is Jensen" art=off cards="ink:one analyst, quoted by CNBC@put"]
+[broll src="real-huang-1.jpg" zoom=in caption="Jensen is Nvidia. Nvidia is Jensen." credit="Photo: Anderseidesvik, CC BY-SA 4.0, via Wikimedia Commons" cards="ink:one analyst, quoted by CNBC@put"]
 One of them put it like this: Jensen is Nvidia, Nvidia is Jensen.
 
-[text board="Risk one: the man himself | He doesn't control the votes" art=off cards="ink:unlike Zuckerberg at Meta@Zuckerberg; ink:Reuters: he doesn't control the votes@votes; ink:the board could remove him@remove; ink:then nobody knows who runs it@nobody"]
+[broll src="real-hq-sign.jpg" zoom=in caption="He doesn't control the votes" credit="Photo: Will Buckner, CC BY 2.0, via Wikimedia Commons" cards="ink:unlike Zuckerberg at Meta@Zuckerberg; ink:Reuters: he doesn't control the votes@votes; ink:the board could remove him@remove; ink:then nobody knows who runs it@nobody"]
 And Reuters made a point I hadn't thought about. Unlike Mark Zuckerberg at Meta, he doesn't control the votes. So the board really could remove him. And if it did, nobody knows who runs the most valuable company in AI.
 
 [news outlet="The Hill" date="November 2026" url="https://thehill.com/policy/technology/6211351-chip-export-restrictions-momentum-nvidia-huang/" headline="Nvidia's Jensen Huang scandal fuels push for strict AI chip export bills" board="Risk 2: Washington" cards="ink:two: politics@politics; ink:new momentum for bills in Congress@momentum; ink:tighter rules on selling AI chips abroad@tighten"]
@@ -117,10 +120,10 @@ left: McDonald's, 2019 | Up 12% | CEO fired over a relationship
 right: Intel, 2018 | Lower | CEO resigned over a relationship
 Intel's CEO resigned for a similar reason in 2018. A year later, they were lower. So in both cases, what the business did next mattered way more than the scandal.
 
-[news outlet="City AM" date="10 November 2026" url="https://www.cityam.com/nvidia-scandal-leaves-uk-savers-exposed-to-fallout/" headline="Nvidia scandal leaves UK savers 'exposed' to fallout" board="UK savers are in this too" part="What I'm doing" cards="ink:what about us, over here?@us; ink:City AM@City; ink:its headline, 10 November@headline; ink:UK savers, exposed@savers; ink:millions of people in the UK@millions; ink:a pension@pension; ink:an ISA@ISA; ink:a tracker fund@tracker"]
+[broll src="real-cityam.jpg" zoom=in caption="City AM, 10 November 2026" credit="cityam.com" part="What I'm doing" cards="ink:what about us, over here?@us; ink:City AM@City; ink:its headline, 10 November@headline; ink:UK savers, exposed@savers; ink:millions of people in the UK@millions; ink:a pension@pension; ink:an ISA@ISA; ink:a tracker fund@tracker"]
 So what about us, over here? City AM ran this headline: the Nvidia scandal leaves UK savers exposed. Because millions of people in the UK own Nvidia without ever buying it, through a pension, an ISA, or a tracker fund.
 
-[text board="AJ Bell: its most bought share | IG: sell trades up 157%" art=off cards="ink:people here are split@split; ink:some buying the dip@buying; ink:some getting out@getting"]
+[broll src="real-yahoo.jpg" zoom=in caption="Yahoo Finance UK, 11 November 2026" credit="uk.finance.yahoo.com" cards="ink:people here are split@split; ink:AJ Bell: its most bought share@bought; ink:IG: sell trades up 157%@157%; ink:some buying the dip@buying; ink:some getting out@getting"]
 And people here are split. AJ Bell says Nvidia was the most bought share on its platform between the 5th and the 9th of November. But IG says its sell trades jumped 157%. So some people are buying the dip, and some are getting out.
 
 [broll lib="vuag-max-chart-app" from=7 phone=on caption="The core: an S&P 500 fund" marks="ink:note:the fund's price, not my balance 50,22@core" cards="ink:where I stand@stand; ink:the core: the S&P 500@core; ink:boring@boring; ink:broad@broad; ink:does the heavy lifting@heavy; ink:Nvidia: its biggest company@biggest; ink:about £7 of every £100@£7"]

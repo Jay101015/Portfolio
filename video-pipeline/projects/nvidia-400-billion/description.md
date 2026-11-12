@@ -6,8 +6,8 @@ Chapters
 0:00 $400 billion in 2 days
 0:47 What happened
 2:17 Why Nvidia
-3:06 What it means
-5:21 What I'm doing
+3:07 What it means
+5:22 What I'm doing
 
 Sources
 - The letter and the board's investigation: Nvidia, "A Message to Our Company" and "Statement from NVIDIA Board of Directors", 8 November 2026; CNN, NBC News, Bloomberg, 8 to 10 November 2026.
@@ -26,6 +26,8 @@ Sources
 
 I invest in an S&P 500 fund and a basket of AI stocks that includes Nvidia. I am not a financial adviser and nothing here is financial advice. Investments can go down as well as up.
 
+Photos of Jensen Huang: Anderseidesvik, CC BY-SA 4.0, via Wikimedia Commons (Stanford, 30 April 2026). Nvidia headquarters: Coolcaesar, CC BY-SA 4.0. Nvidia sign: Will Buckner, CC BY 2.0. Both via Wikimedia Commons.
+Page screenshots: nvidianews.nvidia.com, investor.nvidia.com, aljazeera.com, nbcnews.com, cnbc.com, cityam.com, uk.finance.yahoo.com, shown for reporting and comment.
 Stock footage from Pixabay (Pixabay Content License).
 
 #nvidia #investing #ukfinance #stockmarket #ai #sp500
