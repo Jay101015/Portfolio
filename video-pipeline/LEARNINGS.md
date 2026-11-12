@@ -533,4 +533,8 @@ one change at a time where possible, so a result can be read.
   November dates): anim_labels=off.
 - Open with Jeffrey: Intel "about 4% lower a year later" is from month-end prices in the cited piece; from the day of
   the resignation it looks nearer 9%. His call whether to remake that passage.
+- **The first finished version was rejected as a copy of the other videos.** I had told the director no photo of any
+  real person, so the story was told in drawings, retyped cards and stock. Jeffrey asked where Jensen Huang, the real
+  CNN page and the real material were. Twelve scenes rebuilt from Commons photos and page screenshots (the "Gather
+  real material" workflow): "so much better looking already". Rule in EDITOR.md, "Real material first".
 - Real results: to come.

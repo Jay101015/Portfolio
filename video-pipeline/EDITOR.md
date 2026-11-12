@@ -34,6 +34,21 @@ every 60 to 90 seconds, something useful before the title card, an ending with a
 recorded, so the pass changes none of them: it reads the draft against that list and writes each miss as a
 `WRITING:` line in the notes for Jeffrey (the lines are listed in WRITING.md), so the next recording has it.
 
+## Real material first (Jeffrey, 12 November 2026)
+
+"Every video should have something new about it... where are the images of Jensen Huang, the real snapshot of the
+CNN post, the real footage? If you can find it yourself that is preferable." The Nvidia video first went out as
+drawings, retyped headline cards and stock; with real photos and pages he said "so much better looking already".
+- A video about a real person, company or story shows them: a free-licence photo (Wikimedia Commons, credited), the
+  company's own statement on its own page, the real article where a headline is quoted. Full frame, not a small card.
+- Gather before the picture is planned: write projects/<name>/real/wanted.json (pages to screenshot, Commons
+  searches) and run the "Gather real material" workflow (scripts/gather_real.py); look at real/sheet.png; crop into
+  media/ and use as [broll src="real-..." caption="outlet, date" credit="..."]. Credits go in the description.
+- A drawing, a retyped [news] card or a stock clip is the fallback, used only where nothing real exists.
+- Sensitivity is handled by which real picture is chosen and how it is captioned (admitted against alleged, nobody
+  beside him), not by leaving reality out.
+- Ask Jeffrey only for what cannot be found: his own app recordings, a page that blocks the screenshot.
+
 ## His voice (docs/voice.md)
 
 A script is Jeffrey talking, not an article read out. docs/voice.md holds how he talks (from his own unscripted
