@@ -1118,6 +1118,25 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
       </AbsoluteFill>
     );
   }
+  if (src && scene.props.big) {
+    // big="−$400 BILLION | in 2 days": the picture edge to edge with the number across its lower third, complete on the
+    // first frame. A news video's opening: one real picture and one figure, never half a page of handwriting
+    // (Jeffrey: "I really hate the way we start the vid with half text").
+    const [l1, l2] = String(scene.props.big).split('|').map((x) => x.trim());
+    const inAt = scene.start <= 0.01 ? 1 : pop(frame, fps, 2, 10);
+    const size1 = Math.min((isVertical ? 150 : 180) * u, (width * 0.9) / Math.max(4, l1.length) * 1.75);
+    return (
+      <AbsoluteFill style={{background: '#111', overflow: 'hidden'}}>
+        <div style={{position: 'absolute', inset: 0, overflow: 'hidden'}}>{media}</div>
+        <div style={{position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0) 38%, rgba(4,27,60,0.86) 100%)'}} />
+        <div style={{position: 'absolute', left: pad * 0.7, right: pad * 0.7, bottom: pad * 0.55, transform: `scale(${0.96 + 0.04 * inAt})`, transformOrigin: 'left bottom'}}>
+          <div style={{display: 'inline-block', background: brand.accent2, color: '#fff', fontFamily: brand.display, fontSize: size1, lineHeight: 1.02, padding: `${6 * u}px ${28 * u}px ${14 * u}px`, transform: 'rotate(-1.2deg)', boxShadow: `${10 * u}px ${10 * u}px 0 rgba(0,0,0,0.35)`}}>{l1}</div>
+          {l2 ? <div style={{marginTop: 14 * u, color: '#fff', fontFamily: brand.display, fontSize: size1 * 0.58, lineHeight: 1.05, textShadow: '0 3px 14px rgba(0,0,0,0.6)'}}>{l2}</div> : null}
+        </div>
+        {credit ? <div style={{position: 'absolute', right: pad * 0.4, top: pad * 0.3, fontFamily: hand(brand), fontSize: 24 * u, color: 'rgba(255,255,255,0.85)', textShadow: '0 1px 4px rgba(0,0,0,0.6)'}}>{credit}</div> : null}
+      </AbsoluteFill>
+    );
+  }
   if (src && brand.board && !isVertical) {
     // footage taped to the board: a navy frame with an offset shadow, a degree or two of tilt, a lighter grade so the
     // photo sits with the ink rather than cutting hard against it, the caption on the frame's bottom edge

@@ -201,7 +201,7 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
     elif b.type in ("clip", "broll"):
         # broll: the footage fills the whole frame, a short caption and the credit over it; clip: the framed card
         # phone=on: a vertical screen recording shown in a drawn phone on the board, the cards beside it
-        for k in ("src", "caption", "credit", "fallback", "search", "want", "zoom", "focus", "mag", "rotate", "flip", "bright", "contrast", "sat", "bw", "look", "lib", "phone"):
+        for k in ("src", "caption", "credit", "fallback", "search", "want", "zoom", "focus", "mag", "rotate", "flip", "bright", "contrast", "sat", "bw", "look", "lib", "phone", "big"):
             if k in a:
                 p[k] = a[k]
         if "pick" in a:  # pick=2: the second of the finder's candidates (footage-candidates.png shows three)

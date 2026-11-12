@@ -12,8 +12,12 @@ tts.model: eleven_v4
 slug: nvidia-400-billion
 topic: Nvidia's two-day fall after its CEO admitted an affair and the board opened an investigation into reports he was the target of a foreign intelligence operation: what happened, why Nvidia is a target, what it means for AI and for a UK tracker investor, and how Jeffrey hedges with diversification; in Jeffrey's own way of talking (docs/voice.md)
 
-[hook board="Nvidia: $400 billion gone in 2 days" art=off anim=money-flies anim_labels=off art_at=r art_size=0.5 cards="ink:I've got money riding on this@riding; ink:watching it closely@watching"]
-So Nvidia has lost over $400 billion in 2 days. And I'm going to be honest, I've got money riding on this one, so I've been watching it pretty closely.
+[broll src="real-huang-2.jpg" zoom=in big="−$400 BILLION | in 2 days" credit="Photo: Anderseidesvik, CC BY-SA 4.0, via Wikimedia Commons"]
+So Nvidia has lost over $400 billion in 2 days.
+
+[chart bar title="Nvidia, Friday to Tuesday" y="$" ymin=150 colors="ink,red,red" source="Nasdaq closing prices, 6 to 10 November 2026; the axis starts at $150" cards="ink:I've got money riding on this@riding; ink:watching it closely@watching"]
+bars: Friday:186.64, Monday:178.67, Tuesday:168.89
+And I'm going to be honest, I've got money riding on this one, so I've been watching it pretty closely.
 
 [broll lib="vuag-holdings-app" phone=on caption="Top of an S&P 500 fund: Nvidia" marks="ink:circle 30,42@own" cards="ink:a pension@pension; ink:or a tracker fund@tracker; ink:you probably own some@own"]
 And if you've got a pension or a tracker fund, you probably own some as well, even if you've never bought it.

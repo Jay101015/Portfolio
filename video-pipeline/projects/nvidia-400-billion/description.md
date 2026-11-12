@@ -4,10 +4,10 @@ Recorded 11 November 2026. This is a developing story: the spying claims are all
 
 Chapters
 0:00 $400 billion in 2 days
-0:47 What happened
-2:17 Why Nvidia
-3:07 What it means
-5:21 What I'm doing
+0:48 What happened
+2:18 Why Nvidia
+3:08 What it means
+5:23 What I'm doing
 
 Sources
 - The letter and the board's investigation: Nvidia, "A Message to Our Company" and "Statement from NVIDIA Board of Directors", 8 November 2026; CNN, NBC News, Bloomberg, 8 to 10 November 2026.
