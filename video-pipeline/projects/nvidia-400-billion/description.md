@@ -7,7 +7,7 @@ Chapters
 0:47 What happened
 2:17 Why Nvidia
 3:07 What it means
-5:22 What I'm doing
+5:21 What I'm doing
 
 Sources
 - The letter and the board's investigation: Nvidia, "A Message to Our Company" and "Statement from NVIDIA Board of Directors", 8 November 2026; CNN, NBC News, Bloomberg, 8 to 10 November 2026.

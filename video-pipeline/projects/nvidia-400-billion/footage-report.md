@@ -5,14 +5,26 @@ Topic: Nvidia's two-day fall after its CEO admitted an affair and the board open
 | scene | query | result | licence | attribution |
 |---|---|---|---|---|
 | 2 |  | library vuag-holdings-app |  |  |
-| 9 | | already in media/: 09-computer-chip-circuit-board-macro.mp4 | | |
-| 16 | | already in media/: 16-server-room-data-centre-racks.mp4 | | |
-| 18 | | already in media/: 18-shipping-containers-port-cranes.mp4 | | |
-| 26 | united states capitol building washington | downloaded 26-united-states-capitol-building-washingto.mp4 | Pixabay Content License | Video 239278 by InOldNews via Pixabay |
-| 33 |  | library vuag-max-chart-app |  |  |
-| 37 | | already in media/: 38-supermarket-aisle-shoppers-trolley.mp4 | | |
-| 42 | | already in media/: 43-stock-market-trading-screen-numbers.mp4 | | |
-| 43 | | already in media/: 44-hands-typing-on-smartphone-close-up.mp4 | | |
+| 4 | | already in media/: real-aljazeera.jpg | | |
+| 7 | | already in media/: real-huang-3.jpg | | |
+| 8 | | already in media/: real-letter.jpg | | |
+| 9 | | already in media/: real-board.jpg | | |
+| 10 | | already in media/: 09-computer-chip-circuit-board-macro.mp4 | | |
+| 12 | | already in media/: real-nbc.jpg | | |
+| 16 | | already in media/: real-hq.jpg | | |
+| 17 | | already in media/: 16-server-room-data-centre-racks.mp4 | | |
+| 18 | | already in media/: real-cnbc-china.jpg | | |
+| 19 | | already in media/: 18-shipping-containers-port-cranes.mp4 | | |
+| 23 | | already in media/: real-cnbc-succession.jpg | | |
+| 24 | | already in media/: real-huang-1.jpg | | |
+| 25 | | already in media/: real-hq-sign.jpg | | |
+| 27 | united states capitol building washington | downloaded 27-united-states-capitol-building-washingto.mp4 | Pixabay Content License | Video 239282 by InOldNews via Pixabay |
+| 32 | | already in media/: real-cityam.jpg | | |
+| 33 | | already in media/: real-yahoo.jpg | | |
+| 34 |  | library vuag-max-chart-app |  |  |
+| 38 | | already in media/: 38-supermarket-aisle-shoppers-trolley.mp4 | | |
+| 43 | | already in media/: 43-stock-market-trading-screen-numbers.mp4 | | |
+| 44 | | already in media/: 44-hands-typing-on-smartphone-close-up.mp4 | | |
 
 ## What counts as free use here
 
