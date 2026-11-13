@@ -347,11 +347,18 @@ def write_timing(project: str, sb: dict, slug: str, audio_name: str | None) -> N
         json.dump(timing, f, separators=(",", ":"))
 
 
+STILL_EXTS = (".jpg", ".jpeg", ".png", ".webp")
+
+
 def fit_clip(sc: dict, path: str) -> list[str]:
     """Keep a clip's playback inside the file: a frame requested past the end of a video never returns
     and the render hangs. Pulls the start offset back when the scene would run off the end, and loops
     a file shorter than the scene."""
     notes = []
+    if os.path.splitext(path)[1].lower() in STILL_EXTS:
+        # a still picture has no length to fit. Read as a 0.04 s clip it was "held on its last frame" from frame two,
+        # which froze it: the push-in the script asked for (zoom=in) never showed, on the opening photo above all
+        return notes
     try:
         dur = al.audio_duration(path)
     except Exception:  # noqa: BLE001 - ffprobe missing or an unreadable file: leave the clip as written
@@ -720,6 +727,23 @@ def made_voice(project: str, take: str | None) -> bool:
         return False
 
 
+def mute_header(value: str | None) -> list[tuple[float, float]]:
+    """`mute: 388.66-388.78, 412-412.1` in the script header: stretches of the voiceover file (seconds on its own
+    clock) to silence before anything else is done to it. For a click or a stray half-sound at the edge of a made
+    chunk; never for a word. A stretch longer than half a second is refused: that is a word, and words are not cut."""
+    out: list[tuple[float, float]] = []
+    for part in str(value or "").split(","):
+        m = re.match(r"^\s*(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)\s*s?\s*$", part)
+        if not m:
+            continue
+        a, b = float(m.group(1)), float(m.group(2))
+        if 0 < b - a <= 0.5:
+            out.append((a, b))
+        else:
+            print(f"mute: {part.strip()} is not a short stretch (0.5 s at most): left as it is", file=sys.stderr)
+    return out
+
+
 def cut_restarts(project: str, take: str | None, header: dict[str, str]) -> bool:
     """Whether a restart found in the transcript ("The ... The boring pot?") is cut out of the voice. Yes for a
     recording; never for a made voice, where a word said twice is the script ("Jensen is Nvidia, Nvidia is Jensen")
@@ -950,6 +974,12 @@ def main(argv: list[str] | None = None) -> int:
             LOUDNESS = float(str(_header_lines(md).get("loudness") or LOUDNESS).replace("LUFS", "").strip())
         except ValueError:
             pass
+        mute = mute_header(_header_lines(md).get("mute"))
+        if mute:
+            from .voice import mute_spans
+            os.makedirs(os.path.join(project, ".cache"), exist_ok=True)
+            audio = mute_spans(audio, os.path.join(project, ".cache", "voice-muted.wav"), mute)
+            print(f"voice: {len(mute)} stray sound(s) silenced as the script's mute: line asks ({', '.join(f'{a:g}-{b:g}s' for a, b in mute)}); no word is touched")
         audio = enhance(audio, os.path.join(project, ".cache", "voice-clean.mp3"), level)
         print(f"voice: {'as recorded' if level in ('off', 'raw') else 'enhanced (' + level + ')'}")
         before = al.audio_duration(audio)
@@ -1013,8 +1043,11 @@ def main(argv: list[str] | None = None) -> int:
             moved = snap_cuts(sb, wav)
             for sc in sb["scenes"]:
                 time_cues(sc)
-            changed = take_words(sb, words)
-            print(f"cuts: {moved} moved onto the pause between words; captions: {changed} words follow the take, not the script")
+            # a made voice says the script word for word: where the transcript differs it misheard, and following it
+            # put "The The board" and "of And members" into the captions file that goes up with the video
+            scripted = made_voice(project, find_audio(project))
+            changed = 0 if scripted else take_words(sb, words)
+            print(f"cuts: {moved} moved onto the pause between words; captions: " + ("the script's own words (a made voice)" if scripted else f"{changed} words follow the take, not the script"))
             for line in long_scenes(sb):
                 print(line)
             # a scene the recogniser barely heard was placed by guesswork: its pictures land on the wrong words

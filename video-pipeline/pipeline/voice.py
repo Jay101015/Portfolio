@@ -255,6 +255,23 @@ def remove_spans(src: str, dst: str, spans: list[tuple[float, float]], sr: int =
     return dst
 
 
+def mute_spans(src: str, dst: str, spans: list[tuple[float, float]], sr: int = SR) -> str:
+    """`dst`: `src` with the (start, end) stretches silenced, the same length (a stray sound at a chunk's edge; the
+    build's room-tone fill then covers the hole). Faded over 4 ms each side so the silence does not click."""
+    x = read(src, sr).copy()
+    f = int(0.004 * sr)
+    for a, b in spans:
+        i, j = max(0, int(a * sr)), min(len(x), int(b * sr))
+        if j - i <= 2 * f:
+            x[i:j] = 0
+            continue
+        x[i:i + f] = x[i:i + f] * np.linspace(1, 0, f)
+        x[i + f:j - f] = 0
+        x[j - f:j] = x[j - f:j] * np.linspace(0, 1, f)
+    write(dst, x, sr)
+    return dst
+
+
 def shift_time(t: float, removed: list[tuple[float, float]]) -> float:
     """a moment of the original recording on the tightened one"""
     gone = 0.0

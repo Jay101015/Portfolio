@@ -18,7 +18,16 @@ def _ts(t: float) -> str:
 
 
 def cues(sb: dict[str, Any], max_chars: int = 42, max_secs: float = 3.6, gap: float = 0.9) -> list[tuple[float, float, str]]:
-    words = sorted((float(w["s"]), float(w["e"]), str(w["w"])) for sc in sb.get("scenes", []) for w in (sc.get("words") or []))
+    # the script's order is the order the words are said. Sorting by time put "has Nvidia So lost" on screen when the
+    # aligner had to guess three word times and they ran backwards, so a time never reorders the words: it is held
+    # at the word before it
+    words: list[tuple[float, float, str]] = []
+    last = 0.0
+    for sc in sb.get("scenes", []):
+        for w in sc.get("words") or []:
+            s = max(float(w["s"]), last)
+            words.append((s, max(float(w["e"]), s), str(w["w"])))
+            last = s
     out: list[tuple[float, float, str]] = []
     cur: list[tuple[float, float, str]] = []
 
@@ -28,7 +37,10 @@ def cues(sb: dict[str, Any], max_chars: int = 42, max_secs: float = 3.6, gap: fl
             cur.clear()
 
     for s, e, w in words:
-        if cur and (s - cur[-1][1] > gap or len(" ".join(x[2] for x in cur) + " " + w) > max_chars or s - cur[0][0] > max_secs):
+        line = len(" ".join(x[2] for x in cur) + " " + w)
+        # a sentence's last word stays with its sentence when it is only a little over ("... in 2 days." not "days." alone)
+        closes = w[-1:] in ".?!" and line <= max_chars + 8
+        if cur and (s - cur[-1][1] > gap or (line > max_chars and not closes) or s - cur[0][0] > max_secs + (0.6 if closes else 0)):
             flush()
         cur.append((s, e, w))
         text = " ".join(x[2] for x in cur)

@@ -53,3 +53,42 @@ def test_the_script_header_overrides_either_way(tmp_path):
 def test_no_shorts_flag_is_offered():
     src = open(os.path.join(os.path.dirname(build.__file__), "build.py"), encoding="utf-8").read()
     assert '"--no-shorts"' in src and "not args.no_shorts" in src
+
+
+def test_a_still_picture_is_not_fitted_like_a_clip(tmp_path):
+    # read as a 0.04 s clip, a photo was "held on its last frame" from frame two and never pushed in
+    from PIL import Image
+    pic = tmp_path / "real-photo.jpg"
+    Image.new("RGB", (64, 36), "white").save(pic)
+    sc = {"id": 1, "start": 0.0, "end": 5.0, "props": {"src": "real-photo.jpg", "zoom": "in"}}
+    assert build.fit_clip(sc, str(pic)) == []
+    assert sc["props"] == {"src": "real-photo.jpg", "zoom": "in"}
+
+
+def test_mute_takes_short_stretches_only():
+    assert build.mute_header("388.66-388.78, 12 - 12.4s") == [(388.66, 388.78), (12.0, 12.4)]
+    assert build.mute_header("10-12") == []  # two seconds is a word or more: never cut
+    assert build.mute_header(None) == [] and build.mute_header("soon") == []
+
+
+def test_mute_spans_silences_and_keeps_the_length(tmp_path):
+    import numpy as np
+    from pipeline import voice
+    src, dst = str(tmp_path / "a.wav"), str(tmp_path / "b.wav")
+    x = np.full(voice.SR, 8000.0)  # the voice module works in 16-bit sample values
+    voice.write(src, x)
+    voice.mute_spans(src, dst, [(0.4, 0.5)])
+    y = voice.read(dst)
+    assert len(y) == len(x)
+    assert abs(y[int(0.45 * voice.SR)]) < 1 and abs(y[int(0.2 * voice.SR)] - 8000) < 2 and abs(y[int(0.7 * voice.SR)] - 8000) < 2
+
+
+def test_captions_keep_the_script_order_when_word_times_run_backwards():
+    from pipeline import srt
+    words = [("So", 0.64, 0.72), ("Nvidia", 0.52, 0.76), ("has", 0.4, 0.8), ("lost", 0.8, 1.5), ("over", 1.5, 1.88), ("$400", 1.88, 2.36),
+             ("billion", 2.36, 3.24), ("in", 3.24, 3.5), ("2", 3.5, 3.9), ("days.", 3.9, 4.6), ("And", 5.9, 6.0), ("I'm", 6.0, 6.2)]
+    sb = {"scenes": [{"words": [{"w": w, "s": s, "e": e} for w, s, e in words]}]}
+    lines = [text for _, _, text in srt.cues(sb)]
+    assert lines[0] == "So Nvidia has lost over $400 billion in 2 days."  # in order, and the sentence whole
+    starts = [s for s, _, _ in srt.cues(sb)]
+    assert starts == sorted(starts)
