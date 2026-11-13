@@ -133,12 +133,34 @@ def words_from(args) -> list[dict]:
     return []
 
 
+def loudness_target(args: argparse.Namespace) -> str:
+    """The loudness this video was mixed to on purpose: --loudness, else the `loudness:` line of the project's
+    script.md (found beside the video or the storyboard, or one folder up for a Short's cut), else -14."""
+    if args.loudness:
+        return f"target {str(args.loudness).replace('LUFS', '').strip()}, given"
+    for start in (args.video, args.storyboard or ""):
+        folder = os.path.dirname(os.path.abspath(start)) if start else ""
+        for _ in range(3):
+            script = os.path.join(folder, "script.md") if folder else ""
+            if script and os.path.exists(script):
+                for line in open(script, encoding="utf-8").read().splitlines():
+                    if line.startswith("["):
+                        break
+                    m = re.match(r"^loudness:\s*(-?\d+(?:\.\d+)?)", line.strip(), re.I)
+                    if m:
+                        return f"target {m.group(1)}: the script's own loudness line, the owner's choice"
+                break
+            folder = os.path.dirname(folder) if folder else ""
+    return "target -14"
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("video")
     ap.add_argument("out")
     ap.add_argument("--words")
     ap.add_argument("--storyboard")
+    ap.add_argument("--loudness", help="the target in LUFS (default: the loudness: line of the script.md beside the video or the storyboard, else -14)")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
     info = probe(args.video)
@@ -163,7 +185,7 @@ def main() -> None:
     words = words_from(args)
     lines = [f"# Review kit: {os.path.basename(args.video)}", "",
              f"- length {dur:.1f}s, {w}x{h} ({'vertical, a Short' if vertical else 'landscape'}), {fps} fps",
-             f"- loudness {lufs} LUFS integrated (target -14), true peak {peak} dBFS (keep under -1)",
+             f"- loudness {lufs} LUFS integrated ({loudness_target(args)}), true peak {peak} dBFS (keep under -1)",
              f"- {len(cs)} cuts{' (with the storyboard scene changes)' if changes else ''}; longest stretch with no cut {longest[0]:.1f}s from {longest[1]:.1f}s",
              "", "## Cuts (seconds)", "", ", ".join(f"{c:.2f}" for c in cs) or "none"]
     idle, per_min = idle_stretches(args.video)
