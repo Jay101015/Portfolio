@@ -9,7 +9,7 @@ Chapters
 0:48 What happened
 2:18 Why Nvidia
 3:08 What it means
-5:22 What I'm doing
+5:23 What I'm doing
 
 Sources
 - Update, 12 November: Nvidia, "NVIDIA Announces CEO Transition" and Form 8-K; NBC News, CNBC, Al Jazeera, 12 November 2026.
