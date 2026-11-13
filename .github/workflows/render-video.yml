@@ -24,6 +24,10 @@ on:
         description: "Only find the footage and publish footage-check.png (three frames a clip) to look at before the long render"
         type: boolean
         default: false
+      no_shorts:
+        description: "Leave the Shorts alone: re-render only the long video (its Shorts are already out)"
+        type: boolean
+        default: false
   # a recording on its own is transcribed by transcribe.yml (minutes); the video is rendered when the script ships
   push:
     paths:
@@ -127,6 +131,7 @@ jobs:
           # a full vertical copy of a 10-minute video doubles the render; the Shorts already cover 9:16
           if [ "${{ github.event.inputs.vertical }}" = "true" ]; then flags="--vertical"; fi
           if [ "${{ github.event.inputs.shorts_only }}" = "true" ] || [ "${{ steps.pick.outputs.shorts_only }}" = "true" ]; then flags="--only-shorts"; fi
+          if [ "${{ github.event.inputs.no_shorts }}" = "true" ]; then flags="$flags --no-shorts"; fi
           python -m pipeline.build "projects/$PROJECT" --model base.en --concurrency 2 $flags
 
       - name: Keep what the run found (script with credits, report, small media) on the branch

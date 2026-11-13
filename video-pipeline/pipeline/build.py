@@ -705,6 +705,33 @@ def keep_spans(src: str, dst: str, spans: list[tuple[float, float]], lead: float
             os.remove(p)
 
 
+def made_voice(project: str, take: str | None) -> bool:
+    """True when the voiceover is the one the voice step made (voice.json says so and its hash still matches the
+    file). A made voice says exactly the approved words, so nothing in it is a stumble."""
+    record = os.path.join(project, "voice.json")
+    if not take or not os.path.exists(record):
+        return False
+    try:
+        with open(record, encoding="utf-8") as f:
+            rec = json.load(f)
+        from .tts import file_hash
+        return bool(rec.get("made")) and rec.get("audioHash") == file_hash(take)
+    except (OSError, ValueError):
+        return False
+
+
+def cut_restarts(project: str, take: str | None, header: dict[str, str]) -> bool:
+    """Whether a restart found in the transcript ("The ... The boring pot?") is cut out of the voice. Yes for a
+    recording; never for a made voice, where a word said twice is the script ("Jensen is Nvidia, Nvidia is Jensen")
+    and cutting it loses approved words. `restarts: keep` / `restarts: cut` in the script header overrides."""
+    said = str(header.get("restarts") or "").strip().lower()
+    if said in ("keep", "off", "no"):
+        return False
+    if said in ("cut", "on", "yes"):
+        return True
+    return not made_voice(project, take)
+
+
 def tidy_voice(project: str, audio: str, header: dict[str, str]) -> str:
     """The recording with its gated silences filled with room tone and its long pauses closed up (pipeline/voice.py).
     A project transcribed before this step existed keeps its recording as it was, so its Shorts' cut points (seconds
@@ -892,6 +919,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--concurrency", default=None)
     ap.add_argument("--retranscribe", action="store_true", help="ignore the cached transcript for this voiceover")
     ap.add_argument("--chunk", type=int, default=450, help="frames per render chunk (0 = single pass)")
+    ap.add_argument("--no-shorts", action="store_true", help="leave the Shorts alone (a re-render of the long video after the Shorts are out)")
     ap.add_argument("--shorts", type=int, default=0, help="also cut and render this many Shorts (the project's shorts.json, if present, says which; 0 = only if shorts.json exists)")
     args = ap.parse_args(argv)
 
@@ -940,6 +968,9 @@ def main(argv: list[str] | None = None) -> int:
             if spikes:
                 print(f"voice: {spikes} collapsed runs in the transcript re-timed (a word held for seconds, then a sentence on one instant)")
             cuts = restarts(words)
+            if cuts and not cut_restarts(project, find_audio(project), _header_lines(md)):
+                print(f"voice: {len(cuts)} repeated word(s) kept as said ({', '.join(f'{int(b // 60)}:{b % 60:04.1f}' for _, b in cuts)}): this voice is not cut")
+                cuts = []
             if cuts:
                 audio = remove_spans(audio, os.path.join(project, ".cache", "voice-restarts.wav"), cuts)
                 for w in words:
@@ -1081,7 +1112,7 @@ def main(argv: list[str] | None = None) -> int:
     if (args.vertical or args.only_vertical) and not args.only_shorts:
         render(sb_path, os.path.join(project, f"{slug}-vertical.mp4"), "Vertical", args.concurrency, chunk=args.chunk)
     plan_path = os.path.join(project, "shorts.json")
-    if args.shorts or os.path.exists(plan_path):
+    if (args.shorts or os.path.exists(plan_path)) and not args.no_shorts:
         render_shorts(project, sb, audio, args.concurrency, args.chunk, plan_path, args.shorts or 3)
     print("done")
     return 0
