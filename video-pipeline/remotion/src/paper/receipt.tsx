@@ -1,10 +1,10 @@
 import React from 'react';
 import {AbsoluteFill, Easing, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {Brand, Scene} from '../types';
-import {useLayout} from '../components/layout';
+import {displayLines, useLayout, useUpright} from '../components/layout';
 import {Marker} from './sketch';
 import {Write, writeFrames} from './write';
-import {Art, isTraced} from './art';
+import {Art, isTraced, pickArt} from './art';
 import {figureTime} from './lineMatch';
 
 /**
@@ -38,6 +38,7 @@ export const PaperReceipt: React.FC<{scene: Scene; brand: Brand}> = ({scene, bra
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const {u, pad, isVertical, width, height} = useLayout();
+  const up = useUpright();
   const rows: Row[] = scene.props.rows ?? [];
   const title = String(scene.props.title ?? '');
   const leftLabel = String(scene.props.left ?? 'Left');
@@ -50,11 +51,25 @@ export const PaperReceipt: React.FC<{scene: Scene; brand: Brand}> = ({scene, bra
   const delays = receiptDelays(rows, scene.words, scene.start, fps, total);
   const wrote = fresh.map((r, k) => delays[k] + writeFrames(r.label + r.amount, fps, 34));
 
-  // the strip: on the right of a landscape page, across the middle of a Short
-  const W = isVertical ? width * 0.8 : Math.min(720 * u, width * 0.38);
-  const x0 = isVertical ? (width - W) / 2 : width - pad * 0.85 - W;
-  const y0 = isVertical ? height * 0.2 : pad * 0.5;
-  const room = (isVertical ? height * 0.62 : height - pad * 1.25) - y0 * (isVertical ? 0 : 0.2);
+  // the strip: on the right of a landscape page. On a Short it is laid in the stage (components/upright.json): from
+  // the stage's top, under the caption's band (at 20% of the height the caption sat on it), down to the stage's foot,
+  // and no wider than the stage is beside YouTube's buttons, a little less so its turned lower corner stays inside.
+  // The scene's headline is written across the top of the stage, over the strip (higher up is the hook sticker's
+  // band), and the source line along the stage's foot (at the foot of the frame it was under the Shorts title).
+  // With cards, or a drawing or loop placed bottom left (ArtLayer, LoopLayer), the stage ends above them and the rows
+  // are set closer to fit; beside a drawing the source line goes to its right, where the page is free, and the rows
+  // keep that room. The character is not allowed for: a strip of rows cannot end above his head.
+  const source: string | undefined = scene.props.source;
+  const under = {cards: ((scene.cues ?? []) as unknown as {do?: string}[]).some((c) => c.do === 'card'), drawing: !!brand.board && (!!pickArt(scene.props.art, undefined) || !!scene.props.anim)};
+  const stage = up ? up.stage(under) : null;
+  const beside = up && under.drawing ? up.drawing.x + up.drawing.w + width * 0.02 : null; // where the source line starts, right of the drawing
+  const headSize = 72 * u;
+  const headBlock = stage && headline ? displayLines(String(headline), headSize, stage.w, brand.display) * headSize * 1.1 + 24 * u : 0;
+  const sourceBlock = stage && source && beside === null ? displayLines(`source: ${source}`, 34 * u, stage.w) * 34 * u * 1.15 + 30 * u : 0;
+  const W = stage ? stage.w - 20 * u : Math.min(720 * u, width * 0.38);
+  const x0 = stage ? stage.x : width - pad * 0.85 - W;
+  const y0 = stage ? stage.y + headBlock : pad * 0.5;
+  const room = stage ? stage.h - headBlock - sourceBlock - 16 * u : height - pad * 1.25 - y0 * 0.2;
   const headH = (title ? 104 : 34) * u;
   const footH = 132 * u;
   const rowH = Math.min((isVertical ? 76 : 66) * u, (room - headH - footH) / Math.max(1, rows.length));
@@ -67,7 +82,6 @@ export const PaperReceipt: React.FC<{scene: Scene; brand: Brand}> = ({scene, bra
   const art = !isVertical && scene.props.art && isTraced(String(scene.props.art)) ? String(scene.props.art) : undefined;
   const colW = x0 - pad * 1.5;
   const bigSize = Math.min(210 * u, (colW / Math.max(4, pounds(left).length)) * 1.75);
-  const source: string | undefined = scene.props.source;
   const note: string | undefined = scene.props.note;
 
   return (
@@ -92,8 +106,8 @@ export const PaperReceipt: React.FC<{scene: Scene; brand: Brand}> = ({scene, bra
           ) : null}
         </div>
       )}
-      {isVertical && headline ? (
-        <div style={{position: 'absolute', left: pad, right: pad, top: height * 0.085, textAlign: 'center', fontFamily: brand.display, fontSize: 80 * u, lineHeight: 1.1, color: brand.ink}}>
+      {stage && headline ? (
+        <div style={{position: 'absolute', left: stage.x, width: stage.w, top: stage.y, textAlign: 'center', fontFamily: brand.display, fontSize: headSize, lineHeight: 1.1, color: brand.ink}}>
           <Write text={String(headline)} frame={frame} fps={fps} start={scene.start <= 0.01 ? -fps : 2} cps={26} />
         </div>
       ) : null}
@@ -103,7 +117,7 @@ export const PaperReceipt: React.FC<{scene: Scene; brand: Brand}> = ({scene, bra
         </div>
       ) : null}
       {source ? (
-        <div style={{position: 'absolute', left: art ? pad * 0.8 + height * 0.32 : pad, bottom: pad * 0.55, width: (isVertical ? width - pad * 2 : colW) - (art ? height * 0.32 : 0), fontFamily: hand, fontSize: 34 * u, lineHeight: 1.15, color: brand.muted}}>
+        <div style={{position: 'absolute', ...(stage && beside !== null ? {left: beside, top: stage.foot + 14 * u, width: stage.x + stage.w - beside} : stage ? {left: stage.x, bottom: height - stage.foot, width: stage.w} : {left: art ? pad * 0.8 + height * 0.32 : pad, bottom: pad * 0.55, width: colW - (art ? height * 0.32 : 0)}), fontFamily: hand, fontSize: 34 * u, lineHeight: 1.15, color: brand.muted}}>
           <Write text={`source: ${source}`} frame={frame} fps={fps} start={(wrote[wrote.length - 1] ?? 6) + Math.round(fps * 0.3)} cps={46} color={brand.muted} />
         </div>
       ) : null}

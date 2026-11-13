@@ -6,6 +6,7 @@ import './fonts';
 import {Background} from './components/Background';
 import {Chrome} from './components/Chrome';
 import {Captions} from './components/Captions';
+import {stickerSettle, uprightSticker, useUpright} from './components/layout';
 import {SceneFade, type Transition} from './components/SceneFade';
 import {TitleScene} from './scenes/TitleScene';
 import {TextScene} from './scenes/TextScene';
@@ -122,13 +123,33 @@ const transitionFor = (scene: Scene, toon: boolean): Transition => {
 
 /** A Short's hook: the one line pinned at the top of the frame, big, on a marker highlight, there from the first
  * frame so the viewer who scrolls in knows what this is before anyone speaks. */
-const HookBanner: React.FC<{text: string; brand: Brand}> = ({text, brand}) => {
+const HookBanner: React.FC<{text: string; brand: Brand; scenes: Scene[]}> = ({text, brand, scenes}) => {
   const frame = useCurrentFrame();
   const {width, height, fps} = useVideoConfig();
+  const up = useUpright();
   const u = width / 1080;
   const vertical = height > width;
   // big for the first three seconds (the scroll-in moment), then a smaller line so it never sits on a headline
-  const p = Math.max(0, Math.min(1, (frame - fps * 3) / (fps * 0.4)));
+  const p = stickerSettle(frame, fps);
+  const t = frame / fps;
+  const current = scenes.find((s) => t >= s.start && t < s.end);
+  if (up && up.captionPlace(current?.type) !== 'set') {
+    // a Short: the sticker stays in its band (upright.json), under the Shorts header and over the caption's band. One
+    // line at 72 px, or two lines at 60 px cut where they come out most alike (never one orphan word); 50 px once it
+    // has settled. It hangs from the top of the band and does not climb: 7.5% down was inside YouTube's top 8%.
+    const st = uprightSticker(text, p, up, brand.display);
+    return (
+      <div style={{position: 'absolute', left: 0, right: 0, top: st.top, display: 'flex', justifyContent: 'center', padding: `0 ${40 * u}px`, pointerEvents: 'none'}}>
+        <div style={{fontFamily: brand.display, fontWeight: 800, fontSize: st.size, lineHeight: st.lineHeight, color: brand.ink, textAlign: 'center', whiteSpace: 'nowrap', background: brand.marker ?? '#fff176', padding: `${st.padV}px ${st.padH}px`, borderRadius: 8 * u, boxShadow: `0 ${4 * u}px ${12 * u}px rgba(0,0,0,0.12)`, transform: 'rotate(-1deg)'}}>
+          {st.lines.map((line, i) => (
+            <div key={i}>{line}</div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  // the long video, and a Short's set piece (and compare, until it is laid into the stage: upright.json caption.at),
+  // where the caption sits high in what would be the sticker's band: the sticker as it has always been.
   // on a phone the top 8% is the status bar and the Shorts header, and the right 15% its buttons: the sticker starts
   // 9% down at 72 px (two lines if it must), then settles to 50 px once the board's lines need the room
   const size = (vertical ? 72 - 22 * p : 48) * u;
@@ -510,9 +531,9 @@ export const Video: React.FC<Storyboard> = (sb) => {
         );
       })}
       {sb.poses?.length ? <PoseLayer poses={sb.poses} scenes={sb.scenes} /> : null}
-      {sb.hook ? <HookBanner text={sb.hook} brand={brand} /> : null}
+      {sb.hook ? <HookBanner text={sb.hook} brand={brand} scenes={sb.scenes} /> : null}
       <Chrome brand={brand} durationSec={sb.durationSec} />
-      {sb.captions ? <Captions scenes={sb.scenes} brand={brand} host={sb.host} always={!!sb.short} /> : null}
+      {sb.captions ? <Captions scenes={sb.scenes} brand={brand} host={sb.host} always={!!sb.short} hook={sb.hook} /> : null}
       {brand.board && sb.hand ? <PenHand brand={brand} /> : null}
       {brand.board ? <Grain /> : null}
       {brand.board && String(flags.comingup ?? 'on').toLowerCase() !== 'off' ? <ComingUp sb={sb} brand={brand} /> : null}

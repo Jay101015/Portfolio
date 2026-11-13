@@ -1,11 +1,39 @@
 import React, {useMemo} from 'react';
 import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {Brand, Scene, Word} from '../types';
-import {useLayout} from './layout';
+import {displayWidth, stickerFootOld, stickerSettle, useLayout, useUpright} from './layout';
 import {hostPosFor} from '../hostPos';
 import {setCaptionsHigh} from '../paper/setpiece';
 
 type Chunk = {words: Word[]; s: number; e: number; tilt: number};
+
+// A Short's caption is always one line, on a pill of one height, in the place upright.json gives its scene. The type is
+// 76 px; words too wide for the line at that size are set smaller, down to 56 px, and a chunk that would need smaller
+// still, or runs over about 28 characters, hands its last word on to a chunk of its own. A single word longer than the
+// line is set as small as it takes. Nothing wraps, so the pill never changes height. (px on a 1080 px wide frame)
+const LINE = {min: 56, chars: 28, gap: 12, padH: 30};
+/** the size (px) at which these words sit on one line `room` wide: `base` when they fit, smaller when they do not
+ * (the gap after each word counted as the browser counts it) */
+const fitLine = (words: Word[], base: number, room: number, u: number, family: string) => {
+  const em = words.reduce((n, w) => n + displayWidth(w.w, 1, family), 0);
+  return Math.min(base, (room - LINE.gap * u * words.length) / Math.max(0.01, em));
+};
+/** chunks cut so that every one passes `fits`: the longest run of a chunk's first words that fits stays, the rest
+ * follow as chunks of their own (a single word is kept whole) */
+const cutToLine = (chunks: Chunk[], fits: (words: Word[]) => boolean): Chunk[] => {
+  const out: Chunk[] = [];
+  for (const c of chunks) {
+    let rest = c.words;
+    while (rest.length) {
+      let n = rest.length;
+      while (n > 1 && !fits(rest.slice(0, n))) n--;
+      const words = rest.slice(0, n);
+      out.push({words, s: words[0].s, e: words[words.length - 1].e, tilt: ((out.length * 7) % 5) - 2});
+      rest = rest.slice(n);
+    }
+  }
+  return out;
+};
 
 const chunkWords = (words: Word[], maxWords: number): Chunk[] => {
   const chunks: Chunk[] = [];
@@ -27,12 +55,19 @@ const chunkWords = (words: Word[], maxWords: number): Chunk[] => {
   return chunks;
 };
 
-export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string; always?: boolean}> = ({scenes, brand, host, always}) => {
+export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string; always?: boolean; hook?: string}> = ({scenes, brand, host, always, hook}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const {u, isVertical, pad, width, height} = useLayout();
+  const up = useUpright();
   const t = frame / fps;
-  const chunks = useMemo(() => chunkWords(scenes.flatMap((s) => s.words ?? []), isVertical ? 3 : 6), [scenes, isVertical]); // a Short: three big words at a time
+  const oneLine = !!up && !!brand.paper; // a Short in the paper and board looks: one line, always
+  const room = width - pad * 2 - LINE.padH * 2 * u; // the widest the words may run inside the pill
+  const chunks = useMemo(() => {
+    const three = chunkWords(scenes.flatMap((s) => s.words ?? []), isVertical ? 3 : 6); // a Short: three big words at a time
+    if (!oneLine) return three;
+    return cutToLine(three, (words) => words.map((w) => w.w).join(' ').length <= LINE.chars && fitLine(words, LINE.min * u, room, u, brand.display) >= LINE.min * u);
+  }, [scenes, isVertical, oneLine, room, u, brand.display]);
   const chunk = chunks.find((c) => t >= c.s - 0.05 && t <= c.e + 0.35);
   if (!chunk) return null;
   const current = scenes.find((s) => t >= s.start && t < s.end);
@@ -68,18 +103,27 @@ export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string; a
     // ...except on a stat, chart or other figure scene, whose figure sits in the middle: there the caption goes high,
     // under the hook banner and over the figure's label
     // a list's rows run down the middle and a clip is fitted under the sticker: both carry the caption high too
-    const onBoard = isVertical && !!current && ['text', 'hook', 'takeaway', 'recap'].includes(current.type);
+    // Where each kind of scene carries it is in upright.json (components/layout.ts): the caption band, under the
+    // sticker's band and over the stage, on every scene whose content sits in the stage; the middle of a board; and
+    // on a set piece (and a compare, until its boxes are laid into the stage) a little higher, over the head or the
+    // title that sits just under 22%.
+    const place = up ? up.captionPlace(current?.type) : 'band';
+    const onBoard = !!up && !!current && place === 'board';
     const high = isVertical && (onBoard || setCaptionsHigh(scenes) || (!!current && current.type !== 'outro'));
-    // a compare's title and a set piece's head sit just under 22%: there the caption rides a little higher, clear of both
-    const topAt = onBoard ? 0.44 : current && ['compare', 'set'].includes(current.type) ? 0.135 : 0.22;
+    let top = up ? up.captionTop(current?.type) : 0;
+    // on a set piece the sticker keeps its older place, and for its first three seconds it is big enough to reach the
+    // caption's: the caption rides just under it until it has settled
+    if (up && place === 'set' && hook) top = Math.max(top, stickerFootOld(hook, stickerSettle(frame, fps), width, height, brand.display) + 14 * u);
+    const base = (isVertical ? (high ? 76 : 78) : 40) * u;
+    const size = oneLine ? fitLine(chunk.words, base, high ? room : width - pad * 2, u, brand.display) : base;
     return (
-      <AbsoluteFill style={high ? {justifyContent: 'flex-start', alignItems: 'center', paddingTop: height * topAt} : {justifyContent: 'flex-end', alignItems: 'center', paddingBottom: isVertical ? height * 0.3 : 52 * u, ...sideStyle}}>
-        <div style={{maxWidth: `calc(100% - ${pad * 2}px)`, fontFamily: isVertical ? brand.display : brand.font, fontSize: (isVertical ? (high ? 76 : 78) : 40) * u, fontWeight: isVertical ? 800 : 700, lineHeight: 1.2, textAlign: 'center', color: brand.ink, ...(high ? {background: 'rgba(255,255,255,0.94)', borderRadius: 24 * u, padding: `${10 * u}px ${30 * u}px`} : {})}}>
+      <AbsoluteFill style={high ? {justifyContent: 'flex-start', alignItems: 'center', paddingTop: top} : {justifyContent: 'flex-end', alignItems: 'center', paddingBottom: isVertical ? height * 0.3 : 52 * u, ...sideStyle}}>
+        <div style={{...(oneLine ? {whiteSpace: 'nowrap'} : {maxWidth: `calc(100% - ${pad * 2}px)`}), fontFamily: isVertical ? brand.display : brand.font, fontSize: size, fontWeight: isVertical ? 800 : 700, lineHeight: oneLine ? `${base * 1.2}px` : 1.2, textAlign: 'center', color: brand.ink, ...(high ? {background: 'rgba(255,255,255,0.94)', borderRadius: 24 * u, padding: `${10 * u}px ${30 * u}px`} : {})}}>
           {chunk.words.map((w, i) => {
             const since = t - w.s;
             const swipe = Math.max(0, Math.min(1, (since + 0.02) / 0.16));
             return (
-              <span key={i} style={{display: 'inline-block', marginRight: 12 * u, position: 'relative', color: since >= -0.02 ? brand.ink : brand.muted}}>
+              <span key={i} style={{display: 'inline-block', marginRight: 12 * u, position: 'relative', ...(oneLine ? {lineHeight: 1.2} : {}), color: since >= -0.02 ? brand.ink : brand.muted}}>
                 <span style={{position: 'absolute', left: -4 * u, right: -4 * u, top: '14%', bottom: '4%', background: brand.marker ?? '#ffe66d', opacity: 0.8, transform: `skewX(-6deg) scaleX(${swipe})`, transformOrigin: 'left center', borderRadius: 3}} />
                 <span style={{position: 'relative'}}>{w.w}</span>
               </span>

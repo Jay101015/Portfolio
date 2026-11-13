@@ -262,12 +262,50 @@ Jeffrey's cloned voice can be made by the pipeline instead of pasted in by hand:
 
 ## A Short's page (vertical)
 
-The phone's top 8% is its status bar and the Shorts header, the bottom 15% the title strip, the right 15% its
-buttons: a Short's page is laid out in bands between them, and nothing sits on a label or a row.
-- The hook sticker: 9% down, two lines if it must, for the first three seconds (the scroll-in moment), then smaller.
-- The caption: on a text or hook board, in the middle under the board's lines (44% down); on a stat, chart, pie,
-  list or clip, high on a white pill under the sticker (22% down), above the figure, the title or the screen.
-- The figure, chart, pie, list and clip start at 29% down, under that caption band.
+One file holds the phone's frame: remotion/src/components/upright.json. The renderer lays a Short out from it
+(components/layout.ts), so a fix to one zone no longer lands on its neighbour. tests/test_upright.py checks that the
+zones do not overlap and that this table quotes the same numbers. To move a zone, change the file and this table
+together. The numbers are the rulebook's until Jeffrey sends a screenshot of a Short on his phone.
+
+| Zone | Where | What it is for |
+|---|---|---|
+| YouTube's header | the top 8% | The phone's status bar and the Shorts header. Nothing of ours goes here. |
+| YouTube's title strip | the bottom 15% | The Short's title, the channel name and the sound. Nothing of ours goes here. |
+| YouTube's buttons | the right 15%, from 45% down | Like, comment and share. Nothing of ours goes here. |
+| Hook sticker | 8.5% to 16.5% down | The hook line on its yellow tape. |
+| Hook sticker on a set piece | 7.5% to 12.5% down | Its older, smaller place, kept where the caption sits high. |
+| Caption | 17.5% to 23.5% down | The words being said, on a white pill. |
+| Caption on a board | 44% down | The middle of the board, under its lines and over the character's head. |
+| Caption on a set piece | 13.5% down | Over the character's head in the room. |
+| Stage | from 25% down. 5% to 95% across above 45% of the height, 5% to 84% across below it | The scene's own content. |
+| Stage foot | 83% down with nothing under it, 71% over cards, 63% over a drawing or loop, 52% over the character | Where the stage ends. |
+| Cards | 72.5% to 85% down, right edge at 84% across | The cards under the stage. |
+| Drawing or loop | 5% to 44% across, 63% to 85% down | A placed drawing or loop, bottom left. |
+| Character | 55% to 81% across, 52% to 80% down | The posing character, lower right. |
+
+The caption rule. On a Short the caption is always one line, on a white pill that never changes height. It shows
+three words at a time at 76 px. Words too wide for the line are set smaller, down to 56 px. A caption that would
+still not fit, or runs over about 28 characters, hands its last word on to the next one. Nothing wraps. The pill
+sits in the caption band on every scene whose content sits in the stage. A board carries it in the middle and a
+set piece carries it high. The second table says which scene is which.
+
+The sticker rule. The sticker stays inside its band. It is one line at 72 px, or two lines at 60 px, cut where the
+two lines come out most alike, so no word is left alone on the second line. After three seconds (the scroll-in
+moment) it settles to 50 px, on one line when it fits. It hangs from the top of its band and never climbs into
+YouTube's header. A set piece and a compare are the exception: there the caption sits high, so the sticker keeps
+its older place (9% down at 72 px for three seconds, then 7.5% down at 50 px), and while it is big the caption
+rides just under it.
+
+| Scene | Caption | Where its content sits |
+|---|---|---|
+| stat, chart, pie, list, clip | in the caption band, 17.5% down | From 29% down, as before. They move into the stage next. |
+| a page or a phone screen shown whole | in the caption band, 17.5% down | From 29% down, fitted whole. |
+| footage or a photo | in the caption band, 17.5% down | The whole frame. |
+| receipt | in the caption band, 17.5% down | In the stage. The headline is at 25% down and the strip under it runs 5% to 84% across. The source line is along the stage's foot, or beside the drawing when the scene has one. |
+| text, hook, takeaway, recap | 44% down | The board's own layout: its lines above the caption, the drawing and the character below it. |
+| set | 13.5% down | The whole frame, as before. |
+| compare | 13.5% down | Centred, as before. It moves into the stage with the chart, and its caption joins the band then. |
+
 - A phone clip is fitted between the caption band and the title strip (29% to 84% down: 72% of the width on a
   1080x1480 recording), the whole screen in view, its marks on it, the caption label on its lower right; never
   cover-fitted (the app's price readout went off the edge).

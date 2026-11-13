@@ -1,0 +1,48 @@
+{
+  "note": "A Short's frame (the 9:16 cut) in fractions: left and right are shares of the width, everything else a share of the height, measured from the top. components/layout.ts turns them into pixels (useUpright, uprightStage). tests/test_upright.py checks that the zones do not overlap and that EDITOR.md's zone table quotes these numbers. A zone is corrected here and nowhere else.",
+  "youtube": {
+    "note": "What the Shorts player draws over the video: its header across the top 8%, the title strip across the bottom 15%, and the buttons down the right 15% from 45% of the height.",
+    "top": 0.08,
+    "bottom": 0.15,
+    "right": 0.15,
+    "right_from": 0.45
+  },
+  "sticker": {
+    "note": "The hook sticker's band. On a scene whose caption sits at caption.set the sticker keeps its older place instead (9% down while it is big, then the smaller line recorded here as 'set').",
+    "top": 0.085,
+    "bottom": 0.165,
+    "set": {"top": 0.075, "bottom": 0.125}
+  },
+  "caption": {
+    "note": "The caption is one line on a pill of one height. 'top' to 'bottom' is its band; a scene type listed under 'at' carries it at 'board' (the middle, under the board's own lines) or at 'set' (high, over a set piece's head) instead; every other type has it in the band.",
+    "top": 0.175,
+    "bottom": 0.235,
+    "board": 0.44,
+    "set": 0.135,
+    "at": {"text": "board", "hook": "board", "takeaway": "board", "recap": "board", "set": "set", "compare": "set"}
+  },
+  "stage": {
+    "note": "Where a scene's own content goes. It reaches 'right' above 'narrow_from' of the height and only 'narrow_right' below it, beside YouTube's buttons. Its foot depends on what stands under it: nothing, cards, a drawing or loop, or the character.",
+    "top": 0.25,
+    "left": 0.05,
+    "right": 0.95,
+    "narrow_from": 0.45,
+    "narrow_right": 0.84,
+    "foot": {"bare": 0.83, "cards": 0.71, "drawing": 0.63, "character": 0.52}
+  },
+  "cards": {"top": 0.725, "bottom": 0.85, "right": 0.84},
+  "drawing": {
+    "note": "A placed drawing or loop, bottom left (paper/art.tsx ArtLayer, paper/loops.tsx LoopLayer).",
+    "left": 0.05,
+    "right": 0.44,
+    "top": 0.63,
+    "bottom": 0.85
+  },
+  "character": {
+    "note": "The posing character, lower right (paper/poses.tsx PoseLayer).",
+    "left": 0.55,
+    "right": 0.81,
+    "top": 0.52,
+    "bottom": 0.8
+  }
+}
