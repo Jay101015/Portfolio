@@ -108,3 +108,46 @@ Two pots.
     names = [(se.get("name"), se.get("color")) for se in chart["props"]["series"]]
     assert names == [("Boring", None), ("Chaser", "ink")]
     assert chart["props"]["drawSeconds"] == 12.0
+
+
+def test_page_marks_parse_with_their_rectangles_and_default_colours():
+    sc = {"id": 4, "narration": "CNBC says China is the problem and analysts agree the shares fell", "words": []}
+    bad = craft.plan_marks(sc, {"marks": "highlight 12,18,46,7@China; box 10,52,60,14@analysts; red:underline 12,40,30@fell; circle 62,40@shares"})
+    assert bad == []
+    got = [(m["word"], m["mark"]) for m in sc["markWords"]]
+    assert got[0] == (2, {"kind": "highlight", "x": 12.0, "y": 18.0, "w": 46.0, "h": 7.0, "color": "marker"})
+    assert got[1] == (7, {"kind": "box", "x": 10.0, "y": 52.0, "w": 60.0, "h": 14.0, "color": "ink"})
+    assert got[2] == (11, {"kind": "underline", "x": 12.0, "y": 40.0, "w": 30.0, "color": "red"})  # red only because the script wrote it
+    assert got[3][1] == {"kind": "circle", "x": 62.0, "y": 40.0, "color": "red"}  # the old kinds are untouched
+
+
+def test_a_page_mark_that_leaves_the_picture_or_is_the_wrong_shape_is_reported():
+    sc = {"id": 5, "narration": "one two three", "words": []}
+    bad = craft.plan_marks(sc, {"marks": "highlight 70,18,46,7@one; box 10,52,60@two; underline 12,40,30,5@three"})
+    assert len(bad) == 3
+    assert "leaves the picture" in bad[0] and "x,y,w,h" in bad[1] and "x,y,w@word" in bad[2]
+    assert [m["mark"]["kind"] for m in sc["markWords"]] == ["highlight"]  # out of bounds is drawn clamped; the wrong shapes are dropped
+
+
+def test_page_marks_and_the_card_strip_reach_the_storyboard():
+    from pipeline import script_parser
+    src = """# T
+
+theme: whiteboard
+host: none
+brand.pagecards: strip
+brand.pencil: on
+
+[broll src="real-page.jpg" caption="CNBC, 10 November 2026" cards_at=strip marks="highlight 12,18,46,7@China; underline 12,40,30@fell"]
+CNBC says China is the problem and the shares fell.
+"""
+    sb = script_parser.parse_script(src)
+    sc = sb["scenes"][0]
+    assert sc["props"]["cards_at"] == "strip"
+    assert sb["brand"]["pagecards"] == "strip" and sb["brand"]["pencil"] == "on"
+    words = [{"w": w, "s": 1.0 + i * 0.3, "e": 1.2 + i * 0.3} for i, w in enumerate(sc["narration"].split())]
+    sc["start"], sc["end"], sc["words"] = 0.5, 5.0, words
+    script_parser.time_cues(sc)
+    marks = [c for c in sc["cues"] if c.get("do") == "mark"]
+    assert [(c["kind"], c["x"], c["y"], c["w"], c.get("h"), c["color"]) for c in marks] == [("highlight", 12.0, 18.0, 46.0, 7.0, "marker"), ("underline", 12.0, 40.0, 30.0, None, "ink")]
+    assert marks[0]["t"] == round(words[2]["s"] - 0.08, 3) and marks[1]["t"] == round(words[9]["s"] - 0.08, 3)

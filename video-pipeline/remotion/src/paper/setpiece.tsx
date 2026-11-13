@@ -305,6 +305,30 @@ const Column: React.FC<{items: SetCue[]; colX: number; y0: number; step: number;
   </>
 );
 
+/** `cards_at=strip|tr|br|bl` on a scene: where its cards go on the landscape page, in place of the layout's usual
+ * slot. `strip` is two cards side by side along the foot of the frame, so a real page keeps its headline: on a page
+ * the real words are marked (paper/pagework.tsx) and a card is the exception. `brand.pagecards: strip` gives the strip
+ * to every real page or photo (a still whose file is named real-...) that does not say otherwise. '' is the usual slot. */
+export type CardsAt = '' | 'strip' | 'tr' | 'br' | 'bl';
+const REAL_STILL = /(^|\/)real-[^/]*\.(jpe?g|png|webp)$/i;
+export const cardsAt = (scene: Scene, brand?: Brand): CardsAt => {
+  const asked = String(scene.props.cards_at ?? '').trim().toLowerCase();
+  if (asked === 'strip' || asked === 'tr' || asked === 'br' || asked === 'bl') return asked;
+  if (asked) return ''; // anything else written on the scene keeps the usual slot
+  return brand?.pagecards === 'strip' && REAL_STILL.test(String(scene.props.src ?? '')) ? 'strip' : '';
+};
+/** true while a landscape scene's cards have the foot of its frame on the left (the strip, or the bottom-left corner):
+ * its caption label moves to a tab on the frame's top-left edge (PaperBroll) */
+export const cardsTakeFoot = (scene: Scene, brand?: Brand) => {
+  const at = cardsAt(scene, brand);
+  return (at === 'strip' || at === 'bl') && ((scene.cues ?? []) as unknown as SetCue[]).some((c) => c.do === 'card');
+};
+// the strip: card centres 84.5% down, so a card (a tenth of the height, a figure card 13%) and its landing stretch stay
+// under the top 70% of a taped page (which ends 65% down the frame at its lower end) and above the key-words band
+// (from 93%); each card at most 41% wide, so the pair spans the taped frame (8% to 92%)
+const STRIP = {y: 0.845, xs: [0.29, 0.71], maxw: 0.41};
+const CORNER: Record<'tr' | 'br' | 'bl', {colX: number; y0: number}> = {tr: {colX: 0.74, y0: 0.2}, br: {colX: 0.74, y0: 0.727}, bl: {colX: 0.26, y0: 0.727}};
+
 /** Cards over footage (and over any board, stat or chart given cards=): the amounts said land on the picture as they are
  * said, in a column on the right (landscape) or under the captions (a Short), on the same stop-motion clock as the set
  * pieces. */
@@ -317,6 +341,30 @@ export const FootageCards: React.FC<{scene: Scene; brand?: Brand}> = ({scene, br
   const tq = k / STOP;
   const cues = ((scene.cues ?? []) as unknown as SetCue[]).filter((c) => c.do === 'card' && c.t <= tq + 1e-6);
   if (!cues.length) return null;
+  const at = vertical ? '' : cardsAt(scene, brand); // a Short keeps its own bands
+  if (at === 'strip') {
+    // the last two cards, side by side. A card keeps the side it landed on (the first on the left, the next on the
+    // right, the third over the first) until the one after next replaces it, so nothing slides along the strip
+    const last = cues.length - 1;
+    return (
+      <AbsoluteFill style={{pointerEvents: 'none'}}>
+        {[last - 1, last].filter((i) => i >= 0).map((i) => {
+          const side = i % 2;
+          const tilt = (side ? 1.2 : -1.5) + (rand(k, 9 + side) - 0.5) * 0.8;
+          return <Card key={`s${i}`} c={cues[i]} x={STRIP.xs[side] * W} y={STRIP.y * H} age={(tq - cues[i].t) * STOP} tilt={tilt} vertical={false} W={W} maxw={STRIP.maxw * W} />;
+        })}
+      </AbsoluteFill>
+    );
+  }
+  if (at) {
+    // a corner asked for by name: two cards, one above the other
+    const c = CORNER[at];
+    return (
+      <AbsoluteFill style={{pointerEvents: 'none'}}>
+        <Column items={cues.slice(-2)} colX={c.colX * W} y0={c.y0 * H} step={0.118 * H} maxw={0.44 * W} tq={tq} k={k} left={c.colX < 0.5} vertical={false} W={W} H={H} />
+      </AbsoluteFill>
+    );
+  }
   // a Short's board carries its lines at the top and the caption in the middle; the band under them, between the
   // caption and the Shorts title strip, is where its cards go (right of centre, centred at 0.73 and at most 0.5 wide,
   // so they end where the drawing bottom left begins: at 0.62 they sat on its hands and props)

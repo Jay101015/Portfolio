@@ -10,6 +10,8 @@ import {Art, PaperArt, isTraced, pickArt, pickArtAmong} from './art';
 import {PaperBite, PaperGrow, PaperPie, PaperShrink} from './money';
 import {Erase} from './erase';
 import {Marks} from './marks';
+import {PageMarks, hasPageMarks} from './pagework';
+import {cardsTakeFoot} from './setpiece';
 import {captionLine, isLoss, keyWords, moneyTint} from './phrase';
 import {Media} from './media';
 import {Loop, Sequence} from 'remotion';
@@ -917,6 +919,8 @@ export const PaperStill: React.FC<P> = ({scene, brand}) => {
   const h = (w * 9) / 16;
   const s = pop(frame, fps, 0, 14);
   const tilt = isVertical ? -1 : -1.5;
+  // page work (paper/pagework.tsx): the picture holds still under a highlight, box or underline, so the mark stays on its words
+  const mprops = hasPageMarks(scene) ? {...scene.props, zoom: 'none'} : scene.props;
   return (
     <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', padding: pad}}>
       <div style={{position: 'relative', transform: `rotate(${tilt}deg) translateY(${(1 - s) * 40 * u}px)`, opacity: Math.min(1, s * 1.4)}}>
@@ -925,10 +929,10 @@ export const PaperStill: React.FC<P> = ({scene, brand}) => {
             {src ? (
               scene.props.loop && scene.props.clipDur ? (
                 <Loop durationInFrames={Math.max(1, Math.round(Number(scene.props.clipDur) * fps))}>
-                  <Media src={src} props={scene.props} durationFrames={total} width={w - 36 * u} height={h - 36 * u} />
+                  <Media src={src} props={mprops} durationFrames={total} width={w - 36 * u} height={h - 36 * u} />
                 </Loop>
               ) : (
-                <Media src={src} props={scene.props} durationFrames={total} width={w - 36 * u} height={h - 36 * u} />
+                <Media src={src} props={mprops} durationFrames={total} width={w - 36 * u} height={h - 36 * u} />
               )
             ) : (
               <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 * u, textAlign: 'center', fontFamily: hand(brand), fontSize: 40 * u, lineHeight: 1.2, color: brand.muted}}>
@@ -1005,6 +1009,21 @@ const WatchNext: React.FC<P> = ({scene, brand}) => {
   );
 };
 
+/** The caption as a tab on the top-left edge of a frame, for a scene whose cards have the foot of the frame
+ * (`cards_at=strip`, paper/setpiece.tsx). It sits inside the frame's own box, so it turns with the frame, and stands
+ * wholly above the picture: `lift` is the frame's height less the part of its border the tab laps onto. */
+const CaptionTab: React.FC<{text: string; brand: Brand; left: number; lift: number; size: number; room: number; s: number}> = ({text, brand, left, lift, size, room, s}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const {u} = useLayout();
+  const fs = Math.min(size, room / Math.max(1, text.length) / 0.4); // a long caption is written smaller, never onto the tape
+  return (
+    <div style={{position: 'absolute', left, bottom: lift, transform: `scale(${0.9 + 0.1 * s})`, transformOrigin: 'left bottom', opacity: Math.min(1, s * 1.5), background: '#fff', color: brand.ink, fontFamily: hand(brand), fontSize: fs, lineHeight: 1.15, padding: `${5 * u}px ${20 * u}px ${3 * u}px`, border: `${3 * u}px solid ${brand.ink}`, borderBottom: 'none', borderRadius: `${10 * u}px ${10 * u}px 0 0`, whiteSpace: 'nowrap'}}>
+      <Write text={text} frame={frame} fps={fps} start={Math.round(fps * 0.4)} cps={30} />
+    </div>
+  );
+};
+
 // ------------------------------------------------------------------ b-roll: the footage fills the frame
 /** Stock footage as its own scene, How Money Works style: the clip covers the whole frame with a slow push-in, a short
  * caption on a white label in the corner (the credit beside it only with `credits: screen`). With no footage yet the frame says what was
@@ -1040,6 +1059,15 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
   ) : null);
   const media = mediaAt(width, height);
   const fitted = String(scene.props.vfit ?? '') === 'contain'; // `vfit=contain`: the whole picture on the page of a Short, not cropped to fill it
+  // page work (paper/pagework.tsx): a highlight, box or underline on the real words. Drawn on the landscape page, and
+  // on a Short only where the same file is shown whole (vfit=contain and no vsrc): the rectangles were read off that
+  // picture, and on a cropped upright page they would land on other words. Where they are drawn the page holds still:
+  // no push-in (Media zooms the picture about its focus point while the marks stay put, so they would slide off their
+  // words) and no rock of the taped frame.
+  const paged = hasPageMarks(scene) && (!isVertical || (fitted && !scene.props.vsrc));
+  const still: Record<string, unknown> = paged ? {zoom: 'none'} : {};
+  // the cards have the foot of the frame (cards_at=strip, or bl): the caption label is a tab on the frame's top-left edge
+  const tab = !isVertical && cardsTakeFoot(scene, brand);
   if (src && (String(scene.props.phone ?? '') === 'on' || fitted) && isVertical) {
     // a Short: the phone's whole screen fitted between the caption band and the Shorts title strip (29% to 84% of the
     // height: 72% of the width on a 1080x1480 recording), its marks on it, the caption label on its lower right
@@ -1052,7 +1080,7 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
         <div style={{position: 'absolute', left: cx, top: cy, width: cw, height: ch, transform: `translateY(${(1 - sf) * 40 * u}px)`, opacity: Math.min(1, sf * 1.5), borderRadius: 36 * u, overflow: 'hidden', background: '#000', boxShadow: `0 ${14 * u}px ${40 * u}px rgba(40,30,10,0.28)`}}>
           <div style={{position: 'relative', width: cw, height: ch, overflow: 'hidden'}}>
             {mediaAt(cw, ch, {zoom: 'none', fit: 'contain'})}
-            <Marks scene={scene} brand={brand} w={cw} h={ch} />
+            <Marks scene={scene} brand={brand} w={cw} h={ch} page={paged} />
           </div>
         </div>
         {caption ? (
@@ -1079,7 +1107,7 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
           </div>
         </div>
         {caption ? (
-          <div style={{position: 'absolute', left: pad * 0.8, bottom: pad * 0.9, transform: `rotate(-1deg) scale(${0.9 + 0.1 * s})`, transformOrigin: 'left bottom', opacity: Math.min(1, s * 1.5), background: '#fff', color: brand.ink, fontFamily: hand(brand), fontSize: labelSize, lineHeight: 1.15, padding: `${10 * u}px ${26 * u}px`, boxShadow: `0 ${8 * u}px ${24 * u}px rgba(0,0,0,0.2)`, border: `${3 * u}px solid ${brand.ink}`}}>
+          <div style={{position: 'absolute', left: pad * 0.8, ...(tab ? {top: pad * 0.45} : {bottom: pad * 0.9}), transform: `rotate(-1deg) scale(${0.9 + 0.1 * s})`, transformOrigin: 'left bottom', opacity: Math.min(1, s * 1.5), background: '#fff', color: brand.ink, fontFamily: hand(brand), fontSize: labelSize, lineHeight: 1.15, padding: `${10 * u}px ${26 * u}px`, boxShadow: `0 ${8 * u}px ${24 * u}px rgba(0,0,0,0.2)`, border: `${3 * u}px solid ${brand.ink}`}}>
             <Write text={caption} frame={frame} fps={fps} start={Math.round(fps * 0.4)} cps={30} />
           </div>
         ) : null}
@@ -1104,15 +1132,16 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
             <span style={{marginLeft: 18 * u, flex: 1, height: bar * 0.55, borderRadius: bar * 0.3, background: '#fff', border: `${2 * u}px solid ${brand.muted}55`}} />
           </div>
           <div style={{position: 'relative', width: mw, height: mh, overflow: 'hidden', background: '#111'}}>
-            {mediaAt(mw, mh)}
-            <Marks scene={scene} brand={brand} w={mw} h={mh} />
+            {mediaAt(mw, mh, still)}
+            <Marks scene={scene} brand={brand} w={mw} h={mh} page={paged} />
           </div>
           <div style={{position: 'absolute', left: '50%', top: bez * 0.35, width: 10 * u, height: 10 * u, borderRadius: '50%', background: brand.muted, transform: 'translateX(-50%)'}} />
+          {caption && tab ? <CaptionTab text={caption} brand={brand} left={pad * 0.4} lift={fh - bez} size={labelSize * 0.8} room={fw * 0.8} s={s} /> : null}
         </div>
         <div style={{position: 'absolute', left: fx - fw * 0.04, top: fy + fh + 2 * u, width: fw * 1.08, height: 26 * u, background: brand.ink, borderRadius: `0 0 ${16 * u}px ${16 * u}px`, boxShadow: `${12 * u}px ${12 * u}px 0 ${brand.ink}`, opacity: Math.min(1, sf * 1.5)}}>
           <div style={{position: 'absolute', left: '50%', top: 0, width: fw * 0.16, height: 8 * u, background: brand.muted, borderRadius: `0 0 ${6 * u}px ${6 * u}px`, transform: 'translateX(-50%)', opacity: 0.6}} />
         </div>
-        {caption ? (
+        {caption && !tab ? (
           <div style={{position: 'absolute', left: fx, top: fy + fh + 48 * u, transform: `rotate(-1deg) scale(${0.9 + 0.1 * s})`, transformOrigin: 'left top', opacity: Math.min(1, s * 1.5), background: '#fff', color: brand.ink, fontFamily: hand(brand), fontSize: labelSize, lineHeight: 1.15, padding: `${8 * u}px ${24 * u}px`, border: `${3 * u}px solid ${brand.ink}`, boxShadow: `${6 * u}px ${6 * u}px 0 ${brand.ink}`, maxWidth: width * 0.6}}>
             <Write text={caption} frame={frame} fps={fps} start={Math.round(fps * 0.4)} cps={30} />
           </div>
@@ -1147,17 +1176,18 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
     const fh = (fw * 9) / 16;
     const fx = (width - fw) / 2;
     const fy = (height - fh) / 2 - height * 0.015;
-    const tilt = -1.6 + 0.35 * Math.sin(frame / (fps * 1.9));
+    const tilt = paged ? -1.6 : -1.6 + 0.35 * Math.sin(frame / (fps * 1.9));
     return (
       <AbsoluteFill style={{background: brand.bg, overflow: 'hidden'}}>
         <div style={{position: 'absolute', left: fx, top: fy, width: fw, height: fh, transform: `rotate(${tilt}deg) translateY(${(1 - sf) * 40 * u}px)`, opacity: Math.min(1, sf * 1.5), background: brand.ink, padding: bord, boxSizing: 'border-box', boxShadow: `${12 * u}px ${12 * u}px 0 ${brand.ink}`}}>
           <div style={{position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: '#111', filter: 'saturate(0.88) contrast(1.04) sepia(0.06)'}}>
-            {mediaAt(fw - bord * 2, fh - bord * 2)}
-            <Marks scene={scene} brand={brand} w={fw - bord * 2} h={fh - bord * 2} />
+            {mediaAt(fw - bord * 2, fh - bord * 2, still)}
+            <Marks scene={scene} brand={brand} w={fw - bord * 2} h={fh - bord * 2} page={paged} />
           </div>
           <div style={{position: 'absolute', left: '50%', top: -12 * u, width: 150 * u, height: 28 * u, background: brand.marker, opacity: 0.85, transform: 'translateX(-50%) rotate(1.5deg)'}} />
+          {caption && tab ? <CaptionTab text={caption} brand={brand} left={pad * 0.25} lift={fh - bord * 0.5} size={labelSize * 0.8} room={fw * 0.42} s={s} /> : null}
         </div>
-        {caption ? (
+        {caption && !tab ? (
           <div style={{position: 'absolute', left: fx + pad * 0.25, top: fy + fh - labelSize * 0.9, transform: `rotate(-1deg) scale(${0.9 + 0.1 * s})`, transformOrigin: 'left bottom', opacity: Math.min(1, s * 1.5), background: '#fff', color: brand.ink, fontFamily: hand(brand), fontSize: labelSize, lineHeight: 1.15, padding: `${8 * u}px ${24 * u}px`, border: `${3 * u}px solid ${brand.ink}`, boxShadow: `${6 * u}px ${6 * u}px 0 ${brand.ink}`, maxWidth: width * 0.6}}>
             <Write text={caption} frame={frame} fps={fps} start={Math.round(fps * 0.4)} cps={30} />
           </div>
@@ -1170,7 +1200,10 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
     <AbsoluteFill style={{background: src ? '#111' : brand.bg, overflow: 'hidden'}}>
       {src ? (
         <>
-          <div style={{position: 'absolute', inset: 0, overflow: 'hidden'}}>{media}</div>
+          <div style={{position: 'absolute', inset: 0, overflow: 'hidden'}}>
+            {paged ? mediaAt(width, height, still) : media}
+            {paged ? <PageMarks scene={scene} brand={brand} w={width} h={height} /> : null}
+          </div>
           <div style={{position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%)'}} />
         </>
       ) : (
@@ -1179,7 +1212,7 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
         </div>
       )}
       {caption ? (
-        <div style={{position: 'absolute', left: pad * 0.8, bottom, transform: `rotate(-1deg) scale(${0.9 + 0.1 * s})`, transformOrigin: 'left bottom', opacity: Math.min(1, s * 1.5), background: '#fff', color: brand.ink, fontFamily: hand(brand), fontSize: labelSize, lineHeight: 1.15, padding: `${10 * u}px ${26 * u}px`, boxShadow: `0 ${8 * u}px ${24 * u}px rgba(0,0,0,0.3)`, maxWidth: isVertical ? width - pad * 1.6 : width * 0.6}}>
+        <div style={{position: 'absolute', left: pad * 0.8, ...(tab ? {top: pad * 0.45} : {bottom}), transform: `rotate(-1deg) scale(${0.9 + 0.1 * s})`, transformOrigin: 'left bottom', opacity: Math.min(1, s * 1.5), background: '#fff', color: brand.ink, fontFamily: hand(brand), fontSize: labelSize, lineHeight: 1.15, padding: `${10 * u}px ${26 * u}px`, boxShadow: `0 ${8 * u}px ${24 * u}px rgba(0,0,0,0.3)`, maxWidth: isVertical ? width - pad * 1.6 : width * 0.6}}>
           <Write text={caption} frame={frame} fps={fps} start={Math.round(fps * 0.4)} cps={30} />
         </div>
       ) : null}

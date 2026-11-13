@@ -4,22 +4,31 @@ import type {Brand, Scene} from '../types';
 import {useLayout} from '../components/layout';
 import {Arrow, SketchEllipse} from './sketch';
 import {Write} from './write';
+import {PageMarks, isPageMark, type PageKind} from './pagework';
 
 /**
  * Marks drawn on footage or a photo on the word that calls for them (`marks="circle 62,40@price; arrow 30,70@word;
  * note:the bit that matters 50,80@word"`, x and y as per cent of the picture): a marker ring round the thing, an
  * arrow pointing at it from lower left, a handwritten note beside it. Red unless the spec said green or ink. The
  * picture is what the viewer is looking at; the mark says where.
+ *
+ * On a real page the words themselves are worked on: `highlight`, `box` and `underline` take a rectangle
+ * (x,y,w,h) and are drawn by paper/pagework.tsx, under the ring, arrow and note. `page={false}` leaves them out,
+ * for a frame that shows a different crop of the page from the one the rectangles were read off.
  */
-export type MarkCue = {t: number; do: 'mark'; kind: 'circle' | 'arrow' | 'note'; x: number; y: number; color?: string; text?: string};
+export type MarkCue = {t: number; do: 'mark'; kind: 'circle' | 'arrow' | 'note' | PageKind; x: number; y: number; w?: number; h?: number; color?: string; text?: string};
 
-export const Marks: React.FC<{scene: Scene; brand: Brand; w: number; h: number}> = ({scene, brand, w, h}) => {
+export const Marks: React.FC<{scene: Scene; brand: Brand; w: number; h: number; page?: boolean}> = ({scene, brand, w, h, page = true}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const {u} = useLayout();
-  const marks = ((scene.cues ?? []) as unknown as Array<{do?: string}>).filter((c) => c.do === 'mark') as MarkCue[];
-  if (!marks.length) return null;
+  const all = ((scene.cues ?? []) as unknown as Array<{do?: string}>).filter((c) => c.do === 'mark') as MarkCue[];
+  const marks = all.filter((m) => !isPageMark(m));
+  const paged = page && marks.length < all.length;
+  if (!marks.length) return paged ? <PageMarks scene={scene} brand={brand} w={w} h={h} /> : null;
   return (
+    <>
+    {paged ? <PageMarks scene={scene} brand={brand} w={w} h={h} /> : null}
     <div style={{position: 'absolute', inset: 0, pointerEvents: 'none'}}>
       {marks.map((m, i) => {
         const at = Math.round((m.t - scene.start) * fps);
@@ -62,5 +71,6 @@ export const Marks: React.FC<{scene: Scene; brand: Brand; w: number; h: number}>
         );
       })}
     </div>
+    </>
   );
 };

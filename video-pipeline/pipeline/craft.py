@@ -5,6 +5,8 @@
   figures it says;
 - marks on footage and photos: `marks="circle 62,40@price; arrow 30,70@word; note:the bit that matters 50,80@word"`,
   drawn on the clip at that point (per cent of the picture) on the word, red unless the spec says green or ink.
+- marks on a real page: `marks="highlight 12,18,46,7@China; box 10,52,60,14@analysts; underline 12,40,30@fell"`,
+  the real words worked on as they are said (a rectangle in per cent of the picture, read off scripts/mark-grid.py).
 Runs after the words have their times (build.py), before the storyboard is written.
 """
 from __future__ import annotations
@@ -22,6 +24,9 @@ LOOPS = {"coins-jar", "piggy-bank", "card-tap", "money-flies", "bills-pile", "re
          "calendar-flip", "clock", "hourglass", "scales",
          "payday-split", "price-creep", "rent-day", "interest-grows", "isa-shield", "deposit-jar"}
 MARK_RE = re.compile(r"^(?:(red|green|ink):\s*)?(circle|arrow|note(?::([^@]*?))?)\s+(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*(?:@(.+))?$", re.I)
+# a real page worked on as it is read: the real words highlighted, boxed or underlined (remotion/src/paper/pagework.tsx).
+# x,y is the rectangle's top-left corner and w,h its size, in per cent of the picture; an underline is x,y,w
+PAGE_RE = re.compile(r"^(?:(red|green|ink|marker):\s*)?(highlight|box|underline)\s+(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)(?:\s*,\s*(\d+(?:\.\d+)?))?\s*(?:@(.+))?$", re.I)
 KEY_GAP = 2.5  # seconds between key words on one scene
 CARD_EVERY = 6.0  # a landing at least this often on a board
 
@@ -254,9 +259,26 @@ def plan_marks(sc: dict, attrs: dict) -> list[str]:
     problems: list[str] = []
     marks = []
     for raw in [m.strip() for m in spec.split(";") if m.strip()]:
+        pg = PAGE_RE.match(raw)
+        if pg:
+            color, kind, x, y, w, h, anchor = pg.groups()
+            kind = kind.lower()
+            if kind == "underline" and h is not None:
+                problems.append(f"scene {sc.get('id', '?')}: mark '{raw}': an underline is 'underline x,y,w@word' (its left end and its length)")
+                continue
+            if kind != "underline" and h is None:
+                problems.append(f"scene {sc.get('id', '?')}: mark '{raw}': a {kind} is '{kind} x,y,w,h@word' (the rectangle's corner and its size)")
+                continue
+            x, y, w, h = float(x), float(y), float(w), float(h or 0)
+            if x + w > 100.001 or y + h > 100.001:
+                problems.append(f"scene {sc.get('id', '?')}: mark '{raw}' leaves the picture (x + w and y + h stay within 100)")
+            # the highlighter is yellow and a box or an underline is ink: red only when the script wrote red (a loss)
+            mark = {"kind": kind, "x": x, "y": y, "w": w, **({"h": h} if kind != "underline" else {}), "color": (color or ("marker" if kind == "highlight" else "ink")).lower()}
+            marks.append({"anchor": anchor or "", "mark": mark})
+            continue
         m = MARK_RE.match(raw)
         if not m:
-            problems.append(f"scene {sc.get('id', '?')}: mark '{raw}' is not 'circle|arrow|note:text x,y@word'")
+            problems.append(f"scene {sc.get('id', '?')}: mark '{raw}' is not 'circle|arrow|note:text x,y@word' or 'highlight|box x,y,w,h@word' or 'underline x,y,w@word'")
             continue
         color, kind, text, x, y, anchor = m.groups()
         kind = kind.split(":")[0].lower()

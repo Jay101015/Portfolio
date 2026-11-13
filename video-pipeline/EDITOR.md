@@ -49,6 +49,32 @@ drawings, retyped headline cards and stock; with real photos and pages he said "
   beside him), not by leaving reality out.
 - Ask Jeffrey only for what cannot be found: his own app recordings, a page that blocks the screenshot.
 
+Working on a real page. A real article or official page is not left as a still picture under cards that retype it.
+The real words are marked as they are said.
+- Three marks, each drawn on its cue word:
+  `marks="highlight 12,18,46,7@China; box 10,52,60,14@analysts; underline 12,40,30@fell"`. The numbers are per cent
+  of the picture. For a highlight and a box they are the left edge, the top edge, the width and the height of the
+  rectangle. For an underline they are the left end of the line and its length.
+- The highlight is the yellow marker, and the words show through it. The box and the underline are ink. `green:` or
+  `red:` in front of a mark changes its colour. Red only ever means a loss, so nothing is red unless the script says so.
+- Read the numbers off the page. Never guess them.
+  `python3 scripts/mark-grid.py projects/<name>/media/real-page.jpg /tmp/real-page-grid.png` writes a copy of the
+  picture with a numbered 10% grid over it. Find the words on that copy and read the rectangle off the grid. The
+  picture itself is not changed.
+- A marked page holds still. There is no push-in, so each mark stays on its words. Crop the page to 16:9 (1920 by
+  1080) so the frame shows all of it.
+- On a page scene the marks do the work and cards are the exception. `cards_at=strip` on the scene puts its cards two
+  side by side along the foot of the frame, clear of the headline, and the caption moves to a tab on the top left
+  edge of the frame. `cards_at=tr`, `br` or `bl` puts two cards in that corner. With no `cards_at` the cards go where
+  they always went.
+- New scripts carry the header line `brand.pagecards: strip`. It gives the strip to every picture named real-...,
+  with no `cards_at` on each scene. Older scripts do not carry the line, so their videos do not change.
+- Quote little. Mark a headline, one line or a phrase, never a whole article. The outlet and the date stay in the
+  caption, and the credit goes in the description.
+- A page scene meant for a Short is shown whole or keeps one card. The marks are drawn on a Short only where the same
+  picture is shown whole (`vfit=contain`, no `vsrc=`, and `w=` and `h=` set to the picture's size). A page cropped
+  upright shows no marks, so that scene keeps a card to make the point.
+
 ## His voice (docs/voice.md)
 
 A script is Jeffrey talking, not an article read out. docs/voice.md holds how he talks (from his own unscripted

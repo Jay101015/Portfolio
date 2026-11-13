@@ -29,6 +29,7 @@ export type Brand = {
   boil?: boolean; // living lines: every sketched shape re-wobbles a few times a second, the way drawn animation does (on for the board)
   progress?: boolean; // a thin line along the top that fills as the video runs (on for the board, never on a Short)
   illustrated?: boolean; // the illustrated style (`brand.style: illustrated`): traced people-and-scene drawings, large, on every scene whose words call one up
+  pagecards?: 'strip'; // `brand.pagecards: strip`: on a real page or photo (a still named real-...) the cards go in a strip along the foot of the frame, off the headline
 };
 
 export type Cue = {t: number; pose?: string; face?: string}; // mid-scene change, absolute seconds

@@ -448,6 +448,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
     fullText: String(flags.text ?? 'key').toLowerCase() === 'full',
     illustrated: String(flags.style ?? 'icons').toLowerCase() === 'illustrated',
     creditsOnScreen: String(flags.credits ?? 'description').toLowerCase() === 'screen', // a credit in the corner reads as a watermark: off unless asked
+    pagecards: String(flags.pagecards ?? '').toLowerCase() === 'strip' ? 'strip' : undefined, // cards off a real page's headline (paper/setpiece.tsx cardsAt)
   };
   const avatar: AvatarConfig = {...defaultAvatar, ...(sb.avatar ?? {})};
   return (

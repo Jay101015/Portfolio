@@ -195,13 +195,13 @@ def _block_to_props(b: Block, title_default: str) -> dict[str, Any]:
         if "by" in a:
             p["attribution"] = a["by"]
     elif b.type in ("image", "still"):
-        for k in ("src", "caption", "prompt", "credit", "zoom", "search", "fallback", "want", "from", "focus", "mag", "rotate", "flip", "bright", "contrast", "sat", "bw", "look"):
+        for k in ("src", "caption", "prompt", "credit", "zoom", "search", "fallback", "want", "from", "focus", "mag", "rotate", "flip", "bright", "contrast", "sat", "bw", "look", "cards_at"):
             if k in a:
                 p[k] = a[k]
     elif b.type in ("clip", "broll"):
         # broll: the footage fills the whole frame, a short caption and the credit over it; clip: the framed card
         # phone=on: a vertical screen recording shown in a drawn phone on the board, the cards beside it
-        for k in ("src", "caption", "credit", "fallback", "search", "want", "zoom", "focus", "mag", "rotate", "flip", "bright", "contrast", "sat", "bw", "look", "lib", "phone", "big", "vsrc", "vfit", "w", "h"):
+        for k in ("src", "caption", "credit", "fallback", "search", "want", "zoom", "focus", "mag", "rotate", "flip", "bright", "contrast", "sat", "bw", "look", "lib", "phone", "big", "vsrc", "vfit", "w", "h", "cards_at"):
             if k in a:
                 p[k] = a[k]
         if "pick" in a:  # pick=2: the second of the finder's candidates (footage-candidates.png shows three)
