@@ -1,911 +1,891 @@
 1
-00:00:00,600 --> 00:00:04,220
-So Nvidia has lost over $400 billion in 2
+00:00:00,600 --> 00:00:04,750
+So Nvidia has lost over $400 billion in 2 days.
 
 2
-00:00:04,240 --> 00:00:05,040
-days.
-
-3
-00:00:05,880 --> 00:00:06,180
+00:00:05,900 --> 00:00:07,230
 And I'm going to be honest,
 
-4
-00:00:06,200 --> 00:00:08,980
+3
+00:00:07,480 --> 00:00:08,980
 I've got money riding on this one,
 
-5
-00:00:09,000 --> 00:00:10,870
+4
+00:00:09,000 --> 00:00:10,890
 so I've been watching it pretty closely.
 
-6
-00:00:11,940 --> 00:00:13,560
+5
+00:00:11,860 --> 00:00:13,560
 And if you've got a pension or a tracker
 
-7
-00:00:13,580 --> 00:00:15,710
+6
+00:00:13,580 --> 00:00:15,690
 fund, you probably own some as well,
 
-8
-00:00:15,820 --> 00:00:17,190
+7
+00:00:15,740 --> 00:00:17,190
 even if you've never bought it.
 
-9
-00:00:18,140 --> 00:00:20,940
+8
+00:00:18,000 --> 00:00:20,940
 I worked it out, and on 10 grand in an S&P
 
-10
+9
 00:00:20,960 --> 00:00:23,770
 500 tracker, it's taken off about £70.
 
-11
-00:00:24,080 --> 00:00:25,790
+10
+00:00:24,080 --> 00:00:25,810
 So it's not the end of the world.
 
-12
-00:00:26,760 --> 00:00:28,990
+11
+00:00:26,720 --> 00:00:28,950
 But the story behind it, honestly,
 
+12
+00:00:29,320 --> 00:00:31,230
+I couldn't believe it when I first read it.
+
 13
-00:00:29,320 --> 00:00:30,820
-I couldn't believe it when I first read
+00:00:31,360 --> 00:00:34,170
+The CEO, an affair he's admitted to,
 
 14
-00:00:30,840 --> 00:00:34,150
-it. The CEO, an affair he's admitted to,
-
-15
-00:00:34,240 --> 00:00:36,230
+00:00:34,420 --> 00:00:36,230
 and an alleged Chinese spy.
 
-16
-00:00:37,480 --> 00:00:39,200
+15
+00:00:37,540 --> 00:00:39,200
 So I want to go through what actually
 
-17
-00:00:39,220 --> 00:00:41,760
+16
+00:00:39,220 --> 00:00:41,780
 happened, why Nvidia, what I think it
 
-18
-00:00:41,780 --> 00:00:43,160
-means for AI in the stock market,
+17
+00:00:41,800 --> 00:00:43,450
+means for AI and the stock market,
 
-19
-00:00:43,180 --> 00:00:45,450
+18
+00:00:43,540 --> 00:00:45,450
 and then what I'm doing with my own money.
 
-20
-00:00:48,300 --> 00:00:49,430
+19
+00:00:48,300 --> 00:00:49,390
 So here's what happened.
 
-21
-00:00:50,000 --> 00:00:51,510
+20
+00:00:49,940 --> 00:00:51,510
 On Sunday the 8th of November,
 
-22
-00:00:51,720 --> 00:00:53,710
+21
+00:00:51,620 --> 00:00:53,690
 Jensen Huang, the guy who runs Nvidia,
 
-23
-00:00:54,100 --> 00:00:56,290
+22
+00:00:54,060 --> 00:00:56,230
 sent a letter to every single employee.
 
-24
-00:00:57,280 --> 00:00:59,350
+23
+00:00:57,260 --> 00:00:59,310
 He said he'd been unfaithful to his wife.
 
-25
-00:00:59,660 --> 00:01:01,660
+24
+00:00:59,640 --> 00:01:01,620
 He apologised, and he said he takes full
 
-26
-00:01:01,680 --> 00:01:02,480
+25
+00:01:01,640 --> 00:01:02,440
 responsibility.
 
-27
-00:01:03,400 --> 00:01:05,980
+26
+00:01:03,780 --> 00:01:05,940
 That same day, Nvidia's board opened an
 
-28
-00:01:06,000 --> 00:01:07,430
+27
+00:01:05,960 --> 00:01:07,350
 independent investigation.
 
+28
+00:01:07,940 --> 00:01:10,250
+And to be clear, it's not really about the affair.
+
 29
-00:01:07,940 --> 00:01:09,860
-And to be clear, it's not really about the
+00:01:10,660 --> 00:01:12,260
+It's about reports that he was the target
 
 30
-00:01:09,880 --> 00:01:11,920
-affair. It's about reports that he was the
+00:01:12,280 --> 00:01:13,930
+of a foreign intelligence operation.
 
 31
-00:01:11,940 --> 00:01:13,280
-target of a foreign intelligence
-
-32
-00:01:13,300 --> 00:01:14,100
-operation.
-
-33
-00:01:15,240 --> 00:01:16,750
+00:01:15,240 --> 00:01:16,710
 So according to those reports,
 
-34
-00:01:16,940 --> 00:01:18,350
+32
+00:01:16,880 --> 00:01:18,310
 and the New York Times had it first,
 
-35
-00:01:18,720 --> 00:01:20,220
+33
+00:01:18,660 --> 00:01:20,180
 US intelligence believes the woman
 
-36
-00:01:20,240 --> 00:01:21,850
+34
+00:01:20,200 --> 00:01:21,790
 involved was working for China.
 
-37
-00:01:22,220 --> 00:01:24,060
+35
+00:01:22,240 --> 00:01:24,040
 She's a businesswoman, and her company had
 
-38
-00:01:24,080 --> 00:01:25,800
+36
+00:01:24,060 --> 00:01:25,760
 reportedly bought billions of dollars'
 
-39
-00:01:25,820 --> 00:01:27,130
+37
+00:01:25,780 --> 00:01:27,110
 worth of Nvidia's chips.
 
-40
-00:01:28,200 --> 00:01:29,810
+38
+00:01:28,200 --> 00:01:29,790
 Now, I want to be careful here.
 
-41
-00:01:29,880 --> 00:01:30,830
+39
+00:01:29,860 --> 00:01:30,810
 That's an allegation.
 
+40
+00:01:31,240 --> 00:01:33,570
+Nobody's been charged, and China denies it.
+
+41
+00:01:34,380 --> 00:01:36,040
+The board says it's got no reason to
+
 42
-00:01:31,260 --> 00:01:32,960
-Nobody's been charged, and China denies
+00:01:36,060 --> 00:01:37,800
+believe any company secrets or national
 
 43
-00:01:32,980 --> 00:01:35,900
-it. The The board says it's got no reason
-
-44
-00:01:35,920 --> 00:01:37,860
-to believe any company secrets or national
-
-45
-00:01:37,880 --> 00:01:39,150
+00:01:37,820 --> 00:01:39,130
 security were compromised,
 
+44
+00:01:39,620 --> 00:01:41,650
+and it says it still has confidence in him.
+
+45
+00:01:41,960 --> 00:01:44,190
+As I'm recording this, he's still the CEO.
+
 46
-00:01:39,600 --> 00:01:41,260
-and it says it still has confidence in
-
-47
-00:01:41,280 --> 00:01:43,090
-him. As I'm recording this,
-
-48
-00:01:43,120 --> 00:01:44,250
-he's still the CEO.
-
-49
-00:01:44,520 --> 00:01:45,960
+00:01:44,500 --> 00:01:45,920
 And they've brought in a former US
 
-50
-00:01:45,980 --> 00:01:47,830
+47
+00:01:45,940 --> 00:01:47,690
 prosecutor to run the investigation.
 
-51
-00:01:49,060 --> 00:01:50,900
+48
+00:01:49,020 --> 00:01:50,860
 Since then, the president has said the FBI
 
-52
-00:01:50,920 --> 00:01:52,760
+49
+00:01:50,880 --> 00:01:52,740
 is looking into it, and a group of
 
-53
-00:01:52,780 --> 00:01:54,270
+50
+00:01:52,760 --> 00:01:54,250
 investors has filed a lawsuit.
 
-54
-00:01:54,820 --> 00:01:56,130
+51
+00:01:54,800 --> 00:01:56,090
 And here's what we don't know.
 
-55
-00:01:56,560 --> 00:01:58,320
+52
+00:01:56,540 --> 00:01:58,280
 Reuters says there's no timetable for the
 
-56
-00:01:58,340 --> 00:02:00,120
+53
+00:01:58,300 --> 00:02:00,080
 investigation. These things can take
 
-57
-00:02:00,140 --> 00:02:01,470
+54
+00:02:00,100 --> 00:02:01,430
 weeks, or months.
 
-58
-00:02:02,460 --> 00:02:04,190
+55
+00:02:02,520 --> 00:02:04,130
 But the market didn't wait around.
 
-59
-00:02:04,520 --> 00:02:07,100
+56
+00:02:04,560 --> 00:02:07,050
 On Monday, the shares dropped 4.3%.
 
-60
-00:02:07,140 --> 00:02:09,960
+57
+00:02:07,120 --> 00:02:09,920
 On Tuesday, another 5.5%.
 
-61
-00:02:10,780 --> 00:02:13,910
+58
+00:02:10,880 --> 00:02:13,870
 So that's about 9.5% in 2 days.
 
-62
-00:02:14,140 --> 00:02:17,330
+59
+00:02:14,100 --> 00:02:17,290
 Roughly $428 billion, gone.
 
-63
-00:02:18,760 --> 00:02:21,080
+60
+00:02:18,720 --> 00:02:21,040
 So why would a spy even care about a
 
-64
-00:02:21,100 --> 00:02:22,310
+61
+00:02:21,060 --> 00:02:22,250
 company that makes chips?
 
-65
-00:02:23,440 --> 00:02:25,260
+62
+00:02:23,500 --> 00:02:25,220
 Because those chips are pretty much what
 
-66
-00:02:25,280 --> 00:02:26,410
+63
+00:02:25,240 --> 00:02:26,370
 AI runs on.
 
-67
-00:02:26,620 --> 00:02:28,720
+64
+00:02:26,700 --> 00:02:28,680
 Most of the big AI systems in the world
 
-68
-00:02:28,740 --> 00:02:30,410
+65
+00:02:28,700 --> 00:02:30,100
 are trained on Nvidia's chips.
 
-69
-00:02:30,700 --> 00:02:32,300
+66
+00:02:30,120 --> 00:02:32,260
 So if you're a country that wants to win
 
-70
-00:02:32,320 --> 00:02:34,490
+67
+00:02:32,280 --> 00:02:34,450
 at AI, this is the thing you want.
 
-71
-00:02:35,580 --> 00:02:36,430
+68
+00:02:35,560 --> 00:02:36,390
 And here's the thing.
 
-72
-00:02:36,820 --> 00:02:38,880
+69
+00:02:36,760 --> 00:02:38,840
 The US limits which of those chips can be
 
-73
-00:02:38,900 --> 00:02:39,790
+70
+00:02:38,860 --> 00:02:39,750
 sold to China.
 
-74
-00:02:40,240 --> 00:02:42,340
+71
+00:02:40,220 --> 00:02:42,320
 Jensen Huang has publicly pushed to loosen
 
-75
-00:02:42,360 --> 00:02:44,820
+72
+00:02:42,340 --> 00:02:44,780
 those rules, and he's had direct access to
 
-76
-00:02:44,840 --> 00:02:45,640
+73
+00:02:44,800 --> 00:02:45,600
 the president.
 
-77
-00:02:45,880 --> 00:02:48,160
+74
+00:02:45,840 --> 00:02:48,120
 One chip analyst told CNBC that in 35
 
-78
-00:02:48,180 --> 00:02:50,860
+75
+00:02:48,140 --> 00:02:50,820
 years, he's never seen a chip CEO with
 
-79
-00:02:50,880 --> 00:02:52,890
+76
+00:02:50,840 --> 00:02:52,850
 this much influence on export policy.
 
-80
-00:02:53,960 --> 00:02:55,590
+77
+00:02:54,020 --> 00:02:55,550
 So if you believe the reporting,
 
-81
-00:02:55,860 --> 00:02:57,330
+78
+00:02:55,760 --> 00:02:57,290
 this wasn't only about secrets.
 
-82
-00:02:57,880 --> 00:03:00,040
+79
+00:02:57,860 --> 00:03:00,000
 It was about influence: shaping how the
 
-83
-00:03:00,060 --> 00:03:02,120
+80
+00:03:00,020 --> 00:03:02,080
 most important man in AI chips thinks
 
-84
-00:03:02,140 --> 00:03:03,410
+81
+00:03:02,100 --> 00:03:03,330
 about selling to China.
 
-85
-00:03:03,760 --> 00:03:05,310
+82
+00:03:03,760 --> 00:03:05,250
 But again, that's the claim.
 
-86
-00:03:05,520 --> 00:03:07,170
+83
+00:03:05,500 --> 00:03:07,130
 That's what the investigation is for.
 
-87
-00:03:08,620 --> 00:03:10,420
+84
+00:03:08,540 --> 00:03:10,650
 So what does this actually mean for AI,
 
-88
-00:03:10,440 --> 00:03:11,890
+85
+00:03:10,900 --> 00:03:11,850
 and for your money?
 
-89
-00:03:13,040 --> 00:03:15,280
+86
+00:03:12,980 --> 00:03:15,220
 First thing I noticed: on Monday,
 
-90
-00:03:15,300 --> 00:03:17,130
+87
+00:03:15,240 --> 00:03:17,090
 while Nvidia dropped 4.3%,
 
-91
-00:03:17,260 --> 00:03:19,420
+88
+00:03:17,160 --> 00:03:19,380
 the Nasdaq, which is the main US tech
 
-92
-00:03:19,440 --> 00:03:21,850
+89
+00:03:19,400 --> 00:03:21,810
 index, went up 2.7%.
 
-93
-00:03:21,940 --> 00:03:24,580
+90
+00:03:22,300 --> 00:03:24,540
 And CNBC reported that the other big chip
 
-94
-00:03:24,600 --> 00:03:26,470
+91
+00:03:24,560 --> 00:03:26,430
 makers all rose that day as well.
 
-95
-00:03:26,900 --> 00:03:28,700
+92
+00:03:26,920 --> 00:03:28,660
 So investors are treating this as an
 
-96
-00:03:28,720 --> 00:03:29,630
+93
+00:03:28,680 --> 00:03:29,590
 Nvidia problem.
 
-97
-00:03:29,780 --> 00:03:31,130
+94
+00:03:29,740 --> 00:03:31,090
 Not an AI problem.
 
-98
-00:03:32,300 --> 00:03:33,320
+95
+00:03:32,320 --> 00:03:33,280
 And the business hasn't changed,
 
-99
-00:03:33,340 --> 00:03:36,590
+96
+00:03:33,300 --> 00:03:36,550
 right? Last quarter, Nvidia made $96.2
 
-100
-00:03:36,800 --> 00:03:38,190
+97
+00:03:36,760 --> 00:03:38,130
 billion in sales.
 
-101
-00:03:38,600 --> 00:03:40,190
+98
+00:03:38,520 --> 00:03:40,150
 That's more than double the year before.
 
-102
-00:03:40,740 --> 00:03:42,340
+99
+00:03:40,740 --> 00:03:42,300
 The companies buying these chips aren't
 
+100
+00:03:42,320 --> 00:03:44,670
+going to stop because of the CEO's private life.
+
+101
+00:03:45,840 --> 00:03:48,890
+But to be fair, there are 2 real risks here.
+
+102
+00:03:49,280 --> 00:03:50,890
+The first one is the man himself.
+
 103
-00:03:42,360 --> 00:03:44,140
-going to stop because of the CEO's private
-
-104
-00:03:44,160 --> 00:03:44,960
-life.
-
-105
-00:03:45,740 --> 00:03:48,240
-But to be fair, there are 2 real risks
-
-106
-00:03:48,260 --> 00:03:50,750
-here. The first one is the man himself.
-
-107
-00:03:51,420 --> 00:03:53,280
+00:03:52,400 --> 00:03:53,400
 Analysts are saying Nvidia doesn't have a
 
-108
-00:03:53,300 --> 00:03:54,100
+104
+00:03:53,420 --> 00:03:54,220
 clear successor.
 
-109
-00:03:55,280 --> 00:03:56,450
+105
+00:03:55,440 --> 00:03:56,590
 One of them put it like this:
 
-110
-00:03:56,820 --> 00:03:59,370
+106
+00:03:56,940 --> 00:03:59,510
 Jensen is Nvidia, Nvidia is Jensen.
 
-111
-00:04:00,760 --> 00:04:02,280
-And Reuters made a point I hadn't thought
+107
+00:04:00,880 --> 00:04:02,970
+And Reuters made a point I hadn't thought about.
 
-112
-00:04:02,300 --> 00:04:04,670
-about. Unlike Mark Zuckerberg at Meta,
+108
+00:04:03,140 --> 00:04:04,810
+Unlike Mark Zuckerberg at Meta,
 
-113
-00:04:05,000 --> 00:04:06,350
+109
+00:04:05,020 --> 00:04:06,490
 he doesn't control the votes.
 
-114
-00:04:06,660 --> 00:04:08,550
+110
+00:04:06,720 --> 00:04:08,690
 So the board really could remove him.
 
-115
-00:04:08,720 --> 00:04:10,880
+111
+00:04:08,860 --> 00:04:11,020
 And if it did, nobody knows who runs the
 
-116
-00:04:10,900 --> 00:04:12,490
+112
+00:04:11,040 --> 00:04:12,630
 most valuable company in AI.
 
-117
-00:04:13,720 --> 00:04:15,010
+113
+00:04:13,860 --> 00:04:15,190
 The second one is politics.
 
-118
-00:04:15,300 --> 00:04:17,720
+114
+00:04:15,820 --> 00:04:17,860
 This whole thing has given new momentum to
 
-119
-00:04:17,740 --> 00:04:19,320
+115
+00:04:17,880 --> 00:04:19,460
 bills in Congress that would tighten the
 
-120
-00:04:19,340 --> 00:04:21,190
+116
+00:04:19,480 --> 00:04:21,410
 rules on selling AI chips abroad.
 
-121
-00:04:22,340 --> 00:04:23,980
+117
+00:04:22,400 --> 00:04:24,120
 So the lasting damage might not come from
 
-122
-00:04:24,000 --> 00:04:24,990
+118
+00:04:24,140 --> 00:04:25,150
 the boardroom at all.
 
-123
-00:04:25,260 --> 00:04:26,470
+119
+00:04:25,400 --> 00:04:26,590
 It might come from Washington.
 
-124
-00:04:27,820 --> 00:04:29,060
-And here's the bit the headlines are
+120
+00:04:27,920 --> 00:04:29,670
+And here's the bit the headlines are skipping.
 
-125
-00:04:29,080 --> 00:04:31,690
-skipping. Nvidia was already falling.
+121
+00:04:30,160 --> 00:04:31,830
+Nvidia was already falling.
 
-126
-00:04:32,560 --> 00:04:34,340
+122
+00:04:32,700 --> 00:04:34,480
 From its record high on the 6th of October
 
-127
-00:04:34,360 --> 00:04:36,890
+123
+00:04:34,500 --> 00:04:37,010
 to the Friday before any of this came out,
 
-128
-00:04:37,140 --> 00:04:38,980
+124
+00:04:37,280 --> 00:04:39,020
 the shares had dropped 23%,
 
-129
-00:04:39,000 --> 00:04:41,400
+125
+00:04:39,040 --> 00:04:41,520
 largely on worries about how long the AI
 
-130
-00:04:41,420 --> 00:04:42,750
+126
+00:04:41,540 --> 00:04:42,890
 spending boom can last.
 
-131
-00:04:43,260 --> 00:04:45,380
+127
+00:04:43,280 --> 00:04:45,480
 So the scandal took 9.5%.
 
-132
-00:04:45,400 --> 00:04:48,780
+128
+00:04:45,500 --> 00:04:49,050
 The spending worry had already taken 23%.
 
-133
-00:04:48,800 --> 00:04:51,450
-There There are 2 dates I'm watching.
+129
+00:04:49,500 --> 00:04:51,570
+There are 2 dates I'm watching.
 
-134
-00:04:51,940 --> 00:04:53,800
+130
+00:04:52,120 --> 00:04:53,940
 Nvidia's due to report its results on the
 
-135
-00:04:53,820 --> 00:04:54,840
-17th November.
+131
+00:04:53,960 --> 00:04:55,170
+17th of November.
 
-136
-00:04:54,860 --> 00:04:56,660
-of And members of Congress have asked
+132
+00:04:55,620 --> 00:04:57,080
+And members of Congress have asked Jensen
 
-137
-00:04:56,680 --> 00:04:59,110
-Jensen Huang for a briefing on the 18th.
+133
+00:04:57,100 --> 00:04:59,290
+Huang for a briefing on the 18th.
 
-138
-00:05:00,000 --> 00:05:01,250
+134
+00:05:00,220 --> 00:05:01,350
 And if you look at history,
 
-139
-00:05:01,560 --> 00:05:02,690
+135
+00:05:01,700 --> 00:05:02,890
 it's actually kind of reassuring.
 
-140
-00:05:03,600 --> 00:05:05,540
+136
+00:05:03,780 --> 00:05:05,680
 McDonald's fired its CEO over a
 
-141
-00:05:05,560 --> 00:05:07,200
-relationship with an employee back in
+137
+00:05:05,700 --> 00:05:07,950
+relationship with an employee back in 2019.
 
-142
-00:05:07,220 --> 00:05:10,400
-2019. A year later, the shares were about
+138
+00:05:08,620 --> 00:05:11,550
+A year later, the shares were about 12% higher.
 
-143
-00:05:10,420 --> 00:05:11,390
-12% higher.
-
-144
-00:05:12,600 --> 00:05:14,800
+139
+00:05:13,020 --> 00:05:14,940
 Intel's CEO resigned for a similar reason
 
-145
-00:05:14,820 --> 00:05:15,650
+140
+00:05:14,960 --> 00:05:15,760
 in 2018.
 
-146
-00:05:16,120 --> 00:05:17,710
+141
+00:05:16,260 --> 00:05:17,830
 A year later, they were lower.
 
-147
-00:05:18,140 --> 00:05:20,040
+142
+00:05:18,380 --> 00:05:20,180
 So in both cases, what the business did
 
-148
-00:05:20,060 --> 00:05:22,250
+143
+00:05:20,200 --> 00:05:22,410
 next mattered way more than the scandal.
 
-149
-00:05:23,500 --> 00:05:25,310
+144
+00:05:23,420 --> 00:05:25,333
 So what about us, over here?
 
-150
-00:05:25,780 --> 00:05:27,410
+145
+00:05:25,353 --> 00:05:27,490
 City AM ran this headline:
 
-151
-00:05:28,020 --> 00:05:29,940
-the Nvidia scandal leaves UK savers
+146
+00:05:28,100 --> 00:05:30,770
+the Nvidia scandal leaves UK savers exposed.
 
-152
-00:05:29,960 --> 00:05:32,580
-exposed. Because millions of people in the
+147
+00:05:31,480 --> 00:05:33,400
+Because millions of people in the UK own
 
-153
-00:05:32,600 --> 00:05:34,940
-UK own Nvidia without ever buying it,
+148
+00:05:33,420 --> 00:05:35,350
+Nvidia without ever buying it,
 
-154
-00:05:34,960 --> 00:05:36,740
+149
+00:05:35,400 --> 00:05:37,140
 through a pension, an ISA,
 
-155
-00:05:36,760 --> 00:05:37,810
+150
+00:05:37,160 --> 00:05:37,960
 or a tracker fund.
 
-156
-00:05:38,820 --> 00:05:40,270
+151
+00:05:39,140 --> 00:05:40,712
 And people here are split.
 
-157
-00:05:40,380 --> 00:05:42,880
+152
+00:05:40,732 --> 00:05:43,020
 AJ Bell says Nvidia was the most bought
 
-158
-00:05:42,900 --> 00:05:44,880
+153
+00:05:43,040 --> 00:05:45,020
 share on its platform between the 5th and
 
-159
-00:05:44,900 --> 00:05:45,950
+154
+00:05:45,040 --> 00:05:46,130
 the 9th of November.
 
-160
-00:05:46,440 --> 00:05:50,100
+155
+00:05:46,600 --> 00:05:50,240
 But IG says its sell trades jumped 157%.
 
-161
-00:05:50,120 --> 00:05:52,120
+156
+00:05:50,260 --> 00:05:52,530
 So some people are buying the dip,
 
-162
-00:05:52,140 --> 00:05:53,750
+157
+00:05:52,580 --> 00:05:53,910
 and some are getting out.
 
-163
-00:05:54,760 --> 00:05:55,970
+158
+00:05:54,920 --> 00:05:56,130
 So here's where I stand.
 
-164
-00:05:56,380 --> 00:05:57,870
+159
+00:05:56,520 --> 00:05:58,010
 I've said this before on the channel:
 
-165
-00:05:58,240 --> 00:06:00,770
+160
+00:05:58,300 --> 00:06:00,930
 the core of what I invest is the S&P 500.
 
-166
-00:06:01,240 --> 00:06:03,420
+161
+00:06:01,400 --> 00:06:03,560
 It's boring, it's broad, and it does the
 
-167
-00:06:03,440 --> 00:06:04,240
+162
+00:06:03,580 --> 00:06:04,380
 heavy lifting.
 
-168
-00:06:04,520 --> 00:06:06,360
+163
+00:06:04,660 --> 00:06:06,770
 And Nvidia is the biggest company in it.
 
-169
-00:06:06,380 --> 00:06:08,780
+164
+00:06:06,980 --> 00:06:08,920
 One UK investment firm puts it at around
 
-170
-00:06:08,800 --> 00:06:11,670
+165
+00:06:08,940 --> 00:06:11,810
 £7 of every £100 in the fund.
 
-171
-00:06:12,720 --> 00:06:14,980
+166
+00:06:12,760 --> 00:06:15,140
 And that's exactly why Nvidia's fall only
 
-172
-00:06:15,000 --> 00:06:17,670
+167
+00:06:15,160 --> 00:06:17,810
 took about £70 off 10 grand in a tracker.
 
-173
-00:06:18,020 --> 00:06:19,930
+168
+00:06:18,120 --> 00:06:20,070
 If that 10 grand was all in Nvidia,
 
-174
-00:06:20,180 --> 00:06:21,610
+169
+00:06:20,400 --> 00:06:21,790
 you'd be down about £950.
 
-175
-00:06:22,900 --> 00:06:25,830
+170
+00:06:23,040 --> 00:06:25,950
 The other 499 companies did their job.
 
-176
-00:06:26,860 --> 00:06:28,810
+171
+00:06:27,000 --> 00:06:28,930
 Now, I don't buy individual stocks.
 
-177
-00:06:29,260 --> 00:06:30,880
+172
+00:06:29,380 --> 00:06:31,020
 The only other thing I invest in is a
 
-178
-00:06:30,900 --> 00:06:32,330
+173
+00:06:31,040 --> 00:06:32,470
 basket of AI stocks.
 
-179
-00:06:32,660 --> 00:06:34,440
+174
+00:06:32,800 --> 00:06:34,850
 So yes, I've got Nvidia in there as well.
 
-180
-00:06:34,460 --> 00:06:37,160
+175
+00:06:35,020 --> 00:06:37,280
 But it's a basket, so it's one company out
 
-181
-00:06:37,180 --> 00:06:38,970
+176
+00:06:37,300 --> 00:06:39,110
 of a bunch, not my whole bet.
 
-182
-00:06:39,200 --> 00:06:40,870
+177
+00:06:39,400 --> 00:06:40,990
 And no, I haven't sold anything.
 
-183
-00:06:41,280 --> 00:06:42,620
+178
+00:06:41,420 --> 00:06:42,760
 But I'm going to be honest about the
 
-184
-00:06:42,640 --> 00:06:43,510
+179
+00:06:42,780 --> 00:06:43,650
 limits of this.
 
-185
-00:06:44,540 --> 00:06:46,890
+180
+00:06:44,720 --> 00:06:47,030
 The 10 biggest companies now make up about
 
-186
-00:06:47,050 --> 00:06:50,460
-39% of the S&P 500, and most of them a big
+181
+00:06:47,200 --> 00:06:50,420
+39% of the S&P 500, and most of them are
 
-187
-00:06:50,480 --> 00:06:53,070
-tech. And my other pot is all AI.
+182
+00:06:50,440 --> 00:06:51,240
+big tech.
 
-188
-00:06:53,500 --> 00:06:56,050
+183
+00:06:51,500 --> 00:06:53,210
+And my other pot is all AI.
+
+184
+00:06:53,560 --> 00:06:55,870
 So if the whole AI trade falls,
 
-189
-00:06:56,300 --> 00:06:57,490
+185
+00:06:56,080 --> 00:06:57,290
 I will feel it.
 
-190
-00:06:57,600 --> 00:06:59,270
+186
+00:06:57,400 --> 00:06:59,090
 But I've hedged against that as well.
 
-191
-00:07:00,280 --> 00:07:01,460
+187
+00:07:00,140 --> 00:07:01,530
 So how am I hedging?
 
-192
-00:07:01,480 --> 00:07:03,670
+188
+00:07:01,760 --> 00:07:03,470
 Honestly, it's nothing clever.
 
-193
-00:07:04,120 --> 00:07:06,150
+189
+00:07:03,920 --> 00:07:05,950
 The S&P 500 stays at the core,
 
-194
-00:07:06,260 --> 00:07:07,590
+190
+00:07:06,060 --> 00:07:07,390
 and it isn't only tech.
 
-195
-00:07:07,860 --> 00:07:09,340
+191
+00:07:07,580 --> 00:07:09,140
 There are hundreds of companies in there
 
-196
-00:07:09,360 --> 00:07:10,870
+192
+00:07:09,160 --> 00:07:10,670
 that have nothing to do with AI.
 
-197
-00:07:11,980 --> 00:07:14,280
+193
+00:07:11,780 --> 00:07:14,100
 For AI, I use a basket instead of picking
 
-198
-00:07:14,300 --> 00:07:16,460
+194
+00:07:14,120 --> 00:07:16,280
 one company, so if one of them has a
 
-199
-00:07:16,480 --> 00:07:18,250
+195
+00:07:16,300 --> 00:07:18,050
 terrible week, like this one,
 
-200
-00:07:18,300 --> 00:07:20,470
+196
+00:07:18,120 --> 00:07:20,270
 it hurts, but it doesn't wreck me.
 
-201
-00:07:21,500 --> 00:07:23,080
+197
+00:07:21,240 --> 00:07:22,880
 I keep my emergency fund completely
 
-202
-00:07:23,100 --> 00:07:25,300
+198
+00:07:22,900 --> 00:07:25,100
 separate, so I'm never forced to sell when
 
-203
-00:07:25,320 --> 00:07:26,120
+199
+00:07:25,120 --> 00:07:25,920
 things are down.
 
-204
-00:07:27,040 --> 00:07:28,810
+200
+00:07:26,800 --> 00:07:28,630
 And I try to stick to a plan.
 
-205
-00:07:29,080 --> 00:07:31,860
+201
+00:07:28,820 --> 00:07:31,680
 Because back in 2021, I watched 11 grand
 
-206
-00:07:31,880 --> 00:07:33,980
+202
+00:07:31,700 --> 00:07:33,780
 in crypto go all the way down to four and
 
-207
-00:07:34,000 --> 00:07:35,870
+203
+00:07:33,800 --> 00:07:35,670
 a half, and I panicked and sold.
 
-208
-00:07:36,220 --> 00:07:37,550
+204
+00:07:36,000 --> 00:07:37,360
 I still think about that.
 
-209
-00:07:37,680 --> 00:07:39,340
-So I'm trying not to make that mistake
+205
+00:07:37,380 --> 00:07:39,690
+So I'm trying not to make that mistake again.
 
-210
-00:07:39,360 --> 00:07:40,160
-again.
-
-211
-00:07:41,060 --> 00:07:42,270
+206
+00:07:40,140 --> 00:07:42,070
 I don't know how this ends,
 
-212
-00:07:42,420 --> 00:07:43,470
+207
+00:07:42,320 --> 00:07:43,270
 I really don't.
 
-213
-00:07:43,500 --> 00:07:45,330
+208
+00:07:43,420 --> 00:07:45,130
 He might be fine, he might not.
 
-214
-00:07:45,500 --> 00:07:47,000
+209
+00:07:45,360 --> 00:07:46,800
 And I guess that's why I don't want too
 
-215
-00:07:47,020 --> 00:07:48,810
+210
+00:07:46,820 --> 00:07:48,590
 much riding on any one company,
 
-216
-00:07:48,960 --> 00:07:49,970
+211
+00:07:48,760 --> 00:07:49,770
 even one I like.
 
-217
-00:07:50,940 --> 00:07:52,940
-And just so it said, I'm not a financial
+212
+00:07:50,780 --> 00:07:52,740
+And just so it's said, I'm not a financial
 
-218
-00:07:52,960 --> 00:07:55,090
+213
+00:07:52,760 --> 00:07:54,850
 advisor, this isn't advice,
 
-219
-00:07:55,320 --> 00:07:57,560
+214
+00:07:55,180 --> 00:07:57,410
 and like I said, I've got money in this,
 
-220
-00:07:57,580 --> 00:07:59,130
+215
+00:07:57,480 --> 00:07:58,970
 so I'm not exactly neutral.
 
-221
-00:08:00,180 --> 00:08:02,000
+216
+00:08:00,060 --> 00:08:01,800
 So yeah, let me know in the comments what
 
-222
-00:08:02,020 --> 00:08:03,930
+217
+00:08:01,820 --> 00:08:03,460
 you're doing: buying, selling,
 
-223
-00:08:04,080 --> 00:08:05,110
+218
+00:08:03,480 --> 00:08:04,920
 or just leaving it.
 
-224
-00:08:05,320 --> 00:08:06,530
+219
+00:08:04,940 --> 00:08:06,330
 I'm genuinely curious.
 
-225
-00:08:07,080 --> 00:08:08,240
+220
+00:08:06,580 --> 00:08:08,040
 And if you want to see what happens when
 
-226
-00:08:08,260 --> 00:08:10,230
+221
+00:08:08,060 --> 00:08:10,030
 you chase the hottest stock every year,
 
-227
-00:08:10,360 --> 00:08:12,100
-I made a video on that, and it's on screen
+222
+00:08:10,140 --> 00:08:12,430
+I made a video on that, and it's on screen now.
 
-228
-00:08:12,120 --> 00:08:13,970
-now. I'll see you in the next one.
+223
+00:08:12,720 --> 00:08:13,770
+I'll see you in the next one.

@@ -11,7 +11,7 @@ Topic: Nvidia's two-day fall after its CEO admitted an affair and the board open
 | 9 | | already in media/: real-letter.jpg | | |
 | 10 | | already in media/: real-board.jpg | | |
 | 11 | | already in media/: 09-computer-chip-circuit-board-macro.mp4 | | |
-| 13 | | already in media/: real-nbc.jpg | | |
+| 13 | | already in media/: real-board.jpg | | |
 | 17 | | already in media/: real-hq.jpg | | |
 | 18 | | already in media/: 16-server-room-data-centre-racks.mp4 | | |
 | 19 | | already in media/: real-cnbc-china.jpg | | |
@@ -19,7 +19,7 @@ Topic: Nvidia's two-day fall after its CEO admitted an affair and the board open
 | 24 | | already in media/: real-cnbc-succession.jpg | | |
 | 25 | | already in media/: real-huang-1.jpg | | |
 | 26 | | already in media/: real-hq-sign.jpg | | |
-| 28 | united states capitol building washington | downloaded 28-united-states-capitol-building-washingto.mp4 | Pixabay Content License | Video 239278 by InOldNews via Pixabay |
+| 28 | united states capitol building washington | downloaded 28-united-states-capitol-building-washingto.mp4 | Pixabay Content License | Video 239282 by InOldNews via Pixabay |
 | 33 | | already in media/: real-cityam.jpg | | |
 | 34 | | already in media/: real-yahoo.jpg | | |
 | 35 |  | library vuag-max-chart-app |  |  |
