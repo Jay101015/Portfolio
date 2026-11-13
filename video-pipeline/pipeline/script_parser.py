@@ -681,6 +681,11 @@ def parse_script(md: str) -> dict[str, Any]:
         scenes.append(sc)
     if scenes and header.get("kicker") and scenes[0]["type"] == "title":
         scenes[0]["props"].setdefault("kicker", header["kicker"])
+    if header.get("recorded"):  # a news video carries its date: "Recorded 11 November 2026" above the title on the title card
+        for sc in scenes:
+            if sc["type"] == "title":
+                sc["props"].setdefault("kicker", f"Recorded {header['recorded']}")
+                break
     problems += footage_share(scenes)
     for sc in scenes:  # a tag line that does not start with "[" is read as narration (a stray quote did it once)
         if re.search(r'\b(board|art|cards|label|caption)="', sc.get("narration") or ""):

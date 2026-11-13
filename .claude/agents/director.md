@@ -90,6 +90,11 @@ which word. Use the whole toolbox; spread it, so no device appears more than thr
 the strongest picture on the strongest line. Against usage.md, mark everything the last two videos already used and
 replace what you can with something unused. For each scene write the change as the tag the script needs (attributes,
 cues, cards, art=), so it can be pasted in.
+Real pages and news (EDITOR.md, "Working on a real page" and "Pages and news: the standard"): for every real page
+plan the crop (the article only: masthead, headline, standfirst), the words to mark as they are said (`marks=`
+with highlight, box or underline and the cue word of each) and two cards at most for what the page does not say.
+The header carries `brand.pagecards: strip`, and for a news story `recorded:` with the day the voice is made. Say
+which lines could be overtaken by the news, so an update card can be dropped on them without a new voice.
 
 Then list what would make this video better that does not exist yet, for Jeffrey to make or film:
 - phone clips (what to film, how long, landscape, where it goes: "10 s of your hands counting notes on a table,

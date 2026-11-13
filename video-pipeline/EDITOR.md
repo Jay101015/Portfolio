@@ -75,6 +75,28 @@ The real words are marked as they are said.
   picture is shown whole (`vfit=contain`, no `vsrc=`, and `w=` and `h=` set to the picture's size). A page cropped
   upright shows no marks, so that scene keeps a card to make the point.
 
+Pages and news: the standard. Four reviewers marked the Nvidia video down for these on 13 November 2026, after it
+had been delivered. Every one is checked before the first render now (`python -m pipeline.preflight` warns on the
+ones a script can show).
+- Crop every page to the article: the masthead, the headline, the standfirst. Nothing else is in the frame: no
+  adverts rail, no sponsored thumbnails, no cookie banner, no live price chip, no other people's photographs. An
+  unrelated face beside a card about the story reads as part of the story.
+- A figure that can be read on the page is the figure the voice says. If the page carries another one (a later
+  price, a rounder number), crop it out, or use the page that carries the figure said.
+- No card ever covers a word of a headline. New scripts carry `brand.pagecards: strip`, and the page's own words
+  are marked as they are said. Cards are for what the page does not say, two at most on a page.
+- A page holds still (`zoom=none`, or marked). A photograph pushes in (`zoom=in`).
+- A news video carries its date. `recorded: 11 November 2026` in the header writes "Recorded 11 November 2026" above
+  the title on the title card. A caption that gives someone a role says until when once it has changed ("Nvidia's
+  CEO until 12 November 2026").
+- When the story moves after the voice is made, the words stay and the picture says it. A card "update: he resigned
+  on 12 November" lands on each line the news has overtaken. It states the fact and nothing else. The update is the
+  first paragraph of the description and of the pinned comment, where a phone shows it.
+- A click or a half-sound at the edge of a made voice chunk is silenced with `mute: 388.66-388.78` in the header
+  (seconds in the voiceover file, half a second at most). It is never used on a word.
+- The captions file of a made voice is the script's own words in the script's order. A made voice is never cut for
+  "restarts": a word said twice in it is the script.
+
 ## His voice (docs/voice.md)
 
 A script is Jeffrey talking, not an article read out. docs/voice.md holds how he talks (from his own unscripted

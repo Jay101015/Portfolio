@@ -85,6 +85,29 @@ def checks(md: str, project: str, has_audio: bool, repo: str = HERE) -> list[tup
             out.append(("WARN", f"a recap ending again: the last video ({last['video']}) ended on one too (docs/formats.md)"))
     if len(tags) > 12 and not any(t in ("broll", "clip") for t, _ in tags):
         out.append(("WARN", "no footage scenes at all: aim for one scene in three"))
+    out += real_material(md, h)
+    return out
+
+
+def real_material(md: str, h: dict[str, str]) -> list[tuple[str, str]]:
+    """Real pages and photos held to the standard the Nvidia review set (13 November 2026; EDITOR.md, "Pages and
+    news: the standard"): cards off the page's own words, the words marked not retyped, and a news story dated."""
+    out: list[tuple[str, str]] = []
+    lines = [m.groups() for m in (re.match(r"^\[(\w+)\b(.*)\]\s*$", ln) for ln in md.splitlines()) if m]
+    real = [a for _, a in lines if re.search(r'\bsrc="real-', a)]
+    pages = [a for a in real if re.search(r'\bcredit="[^" ]+\.[a-z]{2,}"', a)]  # a page is credited to its site, a photo to its author
+    if real and h.get("brand.pagecards", "").lower() != "strip":
+        out.append(("WARN", f"{len(real)} scene(s) show a real page or photo and the header has no `brand.pagecards: strip`: their cards will sit on the picture, and on a page that means on its words (a card covered \"alleged\" in a headline for 14 seconds)"))
+    for a in pages:
+        src = re.search(r'\bsrc="([^"]+)"', a).group(1)
+        cards = [c for c in (re.search(r'\bcards="([^"]*)"', a) or [None, ""])[1].split(";") if c.strip()]
+        marked = bool(re.search(r'\bmarks="[^"]*\b(highlight|box|underline)\b', a))
+        if len(cards) > 2 and not marked:
+            out.append(("WARN", f"{src}: {len(cards)} cards on a real page and none of its own words marked: highlight, box or underline the words as they are said (marks=) and keep two cards at most, for what the page does not say"))
+        if not marked and re.search(r"\bzoom=in\b", a):
+            out.append(("INFO", f"{src}: a page with zoom=in is pushed in by a tenth and can lose the edge of its headline: zoom=none, or mark its words (a marked page holds still)"))
+    if (pages or any(t == "news" for t, _ in lines)) and "recorded" not in h:
+        out.append(("WARN", "a news story with no `recorded:` line: add `recorded: 11 November 2026` (the day the voice was made) so the title card carries the date; the Nvidia video said \"he's still the CEO\" the day after he resigned and nothing on screen dated it"))
     return out
 
 

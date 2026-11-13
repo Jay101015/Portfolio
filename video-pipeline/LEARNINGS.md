@@ -545,3 +545,23 @@ Nvidia Shorts (12 November 2026). Review: editor 7/7/5/6/5, animator 7/7/8/7/7, 
 - Upright: `vsrc=` gives a page its own crop and `vfit=contain` shows it whole; no progress bar on a Short; captions ride higher on a compare and a set piece.
 - Open: charts and lists sit in the top half of a Short (an upright layout is needed).
 
+
+Nvidia long video, re-render and review (13 November 2026). Review: editor 5, animator 7, retention 6.5 (round 1 on
+the re-render; the director's review was cut off by the usage limit; round 2 was not run because Jeffrey asked for
+the work to go into future videos, not this one). A fixed render exists on the release (c3715ad).
+- **Why it was re-rendered:** the build cut a second out of the approved voice. "Jensen is Nvidia, Nvidia is Jensen"
+  read as a restart ("1 restarts cut" in the render log). A made voice is never cut now (tests/test_voice_made.py).
+- **What four fresh reviewers found in a video that had passed two rounds and been delivered:** an adverts rail with
+  a child's and two women's photos under "an affair: admitted"; a card over the word "alleged" for 14 seconds; a
+  page whose standfirst gave other figures than the voice (10%, $500bn against 9.5%, $428bn); nothing on screen
+  dating a news story the day after it moved; a captions file with "The The board"; a stray 75 ms sound at a voice
+  chunk's edge; an opening photo that never moved. All are rules in EDITOR.md now ("Pages and news: the standard")
+  and the ones a script can show are warned about before any render (pipeline/preflight.py, tests/test_standards.py).
+- **Still pictures were frozen:** a .jpg was fitted like a 0.04 s clip and "held on its last frame" from frame two,
+  so zoom=in never showed on any photo. Fixed in build.fit_clip.
+- **A review pass costs most of a usage window** (each reviewer 320,000 to 450,000 tokens on an 8-minute video).
+  Jeffrey's account hit its limit five times on 13 November. Plan the review, do not repeat it: fix round-one
+  findings in one render, and do not re-render a delivered video unless he asks.
+- **What Jeffrey asked for and did not get quickly enough:** "I didn't ask you to fix the video, I asked you to
+  prepare and ensure all future videos are better and higher standard." Work on the system first; a delivered video
+  is touched only when he asks.

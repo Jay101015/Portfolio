@@ -23,11 +23,17 @@ sound. Be specific and strict: a vague note is useless, a wrong note wastes a re
    not a motorway for "Essex homes"). Name the time and what it should show instead.
 3. **The board and captions** match the words, nothing cut off, no leftover labels ("goes here"), no typos, the
    right channel name ("The Everyday Investor"), no corner credits.
-4. **Sound:** loudness about -14 LUFS (-15 to -13 passes), true peak under -1 dBFS, no music (the channel's rule),
+4. **Sound:** loudness within 1 LU of the target facts.md states (the script's own `loudness:` line, Jeffrey's
+   choice; -14 when the script has none), true peak under -1 dBFS, no music (the channel's rule),
    no clipped word at a cut (a word whose start or end is missing in facts.md's words at a cut time).
 5. **Pace of cuts:** the longest stretch with no cut (facts.md); over 12 seconds in a long video or 6 in a Short is
    worth a note.
 6. **People in the drawings** match who the video is about (one buyer means one person, not a couple).
+7. **Real pages and dates** (EDITOR.md, "Pages and news: the standard"). Every page is cropped to the article: no
+   adverts rail, cookie banner, live price chip or other people's photographs in the frame. No card covers a word of
+   a headline. A figure readable on a page is the figure the voice says. A news video shows the date it was
+   recorded, and a line the news has since overtaken carries an update card. The captions file (.srt) says the
+   script's words.
 
 ## Report (and nothing else)
 ```
