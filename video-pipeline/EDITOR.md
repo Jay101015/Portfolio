@@ -104,12 +104,6 @@ recording), what he has said on camera about his own money, and how far to take 
 ElevenLabs. Write every script against it; a new claim about what he holds or has done stays in [BRACKETS] until he
 confirms it.
 
-Exact timing (`timing: exact`). A script whose voice was made here carries `timing: exact` in its header. The build
-then takes every word's time from the voice's own timestamps: no transcriber, no closed pauses, no cut words, and
-the same times on every machine. Cuts, cards, bars and captions land on the word that is heard. Shorts picked in
-seconds on such a video carry `"clock": "exact"` at the top of shorts.json. A video on Jeffrey's own recording does
-not use the line. README.md, "Exact timing for a voice the pipeline made", has the detail.
-
 ## Re-cut the scenes first
 
 A scene is one idea. Move the paragraph breaks so every scene starts where a new thought starts (a step, an amount, a
@@ -265,6 +259,12 @@ Jeffrey's cloned voice can be made by the pipeline instead of pasted in by hand:
 - The words are Jeffrey's: no voice is made until he has approved the script. The script carries `voice: natural`.
 - Lines printed as `LISTEN:` (a chunk read much faster or slower than the rest, a hole inside a chunk, a chunk that
   came back at a different level) are listened to before the render.
+
+Exact timing (`timing: exact`). A script whose voice was made here carries `timing: exact` in its header. The build
+then takes every word's time from the voice's own timestamps: no transcriber, no closed pauses, no cut words, and
+the same times on every machine. Cuts, cards, bars and captions land on the word that is heard. Shorts picked in
+seconds on such a video carry `"clock": "exact"` at the top of shorts.json. A video on Jeffrey's own recording does
+not use the line. README.md, "Exact timing for a voice the pipeline made", has the detail.
 
 ## A Short's page (vertical)
 
