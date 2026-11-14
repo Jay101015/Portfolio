@@ -269,6 +269,53 @@ def _interpolate_missing(times: list[float | None], lo: float, hi: float) -> lis
     return out
 
 
+LEAD = 0.25  # a spoken scene is on screen this long before its first word
+MIN_SCENE = 0.5
+
+
+def place_scenes(storyboard: dict[str, Any], per_scene: list[list[Word]], total_sec: float) -> dict[str, Any]:
+    """The scenes placed on their words: `per_scene` holds each scene's words with times, in scene order (an empty
+    list for a scene with nothing said). The words come from the transcript (align, below) or from the voice's own
+    timestamps (pipeline/exact.py); either way the scenes are placed by the same rules."""
+    scenes = storyboard["scenes"]
+    # Scene boundaries: a spoken scene starts at its first word (with a short visual lead);
+    # a silent scene (no narration, e.g. a hero image) takes `dur` seconds just before the
+    # next spoken scene, or after the last one. Every scene ends where the next begins.
+    n = len(scenes)
+    starts: list[float | None] = [ws[0]["s"] - LEAD if ws else None for ws in per_scene]
+    for si in range(n):
+        if starts[si] is not None:
+            continue
+        dur = float(scenes[si]["props"].get("dur", 3.0))
+        nxt = next((starts[j] for j in range(si + 1, n) if starts[j] is not None), None)
+        if nxt is not None:
+            starts[si] = nxt - dur
+        elif si > 0 and not per_scene[si - 1] and starts[si - 1] is not None and next((j for j in range(si - 1, -1, -1) if per_scene[j]), None) is not None:
+            # silent scenes after the last word run one after another (a "watch next" preview, then the end card)
+            starts[si] = starts[si - 1] + float(scenes[si - 1]["props"].get("dur", 3.0))
+        else:
+            prev_words = next((per_scene[j] for j in range(si - 1, -1, -1) if per_scene[j]), None)
+            starts[si] = (prev_words[-1]["e"] + 0.3) if prev_words else 0.0
+    # The first scene is on screen from the first frame whatever the recording does before its first word.
+    resolved: list[float] = [0.0]
+    for si in range(1, n):
+        resolved.append(max(float(starts[si] or 0.0), resolved[si - 1] + MIN_SCENE))
+    last_end = total_sec
+    if not per_scene[-1]:
+        last_end = max(total_sec, resolved[-1] + float(scenes[-1]["props"].get("dur", 3.0)))
+    from .script_parser import time_cues
+
+    for si, sc in enumerate(scenes):
+        sc["start"] = round(resolved[si], 3)
+        sc["end"] = round(resolved[si + 1] if si + 1 < n else max(last_end, resolved[si] + MIN_SCENE), 3)
+        sc["words"] = per_scene[si]
+        time_cues(sc)
+
+    storyboard["durationSec"] = round(max(scenes[-1]["end"], total_sec) + 0.5, 3)
+    storyboard["timing"] = "aligned"
+    return storyboard
+
+
 def align(storyboard: dict[str, Any], transcript: list[Word], total_sec: float) -> dict[str, Any]:
     scenes = storyboard["scenes"]
     script_words: list[tuple[int, str]] = []  # (scene idx, original word)
@@ -319,43 +366,7 @@ def align(storyboard: dict[str, Any], transcript: list[Word], total_sec: float) 
         if starts[i] is not None:
             per_scene_matched[si] += 1
 
-    # Scene boundaries: a spoken scene starts at its first word (with a short visual lead);
-    # a silent scene (no narration, e.g. a hero image) takes `dur` seconds just before the
-    # next spoken scene, or after the last one. Every scene ends where the next begins.
-    LEAD = 0.25
-    MIN_SCENE = 0.5
-    n = len(scenes)
-    starts: list[float | None] = [ws[0]["s"] - LEAD if ws else None for ws in per_scene]
-    for si in range(n):
-        if starts[si] is not None:
-            continue
-        dur = float(scenes[si]["props"].get("dur", 3.0))
-        nxt = next((starts[j] for j in range(si + 1, n) if starts[j] is not None), None)
-        if nxt is not None:
-            starts[si] = nxt - dur
-        elif si > 0 and not per_scene[si - 1] and starts[si - 1] is not None and next((j for j in range(si - 1, -1, -1) if per_scene[j]), None) is not None:
-            # silent scenes after the last word run one after another (a "watch next" preview, then the end card)
-            starts[si] = starts[si - 1] + float(scenes[si - 1]["props"].get("dur", 3.0))
-        else:
-            prev_words = next((per_scene[j] for j in range(si - 1, -1, -1) if per_scene[j]), None)
-            starts[si] = (prev_words[-1]["e"] + 0.3) if prev_words else 0.0
-    # The first scene is on screen from the first frame whatever the recording does before its first word.
-    resolved: list[float] = [0.0]
-    for si in range(1, n):
-        resolved.append(max(float(starts[si] or 0.0), resolved[si - 1] + MIN_SCENE))
-    last_end = total_sec
-    if not per_scene[-1]:
-        last_end = max(total_sec, resolved[-1] + float(scenes[-1]["props"].get("dur", 3.0)))
-    from .script_parser import time_cues
-
-    for si, sc in enumerate(scenes):
-        sc["start"] = round(resolved[si], 3)
-        sc["end"] = round(resolved[si + 1] if si + 1 < n else max(last_end, resolved[si] + MIN_SCENE), 3)
-        sc["words"] = per_scene[si]
-        time_cues(sc)
-
-    storyboard["durationSec"] = round(max(scenes[-1]["end"], total_sec) + 0.5, 3)
-    storyboard["timing"] = "aligned"
+    place_scenes(storyboard, per_scene, total_sec)
     storyboard["alignment"] = {
         "coverage": round(matched / max(1, len(a)), 3),
         "scriptWords": len(a),
@@ -372,9 +383,13 @@ def report(storyboard: dict[str, Any]) -> str:
     al = storyboard.get("alignment")
     if not al:
         return "timing: estimated (no voiceover aligned)"
-    lines = [f"alignment coverage: {al['coverage']*100:.0f}% of {al['scriptWords']} script words matched ({al['transcriptWords']} transcribed)"]
-    if al["coverage"] < 0.6:
-        lines.append("WARNING: low coverage. Check that the recording matches the script, or try a larger Whisper model (--model small.en).")
+    if al.get("source") == "voice":
+        # pipeline/exact.py: no transcriber listened, every word carries the time the voice generator gave it
+        lines = [f"timing: exact, all {al['scriptWords']} script words timed from the voice's own timestamps"]
+    else:
+        lines = [f"alignment coverage: {al['coverage']*100:.0f}% of {al['scriptWords']} script words matched ({al['transcriptWords']} transcribed)"]
+        if al["coverage"] < 0.6:
+            lines.append("WARNING: low coverage. Check that the recording matches the script, or try a larger Whisper model (--model small.en).")
     lines.append(f"{'scene':>5}  {'type':<8} {'start':>7} {'end':>7}  matched")
     for s in al["perScene"]:
         flag = "" if s["words"] == 0 or s["matched"] / s["words"] >= 0.5 else "  <- weak"

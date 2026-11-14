@@ -9,6 +9,8 @@ Expects in the project folder:
                                   and the scenes are built from your words (pipeline/auto_script.py), and the script
                                   that was built is written back so you can edit it and render again
     voiceover.(wav|mp3|m4a|...)   your recording (optional; estimated timing without it)
+    voice.json                    beside a voice the voice step made (pipeline/tts.py); with `timing: exact` in the
+                                  script's header the words are timed from it, not transcribed (pipeline/exact.py)
     images/                       hero images referenced by [image src=...] (optional)
 Writes:
     storyboard.json, storyboard.html, <slug>.mp4 (and <slug>-vertical.mp4); with a shorts.json, each Short's cut
@@ -31,6 +33,7 @@ import urllib.request
 from . import align as al
 from . import sfx
 from . import craft
+from . import exact
 from . import shortcut
 from .enhance import enhance, level_from_header
 from .preview import write_preview
@@ -353,6 +356,10 @@ def write_timing(project: str, sb: dict, slug: str, audio_name: str | None) -> N
     preview to the real recording and edit around it."""
     timing = {"slug": slug, "durationSec": sb["durationSec"], "audio": audio_name,
               "scenes": [{"id": sc["id"], "type": sc["type"], "start": sc["start"], "end": sc["end"], "words": sc.get("words") or []} for sc in sb["scenes"]]}
+    if sb.get("clock"):
+        # `timing: exact` (pipeline/exact.py): the Shorts' check on its own reads this, so seconds typed on the
+        # transcriber's clock are caught there too
+        timing["clock"] = sb["clock"]
     with open(os.path.join(project, "timing.json"), "w", encoding="utf-8") as f:
         json.dump(timing, f, separators=(",", ":"))
 
@@ -768,10 +775,13 @@ def cut_restarts(project: str, take: str | None, header: dict[str, str]) -> bool
     return not made_voice(project, take)
 
 
-def tidy_voice(project: str, audio: str, header: dict[str, str]) -> str:
+def tidy_voice(project: str, audio: str, header: dict[str, str], tighten: bool = True) -> str:
     """The recording with its gated silences filled with room tone and its long pauses closed up (pipeline/voice.py).
     A project transcribed before this step existed keeps its recording as it was, so its Shorts' cut points (seconds
-    in shorts.json) still land where they did; `pauses: tight|keep` in the header decides either way."""
+    in shorts.json) still land where they did; `pauses: tight|keep` in the header decides either way.
+
+    `tighten=False` is exact timing (pipeline/exact.py): the knocks, the digital silence, the clicks and the chirps
+    are still dealt with, none of which moves a word, and every pause stays as long as the voice step made it."""
     kept = os.path.join(project, "transcript.json")
     legacy = False
     if os.path.exists(kept):
@@ -793,6 +803,8 @@ def tidy_voice(project: str, audio: str, header: dict[str, str]) -> str:
     if chirps:
         audio = os.path.join(project, ".cache", "voice-dechirp.wav")
         print(f"voice: {len(chirps)} smoke-alarm chirps (a 3 kHz beep) notched out at " + ", ".join(f"{a:.0f}s" for a, _, _ in chirps))
+    if not tighten:
+        return audio
     longest = float(header.get("pauses.longest", 0.7))
     ceiling = float(header.get("pauses.ceiling", -40))  # a take with breaths in its pauses: -36 lets the pause close over them
     audio, gone, _ = tighten_pauses(audio, os.path.join(project, ".cache", "voice-tight.wav"), longest=longest, ceiling=ceiling)
@@ -806,6 +818,15 @@ def trim_lead(src: str, dst: str, keep: float = 0.3) -> str:
     the speaker does, and the video should open on the voice."""
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-af", f"silenceremove=start_periods=1:start_threshold=-38dB:start_silence={keep}", "-ac", "1", "-ar", "48000", dst], check=True)
     return dst
+
+
+def lead_cut(src: str, dst: str) -> float:
+    """Seconds trim_lead took off the front of `src` to make `dst`, counted in samples. The two files' stated lengths
+    will not do: an mp3 says 45 ms more than it holds, and exact word times would all move by that."""
+    def samples(path: str) -> int:
+        raw = subprocess.run(["ffmpeg", "-v", "error", "-i", path, "-vn", "-ac", "1", "-ar", "48000", "-f", "s16le", "-"], capture_output=True, check=True).stdout
+        return len(raw) // 2
+    return max(0.0, (samples(src) - samples(dst)) / 48000)
 
 
 def music_for(project: str, header: dict[str, str]) -> str | None:
@@ -933,6 +954,7 @@ def main(argv: list[str] | None = None) -> int:
         for lv, msg in checks(md, project, bool(audio)):
             print(f"PREFLIGHT {lv}: {msg}", flush=True)
     words = None
+    timed = None  # each scene's words on the voice's own timestamps (`timing: exact`), else the transcriber times the video
     total = 0.0
     wav = None
     if audio:
@@ -949,18 +971,28 @@ def main(argv: list[str] | None = None) -> int:
             os.makedirs(os.path.join(project, ".cache"), exist_ok=True)
             audio = mute_spans(audio, os.path.join(project, ".cache", "voice-muted.wav"), mute)
             print(f"voice: {len(mute)} stray sound(s) silenced as the script's mute: line asks ({', '.join(f'{a:g}-{b:g}s' for a, b in mute)}); no word is touched")
+        if sb and sb["scenes"]:
+            # `timing: exact`: the words on the voice's own timestamps, settled on the take as it sounds now (pipeline/exact.py)
+            timed = exact.choose(project, sb, _header_lines(md), sound=audio)
         audio = enhance(audio, os.path.join(project, ".cache", "voice-clean.mp3"), level)
         print(f"voice: {'as recorded' if level in ('off', 'raw') else 'enhanced (' + level + ')'}")
+        os.makedirs(os.path.join(project, ".cache"), exist_ok=True)  # voice: raw on a fresh project had no folder for the trimmed take
         before = al.audio_duration(audio)
+        untrimmed = audio
         audio = trim_lead(audio, os.path.join(project, ".cache", "voice-trim.wav"))
         total = al.audio_duration(audio)
         if before - total > 0.2:
             print(f"trimmed {before - total:.1f}s of room tone before the first word")
-        audio = tidy_voice(project, audio, _header_lines(md))
+        if timed is not None:
+            # the exact times are on the take's clock: the build's voice starts after what trim_lead took off its front
+            exact.shift(timed, -lead_cut(untrimmed, audio))
+        # exact timing leaves the made voice as it is: its pauses are the designed ones, and no transcript is read, so
+        # nothing is taken for a stumble and no written word is cut
+        audio = tidy_voice(project, audio, _header_lines(md), tighten=timed is None)
         total = al.audio_duration(audio)
         wav = al.to_wav16k(audio, os.path.join(project, ".cache", "asr16k.wav"))
         hint = " ".join(sc["narration"] for sc in sb["scenes"]) if sb else ""
-        words = transcript_for(project, audio, wav, total, args, hint)
+        words = None if timed is not None else transcript_for(project, audio, wav, total, args, hint)
         if words:
             from .voice import despike, remove_spans, restarts, shift_time
             spikes = despike(words)
@@ -1004,8 +1036,8 @@ def main(argv: list[str] | None = None) -> int:
     public_dir = os.path.join(public_root(), "projects", slug)
     os.makedirs(public_dir, exist_ok=True)
     if audio:
-        if words is not None:
-            sb = al.align(sb, words, total)
+        if timed is not None or words is not None:
+            sb = exact.place(sb, timed, total) if timed is not None else al.align(sb, words, total)
             align_report = al.report(sb)
             print(align_report)
             # the cuts on the quietest moment between scenes, measured in the sound; captions follow the take
@@ -1014,7 +1046,7 @@ def main(argv: list[str] | None = None) -> int:
                 time_cues(sc)
             # a made voice says the script word for word: where the transcript differs it misheard, and following it
             # put "The The board" and "of And members" into the captions file that goes up with the video
-            scripted = made_voice(project, find_audio(project))
+            scripted = timed is not None or made_voice(project, find_audio(project))
             changed = 0 if scripted else take_words(sb, words)
             print(f"cuts: {moved} moved onto the pause between words; captions: " + ("the script's own words (a made voice)" if scripted else f"{changed} words follow the take, not the script"))
             for line in long_scenes(sb):

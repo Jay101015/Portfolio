@@ -17,6 +17,11 @@ with the check's report. It changes nothing in the project. It exits 1 when a Sh
 Who can be held back: a fault stops a Short only when its seconds were typed as spans and the voice was made by the
 pipeline (voice.json), where every word said is the script's own. A pick by scenes, and any video built on a
 recording, gets warnings only, so nothing already published is ever blocked.
+
+Which clock: a video timed from the voice's own timestamps (`timing: exact` in the script, pipeline/exact.py) has
+every word somewhere else than the transcriber put it, by a fraction of a second and by whole seconds where a pause
+was left in. Seconds typed for it count only when shorts.json says so at its top, `"clock": "exact"`; without that
+line a pick by spans is faulted, "these seconds were typed on the transcriber's clock", whatever they land on.
 """
 from __future__ import annotations
 
@@ -108,16 +113,19 @@ class Sound:
 
 def load_plan(plan_path: str | None, sb: dict[str, Any], want: int) -> tuple[list[dict[str, Any]], bool]:
     """The picks to cut: the list in `plan_path` (shorts.json, the studio's picks, each {scenes or spans, hook, name};
-    a "speed" at the top is for all of them), else the planner's best `want`. Also whether a person typed them."""
+    a "speed" at the top is for all of them, and so is a "clock": the clock their seconds were typed on), else the
+    planner's best `want`. Also whether a person typed them."""
     plan = None
     if plan_path and os.path.exists(plan_path):
         with open(plan_path, encoding="utf-8") as f:
             plan = json.load(f)
         if isinstance(plan, dict):
-            top_speed = plan.get("speed")
+            top_speed, top_clock = plan.get("speed"), plan.get("clock")
             plan = plan.get("shorts") or []
             if top_speed is not None:
                 plan = [dict({"speed": top_speed}, **p) for p in plan]
+            if top_clock is not None:
+                plan = [dict({"clock": top_clock}, **p) for p in plan]
     if plan:
         return plan, True
     return plan_shorts(sb, want), False
@@ -216,6 +224,11 @@ def check_edges(sb: dict[str, Any], short: dict[str, Any], name: str, pieces: li
     caption words the script does not have. A fault stays a fault only for seconds typed as spans on a made voice;
     for anything else it is listed with the warnings and nothing is held back.
 
+    Seconds are also only as good as the clock they were typed on. `sb` says which clock the long video is on
+    (`clock: exact` when it was timed from the voice's own timestamps, else the transcriber's) and the pick says
+    which one its seconds were read from (`"clock"`, from the top of shorts.json). When the two differ the Short is
+    faulted whatever its ends land on: the same seconds are other words now.
+
     The transcript's word times can sit most of a second from the sound. So where the sound itself shows a real
     pause at an edge, a word the transcript lays across that edge is not counted as cut: the sound is the witness."""
     seconds, speed = float(cut["durationSec"]), float(cut.get("speed") or 1.0)
@@ -232,6 +245,14 @@ def check_edges(sb: dict[str, Any], short: dict[str, Any], name: str, pieces: li
     say = lambda i, j: " ".join(w["w"] for w in flat[max(0, i):max(0, j)])  # noqa: E731
     faults: list[str] = []
     warnings: list[str] = []
+    video_exact, typed_exact = str(sb.get("clock") or "").lower() == "exact", str(short.get("clock") or "").lower() == "exact"
+    if by_spans and typed and video_exact and not typed_exact:
+        faults.append("these seconds were typed on the transcriber's clock, and this video is timed from the voice's own timestamps (timing: exact), "
+                      "where every word sits somewhere else. Read the seconds again from this build's words (timing.json, or the first and last words here), "
+                      'then put "clock": "exact" at the top of shorts.json')
+    elif by_spans and typed and typed_exact and not video_exact:
+        faults.append('these seconds were typed on the exact clock (shorts.json says "clock": "exact"), and this video is timed by the transcriber, '
+                      "where every word sits somewhere else. Read the seconds again from this build's words, and take the clock line out of shorts.json")
     said: list[int] = []
     tail: tuple[int, int] | None = None  # the first and last word of the last piece that has words
     first = last = ""
@@ -451,7 +472,8 @@ def cut_shorts(project: str, sb: dict[str, Any], audio: str | None, plan_path: s
     print("shorts check, before any render:")
     for c in cuts:
         print("\n".join("  " + row for row in lines(c["check"], held=c["skip"])), flush=True)
-    write_check(os.path.join(project, "shorts-check.md"), slug, checks, "this build's own clock (storyboard.json)", force, picks)
+    clock = "this build's own clock (storyboard.json" + (", exact timing from the voice's own timestamps)" if sb.get("clock") == "exact" else ")")
+    write_check(os.path.join(project, "shorts-check.md"), slug, checks, clock, force, picks)
     for row in summary(checks, force):
         print(row, flush=True)
     return cuts
@@ -477,6 +499,8 @@ def timed_storyboard(project: str) -> tuple[dict[str, Any], str | None, bool]:
     scenes = [dict(sc, props={}, cues=[], words=sc.get("words") or [],
                    narration=script.get(sc["id"], " ".join(str(w["w"]) for w in sc.get("words") or []))) for sc in tm["scenes"]]
     sb = {"slug": tm.get("slug") or os.path.basename(project.rstrip(os.sep)), "fps": 30, "durationSec": tm["durationSec"], "scenes": scenes}
+    if tm.get("clock"):
+        sb["clock"] = tm["clock"]  # "exact": the run timed the video from the voice's own timestamps (pipeline/exact.py)
     audio = os.path.join(project, tm.get("audio") or "voice-preview.mp3")
     return sb, audio if os.path.exists(audio) else None, bool(script)
 
@@ -532,7 +556,7 @@ def main(argv: list[str] | None = None) -> int:
     finally:
         if sound:
             sound.close()
-    print(f"shorts check for {sb['slug']} on the render run's clock (timing.json), {'a made voice' if made else 'a recording'}:")
+    print(f"shorts check for {sb['slug']} on the render run's clock (timing.json{', exact timing' if sb.get('clock') == 'exact' else ''}), {'a made voice' if made else 'a recording'}:")
     if made and not scripted:
         print("  script.md no longer has the scenes timing.json has: the captions were not laid beside the script")
     for check in checks:

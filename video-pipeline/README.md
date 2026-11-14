@@ -129,6 +129,79 @@ Then the edit is fitted to it (pipeline/voice.py):
 - the captions follow what you said where it differs from the script by a small word ("a year" for "per year"),
   keeping the script's figures and names.
 
+A word said twice with a gap ("The ... The boring pot?") is a restart in a
+recording, and the build cuts the first one out. In a voice the pipeline made
+it is the script ("Jensen is Nvidia, Nvidia is Jensen"), and the build never
+cuts it. `restarts: keep` or `restarts: cut` in the header decides either way.
+
+## Exact timing for a voice the pipeline made
+
+When the voice step made the voice (`python -m pipeline.tts`, docs/voice.md),
+the voice generator gives back the time of every word it says, and
+`voice.json` keeps them. A transcriber that listens to the same voice
+afterwards can only guess those times. On the Nvidia video it ran a median
+0.18 s early, 31 of the 1,429 script words got no time of their own, and 16
+were more than half a second out. One header line in `script.md` makes the
+build use the voice's own times:
+
+    timing: exact
+
+Then every cut, card, bar and caption lands on the word that is heard
+(pipeline/exact.py).
+
+- Each script word takes the time of the word the voice said. A figure takes
+  the whole run it is said as: `$400` is said "four hundred", and `£50,000`
+  is said "fifty thousand pounds".
+- The sound has the last word. The voice's own times run late where a phrase
+  ends: a last word was given an end half a second after its sound stopped,
+  and one in five was placed inside the pause after it. So three kinds of
+  time are moved onto the sound of the take, and no others. The first word
+  after a pause starts where the sound starts. A word before a pause ends
+  where the sound stops. A word placed after a "gap" that is full of speech
+  starts where the word before it ends. The build says how many it moved.
+  Inside a phrase the times stay as the voice gave them.
+- The header line is the only switch. Nothing is written into `voice.json`,
+  so making one chunk of a published video's voice again cannot switch that
+  video over.
+- A made voice with no `timing:` line builds as before, on the transcriber.
+  The build prints one note that names the two choices. `timing: transcriber`
+  keeps the transcriber and takes the note away.
+
+What exact timing skips. A made voice says the approved words and nothing
+else, so the build leaves it alone:
+
+- The transcriber. No transcript is read or written, and `--backend none`
+  builds the same video.
+- The pause closer. Every pause plays as long as the voice step made it:
+  0.45 s between chunks, 0.9 s before a new section, and the pauses inside a
+  sentence. The rest of the clean-up still runs (room tone in the digital
+  silence, clicks, the 3 kHz chirp). None of it moves a word.
+- The hunt for restarts. No word is ever cut.
+- The captions following the take. The captions are the script's words.
+
+What it keeps: each cut between scenes still goes on the quietest moment
+between their words, measured in the sound, and the `pace:` silences still go
+in at each cut.
+
+The build falls back to the transcriber, and says why, when:
+
+- the voiceover is not the file `voice.json` describes: your own recording, or
+  a take replaced or edited by hand;
+- the script no longer says what the voice says. Make the voice again;
+- the header also says `pauses: tight` or `restarts: cut`. Both ask for the
+  voice to be edited, and exact timing never edits it.
+
+A video that opts in has every timing moved. The transcriber ran early, so
+everything tied to a word (a card, a mark, a pose, a caption) now lands on the
+word, about 0.12 to 0.18 s later than it used to. The lead is the same: a
+scene is placed 0.25 s before its first word, and the cut then goes on the
+quietest moment between the two scenes' words. That is left as designed, so
+most cuts stay where they were in the sound. On the Nvidia video 7 of 43
+moved by more than 0.3 s, the chart at 4:29 among them. The pauses are kept,
+so the video runs a little longer (2.5 s on that one). Its Shorts need one
+more line, the clock (see Shorts below). The first video built this way gets
+the full review before it goes out.
+
 ## A written script and your voice
 
 If you wrote a script and read from it, give the studio both. In Read, paste it
@@ -455,6 +528,22 @@ render run committed. That is the clock the seconds in `shorts.json` are typed
 on. A build on your own machine can sit a few seconds away from it when the
 transcriber timed the video, so trust the check on its own. `--plan FILE`
 checks another list of picks, and `--pick short-3` checks one.
+
+**The clock.** A video built with `timing: exact` has every word at another
+time than the transcriber gave it. Seconds typed for it count only when
+`shorts.json` says so at its top:
+
+```json
+{"clock": "exact", "shorts": [{"name": "short-3", "spans": [[267.9, 291.2]], "hook": "..."}]}
+```
+
+Without that line a pick typed in seconds is faulted and held back: "these
+seconds were typed on the transcriber's clock". Read the seconds again from
+the new `timing.json`, then add the line. The same goes the other way round:
+seconds marked `"clock": "exact"` are faulted on a video the transcriber
+timed. A pick by scenes has no seconds and needs no clock. After an exact
+build `timing.json` carries `"clock": "exact"` too, so the check on its own
+knows which clock it is reading.
 
 Three switches on the build:
 
