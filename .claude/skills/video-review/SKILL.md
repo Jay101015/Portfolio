@@ -16,6 +16,12 @@ Put its scene tags into the script before building. Send Jeffrey its ASK JEFFREY
 drawings, poses or props to make): he decides what to make, and the build goes ahead with what exists. Its NEW TOOLS
 lines are pipeline work: build the ones a scene needs now, list the rest for him.
 
+## 0b. Before any render: the checks that take seconds
+A review pass is the expensive step (each reviewer reads the whole video), so do not spend one on what a script can
+find. Run the checks in video-pipeline/EDITOR.md, "Before any render: the checks that take seconds" (preflight, the
+real-material board, the build with --no-render and its Shorts check, the proof sheets), fix what they name, look at
+the sheets yourself, and only then render. Do not re-render a video Jeffrey already has unless he asks for it.
+
 ## 1. Build the review kit
 ```
 python3 video-pipeline/scripts/review-kit.py <video.mp4> <kit dir> [--storyboard <storyboard or a Short's cut json>] [--words <words.json>]

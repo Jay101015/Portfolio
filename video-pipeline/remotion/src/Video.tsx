@@ -463,7 +463,7 @@ const KeptBoard: React.FC<{prev: Scene; brand: Brand; mode: 'yes' | 'arrow' | 's
 };
 
 export const Video: React.FC<Storyboard> = (sb) => {
-  const {fps, width, height} = useVideoConfig();
+  const {fps, width, height, durationInFrames: lastFrame} = useVideoConfig();
   const flags = (sb.brand ?? {}) as Record<string, unknown>;
   const brand: Brand = {
     ...(presets[sb.theme ?? 'toon'] ?? presets.toon),
@@ -486,7 +486,9 @@ export const Video: React.FC<Storyboard> = (sb) => {
       {sb.audio ? <Audio src={staticFile(sb.audio)} /> : null}
       {sb.scenes.map((scene, idx) => {
         const from = Math.round(scene.start * fps);
-        const dur = Math.max(1, Math.round((scene.end - scene.start) * fps));
+        // the last scene runs to the last frame the composition has: its length is rounded up (Root.tsx) and a scene's
+        // is rounded, so a Short of a few seconds could end on one frame of bare paper
+        const dur = Math.max(1, Math.round((scene.end - scene.start) * fps), idx === sb.scenes.length - 1 ? lastFrame - from : 1);
         const prev = idx > 0 ? sb.scenes[idx - 1] : null;
         const next = idx + 1 < sb.scenes.length ? sb.scenes[idx + 1] : null;
         const keep = prev ? keepMode(scene) : '';

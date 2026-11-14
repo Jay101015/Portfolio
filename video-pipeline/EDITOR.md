@@ -97,6 +97,27 @@ ones a script can show).
 - The captions file of a made voice is the script's own words in the script's order. A made voice is never cut for
   "restarts": a word said twice in it is the script.
 
+## Before any render: the checks that take seconds
+
+A render takes half an hour and a review pass costs most of a usage window. These run first, on the script and the
+build, and each one names what it found. Fix what they say, then render once.
+
+1. `python -m pipeline.preflight projects/<name>`: the script against the rules (the first frame, the title's number,
+   real pages with cards on their words or no mark, a news story with no `recorded:` line). The build prints the same
+   lines as PREFLIGHT.
+2. `python -m pipeline.realboard projects/<name> --out <folder>`: one picture of which scenes show real material and
+   which fall back to stock or a board, a verdict on every captured page (blocked, covered, banner, advert box), a
+   check that no crop cuts through text, and the short list of what only Jeffrey can supply. docs/real-material.md.
+3. `python -m pipeline.build projects/<name> --no-render`: builds the storyboard, cuts every Short and checks its two
+   ends against the words and the sound (`shorts-check.md`). A Short that starts or ends inside a sentence is held
+   back. `python -m pipeline.shortcut projects/<name> --out <folder>` runs that check alone and writes each cut to
+   listen to. Pick Shorts by their words (`"from"`, `"to"`), not by seconds. README.md, Shorts.
+4. `python -m pipeline.proof projects/<name> --bundle <bundle folder> --out <folder>`: sheets of stills of the long
+   video and of every Short in a few minutes, with measured checks (a bare first frame, a bare band, a near-empty
+   page, a fading last frame, a still held too long). Look at the sheets; a number passing is not enough. docs/proof.md.
+5. The voice: `python -m pipeline.tts projects/<name> --approve "Jeffrey, <date>"` only after he has said yes to the
+   words. Without it no audio is made. A script whose voice is made here carries `timing: exact`.
+
 ## His voice (docs/voice.md)
 
 A script is Jeffrey talking, not an article read out. docs/voice.md holds how he talks (from his own unscripted
