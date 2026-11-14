@@ -1,7 +1,8 @@
 """A Short's zones (remotion/src/components/upright.json): every number is a fraction of the frame, the sticker, the
 caption, the stage and the cards do not overlap in any variant, EDITOR.md's zone table quotes the same numbers, and the
-scenes that are laid in the zones (the caption, the receipt, the stat, the pie, the cards, the photo opener) read them
-from the file. python -m pytest tests/test_upright.py"""
+scenes that are laid in the zones (the caption, the receipt, the stat, the pie, the chart, the compare, the cards, the
+photo opener) read them from the file. Also the first scene of a Short (paper/opener.ts) and the pencil bars a header
+can ask for. python -m pytest tests/test_upright.py"""
 import json
 import os
 import re
@@ -123,7 +124,7 @@ def test_the_caption_clears_the_sticker_and_what_is_under_it_wherever_it_sits():
     # the scene types that carry it somewhere other than the band
     assert set(cap["at"].values()) <= {"board", "set"}
     assert {k for k, v in cap["at"].items() if v == "board"} == {"text", "hook", "takeaway", "recap"}
-    assert cap["at"].get("set") == "set"
+    assert {k for k, v in cap["at"].items() if v == "set"} == {"set"}  # a compare is laid in the stage: it has the band
 
 
 def pct(v):
@@ -200,6 +201,11 @@ def test_editor_md_says_where_the_caption_sits_on_each_scene_type():
     for cells in rows:
         if not re.search(rf"\b({named})\b", cells[0]):
             assert f"{pct(cap['top'])}%" in cells[1], cells
+    # the chart and the compare each have a row, in the band, that says they are laid in the stage
+    for kind in ("chart", "compare"):
+        row = next((cells for cells in rows if re.search(rf"\b{kind}\b", cells[0])), None)
+        assert row is not None, kind
+        assert f"{pct(cap['top'])}%" in row[1] and "In the stage" in row[2], row
 
 
 def test_the_renderer_reads_the_zones_from_the_file():
@@ -256,3 +262,65 @@ def component_of_banner(video):
     start = video.index("const HookBanner")
     return video[start:video.index("\n};", start)]
 
+
+
+def test_the_chart_and_the_compare_are_laid_out_from_the_zones():
+    scenes = read(SRC, "paper", "scenes.tsx")
+    chart, compare = component(scenes, "PaperChart"), component(scenes, "PaperCompare")
+    for src in (chart, compare):
+        # they ask for the stage, with what stands under it, and no longer hang from a fraction of the height
+        assert "useUpright()" in src and "up.stage(stageUnder(" in src
+        assert "height * 0.29" not in src
+        # the title, the content and the source line share the stage's height between them
+        assert "stage.h - titleH - sourceH" in src
+        assert "left: stage.x, top: stage.y, width: stage.w, height: stage.h" in src
+    # the chart: the band a third of the height tall is gone, and the plot's width is the stage's
+    assert "0.31" not in chart
+    assert "W = stage.w" in chart
+    # the compare: the fixed 400 px box is gone; the value is fitted to 80% of the box, the items are 50 px
+    assert "400 : 480" not in compare and "400 * u" not in compare
+    assert "cardW = stage.w" in compare and "(cardW * 0.8) / valueEm" in compare and "50 * u" in compare
+    # its caption has the band like every other scene laid in the stage (the 13.5% exception is gone)
+    assert "compare" not in zones()["caption"]["at"]
+    assert "compare" not in component_of_banner(read(SRC, "Video.tsx"))
+
+
+def test_the_first_scene_of_a_short_is_posed_on_its_first_frame():
+    opener = read(SRC, "paper", "opener.ts")
+    assert "export const Opener = React.createContext(false)" in opener
+    # Video.tsx sets it for the first scene of a Short and no other
+    video = read(SRC, "Video.tsx")
+    assert "<Opener.Provider value={!!sb.short && idx === 0}>" in video
+    assert video.count("Opener.Provider value") == 1
+    # the chart and the compare read it: the title, the axes and the boxes are finished on frame 0
+    scenes = read(SRC, "paper", "scenes.tsx")
+    for name in ("PaperChart", "PaperCompare"):
+        src = component(scenes, name)
+        assert "const posed = React.useContext(Opener)" in src, name
+        assert "start={posed ? POSED : 4}" in src, name  # the title is already written
+    chart = component(scenes, "PaperChart")
+    assert "const axes = posed ? 1 :" in chart  # the axes are already drawn
+    assert "const pencil = posed || !!brand.pencil" in chart  # and every bar is outlined
+    compare = component(scenes, "PaperCompare")
+    assert "const box = posed ? 1 :" in compare and "const textAt = posed ? POSED :" in compare
+
+
+def test_pencil_bars_are_asked_for_in_the_header_and_off_without_it():
+    # `brand.pencil: on` in a script header reaches the renderer as brand.pencil; without it the flag is false
+    assert "pencil?: boolean" in read(SRC, "types.ts")
+    video = read(SRC, "Video.tsx")
+    assert "pencil: ['on', 'yes', 'true', '1'].includes(String(flags.pencil ?? 'off').toLowerCase())" in video
+    chart = component(read(SRC, "paper", "scenes.tsx"), "PaperChart")
+    assert "pencil && grow < 1" in chart  # the outline is drawn only while asked for and until the bar is filled
+    md = read(ROOT, "EDITOR.md")
+    section = md.split("## A Short's page (vertical)", 1)[1].split("\n## ", 1)[0]
+    assert "`brand.pencil: on`" in section
+
+
+def test_editor_md_no_longer_says_a_chart_is_a_third_of_the_height():
+    md = read(ROOT, "EDITOR.md")
+    assert "A chart is a third of the height" not in md
+    assert "third of the height" not in md.split("## A Short's page (vertical)", 1)[1].split("\n## ", 1)[0]
+    section = md.split("## A Short's page (vertical)", 1)[1].split("\n## ", 1)[0]
+    assert "A chart is laid in the stage" in section and "A compare is laid in the stage" in section
+    assert "The first frame is the Short's picture in the feed" in section

@@ -28,6 +28,7 @@ import {PenHand} from './paper/write';
 import {ArtLayer} from './paper/art';
 import {PoseLayer} from './paper/poses';
 import {CharacterOn} from './paper/character';
+import {Opener} from './paper/opener';
 import {FootageCards, SetScene} from './paper/setpiece';
 import {Arrow, BoilContext, SketchPath} from './paper/sketch';
 import {KeyWords} from './paper/keywords';
@@ -151,8 +152,8 @@ const HookBanner: React.FC<{text: string; brand: Brand; scenes: Scene[]}> = ({te
       </div>
     );
   }
-  // the long video, and a Short's set piece (and compare, until it is laid into the stage: upright.json caption.at),
-  // where the caption sits high in what would be the sticker's band: the sticker as it has always been.
+  // the long video, and a Short's set piece (upright.json caption.at), where the caption sits high in what would be
+  // the sticker's band: the sticker as it has always been.
   // on a phone the top 8% is the status bar and the Shorts header, and the right 15% its buttons: the sticker starts
   // 9% down at 72 px (two lines if it must), then settles to 50 px once the board's lines need the room
   const size = (vertical ? 72 - 22 * p : 48) * u;
@@ -473,6 +474,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
     illustrated: String(flags.style ?? 'icons').toLowerCase() === 'illustrated',
     creditsOnScreen: String(flags.credits ?? 'description').toLowerCase() === 'screen', // a credit in the corner reads as a watermark: off unless asked
     pagecards: String(flags.pagecards ?? '').toLowerCase() === 'strip' ? 'strip' : undefined, // cards off a real page's headline (paper/setpiece.tsx cardsAt)
+    pencil: ['on', 'yes', 'true', '1'].includes(String(flags.pencil ?? 'off').toLowerCase()), // every bar in pencil outline before it is said (paper/scenes.tsx PaperChart); off unless asked for
   };
   const avatar: AvatarConfig = {...defaultAvatar, ...(sb.avatar ?? {})};
   return (
@@ -518,6 +520,8 @@ export const Video: React.FC<Storyboard> = (sb) => {
         }
         return (
           <Sequence key={scene.id} from={from} durationInFrames={dur} name={`${scene.id} ${scene.type}`}>
+            {/* the first scene of a Short: its first frame is the Short's picture in the feed, so a chart or a compare is posed on it (paper/opener.ts) */}
+            <Opener.Provider value={!!sb.short && idx === 0}>
             <SceneFade durationInFrames={dur} toon={brand.toon} transition={tr} dir={scene.id % 2 ? 1 : -1}>
               <Camera scene={scene} toon={brand.toon} push={!!brand.board && !['broll', 'clip', 'still', 'image', 'outro', 'set'].includes(scene.type) && String(flags.motion ?? 'off').toLowerCase() === 'on'}>
                 {keep && prev ? <KeptBoard prev={prev} brand={brand} mode={keep} /> : null}
@@ -530,6 +534,7 @@ export const Video: React.FC<Storyboard> = (sb) => {
                 {scene.keys?.length ? <KeyWords scene={scene} brand={brand} /> : null}
               </Camera>
             </SceneFade>
+            </Opener.Provider>
           </Sequence>
         );
       })}

@@ -2,7 +2,7 @@ import React, {useMemo} from 'react';
 import {AbsoluteFill, Easing, Freeze, Img, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import {Check, X} from 'lucide-react';
 import type {Brand, Scene, Word} from '../types';
-import {compactNum, displayWidth, findPhraseTime, formatNum, parseValue, useLayout, useUpright} from '../components/layout';
+import {compactNum, displayLines, displayWidth, findPhraseTime, formatNum, parseValue, useLayout, useUpright} from '../components/layout';
 import zones from '../components/upright.json';
 import {fadeIn, pop, rnd} from '../components/motion';
 import {Arrow, Marker, Ring, SketchEllipse, SketchLine, SketchPath, SketchRect, Underline, figureHeight, figureWidth, roughGen} from './sketch';
@@ -17,6 +17,7 @@ import {captionLine, isLoss, keyWords, moneyTint} from './phrase';
 import {Media} from './media';
 import {Loop, Sequence} from 'remotion';
 import {CharacterOn, isPersonArt} from './character';
+import {Opener} from './opener';
 import {figureTime, lineIndex, lineIndices} from './lineMatch';
 import {PaperReceipt} from './receipt';
 
@@ -663,46 +664,89 @@ export const PaperList: React.FC<P> = ({scene, brand}) => {
 
 // ------------------------------------------------------------------ compare
 type Side = {title: string; value?: string; items?: string[]; color?: string};
+/** a start so far back (20 seconds) that whatever it times, a written title, heading or value, is finished on the
+ * scene's first frame: how a Short's opening chart or compare is posed (paper/opener.ts). No further back than that:
+ * on the paper look a word's landing is a spring, which is worked out frame by frame from its start. */
+const POSED = -600;
 export const PaperCompare: React.FC<P> = ({scene, brand}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const {u, pad, isVertical, width} = useLayout();
+  const up = useUpright();
+  const characterOn = React.useContext(CharacterOn);
+  const posed = React.useContext(Opener); // a Short's first scene: both boxes, their headings and their values are on frame 0
   const left: Side = scene.props.left ?? {title: 'A'};
   const right: Side = scene.props.right ?? {title: 'B'};
   const title: string | undefined = scene.props.title;
-  const cardW = isVertical ? width - pad * 2 : (width - pad * 2 - 90 * u) / 2;
-  const cardH = (isVertical ? 400 : 480) * u;
+  const source: string | undefined = scene.props.source;
+  const titleSize = (isVertical ? 56 : 68) * u * (brand.board ? 1.1 : 1);
+  let cardW = (width - pad * 2 - 90 * u) / 2; // the long video: two boxes side by side
+  let cardH = 480 * u;
+  // A Short: the two boxes are stacked in the stage (components/upright.json) and fill it. The title is at the top of
+  // the stage, the source line along its foot, and the boxes share what is between (about 325 px each over cards with
+  // a two-line source). They used to be a fixed 400 px, hung from the middle of the frame, with the caption pushed up
+  // to 13.5% to clear them. Heading, value and items are centred in their box. The value is fitted to 80% of the box's
+  // width (176 px for "Down £950"; it was 120 px), both boxes at the size the wider value takes, so the two figures
+  // are compared at one size, and no bigger than the box's height allows or 240 px. The items are 50 px. In a box too
+  // short for all that the items drop to 40 px first, then the value gives way, to 96 px at least.
+  const stage = up ? up.stage(stageUnder(scene, brand, characterOn)) : null;
+  let lay: {value: number; item: number; padV: number; gap: number; between: number} | null = null;
+  if (stage) {
+    const titleH = title ? displayLines(title, titleSize, stage.wide.w, brand.display) * titleSize * 1.15 + 10 * u : 0;
+    const sourceH = source ? writtenLines(`source: ${source}`, 38 * u, stage.w) * 38 * u * 1.15 + 10 * u : 0;
+    const between = 52 * u; // the gap the "vs" stands in
+    cardW = stage.w;
+    cardH = Math.max(220 * u, (stage.h - titleH - sourceH - between) / 2);
+    const sides = [left, right];
+    // the wider value in ems, as the marker writes it: its words and the gap between them
+    const valueEm = Math.max(0, ...sides.map((s) => (s.value ? String(s.value).split(/\s+/).filter(Boolean).reduce((w, word) => w + displayWidth(word, 1, brand.display) + 0.28, -0.28) : 0)));
+    // the lines the longer list of items takes at `item` px (about 0.46 em a character in the body face, beside its tick)
+    const rows = (item: number) => Math.max(0, ...sides.map((s) => (s.items ?? []).reduce((n, it) => n + Math.max(1, Math.ceil((it.length * 0.46 * item + item * 1.3) / (cardW - 48 * u))), 0)));
+    const padV = 16 * u;
+    const gap = 8 * u;
+    // the height a box's content takes with the value at `value` px and the items at `item` px
+    const need = (value: number, item: number) => padV * 2 + 56 * u + (valueEm ? gap + value * 0.9 : 0) + (rows(item) ? gap + rows(item) * item * 1.2 : 0);
+    const byHeight = (item: number) => (cardH - need(0, item)) / 0.9;
+    const item = valueEm && byHeight(50 * u) < 120 * u ? 40 * u : 50 * u;
+    const value = valueEm ? Math.max(96 * u, Math.min((cardW * 0.8) / valueEm, byHeight(item), 240 * u)) : 0;
+    const spare = Math.max(0, cardH - need(value, item)); // room left over in the box: some of it goes between its lines
+    lay = {value, item, padV, gap: gap + Math.min(20 * u, spare / 4), between};
+  }
   const titleDone = title ? doneAt(brand, title, fps, 4, 2, 24) : 0;
-  const Card: React.FC<{side: Side; bad: boolean; delay: number; tilt: number; seed: number}> = ({side, bad, delay, tilt, seed}) => {
-    const s = pop(frame, fps, delay, 14);
+  const Card: React.FC<{side: Side; bad: boolean; delay: number; tilt: number; seed: number; itemsFrom: number}> = ({side, bad, delay, tilt, seed, itemsFrom}) => {
+    const s = posed ? 1 : pop(frame, fps, delay, 14);
     const color = bad ? brand.accent2 : brand.accent;
     const Icon = bad ? X : Check;
-    const box = brand.board ? lin(frame, delay, delay + Math.round(fps * 0.6)) : Math.min(1, s * 1.3);
-    const textAt = brand.board ? delay + Math.round(fps * 0.6) + 2 : delay;
-    const valueAt = textAt + (brand.board ? writeFrames(side.title, fps, 30) + 2 : 0);
-    const itemsAt = valueAt + (brand.board && side.value ? writeFrames(side.value, fps, 12) + 2 : 12);
+    const box = posed ? 1 : brand.board ? lin(frame, delay, delay + Math.round(fps * 0.6)) : Math.min(1, s * 1.3);
+    const textAt = posed ? POSED : brand.board ? delay + Math.round(fps * 0.6) + 2 : delay;
+    const valueAt = posed ? POSED : textAt + (brand.board ? writeFrames(side.title, fps, 30) + 2 : 0);
+    const itemsAt = posed ? itemsFrom : valueAt + (brand.board && side.value ? writeFrames(side.value, fps, 12) + 2 : 12);
+    const itemSize = lay ? lay.item : 40 * u;
+    const tick = lay ? lay.item * 0.85 : 34 * u;
+    // a written line ends in the marker's word gap: the same on its left centres the words in a Short's box
+    const centred: React.CSSProperties = lay ? {paddingLeft: brand.board ? '0.28em' : 0} : {};
     return (
       <div style={{position: 'relative', width: cardW, height: cardH, transform: `rotate(${tilt}deg) translateY(${brand.board ? 0 : (1 - s) * 30 * u}px)`, opacity: brand.board ? 1 : Math.min(1, s * 1.4)}}>
         <svg width={cardW} height={cardH} viewBox={`0 0 ${cardW} ${cardH}`} style={{position: 'absolute', inset: 0, overflow: 'visible'}}>
-          <SketchRect x={6} y={6} w={cardW - 12} h={cardH - 12} draw={box} win={brand.board ? [delay, delay + Math.round(fps * 0.6)] : undefined} options={{stroke: brand.ink, strokeWidth: 3.5 * u, seed, fill: brand.board ? undefined : brand.panel, fillStyle: 'solid', roughness: 1.2}} />
+          <SketchRect x={6} y={6} w={cardW - 12} h={cardH - 12} draw={box} win={brand.board && !posed ? [delay, delay + Math.round(fps * 0.6)] : undefined} options={{stroke: brand.ink, strokeWidth: 3.5 * u, seed, fill: brand.board ? undefined : brand.panel, fillStyle: 'solid', roughness: 1.2}} />
         </svg>
-        <div style={{position: 'relative', padding: 40 * u, display: 'flex', flexDirection: 'column', gap: 14 * u, height: '100%'}}>
-          <div style={{fontFamily: hand(brand), fontSize: 56 * u, color, lineHeight: 1}}>{brand.board ? <Write text={side.title} frame={frame} fps={fps} start={textAt} cps={30} color={color} /> : side.title}</div>
+        <div style={lay ? {position: 'relative', boxSizing: 'border-box', height: '100%', padding: `${lay.padV}px ${24 * u}px`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: lay.gap} : {position: 'relative', padding: 40 * u, display: 'flex', flexDirection: 'column', gap: 14 * u, height: '100%'}}>
+          <div style={{fontFamily: hand(brand), fontSize: 56 * u, color, lineHeight: 1, ...centred}}>{brand.board ? <Write text={side.title} frame={frame} fps={fps} start={textAt} cps={30} color={color} /> : side.title}</div>
           {side.value ? (
-            <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: 120 * u, lineHeight: 1, letterSpacing: brand.board ? 0 : -4 * u, color: brand.ink, fontVariantNumeric: 'tabular-nums'}}>
+            <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: lay ? lay.value : 120 * u, lineHeight: lay ? 0.9 : 1, letterSpacing: brand.board ? 0 : -4 * u, color: brand.ink, fontVariantNumeric: 'tabular-nums', ...centred, ...(lay ? {whiteSpace: 'nowrap'} : {})}}>
               {brand.board ? <Write text={side.value} frame={frame} fps={fps} start={valueAt} cps={12} /> : side.value}
             </div>
           ) : null}
           {(side.items ?? []).map((it, i) => {
             const at = itemsAt + i * (brand.board ? writeFrames(it, fps, 34) + 6 : 5);
             return (
-              <div key={i} style={{fontSize: 40 * u, color: brand.ink, display: 'flex', gap: 14 * u, alignItems: 'flex-start', opacity: brand.board ? 1 : fadeIn(frame, at, 8)}}>
+              <div key={i} style={{fontSize: itemSize, color: brand.ink, display: 'flex', gap: 14 * u, alignItems: 'flex-start', opacity: brand.board ? 1 : fadeIn(frame, at, 8), ...(lay ? {lineHeight: 1.2} : {})}}>
                 {brand.board ? (
-                  <svg width={34 * u} height={34 * u} viewBox="0 0 24 24" style={{flexShrink: 0, marginTop: 4 * u, overflow: 'visible', visibility: frame < at ? 'hidden' : undefined}}>
+                  <svg width={tick} height={tick} viewBox="0 0 24 24" style={{flexShrink: 0, marginTop: lay ? lay.item * 0.14 : 4 * u, overflow: 'visible', visibility: frame < at ? 'hidden' : undefined}}>
                     <SketchPath d={bad ? 'M5,5 L19,19 M19,5 L5,19' : 'M4,13 L10,19 L20,6'} win={[at, at + 5]} options={{stroke: color, strokeWidth: 3.5, seed: seed + i, roughness: 0.8}} />
                   </svg>
                 ) : (
-                  <Icon size={34 * u} color={color} strokeWidth={3} style={{flexShrink: 0, marginTop: 4 * u}} />
+                  <Icon size={tick} color={color} strokeWidth={3} style={{flexShrink: 0, marginTop: lay ? lay.item * 0.14 : 4 * u}} />
                 )}
                 <span>{brand.board ? <Write text={it} frame={frame} fps={fps} start={at + 5} cps={34} /> : it}</span>
               </div>
@@ -714,21 +758,52 @@ export const PaperCompare: React.FC<P> = ({scene, brand}) => {
   };
   const leftAt = brand.board ? titleDone + 4 : 4;
   const rightAt = brand.board ? leftAt + Math.round(fps * 0.6) + writeFrames(`${left.title} ${left.value ?? ''} ${(left.items ?? []).join(' ')}`, fps, 30) + 10 : 9;
-  const vs = brand.board ? lin(frame, rightAt - 8, rightAt - 2) : pop(frame, fps, 14, 10);
+  const vs = posed ? 1 : brand.board ? lin(frame, rightAt - 8, rightAt - 2) : pop(frame, fps, 14, 10);
+  // a Short's opener: the boxes are there before the first frame; their items are written on just after it, the first
+  // box's and then the second's, and the source line after them
+  const itemsLen = (side: Side) => (side.items ?? []).reduce((n, it) => n + (brand.board ? writeFrames(it, fps, 34) + 6 : 5), 0);
+  const leftItems = Math.max(0, Math.round(-scene.start * fps)) + 4;
+  const rightItems = leftItems + itemsLen(left) + 4;
+  const sourceAt = posed ? rightItems + itemsLen(right) + 4 : brand.board ? rightAt + fps : 24;
+  const good = scene.props.good;
+  if (stage && lay) {
+    return (
+      <AbsoluteFill>
+        <div style={{position: 'absolute', left: stage.x, top: stage.y, width: stage.w, height: stage.h, display: 'flex', flexDirection: 'column'}}>
+          {title ? (
+            // the title is above the height YouTube's buttons start at: it may run to the right margin
+            <div style={{width: stage.wide.w, fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: titleSize, lineHeight: 1.15, color: brand.ink, marginBottom: 10 * u, letterSpacing: brand.board ? 0 : -1 * u}}>
+              <Txt brand={brand} text={title} frame={frame} fps={fps} start={posed ? POSED : 4} seed={21} per={2} cps={24} />
+            </div>
+          ) : null}
+          <div style={{display: 'flex', flexDirection: 'column', gap: lay.between, alignItems: 'center', position: 'relative'}}>
+            <Card side={left} bad={good !== 'left' && good !== 'both'} delay={leftAt} tilt={-0.6} seed={41} itemsFrom={leftItems} />
+            <div style={{position: 'absolute', left: '50%', top: '50%', transform: `translate(-50%,-50%) scale(${vs}) rotate(-6deg)`, fontFamily: hand(brand), fontSize: 64 * u, lineHeight: 1, fontWeight: 700, color: brand.ink, zIndex: 2}}>vs</div>
+            <Card side={right} bad={good === 'left' && good !== 'both'} delay={rightAt} tilt={0.5} seed={42} itemsFrom={rightItems} />
+          </div>
+          {source ? (
+            <div style={{marginTop: 'auto', lineHeight: 1.15}}>
+              <Source brand={brand} source={source} delay={sourceAt} />
+            </div>
+          ) : null}
+        </div>
+      </AbsoluteFill>
+    );
+  }
   return (
     <AbsoluteFill style={{justifyContent: 'center', padding: pad}}>
       {title ? (
-        <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 56 : 68) * u * (brand.board ? 1.1 : 1), color: brand.ink, marginBottom: 36 * u, letterSpacing: brand.board ? 0 : -1 * u}}>
-          <Txt brand={brand} text={title} frame={frame} fps={fps} seed={21} per={2} cps={24} />
+        <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: titleSize, color: brand.ink, marginBottom: 36 * u, letterSpacing: brand.board ? 0 : -1 * u}}>
+          <Txt brand={brand} text={title} frame={frame} fps={fps} start={posed ? POSED : 4} seed={21} per={2} cps={24} />
         </div>
       ) : null}
-      <div style={{display: 'flex', flexDirection: isVertical ? 'column' : 'row', gap: 90 * u, alignItems: 'center', position: 'relative'}}>
-        <Card side={left} bad={scene.props.good !== 'left' && scene.props.good !== 'both'} delay={leftAt} tilt={-1.2} seed={41} />
+      <div style={{display: 'flex', flexDirection: 'row', gap: 90 * u, alignItems: 'center', position: 'relative'}}>
+        <Card side={left} bad={good !== 'left' && good !== 'both'} delay={leftAt} tilt={-1.2} seed={41} itemsFrom={leftItems} />
         <div style={{position: 'absolute', left: '50%', top: '50%', transform: `translate(-50%,-50%) scale(${vs}) rotate(-6deg)`, fontFamily: hand(brand), fontSize: 64 * u, fontWeight: 700, color: brand.ink, zIndex: 2}}>vs</div>
-        <Card side={right} bad={scene.props.good === 'left' && scene.props.good !== 'both'} delay={rightAt} tilt={1} seed={42} />
+        <Card side={right} bad={good === 'left' && good !== 'both'} delay={rightAt} tilt={1} seed={42} itemsFrom={rightItems} />
       </div>
       <div style={{marginTop: 26 * u}}>
-        <Source brand={brand} source={scene.props.source} delay={brand.board ? rightAt + fps : 24} />
+        <Source brand={brand} source={source} delay={sourceAt} />
       </div>
     </AbsoluteFill>
   );
@@ -754,17 +829,67 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const {u, pad, isVertical, width, height} = useLayout();
+  const up = useUpright();
+  const characterOn = React.useContext(CharacterOn);
+  const posed = React.useContext(Opener); // a Short's first scene: its title, axes, labels and every bar's outline are on frame 0
+  // every bar in pencil outline before its figure is said: on a Short's opener, and on any chart of a script whose header
+  // says `brand.pencil: on`, so the chart never waits on empty axes for the voice to reach its first number
+  const pencil = posed || !!brand.pencil;
   const chartType: 'line' | 'bar' = scene.props.chartType ?? (scene.props.bars ? 'bar' : 'line');
+  const isLine = chartType === 'line';
   const title: string | undefined = scene.props.title;
+  const source: string | undefined = scene.props.source;
   const yFormat: string | undefined = scene.props.yFormat;
   const xLabel: string | undefined = scene.props.xLabel;
-  const W = width - pad * 2;
-  const H = Math.min(height * (isVertical ? 0.31 : 0.56), (isVertical ? 640 : 640) * u); // a Short: the band under the caption, above its cards
-  const left = 150 * u;
-  const bottom = 70 * u;
-  const top = 60 * u;
-  const plotW = W - left - 200 * u;
+  const yLab = (v: number) => compactNum(v, yFormat);
+  const series: Series[] = isLine ? scene.props.series ?? [] : [];
+  const bars: Bar[] = isLine ? [] : scene.props.bars ?? [];
+  const yMin = isLine ? 0 : Number(scene.props.yMin ?? 0) || 0; // a bar chart's floor (ymin=150); line charts keep nought
+  const axis = niceAxis(isLine ? Math.max(...series.flatMap((s) => s.points.map((q) => q[1])), 0) : Math.max(...bars.map((b) => b.value - yMin), 0));
+  const yMax = yMin + axis.max;
+  const ticks = axis.ticks;
+  // the long video: the plot is 56% of the height (640 px at most), with room on its right for a line's tip figure
+  let W = width - pad * 2;
+  let H = Math.min(height * 0.56, 640 * u);
+  let left = 150 * u;
+  let right = 200 * u;
+  let bottom = 70 * u;
+  let top = 60 * u;
+  let tickSize = 30 * u; // the figures down the axis
+  let figSize = 40 * u; // a bar's figure
+  let labSize = 30 * u; // a bar's label
+  const gap = 40 * u; // between bars
+  const titleSize = (isVertical ? 54 : 64) * u * (brand.board ? 1.1 : 1);
+  const stage = up ? up.stage(stageUnder(scene, brand, characterOn)) : null;
+  if (stage) {
+    // A Short: the chart is laid in the stage (components/upright.json). The title is at the top of the stage, the
+    // source line along its foot, and the plot is everything between: about 700 px over cards with a two-line source,
+    // over 900 px with nothing under the stage. It used to be a band 31% of the height tall (595 px) hanging from 29%,
+    // over a page left bare down to its cards. It runs from the left margin to 84% of the width, because it reaches
+    // down beside YouTube's buttons. A line chart keeps the room its tip figures need inside that width; a bar chart
+    // needs none, so its bars run to the edge. The type grows with the plot: the axis figures are 34 px, and a bar's
+    // figure and its label are as big as the bars' pitch lets them sit on one line (56 px and 40 px at most).
+    const widest = (texts: string[]) => Math.max(0.5, ...texts.map(writtenEm)); // the widest of these, in ems of the hand face
+    tickSize = 34 * u;
+    left = widest(Array.from({length: ticks + 1}, (_, i) => yLab(yMin + ((yMax - yMin) * i) / ticks))) * tickSize + 20 * u;
+    if (isLine) {
+      right = 24 * u + widest(series.map((s) => (s.points.length ? yLab(s.points[s.points.length - 1][1]) : ''))) * 48 * u;
+    } else {
+      right = 6 * u;
+      const pitch = (stage.w - left - right - gap) / Math.max(1, bars.length); // a bar and the gap beside it
+      figSize = Math.max(34 * u, Math.min(56 * u, (pitch - 10 * u) / widest(bars.map((b) => yLab(b.value)))));
+      labSize = Math.max(26 * u, Math.min(40 * u, (pitch - 14 * u) / widest(bars.map((b) => b.label))));
+      top = figSize * 0.8 + 22 * u;
+      bottom = labSize + 40 * u;
+    }
+    const titleH = title ? displayLines(title, titleSize, stage.wide.w, brand.display) * titleSize * 1.15 + 12 * u : 0;
+    const sourceH = source ? writtenLines(`source: ${source}`, 38 * u, stage.w) * 38 * u * 1.15 + 10 * u : 0;
+    W = stage.w;
+    H = Math.max(300 * u, stage.h - titleH - sourceH);
+  }
+  const plotW = W - left - right;
   const plotH = H - bottom - top;
+  const labelY = stage ? H - bottom + 22 * u + labSize * 0.8 : H - 18 * u; // the baseline of a bar's label
   // a second line is never the loss red by default: green, ink, blue; `data: Name:red = ...` asks for red
   const colors = [brand.accent, brand.ink, brand.blue ?? '#3b5bdb', brand.note ?? brand.muted];
   const named: Record<string, string> = {ink: brand.ink, green: brand.accent, red: brand.accent2, blue: brand.blue ?? '#3b5bdb', note: brand.note ?? brand.muted};
@@ -778,22 +903,13 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
   const titleDone = title ? doneAt(brand, title, fps, 4, 2, 24) : 0;
   // the axes draw while the title is written, not after it: a chart opened on a bare page for a second
   const axesAt = brand.board ? Math.min(titleDone + 2, Math.round(fps * 0.25)) : 2;
-  const axes = brand.board ? lin(frame, axesAt, axesAt + Math.round(fps * 0.5)) : ease(frame, 2, 14);
+  const axes = posed ? 1 : brand.board ? lin(frame, axesAt, axesAt + Math.round(fps * 0.5)) : ease(frame, 2, 14);
   const lineAt = brand.board ? axesAt + Math.round(fps * 0.5) + 4 : 10;
   const reveal = brand.board ? lin(frame, lineAt, lineAt + drawFrames) : ease(frame, 10, 10 + drawFrames);
-  let yMax = 1;
-  let yMin = 0; // a bar chart's floor (ymin=150); line charts keep nought
-  let ticks = 4;
   let body: React.ReactNode = null;
-  const yLab = (v: number) => compactNum(v, yFormat);
-  const labelWipe = (at: number) => (brand.board ? {opacity: lin(frame, at, at + 3)} : {});
-  if (chartType === 'line') {
-    const series: Series[] = scene.props.series ?? [];
-    const allY = series.flatMap((s) => s.points.map((q) => q[1]));
+  const labelWipe = (at: number) => (brand.board && !posed ? {opacity: lin(frame, at, at + 3)} : {});
+  if (isLine) {
     const allX = series.flatMap((s) => s.points.map((q) => q[0]));
-    const axis = niceAxis(Math.max(...allY, 0));
-    yMax = axis.max;
-    ticks = axis.ticks;
     const xMin = Math.min(...allX);
     const xMax = Math.max(...allX);
     const sx = (x: number) => left + ((x - xMin) / Math.max(1e-9, xMax - xMin)) * plotW;
@@ -826,7 +942,7 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
           const cx = sx(Math.min(xNow, s.points[s.points.length - 1][0]));
           const cy = sy(vNow);
           return (
-            <g key={i} visibility={brand.board && reveal <= 0 ? 'hidden' : undefined}>
+            <g key={i} visibility={brand.board && reveal <= 0 && !posed ? 'hidden' : undefined}>
               <SketchPath d={d} win={brand.board ? [lineAt, lineAt + drawFrames] : [10, 10 + drawFrames]} easeOut={!brand.board} options={{stroke: c, strokeWidth: 6 * u, roughness: 1.1, bowing: 0.6, seed: 60 + i}} />
               <circle cx={cx} cy={cy} r={9 * u} fill={c} />
               {!isVertical || (reveal >= 1 && frame >= tipAt(yLab(vNow))) ? <text x={cx + 18 * u} y={cy + 12 * u} fontFamily={hand(brand)} fontSize={(isVertical ? 48 : 38) * u} fontWeight={700} fill={c}>{yLab(vNow)}</text> : null}
@@ -840,11 +956,6 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
       </>
     );
   } else {
-    const bars: Bar[] = scene.props.bars ?? [];
-    yMin = Number(scene.props.yMin ?? 0) || 0;
-    const axis = niceAxis(Math.max(...bars.map((b) => b.value - yMin), 0));
-    yMax = yMin + axis.max;
-    ticks = axis.ticks;
     const barColors: string[] = scene.props.barColors ?? [];
     // a bar whose own figure is never said (a share price) lands where its label is: "Monday 9 Nov" on "Monday"
     let from = 0;
@@ -856,7 +967,6 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
       lastAt = (scene.words ?? [])[i].s;
       return lastAt;
     });
-    const gap = 40 * u;
     const bw = (plotW - gap * (bars.length + 1)) / Math.max(1, bars.length);
     body = (
       <>
@@ -871,41 +981,70 @@ export const PaperChart: React.FC<P> = ({scene, brand}) => {
           const x = left + gap + i * (bw + gap);
           const y = top + plotH - hq;
           const c = b.color ?? (barColors[i] ? named[barColors[i]] ?? barColors[i] : colors[i % colors.length]);
+          // the pencil outline: the bar's whole shape in a thin slate line, sketched once the axes are down (there
+          // from the first frame on a Short's opener) and gone when the marker has filled the bar
+          const full = Math.max(0, ((b.value - yMin) / Math.max(1e-9, yMax - yMin)) * plotH);
+          const sketchAt = lineAt + i * 3;
           return (
             <g key={i}>
+              {pencil && grow < 1 && full > 2 ? <SketchRect x={x} y={top + plotH - full} w={bw} h={full} win={posed ? undefined : [sketchAt, sketchAt + Math.round(fps * 0.4)]} options={{stroke: brand.note ?? brand.muted, strokeWidth: 3 * u, seed: 90 + i, roughness: 0.9}} /> : null}
               {hq > 2 ? <SketchRect x={x} y={y} w={bw} h={hq} options={{stroke: c, strokeWidth: 3.5 * u, seed: 70 + i, fill: c, fillStyle: 'hachure', hachureGap: 12 * u, fillWeight: 2.5 * u, hachureAngle: -41, roughness: 1}} /> : null}
-              <text x={x + bw / 2} y={y - 16 * u} textAnchor="middle" fontFamily={hand(brand)} fontSize={40 * u} fontWeight={700} fill={brand.ink} opacity={grow}>{yLab(yMin + (b.value - yMin) * grow)}</text>
-              <text x={x + bw / 2} y={H - 18 * u} textAnchor="middle" fontFamily={hand(brand)} fontSize={30 * u} fill={brand.muted} {...labelWipe(axesAt + Math.round(fps * 0.5) + i * 3)}>{b.label}</text>
+              <text x={x + bw / 2} y={y - 16 * u} textAnchor="middle" fontFamily={hand(brand)} fontSize={figSize} fontWeight={700} fill={brand.ink} opacity={grow}>{yLab(yMin + (b.value - yMin) * grow)}</text>
+              <text x={x + bw / 2} y={labelY} textAnchor="middle" fontFamily={hand(brand)} fontSize={labSize} fill={brand.muted} {...labelWipe(axesAt + Math.round(fps * 0.5) + i * 3)}>{b.label}</text>
             </g>
           );
         })}
       </>
     );
   }
+  const plot = (
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{overflow: 'visible'}}>
+      {Array.from({length: ticks + 1}).map((_, i) => {
+        const v = yMin + ((yMax - yMin) * i) / ticks;
+        const y = top + plotH - (i / ticks) * plotH;
+        return (
+          <g key={i} opacity={axes}>
+            {i > 0 ? <line x1={left} x2={left + plotW} y1={y} y2={y} stroke={brand.ink} strokeOpacity={0.12} strokeWidth={2} strokeDasharray="6 10" /> : null}
+            <text x={left - 16 * u} y={y + (stage ? 11 : 10) * u} fontFamily={hand(brand)} fontSize={tickSize} fill={brand.muted} textAnchor="end">{yLab(v)}</text>
+          </g>
+        );
+      })}
+      <SketchLine x1={left} y1={top + plotH} x2={left + plotW} y2={top + plotH} draw={Math.min(1, axes * 2)} win={brand.board && !posed ? [axesAt, axesAt + Math.round(fps * 0.5) / 2] : undefined} options={{stroke: brand.ink, strokeWidth: 3.5 * u, seed: 50}} />
+      <SketchLine x1={left} y1={top + plotH} x2={left} y2={top} draw={Math.max(0, axes * 2 - 1)} win={brand.board && !posed ? [axesAt + Math.round(fps * 0.5) / 2, axesAt + Math.round(fps * 0.5)] : undefined} options={{stroke: brand.ink, strokeWidth: 3.5 * u, seed: 51}} />
+      {body}
+    </svg>
+  );
+  const sourceAt = brand.board ? lineAt + drawFrames + Math.round(fps * 0.2) : 24;
+  if (stage) {
+    return (
+      <AbsoluteFill>
+        <div style={{position: 'absolute', left: stage.x, top: stage.y, width: stage.w, height: stage.h, display: 'flex', flexDirection: 'column'}}>
+          {title ? (
+            // the title is above the height YouTube's buttons start at: it may run to the right margin
+            <div style={{width: stage.wide.w, fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: titleSize, lineHeight: 1.15, color: brand.ink, marginBottom: 12 * u, letterSpacing: brand.board ? 0 : -1 * u}}>
+              <Txt brand={brand} text={title} frame={frame} fps={fps} start={posed ? POSED : 4} seed={31} per={2} cps={24} />
+            </div>
+          ) : null}
+          {plot}
+          {source ? (
+            <div style={{marginTop: 'auto', lineHeight: 1.15}}>
+              <Source brand={brand} source={source} delay={sourceAt} />
+            </div>
+          ) : null}
+        </div>
+      </AbsoluteFill>
+    );
+  }
   return (
-    <AbsoluteFill style={{justifyContent: isVertical ? 'flex-start' : 'center', padding: pad, paddingTop: isVertical ? height * 0.29 : pad}}>
+    <AbsoluteFill style={{justifyContent: 'center', padding: pad}}>
       {title ? (
-        <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: (isVertical ? 54 : 64) * u * (brand.board ? 1.1 : 1), color: brand.ink, marginBottom: 14 * u, letterSpacing: brand.board ? 0 : -1 * u}}>
-          <Txt brand={brand} text={title} frame={frame} fps={fps} seed={31} per={2} cps={24} />
+        <div style={{fontFamily: brand.display, fontWeight: dw(brand, 700), fontSize: titleSize, color: brand.ink, marginBottom: 14 * u, letterSpacing: brand.board ? 0 : -1 * u}}>
+          <Txt brand={brand} text={title} frame={frame} fps={fps} start={posed ? POSED : 4} seed={31} per={2} cps={24} />
         </div>
       ) : null}
-      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{overflow: 'visible'}}>
-        {Array.from({length: ticks + 1}).map((_, i) => {
-          const v = yMin + ((yMax - yMin) * i) / ticks;
-          const y = top + plotH - (i / ticks) * plotH;
-          return (
-            <g key={i} opacity={axes}>
-              {i > 0 ? <line x1={left} x2={left + plotW} y1={y} y2={y} stroke={brand.ink} strokeOpacity={0.12} strokeWidth={2} strokeDasharray="6 10" /> : null}
-              <text x={left - 16 * u} y={y + 10 * u} fontFamily={hand(brand)} fontSize={30 * u} fill={brand.muted} textAnchor="end">{yLab(v)}</text>
-            </g>
-          );
-        })}
-        <SketchLine x1={left} y1={top + plotH} x2={left + plotW} y2={top + plotH} draw={Math.min(1, axes * 2)} win={brand.board ? [axesAt, axesAt + Math.round(fps * 0.5) / 2] : undefined} options={{stroke: brand.ink, strokeWidth: 3.5 * u, seed: 50}} />
-        <SketchLine x1={left} y1={top + plotH} x2={left} y2={top} draw={Math.max(0, axes * 2 - 1)} win={brand.board ? [axesAt + Math.round(fps * 0.5) / 2, axesAt + Math.round(fps * 0.5)] : undefined} options={{stroke: brand.ink, strokeWidth: 3.5 * u, seed: 51}} />
-        {body}
-      </svg>
+      {plot}
       <div style={{marginTop: 10 * u}}>
-        <Source brand={brand} source={scene.props.source} delay={brand.board ? lineAt + drawFrames + Math.round(fps * 0.2) : 24} />
+        <Source brand={brand} source={source} delay={sourceAt} />
       </div>
     </AbsoluteFill>
   );

@@ -30,6 +30,7 @@ export type Brand = {
   progress?: boolean; // a thin line along the top that fills as the video runs (on for the board, never on a Short)
   illustrated?: boolean; // the illustrated style (`brand.style: illustrated`): traced people-and-scene drawings, large, on every scene whose words call one up
   pagecards?: 'strip'; // `brand.pagecards: strip`: on a real page or photo (a still named real-...) the cards go in a strip along the foot of the frame, off the headline
+  pencil?: boolean; // `brand.pencil: on`: a bar chart shows every bar in pencil outline as its axes are drawn, so it never waits on empty axes; fill and figure still land on the spoken number (off by default)
 };
 
 export type Cue = {t: number; pose?: string; face?: string}; // mid-scene change, absolute seconds

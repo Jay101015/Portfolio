@@ -295,20 +295,21 @@ set piece carries it high. The second table says which scene is which.
 The sticker rule. The sticker stays inside its band. It is one line at 72 px, or two lines at 60 px, cut where the
 two lines come out most alike, so no word is left alone on the second line. After three seconds (the scroll-in
 moment) it settles to 50 px, on one line when it fits. It hangs from the top of its band and never climbs into
-YouTube's header. A set piece and a compare are the exception: there the caption sits high, so the sticker keeps
-its older place (9% down at 72 px for three seconds, then 7.5% down at 50 px), and while it is big the caption
-rides just under it.
+YouTube's header. A set piece is the exception: there the caption sits high, so the sticker keeps its older
+place (9% down at 72 px for three seconds, then 7.5% down at 50 px), and while it is big the caption rides just
+under it.
 
 | Scene | Caption | Where its content sits |
 |---|---|---|
 | stat, pie | in the caption band, 17.5% down | In the stage, centred. The figure or the pie is as big as the stage allows. |
-| chart, list, clip | in the caption band, 17.5% down | From 29% down, as before. They move into the stage next. |
+| chart | in the caption band, 17.5% down | In the stage. The title is at its top, the source line along its foot, and the plot fills what is between, 5% to 84% across. |
+| compare | in the caption band, 17.5% down | In the stage. The title is at its top, the source line along its foot, and the two boxes are stacked between them, 5% to 84% across. |
+| list, clip | in the caption band, 17.5% down | From 29% down, as before. A list is not laid in the stage yet. |
 | a page or a phone screen shown whole | in the caption band, 17.5% down | From 29% down, fitted whole. |
 | footage or a photo | in the caption band, 17.5% down | The whole frame. |
 | receipt | in the caption band, 17.5% down | In the stage. The headline is at 25% down and the strip under it runs 5% to 84% across. The source line is along the stage's foot, or beside the drawing when the scene has one. |
 | text, hook, takeaway, recap | 44% down | The board's own layout: its lines above the caption, the drawing and the character below it. |
 | set | 13.5% down | The whole frame, as before. |
-| compare | 13.5% down | Centred, as before. It moves into the stage with the chart, and its caption joins the band then. |
 
 - A phone clip is fitted between the caption band and the title strip (29% to 84% down: 72% of the width on a
   1080x1480 recording), the whole screen in view, its marks on it, the caption label on its lower right; never
@@ -336,10 +337,25 @@ rides just under it.
   of 84% across. The hook sticker is hidden while the opener is up, because the number is the hook. The sticker
   is back with the next scene. The block is red only when the figure is a loss (a minus sign, or a losing word
   such as "lost" or "down"). Any other figure gets a navy block. This holds on the long video too.
-- The first frame is already 0.8 s into the first board (ink on frame 0, never bare paper with a sticker) and the
-  last board holds to the file's end, so the loop runs payoff to hook.
-- A chart is a third of the height, draws in five seconds at most, and prints its tip figures only once drawn. A
-  clip shorter than half its scene plays slower and holds its last frame.
+- The first frame is the Short's picture in the feed, so the first scene is complete on it. A Short that opens
+  on a chart shows the title, the axes and every bar in pencil outline, with its label, on frame 0. A Short that
+  opens on a compare shows both boxes with their headings and values on frame 0. What is said still lands when it
+  is said: a bar fills and gets its figure on the spoken number. Any other first scene is already 0.8 s into its
+  drawing (ink on frame 0, never bare paper with a sticker). The last board holds to the file's end, so the loop
+  runs payoff to hook.
+- A chart is laid in the stage. The title is at the top of the stage and the source line along its foot. The plot
+  fills what is between: about 700 px over cards when the source line takes two lines, over 900 px with nothing
+  under the stage. It runs 5% to 84% across, because it reaches down beside YouTube's buttons. A line chart keeps
+  room for its tip figures inside that width. The bars' figures and labels are as big as the bars leave room for
+  (56 px and 40 px at most). Over a drawing or over the character the stage is shorter, and the plot with it. A
+  chart still draws in five seconds at most and prints its tip figures only once drawn.
+- A compare is laid in the stage: the two boxes stacked, with heading, value and items centred in each. The value
+  is fitted to 80% of the box's width (176 px for "Down £950") and is the same size in both boxes. It is smaller
+  when the boxes are too short for it. The items are 50 px. The source line is along the stage's foot.
+- `brand.pencil: on` in the script header, for new scripts: every bar chart shows its bars in pencil outline as
+  soon as the axes are drawn, on the long video and on a Short. The chart never sits on empty axes waiting for
+  the voice. The fill and the figure still land on the spoken number. Without the line nothing changes.
+- A clip shorter than half its scene plays slower and holds its last frame.
 - The sticker is a claim or a comparison with the figure in it ("Chase the hottest stock: £30. Do nothing:
   £1,280"), never a label a cold viewer cannot place ("hype pot vs boring pot").
 

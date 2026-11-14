@@ -104,9 +104,9 @@ export const Captions: React.FC<{scenes: Scene[]; brand: Brand; host?: string; a
     // under the hook banner and over the figure's label
     // a list's rows run down the middle and a clip is fitted under the sticker: both carry the caption high too
     // Where each kind of scene carries it is in upright.json (components/layout.ts): the caption band, under the
-    // sticker's band and over the stage, on every scene whose content sits in the stage; the middle of a board; and
-    // on a set piece (and a compare, until its boxes are laid into the stage) a little higher, over the head or the
-    // title that sits just under 22%.
+    // sticker's band and over the stage, on every scene whose content sits in the stage (a compare among them: its
+    // boxes are laid in the stage now, so it no longer needs the caption lifted clear of them); the middle of a
+    // board; and on a set piece a little higher, over the character's head.
     const place = up ? up.captionPlace(current?.type) : 'band';
     const onBoard = !!up && !!current && place === 'board';
     const high = isVertical && (onBoard || setCaptionsHigh(scenes) || (!!current && current.type !== 'outro'));

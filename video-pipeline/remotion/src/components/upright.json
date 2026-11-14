@@ -14,15 +14,15 @@
     "set": {"top": 0.075, "bottom": 0.125}
   },
   "caption": {
-    "note": "The caption is one line on a pill of one height. 'top' to 'bottom' is its band; a scene type listed under 'at' carries it at 'board' (the middle, under the board's own lines) or at 'set' (high, over a set piece's head) instead; every other type has it in the band.",
+    "note": "The caption is one line on a pill of one height. 'top' to 'bottom' is its band; a scene type listed under 'at' carries it at 'board' (the middle, under the board's own lines) or at 'set' (high, over a set piece's head) instead; every other type has it in the band, a compare among them now that its boxes are laid in the stage.",
     "top": 0.175,
     "bottom": 0.235,
     "board": 0.44,
     "set": 0.135,
-    "at": {"text": "board", "hook": "board", "takeaway": "board", "recap": "board", "set": "set", "compare": "set"}
+    "at": {"text": "board", "hook": "board", "takeaway": "board", "recap": "board", "set": "set"}
   },
   "stage": {
-    "note": "Where a scene's own content goes. It reaches 'right' above 'narrow_from' of the height and only 'narrow_right' below it, beside YouTube's buttons. Its foot depends on what stands under it: nothing, cards, a drawing or loop, or the character.",
+    "note": "Where a scene's own content goes: a stat, a pie, a chart, a compare, a receipt. It reaches 'right' above 'narrow_from' of the height and only 'narrow_right' below it, beside YouTube's buttons. Its foot depends on what stands under it: nothing, cards, a drawing or loop, or the character.",
     "top": 0.25,
     "left": 0.05,
     "right": 0.95,
