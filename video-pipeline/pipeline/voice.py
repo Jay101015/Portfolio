@@ -283,10 +283,37 @@ def shift_time(t: float, removed: list[tuple[float, float]]) -> float:
     return round(t - gone, 3)
 
 
+QUIET_RUN = 0.08  # seconds of quiet that make a pause; a consonant's closure inside a word ("a-gain") is 30 to 50 ms
+
+
+def quiet_runs(x: np.ndarray, lo: float, hi: float, sr: int = 16000, least: float = QUIET_RUN) -> list[tuple[float, float]]:
+    """The stretches of at least `least` seconds between `lo` and `hi` where the sound is at the room's own level
+    (under -45 dBFS, or under two and a half times the file's quietest tenth when the room is louder than that)."""
+    hop = sr // 100
+    n = len(x) // hop
+    if n < 2:
+        return []
+    rms = np.sqrt((x[:n * hop].astype(np.float64).reshape(n, hop) ** 2).mean(axis=1))
+    thr = max(32768 * 10 ** (-45 / 20), 2.5 * float(np.percentile(rms, 10)))
+    a, b = max(0, int(lo * 100)), min(n, int(hi * 100))
+    out, start = [], None
+    for i in range(a, b + 1):
+        q = i < b and rms[i] < thr
+        if q and start is None:
+            start = i
+        if not q and start is not None:
+            if (i - start) * hop / sr >= least:
+                out.append((start * hop / sr, i * hop / sr))
+            start = None
+    return out
+
+
 def snap_cuts(sb: dict[str, Any], wav16k: str) -> int:
     """Every cut between two spoken scenes moved to the quietest 30 ms between the start of the last word before it
     and the first word after it (the word times can be early, so the search runs from the last word's start, not its
-    end). Returns how many cuts moved."""
+    end). When that moment is not in a pause at all (the next word was timed so early that the search ended inside
+    the last word, and its quietest 30 ms was a consonant: the pace silence then split "again." in two), the cut
+    goes to the nearest real pause instead, looked for up to the next scene's second word. Returns how many moved."""
     x = read(wav16k, 16000)
     win = int(0.03 * 16000)
     moved = 0
@@ -301,6 +328,12 @@ def snap_cuts(sb: dict[str, Any], wav16k: str) -> int:
             continue
         e = np.convolve(x[a:b] ** 2, np.ones(win) / win, mode="valid")
         t = round((a + int(e.argmin()) + win // 2) / 16000, 3)
+        far = min(nw[0]["s"] + 0.6, nw[1]["s"] if len(nw) > 1 else nw[0]["s"] + 0.6, len(x) / 16000)
+        runs = quiet_runs(x, lo, max(hi, far))
+        if runs and not any(r0 - 0.01 <= t <= r1 + 0.01 for r0, r1 in runs):
+            at = float(nw[0]["s"])
+            r0, r1 = min(runs, key=lambda r: (0.0 if r[0] <= at <= r[1] else min(abs(r[0] - at), abs(r[1] - at)), r[0] - r[1]))
+            t = round((r0 + r1) / 2, 3)
         if t <= prev["start"] + 0.5 or abs(t - sc["start"]) < 0.02:
             continue
         prev["end"] = sc["start"] = t

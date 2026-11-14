@@ -92,3 +92,44 @@ def test_captions_keep_the_script_order_when_word_times_run_backwards():
     assert lines[0] == "So Nvidia has lost over $400 billion in 2 days."  # in order, and the sentence whole
     starts = [s for s, _, _ in srt.cues(sb)]
     assert starts == sorted(starts)
+
+
+def test_a_cut_never_lands_in_a_consonant_inside_a_word(tmp_path):
+    # "again." with a 40 ms closure in it, then a real pause; the next scene's first word is timed early, inside "again."
+    import numpy as np
+    from pipeline import voice
+    sr = 16000
+    rng = np.random.default_rng(1)
+    def talk(sec):
+        return rng.normal(0, 3000, int(sec * sr))
+    def hush(sec):
+        return rng.normal(0, 8, int(sec * sr))
+    x = np.concatenate([talk(1.0), talk(0.30), hush(0.04), talk(0.30), hush(0.50), talk(1.0)])  # "again" = 1.00 to 1.64, pause 1.64 to 2.14
+    wav = str(tmp_path / "v.wav")
+    voice.write(wav, x, sr)
+    sb = {"scenes": [{"start": 0.0, "end": 1.2, "words": [{"w": "mistake", "s": 0.2, "e": 0.9}, {"w": "again.", "s": 1.0, "e": 1.25}]},
+                     {"start": 1.2, "end": 3.1, "words": [{"w": "I", "s": 1.3, "e": 1.4}, {"w": "don't", "s": 2.3, "e": 2.6}]}]}
+    assert voice.snap_cuts(sb, wav) == 1
+    cut = sb["scenes"][1]["start"]
+    assert 1.66 <= cut <= 2.12, cut  # in the pause after the word, not in the 40 ms closure at 1.30 to 1.34
+
+
+def test_a_cut_already_in_a_pause_stays_where_the_old_rule_put_it(tmp_path):
+    import numpy as np
+    from pipeline import voice
+    sr = 16000
+    rng = np.random.default_rng(2)
+    x = np.concatenate([rng.normal(0, 3000, sr), rng.normal(0, 8, int(0.4 * sr)), rng.normal(0, 3000, sr)])  # pause 1.0 to 1.4
+    wav = str(tmp_path / "v.wav")
+    voice.write(wav, x, sr)
+    def board():
+        return {"scenes": [{"start": 0.0, "end": 1.1, "words": [{"w": "one", "s": 0.1, "e": 0.9}]}, {"start": 1.1, "end": 2.4, "words": [{"w": "two", "s": 1.4, "e": 2.0}]}]}
+    sb = board()
+    voice.snap_cuts(sb, wav)
+    cut = sb["scenes"][1]["start"]
+    assert 1.0 <= cut <= 1.4
+    # the quietest 30 ms of the search window, exactly as before this guard existed
+    xr = voice.read(wav, sr)
+    a, b, win = int(0.7 * sr), int(1.45 * sr), int(0.03 * sr)
+    e = np.convolve(xr[a:b] ** 2, np.ones(win) / win, mode="valid")
+    assert cut == round((a + int(e.argmin()) + win // 2) / sr, 3)
