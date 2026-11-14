@@ -30,7 +30,19 @@
     "narrow_right": 0.84,
     "foot": {"bare": 0.83, "cards": 0.71, "drawing": 0.63, "character": 0.52}
   },
-  "cards": {"top": 0.725, "bottom": 0.85, "right": 0.84},
+  "cards": {
+    "note": "The cards under a board's stage hang from 'right', where YouTube's buttons begin (paper/setpiece.tsx FootageCards; a set piece's column on the right stops there too). Beside a drawing or loop they start at 'beside_drawing'; beside the character they hang from 'beside_character' instead.",
+    "top": 0.725,
+    "bottom": 0.85,
+    "right": 0.84,
+    "beside_drawing": 0.46,
+    "beside_character": 0.57
+  },
+  "opener": {
+    "note": "A photo opener's big number (big= on footage, paper/scenes.tsx PaperBroll): where the block's foot and its right edge sit, above YouTube's title strip and left of its buttons.",
+    "foot": 0.82,
+    "right": 0.84
+  },
   "drawing": {
     "note": "A placed drawing or loop, bottom left (paper/art.tsx ArtLayer, paper/loops.tsx LoopLayer).",
     "left": 0.05,

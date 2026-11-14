@@ -1,8 +1,10 @@
 import React from 'react';
 import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {Brand, Scene} from '../types';
-import {findPhraseTime, formatNum, parseValue, useLayout} from '../components/layout';
+import {findPhraseTime, formatNum, parseValue, useLayout, useUpright} from '../components/layout';
+import {CharacterOn} from './character';
 import {isLoss} from './phrase';
+import {stageUnder, writtenEm, writtenLines} from './setpiece';
 import {Arrow, Ring, SketchEllipse, SketchPath, SketchRect, Underline, figureHeight, figureWidth} from './sketch';
 import {Write, writeFrames} from './write';
 import {Erase} from './erase';
@@ -170,61 +172,119 @@ export const PaperGrow: React.FC<P> = ({scene, brand}) => {
 export const PaperPie: React.FC<P> = ({scene, brand}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const {u, pad, isVertical, width, height} = useLayout();
+  const {u, pad, width, height} = useLayout();
+  const up = useUpright();
+  const characterOn = React.useContext(CharacterOn);
   const label: string | undefined = scene.props.label;
   const share = Math.max(1, Math.min(99, pct(scene.props.value) ?? 25));
   const sub: string | undefined = scene.props.sub;
-  const r = (isVertical ? 0.15 : 0.3) * height;
-  const cx = r + 20 * u;
-  const cy = r + 20 * u;
+  const source: string | undefined = scene.props.source;
   const t0 = labelDone(label, fps);
   const circleWin: [number, number] = [t0, t0 + Math.round(fps * 0.9)];
   const sliceWin: [number, number] = [circleWin[1] + 4, circleWin[1] + 4 + Math.round(fps * 0.8)];
   const numAt = sliceWin[1] + 4;
+  const numText = `${Math.round(share)}%`;
+  const numDone = numAt + writeFrames(numText, fps, 12);
+  // the small slice: the rest of the circle, in green, with its own figure landing on the word that says it
+  const restText = `${Math.round(100 - share)}%`;
+  const restSaid = findPhraseTime(scene.words, restText);
+  const restAt = restSaid !== null ? Math.max(numDone, Math.round((restSaid - scene.start) * fps)) : null;
+  // A Short: the label, the pie and the sub-line are laid in the stage (components/upright.json), centred, the pie as
+  // big as the stage leaves it, 350 px of radius at most. It used to hang from 29% of the height at 288 px, top left,
+  // its source line under the cards. The label is set on one line when that takes 50 px type or more. A slice too thin
+  // to hold its figure has the figure over the top of the circle, and the label keeps clear of it by `headroom`.
+  const stage = up ? up.stage(stageUnder(scene, brand, characterOn)) : null;
+  const figure = (stage ? 72 : 84) * u; // the figures' type
+  const margin = (stage ? 12 : 20) * u; // the paper kept round the circle inside its box
+  const oneLine = stage && label ? stage.w / (writtenEm(label) * 1.03) : 0;
+  const labelSize = oneLine >= 62 * u ? 62 * u : oneLine >= 50 * u ? oneLine : 62 * u;
+  const outside = share <= 18 || (restAt !== null && 100 - share <= 18);
+  const headroom = stage && outside ? 1.38 * figure - margin : 0;
+  const lines = (text: string, type: number) => (stage ? writtenLines(text, type, stage.w) : 1);
+  const fixed = (label ? (oneLine >= 50 * u ? 1 : lines(label, labelSize)) * labelSize * 1.15 + 12 * u : 0) + headroom + (sub ? 6 * u + lines(sub, 56 * u) * 56 * u * 1.15 : 0) + (source ? 24 * u + lines(`source: ${source}`, 38 * u) * 38 * u * 1.26 : 0);
+  const r = stage ? Math.max(120 * u, Math.min(350 * u, (stage.w - margin * 2) / 2, (stage.h - 24 * u - fixed) / 2 - margin)) : 0.3 * height;
+  const cx = r + margin;
+  const cy = r + margin;
   const a0 = -Math.PI / 2;
   const a1 = a0 + (share / 100) * Math.PI * 2;
   const large = share > 50 ? 1 : 0;
   const wedge = `M${cx},${cy} L${cx + r * Math.cos(a0)},${cy + r * Math.sin(a0)} A${r},${r} 0 ${large} 1 ${cx + r * Math.cos(a1)},${cy + r * Math.sin(a1)} Z`;
   const mid = (a0 + a1) / 2;
-  const numText = `${Math.round(share)}%`;
-  const numDone = numAt + writeFrames(numText, fps, 12);
-  const box = r * 2 + 40 * u;
+  const box = r * 2 + margin * 2;
   // red only ever means a loss: the shaded share is red for a fee, a loss or a debt, navy otherwise
   const red = isLoss(`${label ?? ''} ${sub ?? ''}`);
   const shade = red ? brand.accent2 : brand.ink;
-  // the small slice: the rest of the circle, in green, with its own figure landing on the word that says it
-  const restText = `${Math.round(100 - share)}%`;
-  const restSaid = findPhraseTime(scene.words, restText);
-  const restAt = restSaid !== null ? Math.max(numDone, Math.round((restSaid - scene.start) * fps)) : null;
   const restMid = (a1 + a0 + Math.PI * 2) / 2;
   const rest = `M${cx},${cy} L${cx + r * Math.cos(a1)},${cy + r * Math.sin(a1)} A${r},${r} 0 ${share < 50 ? 1 : 0} 1 ${cx + r * Math.cos(a0)},${cy + r * Math.sin(a0)} Z`;
+  const disc = (
+    <svg width={box} height={box} viewBox={`0 0 ${box} ${box}`} style={{position: 'absolute', inset: 0, overflow: 'visible'}}>
+      <SketchEllipse cx={cx} cy={cy} w={r * 2} h={r * 2} win={circleWin} options={{stroke: brand.ink, strokeWidth: 5 * u, seed: 21 + scene.id, roughness: 0.7, curveStepCount: 24}} />
+      {/* the wedge keeps the circle's centre and radius: barely rough, no bowing, so it sits inside the outline */}
+      <SketchPath d={wedge} win={sliceWin} options={{stroke: shade, strokeWidth: 4 * u, seed: 41 + scene.id, fill: shade, fillStyle: 'hachure', hachureGap: 16 * u, fillWeight: 3 * u, hachureAngle: -45, roughness: 0.4, bowing: 0, preserveVertices: true, disableMultiStroke: true}} />
+      {restAt !== null ? <SketchPath d={rest} win={[restAt, restAt + Math.round(fps * 0.5)]} options={{stroke: brand.accent, strokeWidth: 4 * u, seed: 43 + scene.id, fill: brand.accent, fillStyle: 'hachure', hachureGap: 10 * u, fillWeight: 3 * u, hachureAngle: 45, roughness: 0.4, bowing: 0, preserveVertices: true, disableMultiStroke: true}} /> : null}
+    </svg>
+  );
+  if (stage) {
+    // a figure sits in the middle of its slice, or over the top of the circle when the slice is too thin to hold it
+    const at = (angle: number, inside: boolean) => {
+      const d = inside ? r * 0.55 : r + 0.75 * figure;
+      return {left: cx + Math.cos(angle) * d, top: cy + Math.sin(angle) * d};
+    };
+    // a written line ends in the marker's word gap: the same on its left centres the words
+    const number: React.CSSProperties = {position: 'absolute', transform: 'translate(-50%, -50%)', fontFamily: brand.display, fontSize: figure, lineHeight: 1, whiteSpace: 'nowrap', paddingLeft: '0.28em'};
+    return (
+      <AbsoluteFill>
+        <div style={{position: 'absolute', left: stage.x, top: stage.y, width: stage.w, height: stage.h, display: 'flex', flexDirection: 'column'}}>
+          <div style={{margin: 'auto 0', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'}}>
+            {label ? (
+              <div style={{fontFamily: hand(brand), fontSize: labelSize, lineHeight: 1.15, color: noteColor(brand), transform: 'rotate(-1.5deg)', marginBottom: 12 * u, paddingLeft: '0.28em'}}>
+                <Write text={label} frame={frame} fps={fps} start={2} cps={34} color={noteColor(brand)} />
+              </div>
+            ) : null}
+            <div style={{position: 'relative', width: box, height: box, marginTop: headroom}}>
+              {disc}
+              {restAt !== null ? (
+                <div style={{...number, ...at(restMid, 100 - share > 18), color: brand.accent, visibility: frame >= restAt ? undefined : 'hidden'}}>
+                  <Write text={restText} frame={frame} fps={fps} start={restAt} cps={12} />
+                </div>
+              ) : null}
+              <div style={{...number, ...at(mid, share > 18), color: share > 18 ? brand.ink : shade, visibility: frame >= numAt ? undefined : 'hidden'}}>
+                <Write text={numText} frame={frame} fps={fps} start={numAt} cps={12} />
+              </div>
+            </div>
+            {sub ? (
+              <div style={{fontFamily: hand(brand), fontSize: 56 * u, lineHeight: 1.15, color: noteColor(brand), transform: 'rotate(-2deg)', marginTop: 6 * u, paddingLeft: '0.28em'}}>
+                <Write text={sub} frame={frame} fps={fps} start={numDone + 6} cps={30} color={noteColor(brand)} />
+              </div>
+            ) : null}
+            <SourceLine brand={brand} source={source} frame={frame} fps={fps} start={numDone + (sub ? writeFrames(sub, fps, 30) + 12 : 8)} />
+          </div>
+        </div>
+      </AbsoluteFill>
+    );
+  }
   return (
-    <AbsoluteFill style={{justifyContent: isVertical ? 'flex-start' : 'center', padding: pad, paddingLeft: pad * 1.2, paddingTop: isVertical ? height * 0.29 : pad}}>
+    <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.2}}>
       <Label brand={brand} text={label} frame={frame} fps={fps} />
-      <div style={{display: 'flex', alignItems: 'center', gap: 60 * u, flexWrap: isVertical ? 'wrap' : 'nowrap'}}>
+      <div style={{display: 'flex', alignItems: 'center', gap: 60 * u, flexWrap: 'nowrap'}}>
         <div style={{position: 'relative', width: box, height: box}}>
-          <svg width={box} height={box} viewBox={`0 0 ${box} ${box}`} style={{position: 'absolute', inset: 0, overflow: 'visible'}}>
-            <SketchEllipse cx={cx} cy={cy} w={r * 2} h={r * 2} win={circleWin} options={{stroke: brand.ink, strokeWidth: 5 * u, seed: 21 + scene.id, roughness: 0.7, curveStepCount: 24}} />
-            {/* the wedge keeps the circle's centre and radius: barely rough, no bowing, so it sits inside the outline */}
-            <SketchPath d={wedge} win={sliceWin} options={{stroke: shade, strokeWidth: 4 * u, seed: 41 + scene.id, fill: shade, fillStyle: 'hachure', hachureGap: 16 * u, fillWeight: 3 * u, hachureAngle: -45, roughness: 0.4, bowing: 0, preserveVertices: true, disableMultiStroke: true}} />
-            {restAt !== null ? <SketchPath d={rest} win={[restAt, restAt + Math.round(fps * 0.5)]} options={{stroke: brand.accent, strokeWidth: 4 * u, seed: 43 + scene.id, fill: brand.accent, fillStyle: 'hachure', hachureGap: 10 * u, fillWeight: 3 * u, hachureAngle: 45, roughness: 0.4, bowing: 0, preserveVertices: true, disableMultiStroke: true}} /> : null}
-          </svg>
+          {disc}
           {restAt !== null ? (
-            <div style={{position: 'absolute', left: cx + Math.cos(restMid) * r * 1.2 - 40 * u, top: cy + Math.sin(restMid) * r * 1.2 - 50 * u, fontFamily: brand.display, fontSize: (isVertical ? 64 : 84) * u, color: brand.accent, visibility: frame >= restAt ? undefined : 'hidden'}}>
+            <div style={{position: 'absolute', left: cx + Math.cos(restMid) * r * 1.2 - 40 * u, top: cy + Math.sin(restMid) * r * 1.2 - 50 * u, fontFamily: brand.display, fontSize: figure, color: brand.accent, visibility: frame >= restAt ? undefined : 'hidden'}}>
               <Write text={restText} frame={frame} fps={fps} start={restAt} cps={12} />
             </div>
           ) : null}
-          <div style={{position: 'absolute', left: cx + Math.cos(mid) * r * (share > 18 ? 0.55 : 1.25) - 70 * u, top: cy + Math.sin(mid) * r * (share > 18 ? 0.55 : 1.25) - 50 * u, fontFamily: brand.display, fontSize: (isVertical ? 64 : 84) * u, color: share > 18 ? brand.ink : shade, visibility: frame >= numAt ? undefined : 'hidden'}}>
+          <div style={{position: 'absolute', left: cx + Math.cos(mid) * r * (share > 18 ? 0.55 : 1.25) - 70 * u, top: cy + Math.sin(mid) * r * (share > 18 ? 0.55 : 1.25) - 50 * u, fontFamily: brand.display, fontSize: figure, color: share > 18 ? brand.ink : shade, visibility: frame >= numAt ? undefined : 'hidden'}}>
             <Write text={numText} frame={frame} fps={fps} start={numAt} cps={12} />
           </div>
         </div>
-        {sub && !(isVertical && ((scene.cues ?? []) as unknown as {do?: string}[]).some((c) => c.do === 'card')) ? (
-          <div style={{fontFamily: hand(brand), fontSize: 56 * u, lineHeight: 1.15, color: noteColor(brand), transform: 'rotate(-2deg)', maxWidth: isVertical ? '100%' : width * 0.34}}>
+        {sub ? (
+          <div style={{fontFamily: hand(brand), fontSize: 56 * u, lineHeight: 1.15, color: noteColor(brand), transform: 'rotate(-2deg)', maxWidth: width * 0.34}}>
             <Write text={sub} frame={frame} fps={fps} start={numDone + 6} cps={30} color={noteColor(brand)} />
           </div>
         ) : null}
       </div>
-      <SourceLine brand={brand} source={scene.props.source} frame={frame} fps={fps} start={numDone + (sub ? writeFrames(sub, fps, 30) + 12 : 8)} />
+      <SourceLine brand={brand} source={source} frame={frame} fps={fps} start={numDone + (sub ? writeFrames(sub, fps, 30) + 12 : 8)} />
     </AbsoluteFill>
   );
 };

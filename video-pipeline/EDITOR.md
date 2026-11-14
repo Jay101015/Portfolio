@@ -279,9 +279,12 @@ together. The numbers are the rulebook's until Jeffrey sends a screenshot of a S
 | Caption on a set piece | 13.5% down | Over the character's head in the room. |
 | Stage | from 25% down. 5% to 95% across above 45% of the height, 5% to 84% across below it | The scene's own content. |
 | Stage foot | 83% down with nothing under it, 71% over cards, 63% over a drawing or loop, 52% over the character | Where the stage ends. |
-| Cards | 72.5% to 85% down, right edge at 84% across | The cards under the stage. |
+| Cards | 72.5% to 85% down, right edge at 84% across | The cards under the stage. They hang from that edge. |
+| Cards beside a drawing or loop | from 46% across | Where the cards start when a drawing stands bottom left. |
+| Cards beside the character | up to 57% across | Where the cards end when the character stands lower right. |
 | Drawing or loop | 5% to 44% across, 63% to 85% down | A placed drawing or loop, bottom left. |
 | Character | 55% to 81% across, 52% to 80% down | The posing character, lower right. |
+| Photo opener's number | foot at 82% down, right edge at 84% across | The big number on an opening photo. |
 
 The caption rule. On a Short the caption is always one line, on a white pill that never changes height. It shows
 three words at a time at 76 px. Words too wide for the line are set smaller, down to 56 px. A caption that would
@@ -298,7 +301,8 @@ rides just under it.
 
 | Scene | Caption | Where its content sits |
 |---|---|---|
-| stat, chart, pie, list, clip | in the caption band, 17.5% down | From 29% down, as before. They move into the stage next. |
+| stat, pie | in the caption band, 17.5% down | In the stage, centred. The figure or the pie is as big as the stage allows. |
+| chart, list, clip | in the caption band, 17.5% down | From 29% down, as before. They move into the stage next. |
 | a page or a phone screen shown whole | in the caption band, 17.5% down | From 29% down, fitted whole. |
 | footage or a photo | in the caption band, 17.5% down | The whole frame. |
 | receipt | in the caption band, 17.5% down | In the stage. The headline is at 25% down and the strip under it runs 5% to 84% across. The source line is along the stage's foot, or beside the drawing when the scene has one. |
@@ -309,12 +313,33 @@ rides just under it.
 - A phone clip is fitted between the caption band and the title strip (29% to 84% down: 72% of the width on a
   1080x1480 recording), the whole screen in view, its marks on it, the caption label on its lower right; never
   cover-fitted (the app's price readout went off the edge).
-- Cards land in the band 74% down, right of centre (the drawing stands bottom left), two at a time: a Short's
-  cards are what fills its lower half, so the storyboard's cards must render on every scene, not only on footage.
+- Cards on a board, stat or chart hang from the right edge of their zone (84% across), two at a time, in the band
+  under the stage. They never go under YouTube's buttons. With nothing else in the band a card may run back to
+  the left margin, so a line of thirty characters stays on one line. Beside a drawing or loop the cards start at
+  46% across, one card at a time when its words have to wrap. Beside the character they end at 57% across. A
+  Short's cards are what fills its lower half, so the storyboard's cards must render on every scene, not only on
+  footage.
+- A page shown whole keeps its size, and its cards hang under the page's foot, never on it: two cards while both
+  end above the title strip, else one. Real material is not shrunk to make room for cards.
+- A set piece's cards hang from the far edge of their side: the left margin, or 84% across when they are on the
+  right. They are no wider than the room between that edge and the character at his widest pose in the scene (a
+  third of the width at least), so a long card wraps beside him and does not lie on his arm.
+- A stat is laid in the stage, centred: label, figure, sub-line, source. The figure is fitted to 78% of the
+  stage's width, 420 px at most and 190 px at least. A very long figure is set smaller, so its ring stays in the
+  stage. The label and the sub-line grow with the figure, up to 1.6 times their usual size, while they still fit
+  on one line. Over a drawing or over the character the stage is shorter, and the figure and the lines give way
+  until everything fits.
+- A pie is laid in the stage, centred, with its sub-line under it. Its radius is 350 px when nothing stands under
+  the stage. It is smaller when the label, the sub-line and the source line need the room (about 300 px over
+  cards). A slice too thin to hold its figure has the figure over the top of the circle.
+- A photo opener's big number (`big=`) sits above YouTube's title: the block's foot is 82% down and it stays left
+  of 84% across. The hook sticker is hidden while the opener is up, because the number is the hook. The sticker
+  is back with the next scene. The block is red only when the figure is a loss (a minus sign, or a losing word
+  such as "lost" or "down"). Any other figure gets a navy block. This holds on the long video too.
 - The first frame is already 0.8 s into the first board (ink on frame 0, never bare paper with a sticker) and the
   last board holds to the file's end, so the loop runs payoff to hook.
-- A chart is a third of the height, draws in five seconds at most, and prints its tip figures only once drawn; a
-  pie leaves its sub-line to the cards. A clip shorter than half its scene plays slower and holds its last frame.
+- A chart is a third of the height, draws in five seconds at most, and prints its tip figures only once drawn. A
+  clip shorter than half its scene plays slower and holds its last frame.
 - The sticker is a claim or a comparison with the figure in it ("Chase the hottest stock: £30. Do nothing:
   £1,280"), never a label a cold viewer cannot place ("hype pot vs boring pot").
 

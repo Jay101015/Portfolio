@@ -22,7 +22,7 @@ import {ScoreScene} from './scenes/ScoreScene';
 import {AvatarScene} from './scenes/AvatarScene';
 import {OutroScene} from './scenes/OutroScene';
 import {AvatarLayer, type AvatarPos} from './avatar/AvatarLayer';
-import {PaperSwitch, Sticker} from './paper/scenes';
+import {PaperSwitch, Sticker, bigOpener} from './paper/scenes';
 import {SketchFilterDefs} from './paper/media';
 import {PenHand} from './paper/write';
 import {ArtLayer} from './paper/art';
@@ -133,6 +133,9 @@ const HookBanner: React.FC<{text: string; brand: Brand; scenes: Scene[]}> = ({te
   const p = stickerSettle(frame, fps);
   const t = frame / fps;
   const current = scenes.find((s) => t >= s.start && t < s.end);
+  // a Short's photo opener carries its own big number (paper/scenes.tsx PaperBroll, big=): the number is the hook, and
+  // the sticker lay across the face in the photo. It is back with the next scene.
+  if (up && bigOpener(current)) return null;
   if (up && up.captionPlace(current?.type) !== 'set') {
     // a Short: the sticker stays in its band (upright.json), under the Shorts header and over the caption's band. One
     // line at 72 px, or two lines at 60 px cut where they come out most alike (never one orphan word); 50 px once it

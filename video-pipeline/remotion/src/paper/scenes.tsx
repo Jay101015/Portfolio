@@ -2,7 +2,8 @@ import React, {useMemo} from 'react';
 import {AbsoluteFill, Easing, Freeze, Img, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import {Check, X} from 'lucide-react';
 import type {Brand, Scene, Word} from '../types';
-import {compactNum, findPhraseTime, formatNum, parseValue, useLayout} from '../components/layout';
+import {compactNum, displayWidth, findPhraseTime, formatNum, parseValue, useLayout, useUpright} from '../components/layout';
+import zones from '../components/upright.json';
 import {fadeIn, pop, rnd} from '../components/motion';
 import {Arrow, Marker, Ring, SketchEllipse, SketchLine, SketchPath, SketchRect, Underline, figureHeight, figureWidth, roughGen} from './sketch';
 import {Doodle, Write, WriteSpoken, fitCps, fitStart, pickDoodle, writeFrames} from './write';
@@ -11,7 +12,7 @@ import {PaperBite, PaperGrow, PaperPie, PaperShrink} from './money';
 import {Erase} from './erase';
 import {Marks} from './marks';
 import {PageMarks, hasPageMarks} from './pagework';
-import {cardsTakeFoot} from './setpiece';
+import {cardsTakeFoot, stageUnder, uprightWhole, writtenEm, writtenLines} from './setpiece';
 import {captionLine, isLoss, keyWords, moneyTint} from './phrase';
 import {Media} from './media';
 import {Loop, Sequence} from 'remotion';
@@ -31,6 +32,8 @@ import {PaperReceipt} from './receipt';
 
 /** the colour of a handwritten label, note or source line: slate on the brand board (red is only ever a loss) */
 const noteColor = (b: Brand) => b.note ?? b.accent2;
+/** the channel's navy (library/brand/palette.md), for a block that carries white type on a photo in any look */
+const NAVY = '#041B3C';
 type P = {scene: Scene; brand: Brand};
 const hand = (b: Brand) => b.hand ?? 'cursive';
 const marker = (b: Brand) => b.marker ?? '#ffe66d';
@@ -164,7 +167,9 @@ export const PaperTitle: React.FC<P> = ({scene, brand}) => {
 export const PaperStat: React.FC<P> = ({scene, brand}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const {u, pad, isVertical, width, height} = useLayout();
+  const {u, pad, width} = useLayout();
+  const up = useUpright();
+  const characterOn = React.useContext(CharacterOn);
   const raw = String(scene.props.value ?? '');
   const parsed = parseValue(raw);
   const from = scene.props.from !== undefined ? parseValue(String(scene.props.from))?.num ?? 0 : 0;
@@ -183,7 +188,7 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
   const finalText = parsed ? `${parsed.prefix}${formatNum(parsed.num, parsed.decimals, parsed.grouped || parsed.num >= 1000)}${parsed.suffix}` : raw;
   const s = pop(frame, fps, 3, 13);
   const digits = finalText.length;
-  const size = (isVertical ? 190 : 300) * u * (digits > 9 ? 0.7 : digits > 7 ? 0.85 : 1);
+  const size = 300 * u * (digits > 9 ? 0.7 : digits > 7 ? 0.85 : 1); // the long video's figure; a Short's is fitted to its stage (below)
   const numCps = fitCps(finalText, fps, numStart0, 9, total, 0.65);
   // the figure lands on its word: a count-up ends there, a written figure (count=off) finishes writing there
   const writeLen = brand.board && !counting ? doneAt(brand, finalText, fps, 0, 3, numCps) : 0;
@@ -197,11 +202,88 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
   const loss = isLoss(`${raw} ${label ?? ''} ${sub ?? ''}`);
   const subColor = sub && isLoss(sub) ? brand.accent2 : noteColor(brand);
   // with a loop or a drawing on the right the note goes under the figure, not beside it, where it would run into the picture
-  const stacked = isVertical || !!scene.props.anim || (!!scene.props.art && scene.props.art !== 'off');
+  const stacked = !!scene.props.anim || (!!scene.props.art && scene.props.art !== 'off');
   // the ring round the figure lands on the word that says it (scene.punch, from the build), once it is written
   const ringAt = scene.punch !== undefined ? Math.max(numDone, Math.round((scene.punch - scene.start) * fps)) : null;
+  const corner = <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, label, sub, scene.narration)} art={scene.props.sticker || scene.props.art || scene.props.icon || brand.illustrated ? undefined : autoArt(brand, label, sub, scene.narration, scene.narration)} frame={frame} fps={fps} start={brand.board ? Math.max(numDone + 6, 10) : 0} seed={scene.id} color={brand.blue} />;
+  if (up) {
+    // A Short: the label, the figure and the sub-line are laid in the stage (components/upright.json), centred. They
+    // used to hang from 29% of the height with a 190 px figure, top left of a page that stayed bare down to its cards.
+    // The figure is fitted to 78% of the stage's width, 420 px at most and 190 px at least; a string so long that its
+    // ring would leave the stage is set smaller still. The label and the sub-line grow with it, up to 1.6 times their
+    // usual type, while they still set on one line. Where the stage is short (over a drawing, over the character's
+    // head) the figure and the lines give way together until the block fits; what room is left over goes between the
+    // lines, and the block sits in the middle of the stage. If it cannot fit, it runs over the stage's foot, never up
+    // into the caption.
+    const stage = up.stage(stageUnder(scene, brand, characterOn));
+    const source: string | undefined = scene.props.source;
+    const base = 190 * u;
+    const em = displayWidth(finalText, 1, brand.display); // the figure's width in ems
+    const ringed = (stage.w - 60 * u) / 1.14; // the widest figure whose ring (a seventh wider, and its pen) stays in the stage
+    const most = Math.min(Math.max((stage.w * 0.78) / em, base), 420 * u, ringed / em);
+    const least = Math.min(most, base);
+    const ring = ringAt !== null && !!brand.board;
+    // the block with the figure at `figure` px and the lines grown by `grow`: its type sizes, its pen and its height
+    const lay = (figure: number, grow: number) => {
+      // the largest type, between its usual size and that size grown, at which a written line sets on one line
+      const oneLine = (text: string, usual: number) => Math.max(usual, Math.min(usual * grow, (stage.w * 0.94) / (writtenEm(text) * 1.03)));
+      const labelSize = label ? oneLine(label, 60 * u) : 0;
+      const subSize = sub ? oneLine(sub, 54 * u) : 0;
+      const pen = Math.sqrt(figure / base); // the ring and the underline thicken with the figure
+      const over = ring ? 18 * u * pen : 0; // the ring stands this far over the figure's line: the label keeps clear of it
+      const under = 8 * u + figure * 0.04; // and the underline this far below, clear of the ring's lower arc
+      const lines = (text: string, type: number) => writtenLines(text, type, stage.w);
+      const h = (label ? lines(label, labelSize) * labelSize * 1.1 + 6 * u + over : 0) + figure + under + 32 * u * pen + (sub ? 10 * u + lines(sub, subSize) * subSize * 1.15 : 0) + (source ? 24 * u + lines(`source: ${source}`, 38 * u) * 38 * u * 1.15 : 0);
+      return {figure, labelSize, subSize, pen, over, under, h};
+    };
+    const room = stage.h - 24 * u;
+    // from the fullest setting down: figure and lines shrink together to their usual sizes, then the figure alone
+    let fit = lay(most, 1.6);
+    for (let q = 0.95; fit.h > room && q > -0.01; q -= 0.05) fit = lay(least + (most - least) * q, 1 + 0.6 * q);
+    for (let f = least - 4 * u; fit.h > room && f >= 130 * u; f -= 4 * u) fit = lay(f, 1);
+    const {figure, labelSize, subSize, pen, over, under, h} = fit;
+    const air = Math.max(0, Math.min(1, (room - h) / (200 * u))); // 0 when the block only just fits, 1 when the stage has room to spare
+    const gap = brand.board ? '0.28em' : 0; // a written line ends in the marker's word gap: the same on its left centres the words
+    return (
+      <AbsoluteFill>
+        <div style={{position: 'absolute', left: stage.x, top: stage.y, width: stage.w, height: stage.h, display: 'flex', flexDirection: 'column'}}>
+          <div style={{margin: 'auto 0', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'}}>
+            {label ? (
+              <div style={{fontFamily: hand(brand), fontSize: labelSize, lineHeight: 1.1, color: noteColor(brand), transform: 'rotate(-1.5deg)', opacity: brand.board ? 1 : fadeIn(frame, 0, 8), marginBottom: (6 + 26 * air) * u + over, paddingLeft: gap}}>
+                {brand.board ? <Write text={label} frame={frame} fps={fps} start={0} cps={labelCps} color={noteColor(brand)} /> : label}
+              </div>
+            ) : null}
+            <div style={{position: 'relative', display: 'inline-block'}}>
+              <div style={{fontFamily: brand.display, fontWeight: dw(brand), fontSize: figure, lineHeight: 1, letterSpacing: brand.board ? 0 : -5 * u, color: brand.ink, whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums', marginRight: brand.board && !counting ? '-0.2em' : 0, transform: brand.board ? undefined : `scale(${0.85 + 0.15 * s})`, transformOrigin: 'center bottom', opacity: brand.board ? 1 : Math.min(1, s * 1.5)}}>
+                {counting ? (
+                  // the count-up keeps the finished figure's place: the box is as wide as the last number, so nothing slides as the digits change
+                  <span style={{position: 'relative', display: 'inline-block'}}>
+                    <span style={{visibility: 'hidden'}}>{finalText}</span>
+                    <span style={{position: 'absolute', left: 0, top: 0, visibility: frame >= numStart ? 'visible' : 'hidden'}}>{display}</span>
+                  </span>
+                ) : brand.board ? <Write text={display} frame={frame} fps={fps} start={numStart} cps={numCps} wordGap="0.2em" /> : display}
+              </div>
+              {ring && ringAt !== null ? <Ring width={figureWidth(finalText, figure, brand.display, dw(brand))} height={figureHeight(figure)} stroke={loss ? brand.accent2 : brand.accent} win={[ringAt, ringAt + Math.round(fps * 0.35)]} thickness={7 * u * pen} seed={scene.id * 3 + 1} /> : null}
+            </div>
+            <Underline width={Math.min(stage.w, em * figure * 1.15)} stroke={loss ? brand.accent2 : brand.accent} thickness={8 * u * pen} win={[numDone, numDone + fps * 0.5]} easeOut seed={7} style={{marginTop: under}} />
+            {sub ? (
+              <div style={{fontFamily: hand(brand), fontSize: subSize, lineHeight: 1.15, color: subColor, transform: 'rotate(-2deg)', opacity: brand.board ? 1 : note, marginTop: (10 + 30 * air) * u, paddingLeft: gap}}>
+                {brand.board ? <Write text={sub} frame={frame} fps={fps} start={noteStart + 8} cps={30} color={subColor} /> : sub}
+              </div>
+            ) : null}
+            {source ? (
+              <div style={{marginTop: (24 + 56 * air) * u, lineHeight: 1.15, paddingLeft: gap}}>
+                <Source brand={brand} source={source} delay={brand.board ? noteStart + (sub ? writeFrames(sub, fps, 30) + 12 : 4) : 24} />
+              </div>
+            ) : null}
+          </div>
+        </div>
+        {corner}
+      </AbsoluteFill>
+    );
+  }
   return (
-    <AbsoluteFill style={{justifyContent: isVertical ? 'flex-start' : 'center', padding: pad, paddingLeft: pad * 1.2, paddingTop: isVertical ? height * 0.29 : pad}}>
+    <AbsoluteFill style={{justifyContent: 'center', padding: pad, paddingLeft: pad * 1.2}}>
       {label ? (
         <div style={{fontFamily: hand(brand), fontSize: 60 * u, color: noteColor(brand), transform: 'rotate(-1.5deg)', transformOrigin: 'left', opacity: brand.board ? 1 : fadeIn(frame, 0, 8), marginBottom: 4 * u}}>
           {brand.board ? <Write text={label} frame={frame} fps={fps} start={0} cps={labelCps} color={noteColor(brand)} /> : label}
@@ -218,8 +300,8 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
           <Underline width={Math.min(size * 2.4, width * 0.5)} stroke={loss ? brand.accent2 : brand.accent} thickness={8 * u} win={[numDone, numDone + fps * 0.5]} easeOut seed={7} style={{marginTop: 8 * u}} />
         </div>
         {sub ? (
-          <div style={{display: 'flex', alignItems: 'center', gap: 16 * u, marginBottom: (stacked ? 0 : 40) * u, marginTop: stacked && !isVertical ? 18 * u : 0, opacity: brand.board ? 1 : note, maxWidth: isVertical ? '100%' : width * (stacked ? 0.5 : 0.34)}}>
-            {!isVertical ? <Arrow length={120 * u} stroke={subColor} win={brand.board ? [noteStart, noteStart + 8] : [20, 30]} angle={-8} seed={9} thickness={4 * u} /> : null}
+          <div style={{display: 'flex', alignItems: 'center', gap: 16 * u, marginBottom: (stacked ? 0 : 40) * u, marginTop: stacked ? 18 * u : 0, opacity: brand.board ? 1 : note, maxWidth: width * (stacked ? 0.5 : 0.34)}}>
+            <Arrow length={120 * u} stroke={subColor} win={brand.board ? [noteStart, noteStart + 8] : [20, 30]} angle={-8} seed={9} thickness={4 * u} />
             <div style={{fontFamily: hand(brand), fontSize: 54 * u, lineHeight: 1.15, color: subColor, transform: 'rotate(-2deg)'}}>
               {brand.board ? <Write text={sub} frame={frame} fps={fps} start={noteStart + 8} cps={30} color={subColor} /> : sub}
             </div>
@@ -229,7 +311,7 @@ export const PaperStat: React.FC<P> = ({scene, brand}) => {
       <div style={{marginTop: 30 * u}}>
         <Source brand={brand} source={scene.props.source} delay={brand.board ? noteStart + (sub ? writeFrames(sub, fps, 30) + 12 : 4) : 24} />
       </div>
-      <CornerDoodle brand={brand} name={scene.props.sticker || scene.props.art ? undefined : autoDoodle(brand, scene.props.icon, label, sub, scene.narration)} art={scene.props.sticker || scene.props.art || scene.props.icon || brand.illustrated ? undefined : autoArt(brand, label, sub, scene.narration, scene.narration)} frame={frame} fps={fps} start={brand.board ? Math.max(numDone + 6, 10) : 0} seed={scene.id} color={brand.blue} />
+      {corner}
     </AbsoluteFill>
   );
 };
@@ -1024,6 +1106,15 @@ const CaptionTab: React.FC<{text: string; brand: Brand; left: number; lift: numb
   );
 };
 
+/** true while a Short shows a photo opener with its big number (`big=` on footage: PaperBroll's branch for it, which
+ * on a Short comes after the watch-next card and after a page or phone screen shown whole). The number is the hook
+ * there, so the hook sticker stays off the picture (Video.tsx HookBanner). */
+export const bigOpener = (scene: Scene | undefined): boolean => {
+  if (!scene || scene.type !== 'broll') return false;
+  const p = scene.props;
+  return !!p.big && !!(p.vsrc || p.src) && String(p.next ?? '') !== 'on' && String(p.phone ?? '') !== 'on' && String(p.vfit ?? '') !== 'contain';
+};
+
 // ------------------------------------------------------------------ b-roll: the footage fills the frame
 /** Stock footage as its own scene, How Money Works style: the clip covers the whole frame with a slow push-in, a short
  * caption on a white label in the corner (the credit beside it only with `credits: screen`). With no footage yet the frame says what was
@@ -1033,6 +1124,7 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const {u, pad, width, height, isVertical} = useLayout();
+  const up = useUpright();
   const total = Math.max(1, Math.round((scene.end - scene.start) * fps));
   // `vsrc=`: a second crop of a page or photo for the upright cut (a wide page loses its headline when it fills a Short)
   const src: string | undefined = (isVertical && scene.props.vsrc) || scene.props.src;
@@ -1071,10 +1163,8 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
   if (src && (String(scene.props.phone ?? '') === 'on' || fitted) && isVertical) {
     // a Short: the phone's whole screen fitted between the caption band and the Shorts title strip (29% to 84% of the
     // height: 72% of the width on a 1080x1480 recording), its marks on it, the caption label on its lower right
-    const cw = width * (fitted ? 0.94 : 0.72);
-    const ch = cw * (Number(scene.props.h) > 0 && Number(scene.props.w) > 0 ? Number(scene.props.h) / Number(scene.props.w) : 1480 / 1080);
-    const cx = (width - cw) / 2;
-    const cy = height * 0.29;
+    // (paper/setpiece.tsx uprightWhole has the box: a page's cards hang under its foot, FootageCards)
+    const {x: cx, y: cy, w: cw, h: ch} = uprightWhole(scene, width, height);
     return (
       <AbsoluteFill style={{background: brand.bg, overflow: 'hidden'}}>
         <div style={{position: 'absolute', left: cx, top: cy, width: cw, height: ch, transform: `translateY(${(1 - sf) * 40 * u}px)`, opacity: Math.min(1, sf * 1.5), borderRadius: 36 * u, overflow: 'hidden', background: '#000', boxShadow: `0 ${14 * u}px ${40 * u}px rgba(40,30,10,0.28)`}}>
@@ -1155,13 +1245,21 @@ export const PaperBroll: React.FC<P> = ({scene, brand}) => {
     // (Jeffrey: "I really hate the way we start the vid with half text").
     const [l1, l2] = String(scene.props.big).split('|').map((x) => x.trim());
     const inAt = scene.start <= 0.01 ? 1 : pop(frame, fps, 2, 10);
-    const size1 = Math.min((isVertical ? 150 : 180) * u, (width * 0.9) / Math.max(4, l1.length) * 1.75);
+    // red only ever means a loss: the block is red when the figure reads as one (a leading minus, or a losing word in
+    // either line) and navy otherwise. It used to be red whatever the figure said.
+    const block = /^\s*[−-]/.test(l1) || isLoss(`${l1} ${l2 ?? ''}`) ? brand.accent2 : NAVY;
+    // On a Short the block's foot sits above YouTube's title strip and its right edge left of the buttons
+    // (upright.json opener); at the foot of the frame the number was under the title. The type gives way if the block,
+    // with its shadow, would cross that right edge.
+    const place = up ? {right: width * (1 - zones.opener.right), bottom: height * (1 - zones.opener.foot)} : {right: pad * 0.7, bottom: pad * 0.55};
+    const most = (isVertical ? 150 : 180) * u;
+    const size1 = Math.min(most, (width * 0.9) / Math.max(4, l1.length) * 1.75, up ? (width - place.right - pad * 0.7 - 68 * u) / displayWidth(l1, 1, brand.display) : most);
     return (
       <AbsoluteFill style={{background: '#111', overflow: 'hidden'}}>
         <div style={{position: 'absolute', inset: 0, overflow: 'hidden'}}>{media}</div>
         <div style={{position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0) 38%, rgba(4,27,60,0.86) 100%)'}} />
-        <div style={{position: 'absolute', left: pad * 0.7, right: pad * 0.7, bottom: pad * 0.55, transform: `scale(${0.96 + 0.04 * inAt})`, transformOrigin: 'left bottom'}}>
-          <div style={{display: 'inline-block', background: brand.accent2, color: '#fff', fontFamily: brand.display, fontSize: size1, lineHeight: 1.02, padding: `${6 * u}px ${28 * u}px ${14 * u}px`, transform: 'rotate(-1.2deg)', boxShadow: `${10 * u}px ${10 * u}px 0 rgba(0,0,0,0.35)`}}>{l1}</div>
+        <div style={{position: 'absolute', left: pad * 0.7, right: place.right, bottom: place.bottom, transform: `scale(${0.96 + 0.04 * inAt})`, transformOrigin: 'left bottom'}}>
+          <div style={{display: 'inline-block', background: block, color: '#fff', fontFamily: brand.display, fontSize: size1, lineHeight: 1.02, padding: `${6 * u}px ${28 * u}px ${14 * u}px`, transform: 'rotate(-1.2deg)', boxShadow: `${10 * u}px ${10 * u}px 0 rgba(0,0,0,0.35)`}}>{l1}</div>
           {l2 ? <div style={{marginTop: 14 * u, color: '#fff', fontFamily: brand.display, fontSize: size1 * 0.58, lineHeight: 1.05, textShadow: '0 3px 14px rgba(0,0,0,0.6)'}}>{l2}</div> : null}
         </div>
         {credit ? <div style={{position: 'absolute', right: pad * 0.4, top: pad * 0.3, fontFamily: hand(brand), fontSize: 24 * u, color: 'rgba(255,255,255,0.85)', textShadow: '0 1px 4px rgba(0,0,0,0.6)'}}>{credit}</div> : null}

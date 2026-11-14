@@ -1,6 +1,7 @@
 """A Short's zones (remotion/src/components/upright.json): every number is a fraction of the frame, the sticker, the
-caption, the stage and the cards do not overlap in any variant, and EDITOR.md's zone table quotes the same numbers.
-python -m pytest tests/test_upright.py"""
+caption, the stage and the cards do not overlap in any variant, EDITOR.md's zone table quotes the same numbers, and the
+scenes that are laid in the zones (the caption, the receipt, the stat, the pie, the cards, the photo opener) read them
+from the file. python -m pytest tests/test_upright.py"""
 import json
 import os
 import re
@@ -81,6 +82,32 @@ def test_cards_drawing_and_character_stay_out_of_youtube_and_of_each_other():
     assert z["drawing"]["right"] <= z["character"]["left"]
 
 
+def test_the_cards_keep_off_the_drawing_and_the_character():
+    z = zones()
+    cards, left = z["cards"], z["stage"]["left"]
+    # with nothing else in the band the cards may run from the left margin to their right edge
+    assert left < cards["right"]
+    # beside a drawing or loop they start right of it, and still have a third of the width to be read in
+    assert z["drawing"]["right"] <= cards["beside_drawing"] < cards["right"]
+    assert cards["right"] - cards["beside_drawing"] >= 0.33
+    # beside the character they end left of where he stands: his feet are at the middle of his box, and a standing
+    # figure is under half as wide as the box, so the first tenth of the box is bare paper
+    box = z["character"]
+    assert left < cards["beside_character"] <= box["left"] + (box["right"] - box["left"]) * 0.1
+    assert cards["beside_character"] - left >= 0.33
+    # with both, the one card goes over the drawing and left of him: there is a gap between his head and its top
+    assert z["drawing"]["top"] - z["stage"]["foot"]["character"] >= 0.1
+
+
+def test_the_photo_openers_number_stays_above_the_title_and_left_of_the_buttons():
+    z = zones()
+    opener, yt = z["opener"], z["youtube"]
+    assert opener["foot"] <= 1 - yt["bottom"]  # its foot is above YouTube's title strip
+    assert opener["right"] <= 1 - yt["right"]  # and it ends left of the buttons, which stand beside it
+    assert opener["foot"] > yt["right_from"]
+    assert opener["foot"] >= 0.75  # low on the photo: the face is above it
+
+
 def test_the_caption_clears_the_sticker_and_what_is_under_it_wherever_it_sits():
     z = zones()
     cap = z["caption"]
@@ -142,6 +169,9 @@ def test_editor_md_quotes_the_same_numbers():
         "Stage": [stage["top"], stage["left"], stage["right"], stage["narrow_from"], stage["left"], stage["narrow_right"]],
         "Stage foot": [stage["foot"]["bare"], stage["foot"]["cards"], stage["foot"]["drawing"], stage["foot"]["character"]],
         "Cards": [z["cards"]["top"], z["cards"]["bottom"], z["cards"]["right"]],
+        "Cards beside a drawing or loop": [z["cards"]["beside_drawing"]],
+        "Cards beside the character": [z["cards"]["beside_character"]],
+        "Photo opener's number": [z["opener"]["foot"], z["opener"]["right"]],
         "Drawing or loop": [z["drawing"]["left"], z["drawing"]["right"], z["drawing"]["top"], z["drawing"]["bottom"]],
         "Character": [z["character"]["left"], z["character"]["right"], z["character"]["top"], z["character"]["bottom"]],
     }
@@ -184,3 +214,45 @@ def test_the_renderer_reads_the_zones_from_the_file():
     # the upright receipt starts at the top of the stage, not 20% down
     receipt = read(SRC, "paper", "receipt.tsx")
     assert "useUpright" in receipt and "height * 0.2" not in receipt
+
+
+def component(source, name):
+    """the source of one exported component or helper: from its `export const <name>` to the next top-level one"""
+    start = source.index(f"export const {name}")
+    rest = source[start + 1:]
+    nxt = re.search(r"\n(export const |const [A-Z]|// -{20,})", rest)
+    return source[start:start + 1 + (nxt.start() if nxt else len(rest))]
+
+
+def test_the_stat_the_pie_the_cards_and_the_opener_are_laid_out_from_the_zones():
+    scenes = read(SRC, "paper", "scenes.tsx")
+    money = read(SRC, "paper", "money.tsx")
+    setpiece = read(SRC, "paper", "setpiece.tsx")
+    video = read(SRC, "Video.tsx")
+    # the stat and the pie ask for the stage, with what stands under it, and no longer hang from 29% of the height
+    stat, pie = component(scenes, "PaperStat"), component(money, "PaperPie")
+    for src in (stat, pie):
+        assert "useUpright()" in src and "up.stage(stageUnder(" in src
+        assert "height * 0.29" not in src
+    assert "0.78" in stat and "420 * u" in stat and "190 * u" in stat  # fitted to 78% of the stage, 420 px to 190 px
+    assert "350 * u" in pie  # the pie's radius at most
+    # the cards of a Short's board hang from the zone's right edge, not from a column centred at 73% of the width
+    cards = component(setpiece, "FootageCards")
+    assert "from '../components/upright.json'" in setpiece
+    for key in ("cards.right", "cards.beside_drawing", "cards.beside_character", "cards.bottom"):
+        assert key in cards, key
+    assert "0.73" not in cards
+    assert "cards.right" in component(setpiece, "SetScene")  # a set piece's column on the right stops there too
+    # the photo opener: red only for a loss, placed from the file, and the hook sticker off while it is up
+    broll = component(scenes, "PaperBroll")
+    assert "zones.opener.foot" in broll and "zones.opener.right" in broll
+    assert "isLoss(" in broll and "brand.accent2 : NAVY" in broll
+    assert "background: brand.accent2, color: '#fff'" not in broll  # the block that was red whatever the figure
+    assert "bigOpener(current)" in component_of_banner(video)
+
+
+def component_of_banner(video):
+    """the hook sticker's component in Video.tsx (not exported)"""
+    start = video.index("const HookBanner")
+    return video[start:video.index("\n};", start)]
+

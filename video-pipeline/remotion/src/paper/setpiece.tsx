@@ -8,7 +8,11 @@
 import React from 'react';
 import {AbsoluteFill, Img, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import type {Brand, Scene} from '../types';
-import {isTraced} from './art';
+import {displayWidth, type StageFor} from '../components/layout';
+import zones from '../components/upright.json';
+import {isTraced, pickArt} from './art';
+import {CharacterOn} from './character';
+import {LOOPS} from './loops';
 import poseLib from '../../../library/poses/manifest.json';
 import walkLib from '../../../library/poses/walk.json';
 import roomLib from '../../../library/backgrounds/manifest.json';
@@ -133,7 +137,11 @@ const figureAt = (scene: Scene, cues: SetCue[], st: Stage, W: number, H: number,
   return {kind: 'pose' as const, src: `poses/solid/${e.name}.png`, e, x: X, lift, flip, sx, sy, age: (tq - at) * STOP, name: e.name};
 };
 
-const Card: React.FC<{c: SetCue; x: number; y: number; age: number; tilt: number; vertical: boolean; W: number; maxw: number}> = ({c, x, y, age, tilt, vertical, W, maxw}) => {
+/** How a card's words are set in a column `maxw` wide: the type size, whether an old figure is stacked over the new
+ * one, and whether the words wrap. `hung` is a card that hangs from an edge (a Short's board, below): it is as wide as
+ * its words, so at the floor size it wraps only when they really are wider than the column (the 0.47 em a character
+ * allowed above is a safe guess, a fifth wide of this face). */
+const cardType = (c: SetCue, vertical: boolean, W: number, maxw: number, hung = false) => {
   const u = vertical ? W / 1080 : W / 1920;
   const text = String(c.text ?? '');
   const big = !c.old && isFigure(text);
@@ -144,12 +152,26 @@ const Card: React.FC<{c: SetCue; x: number; y: number; age: number; tilt: number
   if (chars * 0.47 * size > room) size = room / (chars * 0.47);
   // a Short's card is never smaller than 50 px type (smaller cannot be read on a phone): it wraps onto two lines instead
   const floor = vertical ? 50 * u : 0;
-  const wrap = size < floor;
+  let wrap = size < floor;
   if (wrap) size = floor;
+  if (wrap && hung && Math.max(displayWidth(text, size), stack ? displayWidth(String(c.old), size * 0.8) : 0) * 1.03 <= room) wrap = false;
+  return {u, text, size, stack, wrap};
+};
+
+/** how far inside the line it hangs from a card hung by its right edge keeps, in px of a 1080-wide frame: its shadow
+ * (6 px), the corner its tilt swings out (up to 7 px on a card of three lines) and 2 px to spare */
+const HANG_IN = 15;
+/** a column of cards hung from a line: `at` is where the cards' left or right edges sit */
+type Hang = {at: number; side: 'left' | 'right'};
+
+/** A card. `x, y` is its centre. `hang`: `x` is its left or right edge instead (it hangs from a line, and its landing
+ * squash widens it away from that line, never across it); `top`: `y` is its top edge instead. */
+const Card: React.FC<{c: SetCue; x: number; y: number; age: number; tilt: number; vertical: boolean; W: number; maxw: number; hang?: 'left' | 'right'; top?: boolean}> = ({c, x, y, age, tilt, vertical, W, maxw, hang, top}) => {
+  const {u, text, size, stack, wrap} = cardType(c, vertical, W, maxw, !!hang);
   const [sx, sy] = age < 0 ? [1, 1] : squashAt(age);
   const color = COLORS[c.color ?? 'ink'] ?? COLORS.ink;
   return (
-    <div style={{position: 'absolute', left: x, top: y, transform: `translate(-50%, -50%) rotate(${tilt}deg) scale(${sx}, ${sy})`, transformOrigin: '50% 100%',
+    <div style={{position: 'absolute', left: x, top: y, transform: `translate(${hang === 'right' ? '-100%' : hang === 'left' ? '0' : '-50%'}, ${top ? '0' : '-50%'}) rotate(${tilt}deg) scale(${sx}, ${sy})`, transformOrigin: hang === 'right' ? '100% 100%' : hang === 'left' ? '0% 100%' : '50% 100%',
       background: '#fff', border: `${4 * u}px solid ${COLORS.ink}`, borderRadius: 18 * u, padding: `${8 * u}px ${26 * u}px ${12 * u}px`,
       boxShadow: `${6 * u}px ${8 * u}px 0 rgba(0,0,0,0.18)`, fontFamily: 'Caveat Brush', fontSize: size, lineHeight: 1.1, whiteSpace: wrap ? 'normal' : 'nowrap', ...(wrap ? {width: maxw - 60 * u, textAlign: 'center' as const, justifyContent: 'center'} : {}), color, display: 'flex', flexDirection: stack ? 'column' : 'row', alignItems: 'center', gap: (stack ? 2 : 14) * u}}>
       {stack ? <span style={{color: COLORS.red, textDecoration: 'line-through', textDecorationThickness: 5 * u, fontSize: size * 0.8}}>{c.old}</span> : null}
@@ -218,6 +240,23 @@ export const SetScene: React.FC<{scene: Scene; brand: Brand}> = ({scene}) => {
   const y0 = (vertical ? 0.3 : 0.2) * H;
   const step = (vertical ? 0.09 : 0.118) * H;
   const maxw = (vertical ? 0.52 : 0.44) * W;
+  // On a Short the cards hang from the far edge of their side: the left margin, or on the right the line YouTube's
+  // buttons begin at (upright.json cards.right). They are no wider than the room between that edge and him, at the
+  // widest he reaches towards them in any pose of this scene, and a third of the width at least. Centred at 29% or 71%
+  // of the width and up to 52% wide, a long card lay on his arm on the left, and ran to 97%, under the buttons, on the
+  // right.
+  let hang: Hang | undefined;
+  let colW = maxw;
+  if (vertical) {
+    const poses = cues.filter((c) => c.do === 'pose' && !!c.pose && !!POSE[c.pose]);
+    // a pose drawn reaching right is turned to face the cards (figureAt); what he holds out reaches that far
+    const turned = (c: SetCue) => c.flip ?? ((c.pose as string).startsWith('point-board') || (c.pose as string).startsWith('hand-over') ? cardsLeft : false);
+    const towards = (e: PoseEntry, flip: boolean) => (cardsLeft !== flip ? e.foot_x : e.w - e.foot_x) * s;
+    const widest = Math.max(towards(POSE.stand, false), ...poses.map((c) => towards(POSE[c.pose as string], turned(c))));
+    const beside = st.x * W + (cardsLeft ? -1 : 1) * (widest + 0.02 * W);
+    hang = cardsLeft ? {at: zones.stage.left * W, side: 'left'} : {at: zones.cards.right * W - HANG_IN * (W / 1080), side: 'right'};
+    colW = Math.min(maxw, Math.max(0.33 * W, Math.abs(beside - hang.at)));
+  }
   return (
     <AbsoluteFill>
       <AbsoluteFill style={{transform: `translate(${-pan + shx}px, ${shy}px) scale(${z})`, transformOrigin: origin}}>
@@ -238,7 +277,7 @@ export const SetScene: React.FC<{scene: Scene; brand: Brand}> = ({scene}) => {
         const hy = Y - hpx * 0.6;
         return <Img key={`h${i}`} src={staticFile(`props/solid/${c.prop}.png`)} style={{position: 'absolute', left: hx - ph / 2, top: hy - ph * 0.55, height: ph, filter: 'contrast(1.9)', transform: `scale(${sx}, ${sy})`, transformOrigin: '50% 100%'}} />;
       })}
-      <Column items={shown} colX={colX} y0={y0} step={step} maxw={maxw} tq={tq} k={k} left={cardsLeft} vertical={vertical} W={W} H={H} />
+      <Column items={shown} colX={colX} y0={y0} step={step} maxw={colW} tq={tq} k={k} left={cardsLeft} vertical={vertical} W={W} H={H} hang={hang} />
     </AbsoluteFill>
   );
 };
@@ -288,8 +327,10 @@ const pickSlot = (cands: {colX: number; y0: number}[], n: number, step: number, 
   return cands[0];
 };
 
-/** The cards and props that have landed, stacked down a column, each squashing as it lands. */
-const Column: React.FC<{items: SetCue[]; colX: number; y0: number; step: number; maxw: number; tq: number; k: number; left: boolean; vertical: boolean; W: number; H: number}> = ({items, colX, y0, step, maxw, tq, k, left, vertical, W, H}) => (
+/** The cards and props that have landed, stacked down a column, each squashing as it lands. With `hang` the cards hang
+ * from that line by their left or right edges (the props stay centred on `colX`); with `top`, `y0` is the first card's
+ * top edge and each card hangs from its own top, `step` below the last. */
+const Column: React.FC<{items: SetCue[]; colX: number; y0: number; step: number; maxw: number; tq: number; k: number; left: boolean; vertical: boolean; W: number; H: number; hang?: Hang; top?: boolean}> = ({items, colX, y0, step, maxw, tq, k, left, vertical, W, H, hang, top}) => (
   <>
     {items.map((c, i) => {
       const age = (tq - c.t) * STOP;
@@ -300,7 +341,7 @@ const Column: React.FC<{items: SetCue[]; colX: number; y0: number; step: number;
         const [sx, sy] = squashAt(age);
         return <Img key={`p${i}`} src={staticFile(`props/solid/${c.prop}.png`)} style={{position: 'absolute', left: colX - ph / 2, top: y - ph / 2, height: ph, filter: 'contrast(1.9)', transform: `rotate(${tilt * 3}deg) scale(${sx}, ${sy})`, transformOrigin: '50% 100%'}} />;
       }
-      return <Card key={`c${i}`} c={c} x={colX} y={y} age={age} tilt={tilt} vertical={vertical} W={W} maxw={maxw} />;
+      return <Card key={`c${i}`} c={c} x={hang ? hang.at : colX} y={y} age={age} tilt={tilt} vertical={vertical} W={W} maxw={maxw} hang={hang?.side} top={top} />;
     })}
   </>
 );
@@ -329,12 +370,84 @@ export const cardsTakeFoot = (scene: Scene, brand?: Brand) => {
 const STRIP = {y: 0.845, xs: [0.29, 0.71], maxw: 0.41};
 const CORNER: Record<'tr' | 'br' | 'bl', {colX: number; y0: number}> = {tr: {colX: 0.74, y0: 0.2}, br: {colX: 0.74, y0: 0.727}, bl: {colX: 0.26, y0: 0.727}};
 
+/** true when a placed drawing or loop stands bottom left on a Short's scene: paper/art.tsx ArtLayer and paper/loops.tsx
+ * LoopLayer put it there whatever art_at says, unless it was dragged somewhere (art_x and art_y). The stage ends above
+ * it and the cards keep to its right. */
+export const drawingBelow = (scene: Scene, brand?: Brand): boolean => {
+  const p = scene.props;
+  if (!brand?.board || (p.art_x !== undefined && p.art_y !== undefined)) return false;
+  const loop = !!p.anim && (LOOPS as readonly string[]).includes(String(p.anim));
+  const name = pickArt(p.art, undefined);
+  // footage and a clipping carry no drawing, and a traced drawing on an illustrated board is the board's own big picture
+  const art = !!name && scene.type !== 'broll' && scene.type !== 'news' && !(brand.illustrated && (scene.type === 'text' || scene.type === 'hook') && isTraced(name) && p.art_x === undefined);
+  return loop || art;
+};
+const NO_CHARACTER = new Set(['broll', 'clip', 'still', 'image', 'set']); // the scenes the posing character steps out for (paper/poses.tsx PoseLayer)
+/** What stands under a Short's stage on this scene (components/layout.ts uprightStage): cards, a drawing or loop bottom
+ * left, the posing character (`characterOn`: the video has one, paper/character.ts). */
+export const stageUnder = (scene: Scene, brand: Brand | undefined, characterOn: boolean): StageFor => ({
+  cards: ((scene.cues ?? []) as unknown as SetCue[]).some((c) => c.do === 'card'),
+  drawing: drawingBelow(scene, brand),
+  character: characterOn && !NO_CHARACTER.has(scene.type),
+});
+// ------------------------------------------------------------------ how wide the hand face writes a line
+// The advance width of each character of Caveat (the board look's hand face: labels, sub-lines, source lines) in ems,
+// read from the font file, as components/layout.ts holds them for the display face. A sum of these is the line the
+// browser sets, less its kerning. The stat and the pie fit their written lines to a Short's stage with it.
+const CAVEAT: Record<string, number> = {
+  ' ': 0.242, '!': 0.21, '"': 0.237, '#': 0.559, '$': 0.45, '%': 0.6, '&': 0.564, "'": 0.117, '(': 0.33,
+  ')': 0.33, '*': 0.363, '+': 0.446, ',': 0.198, '-': 0.326, '.': 0.198, '/': 0.33, '0': 0.45, '1': 0.45,
+  '2': 0.45, '3': 0.45, '4': 0.45, '5': 0.45, '6': 0.45, '7': 0.45, '8': 0.45, '9': 0.45, ':': 0.198,
+  ';': 0.198, '<': 0.446, '=': 0.446, '>': 0.446, '?': 0.374, '@': 0.643, 'A': 0.502, 'B': 0.52, 'C': 0.472,
+  'D': 0.578, 'E': 0.529, 'F': 0.454, 'G': 0.487, 'H': 0.563, 'I': 0.4, 'J': 0.306, 'K': 0.498, 'L': 0.426,
+  'M': 0.72, 'N': 0.599, 'O': 0.496, 'P': 0.464, 'Q': 0.502, 'R': 0.537, 'S': 0.486, 'T': 0.458, 'U': 0.482,
+  'V': 0.49, 'W': 0.72, 'X': 0.524, 'Y': 0.504, 'Z': 0.522, '[': 0.33, '\\': 0.33, ']': 0.33, '^': 0.446,
+  '_': 0.446, '`': 0.353, 'a': 0.437, 'b': 0.435, 'c': 0.355, 'd': 0.393, 'e': 0.325, 'f': 0.291, 'g': 0.355,
+  'h': 0.464, 'i': 0.187, 'j': 0.204, 'k': 0.365, 'l': 0.169, 'm': 0.56, 'n': 0.45, 'o': 0.353, 'p': 0.378,
+  'q': 0.377, 'r': 0.36, 's': 0.341, 't': 0.331, 'u': 0.37, 'v': 0.331, 'w': 0.517, 'x': 0.343, 'y': 0.341,
+  'z': 0.315, '{': 0.33, '|': 0.33, '}': 0.33, '~': 0.446, '£': 0.45, '€': 0.45, '−': 0.446, '–': 0.446,
+  '—': 0.566, '’': 0.117, '‘': 0.117, '“': 0.267, '”': 0.267, '…': 0.594, '×': 0.446,
+};
+const handEm = (word: string) => {
+  let em = 0;
+  for (const c of word) em += CAVEAT[c] ?? 0.45;
+  return em;
+};
+/** how wide a written line is, in ems of the hand face: each word and the gap the marker leaves after it
+ * (paper/write.tsx Write) */
+export const writtenEm = (text: string) => text.split(/\s+/).filter(Boolean).reduce((w, word) => w + handEm(word) + 0.28, 0);
+/** how many lines a written line takes at `size` px in a column `room` wide, its words broken as the browser breaks
+ * them, with 3% in hand so a close call counts as the extra line */
+export const writtenLines = (text: string, size: number, room: number) => {
+  let lines = 1;
+  let x = 0;
+  for (const word of text.split(/\s+/).filter(Boolean)) {
+    const w = (handEm(word) + 0.28) * size * 1.03;
+    if (x > 0 && x + w > room) {
+      lines += 1;
+      x = 0;
+    }
+    x += w;
+  }
+  return lines;
+};
+
+/** A page, photo or phone screen shown whole on a Short (paper/scenes.tsx PaperBroll: `vfit=contain`, or `phone=on`):
+ * its box. A page is 94% of the width, from 29% of the height down, and as tall as its own shape makes it (`w` and `h`
+ * on the scene); a phone screen is 72% of the width (29% to 84% of the height on a 1080 x 1480 recording). */
+export const uprightWhole = (scene: Scene, W: number, H: number): Rect => {
+  const w = W * (String(scene.props.vfit ?? '') === 'contain' ? 0.94 : 0.72);
+  const h = w * (Number(scene.props.h) > 0 && Number(scene.props.w) > 0 ? Number(scene.props.h) / Number(scene.props.w) : 1480 / 1080);
+  return {x: (W - w) / 2, y: H * 0.29, w, h};
+};
+
 /** Cards over footage (and over any board, stat or chart given cards=): the amounts said land on the picture as they are
  * said, in a column on the right (landscape) or under the captions (a Short), on the same stop-motion clock as the set
  * pieces. */
 export const FootageCards: React.FC<{scene: Scene; brand?: Brand}> = ({scene, brand}) => {
   const frame = useCurrentFrame();
   const {fps, width: W, height: H} = useVideoConfig();
+  const characterOn = React.useContext(CharacterOn);
   const vertical = H > W;
   const t = scene.start + frame / fps;
   const k = Math.floor(t * STOP);
@@ -365,13 +478,57 @@ export const FootageCards: React.FC<{scene: Scene; brand?: Brand}> = ({scene, br
       </AbsoluteFill>
     );
   }
-  // a Short's board carries its lines at the top and the caption in the middle; the band under them, between the
-  // caption and the Shorts title strip, is where its cards go (right of centre, centred at 0.73 and at most 0.5 wide,
-  // so they end where the drawing bottom left begins: at 0.62 they sat on its hands and props)
+  // a Short's board, stat or chart has its content in the stage; the band under it, above the Shorts title strip, is
+  // where its cards go
   const lowBand = vertical && scene.type !== 'broll';
   // a Short's board in the illustrated style with a traced drawing: the drawing is the big centred picture from 45% down,
   // so the cards go in the gap above it, under the caption, not on its hands or props (retirement Shorts round 2)
   const aboveArt = lowBand && !!brand?.illustrated && (scene.type === 'text' || scene.type === 'hook') && !!scene.props.art && isTraced(String(scene.props.art)) && scene.props.art_x === undefined;
+  if (lowBand && !aboveArt) {
+    // The cards hang from the right edge of their zone (components/upright.json: 84% of the width, where YouTube's
+    // buttons begin; centred at 73% and half the width wide, a card ran to 98%, under the buttons), two at a time at
+    // the heights they have always had. With nothing else in the band they may run back to the left margin, so a
+    // line of thirty characters stays one line. Beside a drawing or loop bottom left they start right of it, one card
+    // at a time when its words have to wrap there (two wrapped cards stood on each other). Beside the character they
+    // hang from the line left of him instead. With both, the one card goes in the gap over the drawing, left of him.
+    const z = zones;
+    const under = stageUnder(scene, brand, characterOn);
+    let right = z.cards.right;
+    let from = z.stage.left;
+    let y0 = 0.755 * H;
+    if (under.character && under.drawing) {
+      right = z.character.left;
+      y0 = ((z.stage.foot.character + z.drawing.top) / 2) * H;
+    } else if (under.character) right = z.cards.beside_character;
+    else if (under.drawing) from = z.cards.beside_drawing;
+    const edge = right * W - HANG_IN * (W / 1080);
+    const room = edge - from * W;
+    const pair = cues.slice(-2);
+    const one = under.drawing && (!!under.character || pair.some((c) => cardType(c, true, W, room, true).wrap));
+    return (
+      <AbsoluteFill style={{pointerEvents: 'none'}}>
+        <Column items={one ? pair.slice(-1) : pair} colX={edge - room / 2} y0={y0} step={0.065 * H} maxw={room} tq={tq} k={k} left={false} vertical W={W} H={H} hang={{at: edge, side: 'right'}} />
+      </AbsoluteFill>
+    );
+  }
+  if (vertical && String(scene.props.vfit ?? '') === 'contain' && !!(scene.props.vsrc || scene.props.src) && String(scene.props.next ?? '') !== 'on') {
+    // A page fitted whole on a Short (PaperBroll): its cards hang under the page's foot, the first a little clear of
+    // it, the second a step below. They used to start at 60% of the height whatever the page's shape, on the foot of a
+    // page that ends at 58%. The page keeps its size: real material is not shrunk to make room for cards. Two cards
+    // while both end above the Shorts title strip, else one; under a page so tall that not even one fits, the one
+    // card sits on the page's foot, as low as the strip allows.
+    const box = uprightWhole(scene, W, H);
+    const pitch = 0.08 * H;
+    const tall = 0.072 * H; // a card of two lines
+    const floor = zones.cards.bottom * H;
+    const top0 = box.y + box.h + 0.0125 * H; // clear of the foot by the corner a card's tilt lifts and its landing stretch
+    const fit = Math.floor((floor - top0 - tall) / pitch) + 1;
+    return (
+      <AbsoluteFill style={{pointerEvents: 'none'}}>
+        <Column items={cues.slice(-Math.max(1, Math.min(2, fit)))} colX={0.34 * W} y0={Math.min(top0, floor - tall)} step={pitch} maxw={0.56 * W} tq={tq} k={k} left vertical W={W} H={H} top />
+      </AbsoluteFill>
+    );
+  }
   // on footage the column is on the right; on a board with a drawing on its right half they go under the written
   // lines on the left, so the page fills up instead of sitting white
   // a board with a drawing: the cards go under its written lines, low on the left; a stat keeps them in the right column
@@ -387,10 +544,10 @@ export const FootageCards: React.FC<{scene: Scene; brand?: Brand}> = ({scene, br
   // sit on a box's heading (retirement round 2: "most people under 40: a pot" hid "It depends" for 12 s)
   const compare = !vertical && scene.type === 'compare';
   const left = (underLines && !rightArt) || chart || compare;
-  const n = compare ? 2 : aboveArt ? 1 : lowBand ? 2 : vertical ? 2 : rightArt || topRow || chart ? 2 : underLines ? 2 : left ? 3 : iconBoard ? 3 : 4;
-  const step = (compare ? 0.088 : lowBand ? 0.065 : vertical ? 0.08 : underLines ? 0.1 : 0.118) * H;
-  const maxw = (compare ? 0.84 : aboveArt ? 0.84 : lowBand ? 0.5 : vertical ? 0.56 : left ? 0.42 : 0.44) * W;
-  const usual = {colX: (compare ? 0.5 : aboveArt ? 0.5 : lowBand ? 0.73 : vertical ? 0.34 : chart ? 0.66 : rightArt ? 0.74 : underLines ? 0.25 : 0.74) * W, y0: (compare ? 0.81 : aboveArt ? 0.4 : lowBand ? 0.755 : vertical ? 0.6 : chart ? 0.21 : topRow ? 0.075 : rightArt ? 0.075 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H};
+  const n = compare ? 2 : aboveArt ? 1 : vertical ? 2 : rightArt || topRow || chart ? 2 : underLines ? 2 : left ? 3 : iconBoard ? 3 : 4;
+  const step = (compare ? 0.088 : aboveArt ? 0.065 : vertical ? 0.08 : underLines ? 0.1 : 0.118) * H;
+  const maxw = (compare ? 0.84 : aboveArt ? 0.84 : vertical ? 0.56 : left ? 0.42 : 0.44) * W;
+  const usual = {colX: (compare ? 0.5 : aboveArt ? 0.5 : vertical ? 0.34 : chart ? 0.66 : rightArt ? 0.74 : underLines ? 0.25 : 0.74) * W, y0: (compare ? 0.81 : aboveArt ? 0.4 : vertical ? 0.6 : chart ? 0.21 : topRow ? 0.075 : rightArt ? 0.075 : underLines ? 0.72 : iconBoard ? 0.5 : 0.2) * H};
   // on a landscape board the column keeps off the drawing: its usual place first, then top right, bottom left under
   // the lines, mid left, and the strip along the bottom
   const slot = vertical || compare || chart ? usual : pickSlot([usual, {colX: 0.74 * W, y0: 0.075 * H}, {colX: 0.25 * W, y0: 0.72 * H}, {colX: 0.25 * W, y0: 0.42 * H}, {colX: 0.5 * W, y0: 0.86 * H}], n, step, maxw, artRect(scene, brand, W, H));
