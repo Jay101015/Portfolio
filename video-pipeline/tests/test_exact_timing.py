@@ -40,6 +40,7 @@ def _made(tmp_path, md=SCRIPT):
     project = tmp_path / "p"
     project.mkdir()
     (project / "script.md").write_text(md, encoding="utf-8")
+    tts.approve(str(project), md, "the test's own yes")  # the voice step makes nothing from words that are not approved
     tts.make(str(project), FakeVoice(str(tmp_path)), "voice-id-123", md, build._header_lines(md), log=lambda *_: None)
     return str(project)
 

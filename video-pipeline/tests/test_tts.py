@@ -100,9 +100,15 @@ def _make(project, fake, md=SCRIPT, **kw):
     return rec, lines
 
 
+def _yes(project, md=SCRIPT):
+    """His yes to the words of `md`, written down the way the --approve step writes it."""
+    return tts.approve(str(project), md, "Jeffrey, in the test")
+
+
 def test_a_take_is_made_and_only_changed_chunks_are_paid_for_again(tmp_path):
     project = tmp_path / "p"
     project.mkdir()
+    _yes(project)
     fake = FakeVoice(str(tmp_path))
     rec, _ = _make(project, fake)
     assert (project / "voiceover.m4a").exists() and len(fake.calls) == 2
@@ -130,6 +136,7 @@ def test_a_take_is_made_and_only_changed_chunks_are_paid_for_again(tmp_path):
 def test_without_the_cache_unchanged_chunks_are_cut_from_the_take(tmp_path):
     project = tmp_path / "p"
     project.mkdir()
+    _yes(project)
     fake = FakeVoice(str(tmp_path))
     rec, _ = _make(project, fake)
     for f in (project / ".cache" / "tts").iterdir():
@@ -154,10 +161,108 @@ def test_dry_run_calls_nothing_and_brackets_stop_a_real_run(tmp_path):
 def test_a_recording_that_is_not_ours_is_never_overwritten(tmp_path):
     project = tmp_path / "p"
     project.mkdir()
+    _yes(project)  # the words are approved: it is the recording that stops the run
     (project / "voiceover.mp3").write_bytes(b"his own recording")
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemExit, match="was not made by this step"):
         _make(project, FakeVoice(str(tmp_path)))
     assert (project / "voiceover.mp3").read_bytes() == b"his own recording"
+
+
+def test_no_voice_is_made_from_words_he_has_not_approved(tmp_path):
+    project = tmp_path / "p"
+    project.mkdir()
+    fake = FakeVoice(str(tmp_path))
+    with pytest.raises(SystemExit, match="these words are not approved: there is no approved.json") as stop:
+        _make(project, fake)
+    assert "--approve" in str(stop.value) and "Nothing was made and nothing was spent" in str(stop.value)
+    assert fake.calls == [] and sorted(p.name for p in project.iterdir()) == []  # nothing sent, nothing written
+    out, _ = _make(project, fake, dry=True)  # the dry run is free, approved or not
+    assert fake.calls == [] and out["new"] == out["characters"] > 100
+    _yes(project)
+    rec, _ = _make(project, fake)
+    assert len(fake.calls) == 2 and (project / "voiceover.m4a").exists() and rec["credits"] > 0
+    # one spoken word changes: it stops again, before anything is sent, and says what it was approved as
+    with pytest.raises(SystemExit, match="the spoken words have changed since they were approved") as stop:
+        _make(project, fake, md=SCRIPT.replace("Now the rent.", "Now the mortgage."))
+    assert "Jeffrey, in the test" in str(stop.value) and "words then" in str(stop.value)
+    with pytest.raises(SystemExit, match="have changed since"):  # a word left out is a change too
+        _make(project, fake, md=SCRIPT.replace("In 2010 it was.", "In 2010 it."))
+    assert len(fake.calls) == 2 and rec["audioHash"] == tts.file_hash(str(project / "voiceover.m4a"))  # the take is as it was
+    # a new take of a chunk he approved long ago is new audio too: the approval must still stand
+    (project / "approved.json").unlink()
+    with pytest.raises(SystemExit, match="not approved"):
+        _make(project, fake, redo={1})
+    assert len(fake.calls) == 2
+    _yes(project)
+    _make(project, fake, redo={1})
+    assert len(fake.calls) == 3
+    # an approval file that cannot be read approves nothing
+    (project / "approved.json").write_text("{not json", encoding="utf-8")
+    with pytest.raises(SystemExit, match="cannot be read"):
+        _make(project, fake, redo={2})
+    assert len(fake.calls) == 3
+
+
+def test_a_tag_a_comma_a_respelling_or_the_chunking_are_not_words(tmp_path):
+    project = tmp_path / "p"
+    project.mkdir()
+    approved = _yes(project)
+    assert approved["wordsHash"] == tts.words_hash(_sb())[0] and approved["words"] == 37
+    fake = FakeVoice(str(tmp_path))
+    _make(project, fake)
+    assert len(fake.calls) == 2
+    from pipeline.script_parser import parse_script
+    tag = SCRIPT.replace('label="a month"', 'label="every month" source="ONS"').replace("[text board=\"Rent\"]", "[stat value=\"£1,406\" label=\"the rent\"]")
+    comma = SCRIPT.replace("Now the rent.", "Now, the rent!")
+    respelt = SCRIPT.replace("voice: natural\n", "voice: natural\ntts.say: rent=rehnt\n")
+    chunked = SCRIPT.replace("voice: natural\n", "voice: natural\ntts.chunk: 60\n")
+    for md in (tag, comma, respelt, chunked):
+        assert md != SCRIPT and tts.words_hash(parse_script(md)) == tts.words_hash(_sb())
+    _make(project, fake, md=tag)
+    assert len(fake.calls) == 2  # a tag changes the picture, not the voice: nothing to make
+    _make(project, fake, md=comma)
+    assert len(fake.calls) == 3 and fake.calls[2]["text"].startswith("Now, the rent!")  # new audio, the same approved words
+    _make(project, fake, md=respelt)
+    assert len(fake.calls) == 4 and "rehnt" in fake.calls[3]["text"]
+    _make(project, fake, md=chunked)
+    assert len(fake.calls) > 4
+    # and what is a word: one more, one fewer, one changed, two swapped; a figure written another way is the same word
+    same = tts.words_hash(_sb())
+    for was, now in (("Now the rent.", "Now the rent again."), ("Now the rent.", "The rent."), ("sounds like a lot", "sounds like lots"), ("Now the rent.", "The rent now.")):
+        assert tts.words_hash(parse_script(SCRIPT.replace(was, now))) != same
+    assert tts.words_hash(parse_script(SCRIPT.replace("£50,000 a year", "£50000 A YEAR"))) == same
+
+
+def test_the_approve_step_writes_the_hash_the_date_and_the_note_and_reads_no_key(tmp_path, monkeypatch, capsys):
+    import re
+    project = tmp_path / "p"
+    project.mkdir()
+    (project / "script.md").write_text(SCRIPT, encoding="utf-8")
+    fake = FakeVoice(str(tmp_path))
+    asked = []
+    monkeypatch.setattr(tts, "read_secret", lambda env, name: asked.append(name) or "not-a-real-one")
+    monkeypatch.setattr(tts, "ElevenLabs", lambda key: fake)
+    # the command, as it is run: no approval, so it stops before a character is sent
+    with pytest.raises(SystemExit, match="not approved"):
+        tts.main([str(project)])
+    assert fake.calls == [] and not (project / "voiceover.m4a").exists()
+    assert tts.main([str(project), "--dry-run"]) == 0 and fake.calls == []  # free, and needs no approval
+    del asked[:]
+    assert tts.main([str(project), "--approve", "  Jeffrey, by message,\n 14 November "]) == 0
+    assert asked == [] and fake.calls == []  # his yes is written down: no key is read and nothing is made
+    rec = json.loads((project / "approved.json").read_text(encoding="utf-8"))
+    assert sorted(rec) == ["date", "note", "words", "wordsHash"]
+    assert rec["wordsHash"] == tts.words_hash(_sb())[0] and rec["words"] == 37 and rec["note"] == "Jeffrey, by message, 14 November"
+    assert re.fullmatch(r"20\d\d-\d\d-\d\d", rec["date"])
+    said = capsys.readouterr().out
+    assert "approved: 37 spoken words" in said and "nothing was made" in said
+    assert tts.main([str(project)]) == 0 and len(fake.calls) == 2 and (project / "voiceover.m4a").exists()
+    # an empty note is no approval, and neither is a script with no words in it
+    with pytest.raises(SystemExit, match="needs a note"):
+        tts.main([str(project), "--approve", "  "])
+    (project / "script.md").write_text("# Nothing said\n\nslug: t\n\n[title title=\"A card\"]\n", encoding="utf-8")
+    with pytest.raises(SystemExit, match="nothing to approve"):
+        tts.main([str(project), "--approve", "Jeffrey"])
 
 
 def test_the_key_never_reaches_an_error_message(monkeypatch):

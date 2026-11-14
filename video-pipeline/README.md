@@ -134,6 +134,40 @@ recording, and the build cuts the first one out. In a voice the pipeline made
 it is the script ("Jensen is Nvidia, Nvidia is Jensen"), and the build never
 cuts it. `restarts: keep` or `restarts: cut` in the header decides either way.
 
+## The voice is made only from words he approved
+
+The voice step (`python -m pipeline.tts`, docs/voice.md) costs credits and
+speaks in Jeffrey's voice. It makes nothing from words he has not said yes to.
+
+```bash
+python -m pipeline.tts projects/x --dry-run    # what would be sent and what it costs: free, needs no approval
+python -m pipeline.tts projects/x --approve "Jeffrey, by message, 14 November"   # only after he has said yes
+python -m pipeline.tts projects/x              # makes the voice
+```
+
+- `--approve` writes `approved.json` into the project folder: a hash of the
+  script's spoken words in order, how many there are, the date and your note.
+  The note says who said yes and when. The step reads no key and makes
+  nothing. Commit the file with the script. The repo is public, so the note
+  holds nothing else.
+- Run it only after he has read these words and said yes. The file is the
+  record of his yes. It is never written to get past the stop.
+- Whenever there is new audio to make, the voice step reads `approved.json`
+  first. If the file is not there, or the words have changed since, it stops.
+  Nothing is sent and nothing is spent. The message says which of the two it
+  was, and gives the command to run once he has said yes.
+- What counts as a change: a word added, dropped, changed or moved. Send him
+  the script again, then approve again.
+- What does not: a tag or its attributes, punctuation, capital letters, a
+  respelling (`tts.say`), how the chunks are cut (`tts.chunk`), a figure
+  written with or without its comma. Some of these change the sound, so a
+  chunk is made again, but the approved words are the same and nothing stops.
+- `--redo 4,7` makes new audio, so it needs the approval too. A video voiced
+  before this rule (the Nvidia one) has no `approved.json`. Approve its words
+  once, with a note that says when he approved them, before any chunk of it
+  is made again.
+- `--dry-run` never needs an approval.
+
 ## Exact timing for a voice the pipeline made
 
 When the voice step made the voice (`python -m pipeline.tts`, docs/voice.md),
@@ -510,9 +544,59 @@ to `shorts-check.md` in the project folder.
   dates ("so far", "today", "this week"), or an opener like "And" or "So". For
   an opener it prints the same Short one sentence later, ready to type. It
   changes nothing.
-- A Short is held back only when its seconds are typed as `spans` and the
-  voice was made by the pipeline (`voice.json`). A pick by scenes, and a video
-  on your own recording, gets warnings only.
+- A Short is held back only when it is typed as `spans`, or picked by its
+  words, and the voice was made by the pipeline (`voice.json`). A pick by
+  scenes, and a video on your own recording, gets warnings only.
+
+**A Short picked by its words.** A pick can give its first and last words
+instead of seconds:
+
+```json
+{"shorts": [{"name": "short-3", "from": "And here's the bit the headlines are skipping.", "to": "had already taken 23%.", "hook": "Already down 23% before the scandal"}]}
+```
+
+`from` is the start of the Short's first sentence. `to` is the end of its last
+sentence. Copy the words from the script as they are spoken. A few words are
+enough when they are said only once in the video. Capital letters, commas,
+full stops and the £ sign do not count, "two" is the same as "2", and one
+small joining word may differ ("a year" for "per year").
+
+The build finds the two quotes in the words the video says. It cuts in the
+middle of the pause before the first sentence and in the middle of the pause
+after the last one. The pause is the one in the sound: the word times only say
+where to look for it. A cut is never more than 0.8 s from the Short's own
+words, so a silent card next to it does not leave two seconds of nothing. Then
+the same snap and the same check run as for a pick in seconds.
+
+- There are no seconds to mistype and there is no clock. The words are found
+  again on every build, whatever timed it, so the pick still holds after a new
+  render has moved every second. It needs no `"clock"` line.
+- It cannot start or end inside a sentence. A `from` that does not start a
+  sentence, or a `to` that does not end one, stops that Short. The message
+  shows the sentence it sits in and what to quote instead. A sentence that
+  runs across a scene cut is one sentence.
+- A quote that is said twice stops that Short, and the message lists both
+  places with their times. Quote more of the sentence, so that it names one
+  place. A quote that is not said at all is shown the nearest place.
+- Nothing is guessed. A Short stopped this way is held back and named at the
+  end of the log, like any Short with a fault. The long video and the other
+  Shorts still render.
+- A pick is by its words, by seconds or by scenes. One pick with `from` and
+  `to` and also `spans` or `scenes` is stopped.
+- For an opener like "And" or "So" the check prints the same Short one
+  sentence later as a `"from"` quote, ready to paste.
+- A pick's `"poses"` are still seconds in the long video. Read them again
+  after a render that moved the clock.
+
+On a video the transcriber timed, the word times can sit a few tenths of a
+second off. Now and then the transcript lays the first word of a sentence far
+over the pause before it (about one sentence in thirty on the Nvidia video).
+The check then says the Short "starts 1 word into a sentence" and holds it
+back. Start on the sentence before or after. A video built with
+`timing: exact` does not have this: its word times come from the voice. And
+where the voice runs two sentences together with no pause at all (also about
+one in thirty there), no cut is clean, by words or by seconds, and the check
+says so.
 
 Two commands:
 
@@ -541,7 +625,7 @@ Without that line a pick typed in seconds is faulted and held back: "these
 seconds were typed on the transcriber's clock". Read the seconds again from
 the new `timing.json`, then add the line. The same goes the other way round:
 seconds marked `"clock": "exact"` are faulted on a video the transcriber
-timed. A pick by scenes has no seconds and needs no clock. After an exact
+timed. A pick by scenes or by its words has no seconds and needs no clock. After an exact
 build `timing.json` carries `"clock": "exact"` too, so the check on its own
 knows which clock it is reading.
 
@@ -898,6 +982,10 @@ Every render writes `facts-report.md`: the figures filled, the headlines found,
 and every sentence that states a figure or a UK/US claim without a source on
 the board, for the editor's pass to verify. The rule is in EDITOR.md: real
 figures with a publisher and date, the host's own numbers excepted.
+
+A real page is marked as it is read, not left as a still: the highlighter, the
+box and the underline (`marks=`) and where its cards go (`cards_at=`) are in
+EDITOR.md, under "Working on a real page".
 
 ### Standing rules for the pictures
 

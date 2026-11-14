@@ -1,12 +1,20 @@
 """The voice, made by ElevenLabs from the script.
 
     python -m pipeline.tts projects/<name> --dry-run     what would be sent, and how many characters it costs
+    python -m pipeline.tts projects/<name> --approve "Jeffrey, by message, 14 November"
+                                                         he has said yes to these words: write approved.json
     python -m pipeline.tts projects/<name>               make voiceover.m4a (only the chunks that changed are paid for)
     python -m pipeline.tts projects/<name> --redo 4,7    a new take of chunks 4 and 7
 
 script.md -> each scene's spoken words, figures spelled out the British way -> chunks of a few scenes, cut where a
 scene ends -> ElevenLabs text to speech with timestamps, in the cloned voice -> the chunks trimmed, matched in level
 and joined with a set pause -> voiceover.m4a for the build, and voice.json (what was made, where each chunk sits).
+
+No voice is made from words he has not approved. `--approve` writes approved.json into the project: the hash of the
+script's spoken words in order, how many there are, the date and the note (who said yes, and when). It is run only
+after he has said yes. Whenever there is new audio to make, `make` reads that file first and stops, with nothing
+made and nothing spent, if it is not there or the words have changed since. Tags, punctuation, respellings and how
+the chunks are cut are not words: changing them needs no new approval. `--dry-run` never needs one.
 
 The repo is public, so the key and the voice ID never live in it: ELEVENLABS_API_KEY / ELEVENLABS_VOICE_ID in the
 environment, or the files ~/.config/everyday-investor/elevenlabs.key and elevenlabs.voice. Neither is ever printed
@@ -36,6 +44,7 @@ from typing import Any
 import numpy as np
 
 from . import voice as vo
+from .align import normalize
 from .script_parser import parse_script
 
 API = "https://api.elevenlabs.io"
@@ -409,6 +418,56 @@ def existing_take(project: str) -> str | None:
     return hits[0] if hits else None
 
 
+# ------------------------------------------------------------------------------------------------- his approval
+
+APPROVED = "approved.json"
+
+
+def words_hash(sb: dict[str, Any]) -> tuple[str, int]:
+    """What he approves: the script's spoken words in order, as a hash, and how many there are. The words are read
+    as pipeline/align.normalize reads them (lower case, no punctuation), from the script itself and not from what is
+    sent to the voice: a tag, a comma, a respelling or another way of cutting the chunks does not change the hash,
+    and one word added, dropped, changed or moved does."""
+    words = [n for sc in sb["scenes"] for n in (normalize(w) for w in (sc.get("narration") or "").split()) if n]
+    return hashlib.sha1(" ".join(words).encode()).hexdigest()[:16], len(words)
+
+
+def approve(project: str, md: str, note: str) -> dict[str, Any]:
+    """Write approved.json for the words `md` (script.md) says now: their hash, how many, today's date and the note
+    (who said yes, and when). Only ever run after he has said yes to these words. Returns what was written."""
+    note = " ".join(str(note).split())
+    if not note:
+        raise SystemExit('--approve needs a note: who said yes to these words, and when (for example --approve "Jeffrey, by message, 14 November")')
+    sha, count = words_hash(parse_script(md))
+    if not count:
+        raise SystemExit("no spoken words in the script: there is nothing to approve")
+    record = {"wordsHash": sha, "words": count, "date": time.strftime("%Y-%m-%d"), "note": note}
+    with open(os.path.join(project, APPROVED), "w", encoding="utf-8") as f:
+        json.dump(record, f, indent=1, ensure_ascii=False)
+        f.write("\n")
+    return record
+
+
+def unapproved(project: str, sb: dict[str, Any]) -> str:
+    """Why these words may not be voiced, or "" when approved.json holds their hash."""
+    sha, count = words_hash(sb)
+    how = (f'When he has said yes to them, run: python -m pipeline.tts {project} --approve "who said yes, and when". '
+           "Nothing was made and nothing was spent.")
+    path = os.path.join(project, APPROVED)
+    if not os.path.exists(path):
+        return f"these words are not approved: there is no {APPROVED} in this project, and no voice is made from words Jeffrey has not said yes to. {how}"
+    try:
+        with open(path, encoding="utf-8") as f:
+            rec = json.load(f)
+        was = str(rec.get("wordsHash") or "")
+    except (OSError, ValueError, AttributeError):
+        return f"{APPROVED} cannot be read, so these words count as not approved. {how}"
+    if was != sha:
+        return (f"the spoken words have changed since they were approved ({rec.get('date', 'no date')}: {rec.get('note', 'no note')}; {rec.get('words', '?')} words then, {count:,} now), "
+                f"and no voice is made from words Jeffrey has not said yes to. Send him the script as it is now. {how}")
+    return ""
+
+
 def make(project: str, client: ElevenLabs | None, voice_id: str, md: str, header: dict[str, str], redo: set[int] | None = None, dry: bool = False, max_credits: int = 20000, log=print) -> dict[str, Any]:
     """The whole job for one project. Returns the record that is written to voice.json."""
     sb = parse_script(md)
@@ -447,6 +506,11 @@ def make(project: str, client: ElevenLabs | None, voice_id: str, md: str, header
         return {"chunks": chunks, "characters": total_chars, "new": new_chars}
     if bad:
         raise SystemExit("fix the words above first (digits, symbols or [BRACKETS] left in the narration)")
+    if new_chars:
+        # new audio costs credits and says words in his voice: only the words he has said yes to (approved.json)
+        stop = unapproved(project, sb)
+        if stop:
+            raise SystemExit(stop)
     if new_chars > max_credits:
         raise SystemExit(f"{new_chars:,} characters is over the limit of {max_credits:,} for one run (--max-credits)")
     if take and not old.get("audioHash"):
@@ -503,6 +567,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("project")
     ap.add_argument("--dry-run", action="store_true", help="list the chunks and the characters; call nothing")
+    ap.add_argument("--approve", default=None, metavar="NOTE", help='he has said yes to the script\'s words as they are now: write approved.json with this note (who said yes, and when) and make nothing')
     ap.add_argument("--redo", default="", help="chunk numbers to make again, e.g. 4,7")
     ap.add_argument("--replace", action="store_true", help="replace a voiceover that this step did not make (the old one is kept in .cache)")
     ap.add_argument("--max-credits", type=int, default=20000)
@@ -510,6 +575,11 @@ def main(argv: list[str] | None = None) -> int:
     project = os.path.abspath(args.project)
     with open(os.path.join(project, "script.md"), encoding="utf-8") as f:
         md = f.read()
+    if args.approve is not None:
+        # his yes, written down: no key is read, nothing is sent and nothing is made
+        rec = approve(project, md, args.approve)
+        print(f"approved: {rec['words']:,} spoken words of {os.path.basename(project)} as they are now ({rec['wordsHash']}), {rec['date']}, {rec['note']}. Written to {APPROVED}; nothing was made.")
+        return 0
     from .build import _header_lines
     header = _header_lines(md)
     key, voice_id = read_secret("ELEVENLABS_API_KEY", "elevenlabs.key"), read_secret("ELEVENLABS_VOICE_ID", "elevenlabs.voice")

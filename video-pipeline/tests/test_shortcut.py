@@ -371,3 +371,155 @@ def test_the_check_on_its_own_reads_the_committed_timing_and_changes_nothing(tmp
     assert shortcut.main([project, "--plan", str(other)]) == 0
     assert "a recording" in capsys.readouterr().out
     assert shortcut.main([str(tmp_path / "nowhere")]) == 2
+
+
+# --- a Short picked by its words: {"from": ..., "to": ...} ----------------------------------------------------------------
+
+WORDS = {"from": "Savers held on", "to": "come back so far."}
+
+
+def _resolve(video, pick, with_sound=True):
+    sb, wav = video
+    sound = shortcut.Sound(wav) if with_sound else None
+    try:
+        return shortcut.resolve_pick(sb, pick, sound)
+    finally:
+        if sound:
+            sound.close()
+
+
+def test_a_pick_by_its_words_is_cut_in_the_middle_of_the_pause_at_each_end(video):
+    # the sound is quiet from 5.70 to 6.48 s before "Savers" and from 10.80 to 12.48 s after "far."
+    assert _resolve(video, WORDS) == [(6.09, 11.6)]  # the middle of the first pause; the second is long, so 0.8 s after the last word
+    assert _resolve(video, WORDS, with_sound=False) == [(6.1, 11.6)]  # no sound to ask: the middle of the gap the word times state
+    assert _resolve(video, {"from": "savers HELD, on", "to": "Come back: so far"}) == [(6.09, 11.6)]  # case and punctuation do not count
+    assert _resolve(video, {"from": "Prices fell", "to": "never sell at all."}) == [(0.495, 15.41)]  # the video's first sentence to its last
+    v = _check(video, WORDS)
+    assert v["by"] == "words" and v["asked"] == WORDS and v["pieces"] == [(6.12, 11.58)]  # the snap moves a cut that is in a pause by a frame at most
+    assert v["faults"] == [] and v["first"] == "Savers held on and waited." and v["last"] == "has come back so far."
+    assert 'picked by words {"from": "Savers held on", "to": "come back so far."}, cut on [[6.12, 11.58]]' in "\n".join(shortcut.lines(v))
+    # a pick by seconds comes back as it was typed, and a pick by scenes has no seconds
+    sb, _ = video
+    assert shortcut.resolve_pick(sb, {"spans": [[2.9, 8.2]]}) == [(2.9, 8.2)] and shortcut.resolve_pick(sb, {"scenes": [1]}) == []
+
+
+def test_a_quote_said_twice_stops_the_pick_and_names_both_places(video):
+    sb, _ = video
+    twice = json.loads(json.dumps(sb))
+    for w, said in zip(twice["scenes"][2]["words"], "And the fund lost nothing at all.".split()):
+        w["w"] = said
+    with pytest.raises(ValueError, match='"from": "And the fund lost" is said 2 times') as e:
+        shortcut.resolve_pick(twice, {"from": "And the fund lost", "to": "at all."})
+    assert "at 0:03.0 (3.00 s, scene 1)" in str(e.value) and "at 0:12.5 (12.50 s, scene 3)" in str(e.value)
+    assert "Quote more of the sentence" in str(e.value)
+    # a longer quote names one place, either of them
+    assert shortcut.resolve_pick(twice, {"from": "And the fund lost nothing", "to": "at all."}) == [(11.7, 15.4)]
+    assert shortcut.resolve_pick(twice, {"from": "And the fund lost a fifth", "to": "its value."}) == [(2.6, 6.1)]
+    with pytest.raises(ValueError, match='"to": "the fund lost" is said 2 times'):  # the same for the last words
+        shortcut.resolve_pick(twice, {"from": "Prices fell", "to": "the fund lost"})
+
+
+def test_a_from_that_does_not_start_a_sentence_and_a_to_that_does_not_end_one_stop_the_pick(video):
+    sb, _ = video
+    # scene 2 starts in the middle of "And the fund lost | a fifth of its value.": a scene cut is not the start of a sentence
+    with pytest.raises(ValueError, match='"from": "a fifth of its value." does not start a sentence: it is said 4 words into one') as e:
+        shortcut.resolve_pick(sb, {"from": "a fifth of its value.", "to": "so far."})
+    assert '"And the fund lost | a fifth of its..."' in str(e.value) and 'from its first word, "And the fund lost"' in str(e.value)
+    with pytest.raises(ValueError, match='"to": "Savers held on" does not end a sentence') as e:
+        shortcut.resolve_pick(sb, {"from": "Prices fell", "to": "Savers held on"})
+    assert '"...Savers held on | and waited."' in str(e.value) and "value." not in str(e.value) and 'to its last word, "and waited."' in str(e.value)
+    with pytest.raises(ValueError, match="is said before"):
+        shortcut.resolve_pick(sb, {"from": "Savers held on", "to": "hard today."})
+    with pytest.raises(ValueError, match='"from": "Prices rose hard" is not said in this video') as e:
+        shortcut.resolve_pick(sb, {"from": "Prices rose hard", "to": "so far."})
+    assert 'The nearest is at 0:01.0 (1.00 s, scene 1): "Prices fell hard"' in str(e.value)
+    with pytest.raises(ValueError, match='needs both: "to" is missing'):
+        shortcut.resolve_pick(sb, {"from": "Savers held on"})
+    with pytest.raises(ValueError, match="a Short is picked one way"):
+        shortcut.resolve_pick(sb, dict(WORDS, spans=[[6.1, 11.6]]))
+
+
+def test_a_quote_may_differ_from_the_captions_by_one_small_word(video):
+    # captions that follow a recording differ from the script by a joining word here and there (voice.take_words)
+    sb, _ = video
+    want = shortcut.resolve_pick(sb, {"from": "And the fund lost", "to": "Savers held on and waited."})
+    assert want == [(2.6, 8.5)]
+    assert shortcut.resolve_pick(sb, {"from": "And a fund lost", "to": "Savers held on and waited."}) == want  # one said instead of another
+    assert shortcut.resolve_pick(sb, {"from": "And the fund lost", "to": "Savers held on and then waited."}) == want  # one the voice left out
+    assert shortcut.resolve_pick(sb, {"from": "And the fund lost", "to": "Savers held and waited."}) == want  # one the voice said as well
+    with pytest.raises(ValueError, match="is not said"):  # a word that carries the meaning is never let through
+        shortcut.resolve_pick(sb, {"from": "And the firm lost", "to": "Savers held on and waited."})
+    with pytest.raises(ValueError, match="is not said"):  # and two small words are one too many
+        shortcut.resolve_pick(sb, {"from": "So a fund lost", "to": "Savers held on and waited."})
+
+
+def test_the_pause_is_the_one_in_the_sound_where_the_word_times_miss_it(video):
+    # the transcriber lays words early: here "value." half a second early and "Savers" a third, so the middle of the gap
+    # it states between the two sentences (5.2 to 6.15 s) is still inside the sound of "value.", which runs to 5.7 s
+    sb, wav = video
+    early = json.loads(json.dumps(sb))
+    value, savers = early["scenes"][1]["words"][4:6]
+    assert (value["w"], savers["w"]) == ("value.", "Savers")
+    value["s"], value["e"], savers["s"], savers["e"] = 4.9, 5.2, 6.15, 6.45
+    assert _resolve((early, wav), WORDS, with_sound=False)[0][0] == 5.675  # by the word times alone: in sound
+    assert _resolve((early, wav), WORDS)[0][0] == 6.09  # the pause the sound has there, 5.70 to 6.48 s: its middle
+    v = _check((early, wav), WORDS)
+    assert v["faults"] == [] and v["first"] == "Savers held on and waited."
+    # laid over the pause itself, before its middle: the cut goes to the word's stated start, so its caption is kept
+    savers["s"], savers["e"] = 5.9, 6.2
+    assert _resolve((early, wav), WORDS)[0][0] == 5.91
+    v = _check((early, wav), WORDS)
+    assert v["faults"] == [] and v["first"] == "Savers held on and waited." and v["pieces"][0][0] == 5.94
+
+
+def test_a_pick_by_its_words_needs_no_clock_line(video):
+    # seconds typed for a video on the exact clock count only with the clock line (pipeline/exact.py); words have no clock
+    sb, wav = video
+    exact = dict(json.loads(json.dumps(sb)), clock="exact")
+    assert _has(_check((exact, wav), {"spans": [[6.1, 11.6]]})["faults"], "typed on the transcriber's clock")
+    v = _check((exact, wav), WORDS)
+    assert v["faults"] == [] and v["pieces"] == [(6.12, 11.58)]
+    assert _check((exact, wav), dict(WORDS, clock="exact"))["faults"] == []  # and a clock line at the top of the file does no harm
+
+
+def test_a_leaning_opener_of_a_words_pick_is_offered_one_sentence_later_as_words(video):
+    v = _check(video, {"from": "And the fund lost", "to": "Savers held on and waited."})
+    assert v["faults"] == []
+    assert _has(v["warnings"], 'opens on "And"', 'Ready alternative, one sentence later: "from": "Savers held on" (', 'starting "Savers held on and waited."')
+
+
+def test_a_fault_holds_a_words_pick_back_on_a_made_voice_only(video):
+    sb, _ = video
+    pick = dict(WORDS, name="short-1", speed=1)
+    cut, _, pieces, _ = shortcut.cut_one(sb, pick, "short-1", None)
+    cut["durationSec"] = 61.0
+    assert _has(shortcut.check_edges(sb, pick, "short-1", pieces, cut, None, made=True)["faults"], "61.0 s long")
+    told = shortcut.check_edges(sb, pick, "short-1", pieces, cut, None, made=False)  # a recording: told, never held back
+    assert told["faults"] == [] and _has(told["warnings"], "61.0 s long")
+
+
+def test_words_picks_are_cut_by_the_build_and_a_quote_that_is_not_said_holds_only_its_own_short(tmp_path, capsys):
+    plan = [dict(WORDS, name="short-1", hook="Held on", speed=1),
+            {"name": "short-2", "from": "Prices rose", "to": "so far.", "hook": "Never said", "speed": 1},
+            dict(PLAN[0], name="short-3")]
+    project, sb, wav = _made_project(tmp_path, plan)
+    cuts = shortcut.cut_shorts(project, sb, wav, os.path.join(project, "shorts.json"), 3, str(tmp_path / "public"))
+    assert [(c["name"], c["skip"]) for c in cuts] == [("short-1", False), ("short-2", True), ("short-3", False)]
+    assert _has(cuts[1]["check"]["faults"], "could not be cut", '"from": "Prices rose" is not said in this video')
+    with open(cuts[0]["props"], encoding="utf-8") as f:
+        cut = json.load(f)
+    assert [w["w"] for sc in cut["scenes"] for w in sc["words"]] == "Savers held on and waited. Nothing has come back so far.".split()
+    assert abs(voice.read(str(tmp_path / "public" / "short-1.mp3"), SR).size / SR - (0.4 + (11.58 - 6.12) + 0.8)) < 0.06
+    said = capsys.readouterr().out
+    assert 'short short-1: words from "Savers held on" to "come back so far.", 7s at 1x' in said and "SHORTS HELD BACK: short-2" in said
+    md = open(os.path.join(project, "shorts-check.md"), encoding="utf-8").read()
+    assert 'picked by words {"from": "Savers held on", "to": "come back so far."}, cut on [[6.12, 11.58]]' in md and "Held back: short-2." in md
+    with open(os.path.join(project, "shorts-plan.json"), encoding="utf-8") as f:
+        assert json.load(f) == plan  # the plan is written back as it was typed: the words, not the seconds they gave
+    # the check on its own reads the same picks against the committed timing
+    timing = {"slug": "made-up", "durationSec": 18.0, "audio": "voiceover.wav",
+              "scenes": [{"id": sc["id"], "type": sc["type"], "start": sc["start"], "end": sc["end"], "words": sc["words"]} for sc in sb["scenes"]]}
+    with open(os.path.join(project, "timing.json"), "w", encoding="utf-8") as f:
+        json.dump(timing, f)
+    assert shortcut.main([project, "--pick", "short-1"]) == 0 and shortcut.main([project]) == 1
+    assert 'picked by words {"from": "Savers held on", "to": "come back so far."}' in capsys.readouterr().out
