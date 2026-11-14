@@ -1,6 +1,7 @@
 """One command from script + voiceover to finished video.
 
     python -m pipeline.build projects/<name> [--vertical] [--no-render] [--backend faster_whisper|sherpa_onnx|none]
+                                             [--pick NAME] [--force-shorts] [--strict-shorts]
 
 Expects in the project folder:
     script.md                     the tagged script; plain paragraphs work too. Optional when there is a voiceover:
@@ -10,7 +11,8 @@ Expects in the project folder:
     voiceover.(wav|mp3|m4a|...)   your recording (optional; estimated timing without it)
     images/                       hero images referenced by [image src=...] (optional)
 Writes:
-    storyboard.json, storyboard.html, <slug>.mp4 (and <slug>-vertical.mp4)
+    storyboard.json, storyboard.html, <slug>.mp4 (and <slug>-vertical.mp4); with a shorts.json, each Short's cut
+    (.cache/<name>.json) and shorts-check.md before any render, then <slug>-<name>.mp4 (pipeline/shortcut.py)
 """
 from __future__ import annotations
 
@@ -29,18 +31,26 @@ import urllib.request
 from . import align as al
 from . import sfx
 from . import craft
+from . import shortcut
 from .enhance import enhance, level_from_header
 from .preview import write_preview
 from .auto_script import script_from_words
 from .script_parser import pace_scenes, parse_script, room_for_silent, time_cues
-from .voice import fill_gated, snap_cuts, snap_spans, take_words, tighten_pauses
+from .voice import fill_gated, snap_cuts, take_words, tighten_pauses
 from .footage_library import use_library
-from .shorts import SHORT_SPEED, cut_short, cut_spans, plan_shorts, pose_track, speed_up
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 REMOTION = os.path.join(ROOT, "remotion")
 AUDIO_EXT = ("wav", "mp3", "m4a", "aac", "flac", "ogg", "opus", "webm", "weba", "mp4", "mov", "caf")
+
+
+def public_root() -> str:
+    """The renderer's public folder: remotion/public, or the folder EI_PUBLIC_DIR names. Every build empties and
+    refills projects/<slug> in it, so a build made only to check something points EI_PUBLIC_DIR at a folder of its
+    own and leaves the one a running render reads alone. A render with it set reads that folder too (--public-dir),
+    so it must then hold everything remotion/public does."""
+    return os.path.abspath(os.environ.get("EI_PUBLIC_DIR") or os.path.join(REMOTION, "public"))
 
 
 def find_audio(project: str) -> str | None:
@@ -541,6 +551,8 @@ def render(props_path: str, out_path: str, composition: str, concurrency: str | 
     base = ["npx", "remotion", "render", composition, f"--props={props_path}", "--log=warn", f"--timeout={timeout_ms}"]
     if concurrency:
         base.append(f"--concurrency={concurrency}")
+    if os.environ.get("EI_PUBLIC_DIR"):
+        base.append(f"--public-dir={public_root()}")  # the renderer reads the same folder the build filled
     if chunk <= 0 or total <= chunk:
         if _remotion(base[:4] + [out_path] + base[4:], REMOTION) != 0:
             raise SystemExit("render failed")
@@ -634,7 +646,7 @@ def footage_sound(sb: dict) -> list[tuple[str, float, float, float, float]]:
         src = p.get("src")
         if vol <= 0 or not src:
             continue
-        path = os.path.join(REMOTION, "public", src)
+        path = os.path.join(public_root(), src)
         if not os.path.exists(path):
             continue
         lead = WATCH_NEXT_DELAY if p.get("next") == "on" and p.get("cont") != "on" else 0.0
@@ -647,7 +659,7 @@ def can_lay_voice(sb: dict) -> bool:
     """Whether the sound can be built in one piece from the voice file (and any footage sound), not from the chunks."""
     if not sb.get("audio") or any(float(sc.get("props", {}).get(k) or 0) > 0 for sc in sb.get("scenes", []) for k in ("clip_vol", "sticker_vol")):
         return False
-    return os.path.exists(os.path.join(REMOTION, "public", sb["audio"]))
+    return os.path.exists(os.path.join(public_root(), sb["audio"]))
 
 
 def voice_over_whole(video: str, sb: dict) -> bool:
@@ -657,7 +669,7 @@ def voice_over_whole(video: str, sb: dict) -> bool:
     "watch next" preview, vol=) mixed in at its place. Returns whether it did."""
     if not can_lay_voice(sb):
         return False
-    src = os.path.join(REMOTION, "public", sb["audio"])
+    src = os.path.join(public_root(), sb["audio"])
     dur = al.audio_duration(video) if has_audio(video) else video_duration(video)
     padded = video + ".voice.wav"
     filled = video + ".voice-room.wav"
@@ -848,66 +860,20 @@ def long_scenes(sb: dict, limit: float = 20.0) -> list[str]:
     return out
 
 
-def render_shorts(project: str, sb: dict, audio: str | None, concurrency: str | None, chunk: int, plan_path: str | None, want: int) -> list[str]:
-    """Cut and render the Shorts: the slices in `shorts.json` (the studio's picks, each {scenes, hook, name}), else the
-    planner's best `want`. Writes the plan back as shorts-plan.json and renders <slug>-<name>.mp4, vertical, captioned."""
-    slug = sb["slug"]
-    public_dir = os.path.join(REMOTION, "public", "projects", slug)
-    plan = None
-    if plan_path and os.path.exists(plan_path):
-        with open(plan_path, encoding="utf-8") as f:
-            plan = json.load(f)
-        if isinstance(plan, dict):
-            top_speed = plan.get("speed")
-            plan = plan.get("shorts") or []
-            if top_speed is not None:
-                plan = [dict({"speed": top_speed}, **p) for p in plan]
-    default_speed = SHORT_SPEED
-    if not plan:
-        plan = plan_shorts(sb, want)
-    with open(os.path.join(project, "shorts-plan.json"), "w", encoding="utf-8") as f:
-        json.dump(plan, f, indent=1)
+def render_shorts(project: str, sb: dict, audio: str | None, concurrency: str | None, chunk: int, plan_path: str | None, want: int,
+                  cuts: list[dict] | None = None, picks: list[str] | None = None, force: bool = False) -> list[str]:
+    """Render the Shorts as <slug>-<name>.mp4, vertical, captioned. The cut and its check are pipeline/shortcut.py's:
+    the build makes them before the long render and hands them over as `cuts`; called without, they are made here
+    (the slices in `shorts.json`, else the planner's best `want`). A Short the check held back is not rendered."""
+    if cuts is None:
+        cuts = shortcut.cut_shorts(project, sb, audio, plan_path, want, os.path.join(public_root(), "projects", sb["slug"]), picks, force)
     made = []
-    for k, short in enumerate(plan, 1):
-        name = short.get("name") or f"short-{k}"
-        ids = [int(x) for x in short.get("scenes", [])]
-        if short.get("spans"):
-            # cut on sentences: stretches of time, which may start or end inside a scene or skip a middle part
-            spans_in = [tuple(x) for x in short["spans"]]
-            if audio:
-                # each edge on a pause measured in the sound: the transcript's word times can run early
-                spans_in = snap_spans(spans_in, audio)
-            cut, spans = cut_spans(sb, spans_in, short.get("hook"), name)
-        elif ids:
-            cut, spans = cut_short(sb, ids, short.get("hook"), name)
-        else:
+    for c in cuts:
+        if c["skip"]:
+            print(f"short {c['name']}: held back by the check, not rendered", flush=True)
             continue
-        # a Short plays a little faster than the long video (shorts.json "speed", per pick or for all; 1 = as recorded)
-        speed = float(short.get("speed", default_speed))
-        cut = speed_up(cut, speed)
-        if short.get("poses"):
-            # the character, posing on the words (shorts.json "poses": [[seconds in the long video, pose], ...])
-            cut["poses"] = pose_track(short["poses"], spans, 0.4, speed, int(sb.get("fps", 30)))
-        if audio:
-            os.makedirs(public_dir, exist_ok=True)
-            keep_spans(audio, os.path.join(public_dir, f"{name}.mp3"), spans, 0.4, 0.8, speed)
-            if sb.get("music"):
-                mix_music(os.path.join(public_dir, f"{name}.mp3"), sb["music"], os.path.join(public_dir, f"{name}-mix.mp3"), float(sb.get("musicDb", -20.0)))
-                os.replace(os.path.join(public_dir, f"{name}-mix.mp3"), os.path.join(public_dir, f"{name}.mp3"))
-            cut["audio"] = f"projects/{slug}/{name}.mp3"
-        else:
-            cut["audio"] = None
-        # the punch-ins on the Short's own clock (the long video's times do not carry over); the header's sfx switch carries
-        cut["sfx"] = sb.get("sfx", "light")
-        sfx.set_punches(cut, gap=4.0)
-        props = os.path.join(project, ".cache", f"{name}.json")
-        os.makedirs(os.path.dirname(props), exist_ok=True)
-        with open(props, "w", encoding="utf-8") as f:
-            json.dump(cut, f)
-        out = os.path.join(project, f"{slug}-{name}.mp4")
-        print(f"short {name}: {'spans ' + str(short['spans']) if short.get('spans') else 'scenes ' + str(ids)}, {cut['durationSec']:.0f}s at {speed:g}x, hook: {cut['hook']}")
-        render(props, out, "Vertical", concurrency, chunk=chunk)
-        made.append(out)
+        render(c["props"], c["out"], "Vertical", concurrency, chunk=chunk)
+        made.append(c["out"])
     return made
 
 
@@ -938,13 +904,16 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--vertical", action="store_true", help="also render a 9:16 version")
     ap.add_argument("--only-vertical", action="store_true")
     ap.add_argument("--only-shorts", action="store_true", help="skip the main (and vertical) render: just cut and render the Shorts")
-    ap.add_argument("--no-render", action="store_true", help="stop after storyboard.json / storyboard.html")
+    ap.add_argument("--no-render", action="store_true", help="stop after storyboard.json / storyboard.html and the Shorts' cut and check")
     ap.add_argument("--no-captions", action="store_true")
     ap.add_argument("--concurrency", default=None)
     ap.add_argument("--retranscribe", action="store_true", help="ignore the cached transcript for this voiceover")
     ap.add_argument("--chunk", type=int, default=450, help="frames per render chunk (0 = single pass)")
     ap.add_argument("--no-shorts", action="store_true", help="leave the Shorts alone (a re-render of the long video after the Shorts are out)")
     ap.add_argument("--shorts", type=int, default=0, help="also cut and render this many Shorts (the project's shorts.json, if present, says which; 0 = only if shorts.json exists)")
+    ap.add_argument("--pick", action="append", default=[], metavar="NAME", help="only this Short from the plan (repeatable): one Short re-cut without the others, as in --only-shorts --pick short-3")
+    ap.add_argument("--force-shorts", action="store_true", help="render a Short even when the check found a fault in its cut")
+    ap.add_argument("--strict-shorts", action="store_true", help="exit with code 3, at the very end, when a Short was held back")
     args = ap.parse_args(argv)
 
     project = os.path.abspath(args.project)
@@ -1032,7 +1001,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"WARNING: {problem}")
 
     align_report = ""
-    public_dir = os.path.join(REMOTION, "public", "projects", slug)
+    public_dir = os.path.join(public_root(), "projects", slug)
     os.makedirs(public_dir, exist_ok=True)
     if audio:
         if words is not None:
@@ -1137,18 +1106,30 @@ def main(argv: list[str] | None = None) -> int:
         print(f"captions: {slug}.srt, {n} lines from the script's words (upload in Studio, Subtitles)")
         from .chapters import write_chapters
         print(write_chapters(project, sb))
+    # the Shorts are cut and their two ends checked now, in seconds, before the long render: a Short that starts or
+    # ends inside a sentence is held back and named here, not found after 25 minutes (pipeline/shortcut.py)
+    plan_path = os.path.join(project, "shorts.json")
+    cuts: list[dict] = []
+    if (args.shorts or os.path.exists(plan_path)) and not args.no_shorts:
+        cuts = shortcut.cut_shorts(project, sb, audio, plan_path, args.shorts or 3, public_dir, args.pick, args.force_shorts)
+    elif args.pick:
+        print(f"--pick {' '.join(args.pick)}: no Short was cut ({'--no-shorts was given' if args.no_shorts else 'there is no shorts.json here and no --shorts N'})", file=sys.stderr)
+    held = [c["name"] for c in cuts if c["skip"]]
     if args.no_render:
-        return 0
+        return 3 if held and args.strict_shorts else 0
 
     if not args.only_vertical and not args.only_shorts:
         render(sb_path, os.path.join(project, f"{slug}.mp4"), "Main", args.concurrency, chunk=args.chunk)
     if (args.vertical or args.only_vertical) and not args.only_shorts:
         render(sb_path, os.path.join(project, f"{slug}-vertical.mp4"), "Vertical", args.concurrency, chunk=args.chunk)
-    plan_path = os.path.join(project, "shorts.json")
-    if (args.shorts or os.path.exists(plan_path)) and not args.no_shorts:
-        render_shorts(project, sb, audio, args.concurrency, args.chunk, plan_path, args.shorts or 3)
+    if cuts:
+        render_shorts(project, sb, audio, args.concurrency, args.chunk, plan_path, args.shorts or 3, cuts)
     print("done")
-    return 0
+    # said again where a long log ends; the long video and the other Shorts are out either way, so the code stays 0
+    # unless --strict-shorts asks for the run to be marked
+    for row in shortcut.summary([c["check"] for c in cuts], args.force_shorts):
+        print(row, flush=True)
+    return 3 if held and args.strict_shorts else 0
 
 
 if __name__ == "__main__":

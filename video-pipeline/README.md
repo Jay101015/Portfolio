@@ -424,6 +424,49 @@ On the command line, `python -m pipeline.build projects/x --shorts 3` plans
 and renders them (`projects/x/shorts.json`, the studio's picks, says which
 if it exists; the plan used is written to `shorts-plan.json`).
 
+**Every Short is cut and checked before anything renders.** The check takes a
+few seconds. It reads each Short's two ends against the words and the sound,
+prints its length and its first and last five words, and writes what it found
+to `shorts-check.md` in the project folder.
+
+- A fault: the Short starts or ends inside a sentence, holds words of the next
+  sentence, cuts through a word, starts or ends in sound, or runs over 60
+  seconds. A Short with a fault is held back and named at the end of the log.
+  The long video and the other Shorts still render.
+- A warning: under 120 ms of quiet at an end, under 15 seconds, an ending that
+  dates ("so far", "today", "this week"), or an opener like "And" or "So". For
+  an opener it prints the same Short one sentence later, ready to type. It
+  changes nothing.
+- A Short is held back only when its seconds are typed as `spans` and the
+  voice was made by the pipeline (`voice.json`). A pick by scenes, and a video
+  on your own recording, gets warnings only.
+
+Two commands:
+
+```bash
+# the check on its own, in seconds: nothing is rendered, nothing in the project is changed
+python -m pipeline.shortcut projects/x --out /tmp/x-shorts   # also writes each cut there to listen to
+# the same check inside the build; --no-render stops after the cut and the check
+python -m pipeline.build projects/x --no-render
+```
+
+The check on its own reads `timing.json` and `voice-preview.mp3`, the files the
+render run committed. That is the clock the seconds in `shorts.json` are typed
+on. A build on your own machine can sit a few seconds away from it when the
+transcriber timed the video, so trust the check on its own. `--plan FILE`
+checks another list of picks, and `--pick short-3` checks one.
+
+Three switches on the build:
+
+- `--pick short-3` cuts, checks and renders only that Short. Repeat it for
+  more. With `--only-shorts` one Short is made again without the other four.
+- `--force-shorts` renders a Short even when the check found a fault.
+- `--strict-shorts` makes the build exit with code 3, at the very end, when a
+  Short was held back. Without it the exit code stays 0.
+
+`EI_PUBLIC_DIR=/some/folder` points a build at its own public folder, so a
+check build leaves `remotion/public` alone.
+
 #### Motion
 
 Every board scene has a slow push-in, about 3% over the scene, eased, reset on each cut, so the frame is never quite

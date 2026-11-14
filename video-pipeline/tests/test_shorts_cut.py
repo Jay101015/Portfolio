@@ -35,3 +35,17 @@ def test_snap_spans_keeps_a_reordered_piece(tmp_path):
     voice.write(str(p), x, sr) if hasattr(voice, "write") else __import__("scipy.io.wavfile", fromlist=["write"]).write(str(p), sr, (x * 32767).astype(np.int16))
     out = voice.snap_spans([(12.0, 15.0), (1.0, 4.0)], str(p))
     assert len(out) == 2 and out[0][0] > 11 and out[1][1] < 5
+
+
+def test_a_cut_short_has_captions_on_and_its_name_set():
+    # the renderer hides the long video's progress line on anything that carries a `short` name, and a Short always
+    # shows its captions, whatever the long video's `captions:` line says
+    from pipeline import shortcut
+    sb = dict(_sb(), captions=False)
+    for pick in ({"name": "short-7", "scenes": [1, 2]}, {"name": "short-7", "spans": [[5.5, 11.0]]}):
+        cut, spans, pieces, speed = shortcut.cut_one(sb, pick, "short-7", None)
+        assert cut["captions"] is True and cut["short"] == "short-7"
+        assert speed == 1.2 and cut["speed"] == 1.2  # a Short plays a little faster unless the pick says otherwise
+    assert pieces == [(5.5, 11.0)] and spans == [(5.5, 11.0)]
+    assert shortcut.cut_one(sb, {"name": "short-7", "scenes": [1, 2]}, "short-7", None)[2] == [(0.0, 12.0)]  # scenes side by side: one stretch, two edges
+    assert shortcut.cut_one(sb, {"name": "empty"}, "empty", None) is None
