@@ -565,3 +565,41 @@ the work to go into future videos, not this one). A fixed render exists on the r
 - **What Jeffrey asked for and did not get quickly enough:** "I didn't ask you to fix the video, I asked you to
   prepare and ensure all future videos are better and higher standard." Work on the system first; a delivered video
   is touched only when he asks.
+
+## Studio upgrade (13 to 14 November 2026): what every video gets from now on
+
+Jeffrey: "take this studio to the next level", then, a day in: "I didn't ask you to fix the video, I asked you to
+prepare and ensure all future videos are better and higher standard." Fourteen pieces, each with tests, each proved
+not to change an existing long video (346 of 346 landscape baseline stills identical at the end; 293 tests).
+- **Before any render** (EDITOR.md has the five commands): preflight warns on real pages with cards on their words, no
+  mark or no date; `pipeline.realboard` shows which scenes use real material and judges every captured page;
+  `--no-render` cuts and checks every Short; `pipeline.proof` draws sheets of stills with measured checks.
+- **On screen:** highlight, box and underline on a real page's own words (`marks=`), cards in a strip off the headline
+  (`brand.pagecards: strip`), "Recorded <date>" on the title card (`recorded:`), photos that push in (they were
+  frozen), pencil bars on request (`brand.pencil: on`).
+- **Shorts:** one zone file for the phone (remotion/src/components/upright.json); the caption in one fixed place; stat,
+  pie, chart and compare fill the stage; cards clear of YouTube's buttons; a complete first frame; picked by their
+  words (`"from"`, `"to"`); checked before render; the last frame is never blank.
+- **Voice and timing:** `timing: exact` takes every word's time from the voice's own timestamps; a made voice is never
+  cut; captions are the script's words; `mute:` silences a stray sound; a cut never lands inside a word; no audio is
+  made without `--approve`.
+- **Thumbnails:** `pipeline.thumbnail` makes real-photo mock-ups in three layouts and a phone-size sheet.
+- **Not done:** the studio page on his phone (its source has private ids and is not in the repo); list rows, grow,
+  bite and shrink on a Short; the character on a receipt; a card over a phone clip's rows; clean page capture on the
+  runner; the "And / So / But" opener trim (needs his yes).
+
+What the build itself taught (for the next big job on this account):
+- **The usage limit is the budget.** Nine readers, a merge, three judges and two critics spent about 4.4 million
+  tokens and two usage windows before a line was written; the limit stopped the work eight times in two days. Plan
+  small: one fresh agent for one package, two at once at most.
+- **Never resume a big agent.** Resuming one that had been cut off cost 700,000 tokens for five tool calls: it
+  re-reads its whole context. Start a fresh agent and give it the lane notes and the partial diff.
+- **The lead verifies with the agent's own script.** Each agent wrote its acceptance checks as one script that prints
+  PASS or FAIL lines; the lead re-ran it in two minutes and looked at one sheet. That replaced a second agent per
+  package at a quarter of the cost.
+- **Notes and checkpoint first, long checks last.** Agents cut off before their notes left work nobody could pick up
+  cheaply; the ones that checkpointed after the code were committed from that copy.
+- **A review pass costs most of a window** (four reviewers at 320,000 to 450,000 tokens each). Run the checks above
+  first, fix round one in one render, and do not re-render a delivered video unless he asks.
+- **The transcriber's word times are the weak point.** They clipped a sentence, put five cuts inside words and split
+  "again." with a pause. A made voice should always carry `timing: exact`.
