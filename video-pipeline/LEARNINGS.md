@@ -537,7 +537,12 @@ one change at a time where possible, so a result can be read.
   real person, so the story was told in drawings, retyped cards and stock. Jeffrey asked where Jensen Huang, the real
   CNN page and the real material were. Twelve scenes rebuilt from Commons photos and page screenshots (the "Gather
   real material" workflow): "so much better looking already". Rule in EDITOR.md, "Real material first".
-- Real results: to come.
+- Real results: 7 views, as Jeffrey reported on 16 November 2026 (he uploaded it himself; the upload date and the
+  retention curve are not known here). The weekly review of 16 November could not pull anything: vidIQ had 0 of its
+  150 credits left until 27 November. To test, not yet a rule: a breaking-news video from a channel this size is not
+  shown to anyone, because larger outlets hold the search results by the time it is out; evergreen questions with his
+  own number in them (the house and retirement videos) are what found viewers. Confirm or reject with the retention
+  curve and traffic sources at the first review after 27 November.
 
 Nvidia Shorts (12 November 2026). Review: editor 7/7/5/6/5, animator 7/7/8/7/7, retention 8/7.5/6/6/5, director 6/7.5/5/7/5.5 (round 2, Shorts 1 to 5; Shorts 3 to 5 were scored before their cut points were corrected).
 - A Short's span must start and end inside a pause measured in the sound, not on the storyboard's scene or word times: where the transcriber squeezed a sentence onto one instant, the scene time was up to 3 s late, and Shorts started mid-sentence or ran into the next line. Check every Short by transcribing its first and last words before review.
