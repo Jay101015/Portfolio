@@ -5,7 +5,7 @@
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => [...document.querySelectorAll(sel)];
   const STORE_KEY = 'cue:v1';
-  const APP_VERSION = '3.0.0';
+  const APP_VERSION = '3.1.0';
   const UA = navigator.userAgent;
   // Every browser on an iPhone or iPad is Safari underneath, whatever its name.
   const isWebKit = /AppleWebKit/.test(UA) && !/Chrome|Chromium|Edg\/|Android/.test(UA);
@@ -71,7 +71,6 @@ It does to me.`;
       sensitivity: 5,
       matchWords: 'off',
       gapMs: 300,
-      countdown: '3',
       myLineDisplay: 'full',
       mirror: true,
     },
@@ -535,7 +534,7 @@ It does to me.`;
     $('#stageRole').innerHTML = opts;
     const others = state.characters.filter((c) => c !== state.me);
     $('#stageReads').textContent = !state.me ? 'Pick your role to start.' : others.length ? `I'll read ${others.join(', ')}` : 'Monologue — no reader lines';
-    $('#rehearseBtn').disabled = $('#recordBtn').disabled = !state.me || !!run;
+    $('#rehearseBtn').disabled = !state.me || !!run;
   }
 
   // Voices nobody chose by hand are handed out again, so the readers get the first (American) voices of each kind
@@ -563,7 +562,7 @@ It does to me.`;
       renderLines();
       save();
     };
-    ['advanceMode', 'micMode', 'silenceMs', 'sensitivity', 'gapMs', 'countdown', 'myLineDisplay'].forEach((k) => {
+    ['advanceMode', 'micMode', 'silenceMs', 'sensitivity', 'gapMs', 'myLineDisplay'].forEach((k) => {
       const el = $('#' + k);
       if (el.type === 'checkbox') el.checked = !!s[k]; else el.value = s[k];
       el.addEventListener('input', () => {
@@ -965,7 +964,7 @@ It does to me.`;
       const gen = mic.gen;
       const stale = () => gen !== mic.gen;
       mic.state = 'starting';
-      mic.half = useHalf() && !(run && run.recording);
+      mic.half = useHalf();
       setSessionType('play-and-record');
       const t0 = performance.now();
       let s;
@@ -1937,54 +1936,12 @@ It does to me.`;
     return result;
   }
 
-  async function countdown(n, signal) {
-    const o = $('#countdownOverlay');
-    o.hidden = false;
-    try {
-      for (let k = n; k > 0; k--) {
-        o.textContent = k;
-        await sleep(1000, signal);
-      }
-    } finally { o.hidden = true; }
-  }
-
-  function pickMime() {
-    if (!window.MediaRecorder) return null;
-    const types = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mpeg'];
-    return types.find((t) => MediaRecorder.isTypeSupported(t)) || '';
-  }
-
-  function startRecorder() {
-    const mime = pickMime();
-    if (mime === null) throw new Error('Recording is not supported in this browser.');
-    const rec = new MediaRecorder(mic.stream, mime ? { mimeType: mime, audioBitsPerSecond: 128_000 } : undefined);
-    const chunks = [];
-    const started = Date.now();
-    rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
-    const finished = new Promise((resolve) => {
-      rec.onstop = () => resolve(new Blob(chunks, { type: rec.mimeType || mime || 'audio/webm' }));
-    });
-    rec.start(1000);
-    $('#recBadge').hidden = false;
-    const timer = setInterval(() => { $('#recTime').textContent = fmtDur((Date.now() - started) / 1000); }, 250);
-    return {
-      async stop() {
-        clearInterval(timer);
-        $('#recBadge').hidden = true;
-        if (rec.state !== 'inactive') rec.stop();
-        const blob = await finished;
-        return { blob, duration: (Date.now() - started) / 1000 };
-      },
-    };
-  }
-
-  function setRunning(on, record) {
-    $('#rehearseBtn').disabled = $('#recordBtn').disabled = on || !state.me;
+  function setRunning(on) {
+    $('#rehearseBtn').disabled = on || !state.me;
     $('#stageRole').disabled = on;
     $('#nextBtn').disabled = !on;
     $('#stopBtn').disabled = !on;
     $('#micBtn').hidden = on;
-    $$('.tab').forEach((t) => { if (t.dataset.view !== 'stage') t.disabled = on && record; });
   }
   const status = (msg) => { $('#status').textContent = msg || ''; };
   const nowState = (msg) => { const el = $('#nowState'); if (el) el.textContent = msg || ''; };
@@ -2011,37 +1968,35 @@ It does to me.`;
     el.textContent = bits.join(' · ');
   }
 
-  async function runScene(record) {
+  async function runScene() {
     if (run || !state.lines.length || !state.me) return;
-    const wantsMic = record || state.settings.advanceMode === 'voice';
-    const half = wantsMic && useHalf() && !record; // iPhone: the mic is on for the actor's lines only
+    const wantsMic = state.settings.advanceMode === 'voice';
+    const half = wantsMic && useHalf(); // iPhone: the mic is on for the actor's lines only
     const readers = state.characters.filter((c) => c !== state.me).map(readerFor);
     // Everything an iPhone only allows from a tap happens here, before the first wait.
     unlockAudio(!wantsMic || half);
     if (readers.length) unlockSpeech(); // the phone's voice stands in whenever a studio line isn't ready
     stopMicTest(true);
     const ac = new AbortController();
-    run = { ac, skip: null, skipped: false, recording: record, half, turn: '' };
+    run = { ac, skip: null, skipped: false, half, turn: '' };
     const mineNext = (from) => { for (let k = from; k < state.lines.length; k++) if (state.lines[k].type === 'dialogue') return state.lines[k].character === state.me; return false; };
     const micUsable = () => wantsMic && mic.state !== 'denied' && mic.fails < 3; // a passing failure may be retried
     let settleUntil = 0; // after the mic goes off an iPhone needs a moment to give the loudspeaker back
-    setRunning(true, record);
+    setRunning(true);
     status('');
-    setTurn('idle', record ? 'Getting ready to record…' : 'Starting…');
+    setTurn('idle', 'Starting…');
     updateAwake();
     studioWarned = false;
     mic.recoveries = 0;
     mic.fails = 0;
     mic.slowOpens = 0;
     let failed = '';
-    log(`scene started (${record ? 'recording' : 'rehearsal'}, cue: ${state.settings.advanceMode}, from line ${state.startIndex})`);
-    let recorder = null;
+    log(`scene started (cue: ${state.settings.advanceMode}, from line ${state.startIndex})`);
     try {
       if (wantsMic) {
         // Asked for now, while the actor is still at the phone, even if the first line is the reader's.
         try { await openMic(); } catch (e) {
           if (ac.signal.aborted || (e && e.name === 'AbortError')) throw abortError();
-          if (record) throw new Error(micBlockedText(e));
           status(micBlockedText(e) + ' Until then I\'ll time your lines.');
         }
         // A moment of listening to the room, so the first line is judged against the right background level.
@@ -2052,13 +2007,6 @@ It does to me.`;
         }
       } else setSessionType('playback');
       if (studio.downloaded && !engineBlocked() && studioLinesFrom(state.startIndex).length) prepareScene(state.startIndex);
-      if (record) {
-        if (isIOS) status('Recording keeps the mic on, and an iPhone then plays the reader more quietly. Headphones avoid that.');
-        const n = Number(state.settings.countdown);
-        if (n) await countdown(n, ac.signal);
-        recorder = startRecorder();
-        await sleep(600, ac.signal); // a beat of air before the first line
-      }
       for (let i = state.startIndex; i < state.lines.length; i++) {
         const l = state.lines[i];
         if (l.type !== 'dialogue') continue;
@@ -2101,7 +2049,6 @@ It does to me.`;
       status('Scene complete.');
       setTurn('idle', 'Scene complete.');
       log('scene complete');
-      if (record) await sleep(1200, ac.signal);
     } catch (err) {
       if (err && err.name === 'AbortError') { status('Stopped.'); log('scene stopped'); }
       else {
@@ -2116,14 +2063,7 @@ It does to me.`;
       if (hasTTS) { try { speechSynthesis.cancel(); } catch { /* ignore */ } }
       run = null;
       setCurrent(-1);
-      setRunning(false, record);
-      if (recorder) {
-        const { blob, duration } = await recorder.stop();
-        if (blob.size) {
-          await saveTake(blob, duration);
-          status(`Saved take (${fmtDur(duration)}). See Takes.`);
-        }
-      }
+      setRunning(false);
       // Keep the mic for a minute in case another run-through follows, then let it go. (On iPhone it goes off at
       // once: the mic being on is what spoils the sound there.)
       if (half) {
@@ -2242,6 +2182,9 @@ It does to me.`;
     takeUrls.forEach((u) => URL.revokeObjectURL(u));
     takeUrls = [];
     $('#takeCount').textContent = takes.length;
+    // Recording is gone; the tab only shows for takes saved by earlier versions.
+    const takesTab = $('.tab[data-view="takes"]');
+    if (takesTab) takesTab.hidden = takes.length === 0;
     $('#takesEmpty').hidden = takes.length > 0;
     $('#takesGrid').innerHTML = takes.map((t) => {
       const url = URL.createObjectURL(t.blob);
@@ -2676,8 +2619,7 @@ It does to me.`;
       }
     });
     window.addEventListener('pagehide', () => setCrumb(false));
-    $('#rehearseBtn').addEventListener('click', () => runScene(false));
-    $('#recordBtn').addEventListener('click', () => runScene(true));
+    $('#rehearseBtn').addEventListener('click', () => runScene());
     $('#nextBtn').addEventListener('click', () => run && run.skip && run.skip());
     $('#stopBtn').addEventListener('click', () => run && run.ac.abort());
 

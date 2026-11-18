@@ -11,15 +11,14 @@ lines on cue and listens for the end of yours.
   or Space, moves on by hand; a dead or blocked microphone falls back to timing the line.
 - **iPhone:** iOS plays a page's sound quietly, from the earpiece or with crackles while that page's microphone is
   open. So on iPhone and iPad the mic is only switched on for your own lines and the reader plays through the
-  loudspeaker with the mic off. (Recording a take needs the mic throughout, so there it stays on.)
+  loudspeaker with the mic off.
 - **Studio voices:** Heart and Michael (US), Emma and George (UK), from the open-source Kokoro-82M model running on
   the device through kokoro-js in a Web Worker. One-time download of about 90 MB from Hugging Face (the 8-bit `q8`
   model), then offline. Lines are made sentence by sentence in scene order and saved in IndexedDB, so a scene that
   has been prepared once starts instantly afterwards.
 - **Never waiting:** a line the studio voice hasn't finished making is read in the phone's own text-to-speech voice
   instead, so the scene always flows; the next run-through uses the studio voice.
-- Record an audio take of the scene, or import videos from the camera roll; takes stay in the browser (IndexedDB)
-  and can be downloaded.
+- Nothing is recorded: the microphone is only used to tell when you have finished a line.
 - Memorisation modes: show only the first words of your lines, or hide them.
 
 No build step and no backend — just static files.
