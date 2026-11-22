@@ -1,4 +1,4 @@
-Read the plain text. Skip the bold lines. Fill in the [BRACKETS] with your own figures.
+Read the plain text. Skip the bold lines.
 
 To retire with a million pounds, starting at 25, you need about £329 a month going in. And here's the bit nobody tells you: about £123 of that doesn't come out of your pocket.
 
@@ -40,9 +40,13 @@ And I've got to be honest about one more thing. A million in 42 years isn't a mi
 
 Right, so where am I with this.
 
-I put in [MY MONTHLY] a month, split [MY SPLIT]. I started at [MY AGE STARTED], which, looking at that chart, I wish had been earlier.
+I started investing at 22. And I went bust. I lost all of it. So if that chart made you feel behind, I basically started again from zero.
 
-If I keep that up, and the market does roughly what it's done before, that gets me to about [MY PROJECTION]. So am I on track for the million? [MY ANSWER]. And I'd rather know that now than at 60.
+I'm 27 now. I put £500 a month into an S&P 500 fund, and I've got about four grand in there so far. Most of what I save isn't even for retirement yet. A grand a month goes into savings for a house, because that's the thing in front of me right now.
+
+So just on that £500. If I keep it up, and the market does roughly what it's done before, that gets me to about 1.38 million by 67.
+
+It'd cross the million at about 63. So yeah, I'm on track. But only if I don't do what I did at 22, and that's the hard part, not the maths.
 
 I'm not a financial advisor and this isn't advice. Pensions have rules about when you can take the money and how it's taxed, so check what applies to you.
 
