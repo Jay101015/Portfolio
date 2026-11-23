@@ -32,23 +32,21 @@ So I want to show you who pays the rest, what happens to that number if you're s
 Right, the number first. I've assumed your money grows about 7% a year, which is roughly what a global tracker has done over the long run. It's not a promise, some years are horrible.
 
 [chart bar title="A month, to reach £1 million by 67" y="£" source="Worked out at 7% a year, paid in monthly; not a promise"]
-- 25: 329
-- 35: 700
-- 45: 1601
+bars: 25:329, 35:700, 45:1601
 Start at 25 and it's £329 a month. Start at 35 and it's £700. Start at 45 and it's about sixteen hundred pounds a month.
 
-[text board="Wait 10 years: the bill more than doubles" art=off cards="ink:not about being clever@clever; green:about being early@early"]
+[text board="Wait 10 years: the bill more than doubles" art=off anim=hourglass anim_labels=off art_at=r art_size=0.45 cards="ink:not about being clever@clever; green:about being early@early"]
 So every ten years you wait, the monthly bill more than doubles. That's the whole game, honestly. It's not about being clever, it's about being early.
 
-[grow from="£329" per=month years=42 to="£1,000,000" label="£329 a month from 25, for 42 years" source="£329 a month for 42 years, at 7% a year; not a promise" cards="ink:you pay in: £166,000@166; green:growth: £834,000@834; green:the money made more than you did@made"]
+[stat value="£834,000" label="Of that £1 million, this much is growth" sub="you pay in about £166,000" source="£329 a month for 42 years, at 7% a year; not a promise" cards="green:the money made more than you did@made"]
 And look at this. From 25, over the whole 42 years, what actually goes in is about 166 grand. The other 834 grand is just growth. The money made more money than you did.
 
-[text board="The first £100,000: nearly 15 years" art=road-to-100k art_at=r art_size=0.5 cards="ink:the bit that makes people quit@quit; ink:feels like nothing's happening@nothing's"]
+[text board="The first £100,000: nearly 15 years" art=off anim=calendar-flip anim_labels=off art_at=r art_size=0.5 art_start=0 cards="ink:the bit that makes people quit@quit"]
 And this is the bit that makes people quit. The first hundred grand takes nearly 15 years. It feels like nothing's happening.
 
 [compare title="£329 a month: how long each £100,000 takes" good=right source="Worked out at 7% a year, paid in monthly; not a promise" cards="ink:from £900,000 to £1 million@900; ink:same money going in@Same; green:slow at the start is normal@normal"]
-- The first £100,000: nearly 15 years
-- The last £100,000: about 17 months
+left: The first £100,000 | 15 years | nearly
+right: The last £100,000 | 17 months | about
 But the last hundred grand, from 900 to a million, takes about 17 months. Same money going in. So if you're a few years in and it feels slow, that's normal. That's what it's meant to feel like.
 
 [stat value="£40,000" label="A year, from a £1 million pot" sub="taking about 4% a year" source="The 4% rule of thumb; not a guarantee" cards="ink:what does £1 million pay you?@pay; ink:the pot should roughly last@last; ink:is that enough? That's the last video@video; ink:the catch: in a minute@catch"]
@@ -57,7 +55,7 @@ And what does a million actually pay you? The rule of thumb is you can take abou
 [text board="£329 a month, at 25?" art=off anim=bills-pile anim_labels=off art_at=r art_size=0.45 art_start=0 part="Who pays" cards="ink:still a lot at 25@lot; green:here's where it gets cheaper@cheaper"]
 But 329 quid a month is still a lot when you're 25. So here's where it gets cheaper.
 
-[list title="£192 a month, on £35,000: who pays it" unnumbered source="Auto-enrolment minimums on qualifying earnings and basic-rate tax relief, GOV.UK, 2026-27" cards="ink:on a £35,000 salary@35; ink:then you top up the gap@top; green:and tax relief on that too@well"]
+[list title="£192 a month: who pays it" unnumbered source="Auto-enrolment minimums on qualifying earnings and basic-rate tax relief, GOV.UK, 2026-27" cards="ink:on a £35,000 salary@35"]
 - You: £96
 - Your employer: £72
 - The taxman: £24
@@ -67,7 +65,7 @@ Say you're on 35 grand. Your workplace pension already puts in around £192 a mo
 So for £329 going in, about £206 comes out of your pay. The other £123 is free money.
 
 [set room=office walk cards="green:the pension at work, first@pension; ink:take every pound of the match@every; green:nothing else you can buy does this@Nothing"]
-So the {count-fingers} cheapest way, by a mile, starts with the pension at work. If your employer {hand-over} matches more when you put in more, {coin-jar} take every pound of it before you do anything else. {smug} Nothing else you can buy gives you that.
+So the {explain} cheapest way, by a mile, starts with the pension at work. If your employer {hand-over} matches more when you put in more, {count-notes} take every pound of it before you do anything else. {smug} Nothing else you can buy gives you that.
 
 [broll search="feet walking up stone steps close up" pick=2 caption="Start lower. Raise it every year" cards="ink:if £329 feels like too much@329; green:start lower@lower; green:up a bit every year@bit"]
 And if 329 feels like too much right now, there's another way to do it. Start lower, and put it up a bit every year.
@@ -84,27 +82,27 @@ After that, it's a stocks and shares ISA. You don't get anything on the way in, 
 [broll src="real-gov-isa.jpg" zoom=none caption="GOV.UK, Individual Savings Accounts" credit="gov.uk, Open Government Licence v3.0" marks="box 26,75,50,19@20"]
 You can put in up to 20 grand a year, which is more than most of us will ever manage.
 
-[text board="One cheap tracker fund | The whole market | Leave it" art=off cards="ink:what goes inside: boring@boring; ink:I tried picking winners@tried"]
+[text board="One cheap tracker fund | The whole market | Leave it" art=index-fund-basket art_at=r art_size=0.5 cards="ink:what goes inside: boring@boring; ink:I tried picking winners@tried"]
 And what goes inside it? For me it's boring. One cheap tracker fund that buys the whole market. I'm not picking winners, I tried that, and I'll tell you how that went.
 
 [broll search="man in his forties at laptop at home thinking" caption="Starting at 35 or 45?" part="Starting later" cards="ink:35? 45?@35; ink:that's me done?@done" src="22-man-in-his-forties-at-laptop-at-home-thi.mp4" credit="Video 86866 by atiqurrahman0047 via Pixabay"]
 But what if you're not 25. What if you're 35, or 45, and you're looking at that chart thinking, well, that's me done.
 
 [compare title="Starting at 45, by 67" good=right source="Worked out at 7% a year, paid in monthly; not a promise" cards="ink:it's not done@done; green:£1,601 → £800 a month@£800; green:less, if your employer pays in@chunk"]
-- £1 million: £1,601 a month
-- £500,000: £800 a month
+left: £1 million | £1,601 a month | by 67
+right: £500,000 | £800 a month | by 67
 It's not done. At 45, a million needs about sixteen hundred a month, which is a lot. But half a million needs about £800. And if your employer's paying in, a good chunk of that isn't yours either.
 
-[broll src="real-gov-state-pension.jpg" zoom=none caption="GOV.UK, the new State Pension" credit="gov.uk, Open Government Licence v3.0" marks="highlight 47.5,54.2,21,5.4@£241.30; underline 58.8,28.6,32.6@National" cards="ink:you're not starting from nothing@nothing; green:about £12,500 a year, on top@twelve"]
+[broll src="real-gov-state-pension.jpg" zoom=none caption="GOV.UK, the new State Pension" credit="gov.uk, Open Government Licence v3.0" marks="highlight 47.5,54.2,21,5.4@£241.30; underline 58.8,28.6,32.6@National"]
 And you're not starting from nothing. The full State Pension is £241.30 a week right now. That's about twelve and a half grand a year on top of whatever you've built, as long as you've got enough years of National Insurance.
 
-[broll search="senior couple walking dog in park" caption="£500,000 + the State Pension" cards="green:still a really comfortable retirement@comfortable; ink:starting late isn't failing@failed; ink:the number's just different@different" src="25-senior-couple-walking-dog-in-park.mp4" credit="Video 8251 by Coverr-Free-Footage via Pixabay"]
+[text board="£500,000 + the State Pension | Still a comfortable retirement" art=retired-bench art_at=r art_size=0.5 cards="ink:starting late isn't failing@failed; ink:the number's just different@different"]
 So half a million, plus the State Pension, is still a really comfortable retirement. Starting late doesn't mean you've failed. It just means the number's different.
 
 [text wrong="A crash" board="The bit that ruins it" art=off part="What ruins it"]
 Now the bit that ruins it. And it's not a crash.
 
-[bite value="£1,000,000" lose="£254,000" label="Same £329 a month, 42 years, with 1% a year more in fees" source="7% a year against 6% a year after a 1% fee; not a promise" cards="red:it's fees@fees; ink:same money in, same 42 years@42; red:£1,000,000 → £746,000@746; red:a quarter of a million, gone@gone; ink:a number most people never look at@never"]
+[bite value="£1,000,000" lose="£254,000" label="1% a year more in fees" source="£329 a month for 42 years: 7% a year against 6% after a 1% fee; not a promise" cards="red:it's fees@fees; red:a quarter of a million, gone@gone"]
 It's fees. Same money in, same 42 years. But if you're paying 1% a year more in fees, you don't end up with a million. You end up with about 746 grand. That's a quarter of a million pounds, gone, for a number most people never look at.
 
 [text board="Check the fee on your pension | It's one login" art=off anim=receipt-print anim_labels=off art_at=r art_size=0.45 cards="ink:the one thing to do after this@one; red:old pensions in expensive funds@expensive; ink:nobody's ever checked@checked"]
@@ -127,13 +125,13 @@ So that's the whole thing, really. Take the employer money first. Then an ISA, i
 [shrink value="£1,000,000" to="£435,000" years=42 label="£1 million in 42 years, in today's money" source="£1,000,000 at 2% inflation a year for 42 years" cards="ink:one more honest thing@honest; ink:prices up about 2% a year@2%"]
 And I've got to be honest about one more thing. A million in 42 years isn't a million today. With prices going up about 2% a year, it buys what roughly 435 grand buys now.
 
-[text board="Still a really good retirement | Just not a yacht" art=off]
+[text board="Still a really good retirement | Just not a yacht" art=garden-retirement art_at=r art_size=0.5]
 That's still a really good retirement. It's just not a yacht.
 
 [text board="Where I actually am" art=off part="My numbers" cards="ink:I said I'd show you@show"]
 Right, so where am I with this. Because I said I'd show you.
 
-[text board="I started at 22 | And lost the lot" art=off anim=money-flies anim_labels=off art_at=r art_size=0.45 art_start=0 cards="red:went bust@bust; ink:feel behind? So was I@behind; ink:started again from zero@zero"]
+[text board="I started at 22 | And lost the lot" art=off anim=money-flies anim_labels=off art_at=r art_size=0.55 art_start=0 cards="red:went bust@bust; ink:started again from zero@zero"]
 I started investing at 22. And I went bust. I lost all of it. So if that chart made you feel behind, I basically started again from zero.
 
 [stat value="£500" label="What I invest a month now, at 27" sub="into an S&P 500 fund" source="Jeffrey's own figures" cards="ink:27 now@27; ink:one fund@fund"]
@@ -154,4 +152,4 @@ I'm not a financial advisor and this isn't advice. Pensions have rules about whe
 [broll search="person typing comment on laptop keyboard close up" pick=2 caption="Tell me in the comments" cards="ink:what age did you start?@started; ink:or what age are you starting?@starting; green:is £1 million even enough? On screen now@enough"]
 Tell me in the comments what age you started, or what age you're starting. And if you want to know whether a million is even enough, I did that one already, it's on screen now.
 
-[outro title="The Everyday Investor" cta="Subscribe for the next one" dur=14 cards=on]
+[outro title="The Everyday Investor" cta="Subscribe for the next one" dur=20 cards=on]
