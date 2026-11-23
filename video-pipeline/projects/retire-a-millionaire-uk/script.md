@@ -38,15 +38,15 @@ Start at 25 and it's £329 a month. Start at 35 and it's £700. Start at 45 and 
 [text board="Wait 10 years: the bill more than doubles" art=off anim=hourglass anim_labels=off art_at=r art_size=0.45 cards="ink:not about being clever@clever; green:about being early@early"]
 So every ten years you wait, the monthly bill more than doubles. That's the whole game, honestly. It's not about being clever, it's about being early.
 
-[stat value="£834,000" label="Of that £1 million, this much is growth" sub="you pay in about £166,000" source="£329 a month for 42 years, at 7% a year; not a promise" cards="green:the money made more than you did@made"]
+[stat value="£834,000" label="Of that £1 million, this much is growth" sub="you pay in about £166,000" source="£329 a month for 42 years, at 7% a year; not a promise" cards="ink:£166,000 goes in@166; green:the money made more than you did@made"]
 And look at this. From 25, over the whole 42 years, what actually goes in is about 166 grand. The other 834 grand is just growth. The money made more money than you did.
 
 [text board="The first £100,000: nearly 15 years" art=off anim=calendar-flip anim_labels=off art_at=r art_size=0.5 art_start=0 cards="ink:the bit that makes people quit@quit"]
 And this is the bit that makes people quit. The first hundred grand takes nearly 15 years. It feels like nothing's happening.
 
-[compare title="£329 a month: how long each £100,000 takes" good=right source="Worked out at 7% a year, paid in monthly; not a promise" cards="ink:from £900,000 to £1 million@900; ink:same money going in@Same; green:slow at the start is normal@normal"]
-left: The first £100,000 | 15 years | nearly
-right: The last £100,000 | 17 months | about
+[compare title="£329 a month: how long each £100,000 takes" good=both source="Worked out at 7% a year, paid in monthly; not a promise" cards=off]
+left: The first £100,000 | nearly 15 years | it feels like nothing is happening
+right: The last £100,000 | about 17 months | same money going in
 But the last hundred grand, from 900 to a million, takes about 17 months. Same money going in. So if you're a few years in and it feels slow, that's normal. That's what it's meant to feel like.
 
 [stat value="£40,000" label="A year, from a £1 million pot" sub="taking about 4% a year" source="The 4% rule of thumb; not a guarantee" cards="ink:what does £1 million pay you?@pay; ink:the pot should roughly last@last; ink:is that enough? That's the last video@video; ink:the catch: in a minute@catch"]
@@ -55,7 +55,7 @@ And what does a million actually pay you? The rule of thumb is you can take abou
 [text board="£329 a month, at 25?" art=off anim=bills-pile anim_labels=off art_at=r art_size=0.45 art_start=0 part="Who pays" cards="ink:still a lot at 25@lot; green:here's where it gets cheaper@cheaper"]
 But 329 quid a month is still a lot when you're 25. So here's where it gets cheaper.
 
-[list title="£192 a month: who pays it" unnumbered source="Auto-enrolment minimums on qualifying earnings and basic-rate tax relief, GOV.UK, 2026-27" cards="ink:on a £35,000 salary@35"]
+[list title="£192 a month: who pays it" unnumbered source="Auto-enrolment minimums on qualifying earnings and basic-rate tax relief, GOV.UK, 2026-27" cards="ink:on a £35,000 salary@35; ink:you: £96@£96; green:your employer: £72@£72; green:the taxman: £24@£24"]
 - You: £96
 - Your employer: £72
 - The taxman: £24
@@ -88,12 +88,12 @@ And what goes inside it? For me it's boring. One cheap tracker fund that buys th
 [broll search="man in his forties at laptop at home thinking" caption="Starting at 35 or 45?" part="Starting later" cards="ink:35? 45?@35; ink:that's me done?@done" src="22-man-in-his-forties-at-laptop-at-home-thi.mp4" credit="Video 86866 by atiqurrahman0047 via Pixabay"]
 But what if you're not 25. What if you're 35, or 45, and you're looking at that chart thinking, well, that's me done.
 
-[compare title="Starting at 45, by 67" good=right source="Worked out at 7% a year, paid in monthly; not a promise" cards="ink:it's not done@done; green:£1,601 → £800 a month@£800; green:less, if your employer pays in@chunk"]
-left: £1 million | £1,601 a month | by 67
-right: £500,000 | £800 a month | by 67
+[compare title="Starting at 45, by 67" good=both source="Worked out at 7% a year, paid in monthly; not a promise" cards=off]
+left: £1 million by 67 | £1,601 a month | a lot
+right: £500,000 by 67 | £800 a month | less, if your employer pays in
 It's not done. At 45, a million needs about sixteen hundred a month, which is a lot. But half a million needs about £800. And if your employer's paying in, a good chunk of that isn't yours either.
 
-[broll src="real-gov-state-pension.jpg" zoom=none caption="GOV.UK, the new State Pension" credit="gov.uk, Open Government Licence v3.0" marks="highlight 47.5,54.2,21,5.4@£241.30; underline 58.8,28.6,32.6@National"]
+[broll src="real-gov-state-pension.jpg" zoom=none caption="GOV.UK, the new State Pension" credit="gov.uk, Open Government Licence v3.0" cards=off marks="highlight 47.5,54.2,21,5.4@£241.30; underline 58.8,28.6,32.6@National"]
 And you're not starting from nothing. The full State Pension is £241.30 a week right now. That's about twelve and a half grand a year on top of whatever you've built, as long as you've got enough years of National Insurance.
 
 [text board="£500,000 + the State Pension | Still a comfortable retirement" art=retired-bench art_at=r art_size=0.5 cards="ink:starting late isn't failing@failed; ink:the number's just different@different"]
@@ -108,13 +108,13 @@ It's fees. Same money in, same 42 years. But if you're paying 1% a year more in 
 [text board="Check the fee on your pension | It's one login" art=off anim=receipt-print anim_labels=off art_at=r art_size=0.45 cards="ink:the one thing to do after this@one; red:old pensions in expensive funds@expensive; ink:nobody's ever checked@checked"]
 So if you do one thing after this video, log in to your pension and find the fee. A lot of old workplace pensions are sat in expensive funds and nobody's ever checked.
 
-[broll lib="vuag-max-chart-app" phone=on from=2 caption="An S&P 500 fund: it drops, it comes back" marks="ink:note:the fund's price, not my balance 50,22@me" cards="red:it will drop. More than once@once; green:the 7% only works if you stay in@still"]
+[broll lib="vuag-max-chart-app" phone=on from=2 caption="An S&P 500 fund: it drops, it comes back" cards="ink:the fund's price, not my balance@me; red:it will drop. More than once@once; green:the 7% only works if you stay in@still"]
 The other thing that ruins it is you. Well, me. The market will drop, probably by a lot, probably more than once in 40 years. The 7% only works if you're still in when it comes back.
 
 [text board="Don't look at it every day" art=off anim=phone-ping anim_labels=off art_at=r art_size=0.45 art_start=0 cards="green:I check about once a month@once; red:every red day felt like an emergency@emergency; ink:that's when you do something stupid@stupid"]
 What helps me is not looking. I check mine about once a month now. When I was checking it every day, every red day felt like an emergency, and that's when you do something stupid.
 
-[list title="So, the cheap way" unnumbered cards="ink:none of it's clever@clever; ink:just hard to keep doing for 40 years@40"]
+[list title="So, the cheap way" unnumbered art=sam-celebrating art_at=r art_size=0.4 cards="ink:none of it's clever@clever; ink:just hard to keep doing for 40 years@40"]
 - Employer money first
 - Then an ISA, in one cheap tracker
 - Check the fee
