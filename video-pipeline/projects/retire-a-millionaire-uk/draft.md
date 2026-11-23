@@ -1,5 +1,5 @@
 # The Cheapest Way to Retire a Millionaire in the UK
-synced: 2026-11-23T15:08:47Z
+synced: 2026-11-23T15:43:08Z
 
 theme: whiteboard
 host: none
