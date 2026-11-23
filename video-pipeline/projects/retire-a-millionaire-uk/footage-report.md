@@ -4,12 +4,12 @@ Topic: How a normal UK earner gets to £1 million by retirement for the least of
 
 | scene | query | result | licence | attribution |
 |---|---|---|---|---|
-| 17 | feet walking up stone steps close up | downloaded 17-feet-walking-up-stone-steps-close-up.mp4 | Pixabay Content License | Video 254 by Life-Of-Vids via Pixabay |
+| 17 | | already in media/: 17-feet-walking-up-stone-steps-close-up.mp4 | | |
 | 21 | | already in media/: real-gov-isa.jpg | | |
 | 23 | | already in media/: 22-man-in-his-forties-at-laptop-at-home-thi.mp4 | | |
 | 25 | | already in media/: real-gov-state-pension.jpg | | |
 | 30 |  | library vuag-max-chart-app |  |  |
-| 42 | person typing comment on laptop keyboard close up | downloaded 42-person-typing-comment-on-laptop-keyboard.mp4 | Pixabay Content License | Video 3576 by Pexels via Pixabay |
+| 42 | | already in media/: 42-person-typing-comment-on-laptop-keyboard.mp4 | | |
 
 ## What counts as free use here
 
