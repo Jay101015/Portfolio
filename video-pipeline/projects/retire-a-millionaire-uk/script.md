@@ -17,7 +17,7 @@ topic: How a normal UK earner gets to £1 million by retirement for the least of
 [hook board="£1 million for £329 a month" anim=snowball anim_labels=off art_at=r art_size=0.5 art_start=0 cards="ink:starting at 25@25; ink:going in, every month@going; green:£123 of it isn't yours@£123" source="Worked out at 7% a year to age 67; not a promise"]
 To retire with a million pounds, starting at 25, you need about £329 a month going in. And here's the bit nobody tells you: about £123 of that doesn't come out of your pocket.
 
-[broll search="lottery balls spinning in machine" caption="A lottery number?" cards="ink:it did to me@me"]
+[broll search="lottery balls spinning in machine" caption="A lottery number?" cards="ink:it did to me@me" src="02-lottery-balls-spinning-in-machine.mp4" credit="Video 7578 by Thomas-Ritter via Pixabay"]
 And I know a million sounds like a lottery number. It did to me.
 
 [text board="A monthly direct debit | And a lot of patience" art=laptop-standing-order art_at=r art_size=0.5 cards="green:most of it isn't even your money@most"]
@@ -54,7 +54,7 @@ But the last hundred grand, from 900 to a million, takes about 17 months. Same m
 [stat value="£40,000" label="A year, from a £1 million pot" sub="taking about 4% a year" source="The 4% rule of thumb; not a guarantee" cards="ink:what does £1 million pay you?@pay; ink:the pot should roughly last@last; ink:is that enough? That's the last video@video; ink:the catch: in a minute@catch"]
 And what does a million actually pay you? The rule of thumb is you can take about 4% a year. So that's around 40 grand a year, and the pot should roughly last. I did a whole video on whether that's enough, and I'll come back to the catch in a minute.
 
-[broll search="hands counting twenty pound notes" caption="£329 a month, at 25?" part="Who pays" cards="ink:still a lot at 25@lot; green:here's where it gets cheaper@cheaper"]
+[broll search="hands counting twenty pound notes" caption="£329 a month, at 25?" part="Who pays" cards="ink:still a lot at 25@lot; green:here's where it gets cheaper@cheaper" src="13-hands-counting-twenty-pound-notes.mp4" credit="Video 100344 by egemen_izmirli via Pixabay"]
 But 329 quid a month is still a lot when you're 25. So here's where it gets cheaper.
 
 [list title="£192 a month, on £35,000: who pays it" unnumbered source="Auto-enrolment minimums on qualifying earnings and basic-rate tax relief, GOV.UK, 2026-27" cards="ink:on a £35,000 salary@35; ink:then you top up the gap@top; green:and tax relief on that too@well"]
@@ -69,7 +69,7 @@ So for £329 going in, about £206 comes out of your pay. The other £123 is fre
 [set room=office walk cards="green:the pension at work, first@pension; ink:take every pound of the match@every; green:nothing else you can buy does this@Nothing"]
 So the {count-fingers} cheapest way, by a mile, starts with the pension at work. If your employer {hand-over} matches more when you put in more, {coin-jar} take every pound of it before you do anything else. {smug} Nothing else you can buy gives you that.
 
-[broll search="feet walking up stone steps close up" caption="Start lower. Raise it every year" cards="ink:if £329 feels like too much@329; green:start lower@lower; green:up a bit every year@bit"]
+[broll search="feet walking up stone steps close up" caption="Start lower. Raise it every year" cards="ink:if £329 feels like too much@329; green:start lower@lower; green:up a bit every year@bit" src="17-feet-walking-up-stone-steps-close-up.mp4" credit="Video 3171 by Coverr-Free-Footage via Pixabay"]
 And if 329 feels like too much right now, there's another way to do it. Start lower, and put it up a bit every year.
 
 [stat value="£223" label="A month to start, at 25, raising it 3% a year" sub="and still £1 million by 67" source="Worked out at 7% a year, contributions rising 3% a year to 67; not a promise" cards="ink:+3% a year@3%; ink:every pay rise@rise; green:£329 → £223, same £1 million@same"]
@@ -84,7 +84,7 @@ After that, it's a stocks and shares ISA. You don't get anything on the way in, 
 [text board="One cheap tracker fund | The whole market | Leave it" art=off cards="ink:what goes inside: boring@boring; ink:I tried picking winners@tried"]
 And what goes inside it? For me it's boring. One cheap tracker fund that buys the whole market. I'm not picking winners, I tried that, and I'll tell you how that went.
 
-[broll search="man in his forties at laptop at home thinking" caption="Starting at 35 or 45?" part="Starting later" cards="ink:35? 45?@35; ink:that's me done?@done"]
+[broll search="man in his forties at laptop at home thinking" caption="Starting at 35 or 45?" part="Starting later" cards="ink:35? 45?@35; ink:that's me done?@done" src="22-man-in-his-forties-at-laptop-at-home-thi.mp4" credit="Video 86866 by atiqurrahman0047 via Pixabay"]
 But what if you're not 25. What if you're 35, or 45, and you're looking at that chart thinking, well, that's me done.
 
 [compare title="Starting at 45, by 67" good=right source="Worked out at 7% a year, paid in monthly; not a promise" cards="ink:it's not done@done; green:£1,601 → £800 a month@£800; green:less, if your employer pays in@chunk"]
@@ -95,10 +95,10 @@ It's not done. At 45, a million needs about sixteen hundred a month, which is a 
 [stat value="£241.30" label="The full new State Pension, a week" sub="about £12,500 a year, on top" source="GOV.UK, full new State Pension, 2026-27" cards="ink:on top of what you've built@top; ink:needs enough National Insurance years@National"]
 And you're not starting from nothing. The full State Pension is £241.30 a week right now. That's about twelve and a half grand a year on top of whatever you've built, as long as you've got enough years of National Insurance.
 
-[broll search="senior couple walking dog in park" caption="£500,000 + the State Pension" cards="green:still a really comfortable retirement@comfortable; ink:starting late isn't failing@failed; ink:the number's just different@different"]
+[broll search="senior couple walking dog in park" caption="£500,000 + the State Pension" cards="green:still a really comfortable retirement@comfortable; ink:starting late isn't failing@failed; ink:the number's just different@different" src="25-senior-couple-walking-dog-in-park.mp4" credit="Video 8251 by Coverr-Free-Footage via Pixabay"]
 So half a million, plus the State Pension, is still a really comfortable retirement. Starting late doesn't mean you've failed. It just means the number's different.
 
-[broll search="stock market crash red numbers screen" caption="Not a crash" part="What ruins it" cards="ink:the bit that ruins it@ruins"]
+[broll search="stock market crash red numbers screen" caption="Not a crash" part="What ruins it" cards="ink:the bit that ruins it@ruins" src="26-stock-market-crash-red-numbers-screen.mp4" credit="Video 151 by Coverr-Free-Footage via Pixabay"]
 Now the bit that ruins it. And it's not a crash.
 
 [bite value="£1,000,000" lose="£254,000" label="Same £329 a month, 42 years, with 1% a year more in fees" source="7% a year against 6% a year after a 1% fee; not a promise" cards="red:it's fees@fees; ink:same money in, same 42 years@42; red:£1,000,000 → £746,000@746; red:a quarter of a million, gone@gone; ink:a number most people never look at@never"]
@@ -124,7 +124,7 @@ So that's the whole thing, really. Take the employer money first. Then an ISA, i
 [shrink value="£1,000,000" to="£435,000" years=42 label="£1 million in 42 years, in today's money" source="£1,000,000 at 2% inflation a year for 42 years" cards="ink:one more honest thing@honest; ink:prices up about 2% a year@2%"]
 And I've got to be honest about one more thing. A million in 42 years isn't a million today. With prices going up about 2% a year, it buys what roughly 435 grand buys now.
 
-[broll search="luxury yacht at sea aerial" caption="Still a really good retirement" cards="ink:just not a yacht@yacht"]
+[broll search="luxury yacht at sea aerial" caption="Still a really good retirement" cards="ink:just not a yacht@yacht" src="33-luxury-yacht-at-sea-aerial.mp4" credit="Video 246840 by ImbaStock via Pixabay"]
 That's still a really good retirement. It's just not a yacht.
 
 [text board="Where I actually am" art=off part="My numbers" cards="ink:I said I'd show you@show"]
@@ -136,7 +136,7 @@ I started investing at 22. And I went bust. I lost all of it. So if that chart m
 [stat value="£500" label="What I invest a month now, at 27" sub="into an S&P 500 fund" source="Jeffrey's own figures" cards="ink:27 now@27; ink:one fund@fund"]
 I'm 27 now. I put £500 a month into an S&P 500 fund, and I've got about four grand in there so far.
 
-[broll search="house key unlocking front door close up" caption="£1,000 a month: for a house" cards="ink:most of what I save@Most; ink:the thing in front of me right now@front"]
+[broll search="house key unlocking front door close up" caption="£1,000 a month: for a house" cards="ink:most of what I save@Most; ink:the thing in front of me right now@front" src="37-house-key-unlocking-front-door-close-up.mp4" credit="Video 20263 by Matthias_Groeneveld via Pixabay"]
 Most of what I save isn't even for retirement yet. A grand a month goes into savings for a house, because that's the thing in front of me right now.
 
 [stat value="£1.38m" label="£500 a month from 27, by 67" sub="at 7% a year. Not a promise" source="£4,000 now and £500 a month for 40 years, at 7% a year" cards="ink:just on that £500@£500; ink:if I keep it up@keep"]
@@ -148,7 +148,7 @@ It'd cross the million at about 63. So yeah, I'm on track. But only if I don't d
 [text board="Not advice | Just the maths, and mine" art=off cards="ink:not a financial advisor@advisor; ink:rules on when you can take the money@rules; ink:check what applies to you@applies"]
 I'm not a financial advisor and this isn't advice. Pensions have rules about when you can take the money and how it's taxed, so check what applies to you.
 
-[broll search="person typing comment on laptop keyboard close up" caption="Tell me in the comments" cards="ink:what age did you start?@started; ink:or what age are you starting?@starting; green:is £1 million even enough? On screen now@enough"]
+[broll search="person typing comment on laptop keyboard close up" caption="Tell me in the comments" cards="ink:what age did you start?@started; ink:or what age are you starting?@starting; green:is £1 million even enough? On screen now@enough" src="41-person-typing-comment-on-laptop-keyboard.mp4" credit="Video 10822 by Coverr-Free-Footage via Pixabay"]
 Tell me in the comments what age you started, or what age you're starting. And if you want to know whether a million is even enough, I did that one already, it's on screen now.
 
 [outro title="The Everyday Investor" cta="Subscribe for the next one" dur=14 cards=on]
