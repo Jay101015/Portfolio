@@ -233,7 +233,7 @@ Tags for the script:
 ## Punch-ins (automatic) and sound effects (light by default)
 
 A money or hook scene's key number gets a punch-in as it is said (the figure matched to the spoken number). The sound
-effects (pipeline/sfx.py) have three levels in the script header: `sfx: light` (the default): a soft ding on the
+effects (pipeline/sfx.py) are OFF unless the script header asks for them (Jeffrey, 23 November 2026: "remove those stupid sound effects"; never switch them on without his say). The three levels in the script header: `sfx: off` (the default), `sfx: light`: a soft ding on the
 key number and a quiet whoosh on a cut to footage only, about one sound every 20 to 30 seconds; `sfx: on`: a
 whoosh on every cut, a pop on every card, a scribble as a board starts writing (175 sounds in 7 minutes: Jeffrey
 turned it off); `sfx: off`: none. All sit about 20 dB under the voice.

@@ -627,3 +627,5 @@ Review, two rounds: editor 4 then 7, animator 5 then 7, retention 5.5 then 6.5, 
   twelve boards that are one line and a small loop. That is the next thing to raise in the studio, not in one video.
 - Open for Jeffrey: 7 min 21 s (under 8 minutes for mid-rolls); the end screen must carry "Is £1 Million Enough"; the
   auto-enrolment thresholds were not re-checked on GOV.UK.
+- Jeffrey on this video, 23 November 2026: "remove those stupid sound effects". Sound effects are now off by default
+  (`sfx: off`); `sfx: light` or `sfx: on` only when he asks for them.

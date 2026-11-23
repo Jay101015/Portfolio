@@ -1123,7 +1123,7 @@ def main(argv: list[str] | None = None) -> int:
     # everything, `sfx: off` for none. Jeffrey turned the full set off on the first cut and later asked for some sounds.
     for note in craft.enrich(sb):  # cards on empty stretches, key words popping up, the set-piece ration
         print(note)
-    sb["sfx"] = sfx.level({"sfx": _header_lines(md).get("sfx", "light").strip().lower()})
+    sb["sfx"] = sfx.level({"sfx": _header_lines(md).get("sfx", "off").strip().lower()})
     print(f"punch-ins: {sfx.set_punches(sb)} on key numbers; sound effects: {sb['sfx']} ({len(sfx.events(sb))} sounds)")
     sb_path = os.path.join(project, "storyboard.json")
     with open(sb_path, "w", encoding="utf-8") as f:

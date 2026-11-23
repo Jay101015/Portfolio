@@ -11,6 +11,7 @@ voice: natural
 loudness: -16
 timing: exact
 tts.model: eleven_v4
+sfx: off
 slug: retire-a-millionaire-uk
 topic: How a normal UK earner gets to £1 million by retirement for the least of their own money: the monthly figure from 25, 35 and 45, how much of it the employer and tax relief pay, what fees and waiting cost, and Jeffrey's own numbers; in Jeffrey's own way of talking (docs/voice.md)
 
