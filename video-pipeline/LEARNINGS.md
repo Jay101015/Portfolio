@@ -608,3 +608,22 @@ What the build itself taught (for the next big job on this account):
   first, fix round one in one render, and do not re-render a delivered video unless he asks.
 - **The transcriber's word times are the weak point.** They clipped a sentence, put five cuts inside words and split
   "again." with a pause. A made voice should always carry `timing: exact`.
+
+## The Cheapest Way to Retire a Millionaire in the UK (retire-a-millionaire-uk, built 22 to 23 November 2026)
+
+Review, two rounds: editor 4 then 7, animator 5 then 7, retention 5.5 then 6.5, director 3 then 6.
+
+- Round one's worst faults were mine, in the script grammar: chart and compare data written as `- ` rows render empty
+  (`bars:`, `left:`, `right:` are the lines), and `[grow to=]` drew a wrong rate. Proof stills before a render catch both.
+- transcribe.yml overwrites `timing.json` with a transcriber clock when a made voice is pushed. On a `timing: exact`
+  video the storyboard and the .srt are the clock; a reviewer given the stale file reads the picture as drifting.
+- A compare's left box is red with a cross unless `good=both` or `good=left`: red on a figure that is not a loss breaks
+  the rule. Use `good=both` when neither side is a loss.
+- Automatic cards read "At 45, a million" as "45 million". Fixed: a pause ends a spoken number, and `cards=off` on a tag
+  now stops automatic cards on that scene as well as the planned ones.
+- A figure said over a page lands as a card on the page and covers its words: `cards=off` on a page whose highlight
+  already shows the figure.
+- What all four reviewers still say after round two: thin pages (157 s of near-empty paper), small left-aligned type,
+  twelve boards that are one line and a small loop. That is the next thing to raise in the studio, not in one video.
+- Open for Jeffrey: 7 min 21 s (under 8 minutes for mid-rolls); the end screen must carry "Is £1 Million Enough"; the
+  auto-enrolment thresholds were not re-checked on GOV.UK.

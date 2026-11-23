@@ -43,6 +43,7 @@ chapter device or opening. Shorts follow the same rule across a set: no two Shor
 | is-the-dream-dead-gen-z | explainer with chapters | set pieces, character | Takeaway cards | stat | recap |
 | afford-a-home-uk | explainer with chapters | salary ladder | Takeaway cards | stat | personal reveal |
 | 200-1000-10000-where-id-put-it | three-tier walkthrough | three amounts | Takeaway cards | question | recap |
+| retire-a-millionaire-uk | one number taken apart (£329 a month) | the monthly figure and who pays it | none: GOV.UK pages, his fund chart, one office set piece | the number, first frame | his own figures, then the checklist |
 
 Next up, **top-10-percent-uk** (written, not recorded): currently the same explainer spine with Takeaway 1-5. Rework
 before recording, e.g. as **the ladder**: the income ladder from 50% to 1% is the map and the signature device (a
