@@ -672,6 +672,8 @@ def parse_script(md: str) -> dict[str, Any]:
             problems += setpiece.plan_cards(sc, b.attrs)  # the amounts said over footage land on it as cards
         elif b.attrs.get("cards"):
             problems += setpiece.plan_cards(sc, b.attrs)  # cards= on a board, stat or chart: text pops up on its word there too
+        if str(b.attrs.get("cards", "")).strip().lower() == "off":
+            sc["noAutoCards"] = True  # craft.auto_cards leaves the scene alone
         if b.attrs.get("marks"):
             problems += craft.plan_marks(sc, b.attrs)  # marks= on footage or a photo: circles, arrows and notes drawn on the picture on their word
         if sc["props"].get("anim") and str(sc["props"]["anim"]) not in craft.LOOPS:

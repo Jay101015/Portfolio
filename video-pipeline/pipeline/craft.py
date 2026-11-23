@@ -41,6 +41,9 @@ def number_runs(words: list[dict]) -> list[tuple[int, int]]:
     i0 = None
     for i, w in enumerate(words):
         text = str(w.get("w", ""))
+        if i0 is not None and i > 0 and str(words[i - 1].get("w", "")).rstrip('"\')').endswith((",", ".", ";", ":", "?", "!")):
+            runs.append((i0, i))  # a pause ends the number: "At 45, a million" is two figures, not "45 million"
+            i0 = None
         if sfx._is_number(text) and w.get("s") is not None:
             if i0 is None:
                 i0 = i
@@ -147,6 +150,8 @@ def auto_cards(sc: dict) -> int:
     """Cards from the figures said, on a board that runs on with nothing landing. Returns how many were added."""
     if sc.get("type") not in BOARD_TYPES:
         return 0
+    if sc.get("noAutoCards"):
+        return 0  # cards=off on the scene's tag: nothing lands on it that the script did not ask for
     if (sc.get("props") or {}).get("anim"):
         return 0  # a drawn loop is the motion on that board, and the cards would land on it
     start, end = float(sc["start"]), float(sc["end"])
