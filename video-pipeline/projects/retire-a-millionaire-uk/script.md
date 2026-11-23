@@ -67,7 +67,7 @@ So for £329 going in, about £206 comes out of your pay. The other £123 is fre
 [set room=office walk cards="green:the pension at work, first@pension; ink:take every pound of the match@every; green:nothing else you can buy does this@Nothing"]
 So the {explain} cheapest way, by a mile, starts with the pension at work. If your employer {hand-over} matches more when you put in more, {count-notes} take every pound of it before you do anything else. {smug} Nothing else you can buy gives you that.
 
-[broll search="feet walking up stone steps close up" pick=2 caption="Start lower. Raise it every year" cards="ink:if £329 feels like too much@329; green:start lower@lower; green:up a bit every year@bit"]
+[broll search="feet walking up stone steps close up" pick=2 caption="Start lower. Raise it every year" cards="ink:if £329 feels like too much@329; green:start lower@lower; green:up a bit every year@bit" src="17-feet-walking-up-stone-steps-close-up.mp4" credit="Video 254 by Life-Of-Vids via Pixabay"]
 And if 329 feels like too much right now, there's another way to do it. Start lower, and put it up a bit every year.
 
 [stat value="£223" label="A month to start, at 25, raising it 3% a year" sub="and still £1 million by 67" source="Worked out at 7% a year, contributions rising 3% a year to 67; not a promise" cards="ink:+3% a year@3%; ink:every pay rise@rise; green:£329 → £223, same £1 million@same"]
@@ -149,7 +149,7 @@ It'd cross the million at about 63. So yeah, I'm on track. But only if I don't d
 [text board="Not advice | Just the maths, and mine" art=off cards="ink:not a financial advisor@advisor; ink:rules on when you can take the money@rules; ink:check what applies to you@applies"]
 I'm not a financial advisor and this isn't advice. Pensions have rules about when you can take the money and how it's taxed, so check what applies to you.
 
-[broll search="person typing comment on laptop keyboard close up" pick=2 caption="Tell me in the comments" cards="ink:what age did you start?@started; ink:or what age are you starting?@starting; green:is £1 million even enough? On screen now@enough"]
+[broll search="person typing comment on laptop keyboard close up" pick=2 caption="Tell me in the comments" cards="ink:what age did you start?@started; ink:or what age are you starting?@starting; green:is £1 million even enough? On screen now@enough" src="42-person-typing-comment-on-laptop-keyboard.mp4" credit="Video 3576 by Pexels via Pixabay"]
 Tell me in the comments what age you started, or what age you're starting. And if you want to know whether a million is even enough, I did that one already, it's on screen now.
 
 [outro title="The Everyday Investor" cta="Subscribe for the next one" dur=20 cards=on]

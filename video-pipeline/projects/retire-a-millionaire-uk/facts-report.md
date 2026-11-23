@@ -15,7 +15,8 @@ No `[news]` scene with a search=.
 These sentences state a figure or a UK/US claim and the scene has no source on the board. Give the scene a `[stat fact=...]`, a `source=` with publisher and date, or a `[news]` scene; or leave it as the host's own experience.
 
 - scene 14: Your workplace pension already puts in around £192 a month.
-- scene 25: So half a million, plus the State Pension, is still a really comfortable retirement.
+- scene 25: The full State Pension is £241.30 a week right now.
+- scene 26: So half a million, plus the State Pension, is still a really comfortable retirement.
 
 ## The catalogue
 
