@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
 import '../fonts';
 
 // "One sheet, 25 to 67": the whole video as a single chart on squared paper. The camera travels over it and never
@@ -182,8 +182,6 @@ export const Sheet: React.FC = () => {
           <clipPath id="mineReveal"><rect x={X(25)} y={0} width={(X(67) - X(25)) * mine} height={2200} /></clipPath>
         </defs>
         <g transform={tr}>
-          <rect x={-3000} y={-3000} width={12000} height={10000} fill="url(#sq)" />
-          <rect x={-3000} y={-3000} width={12000} height={10000} fill="url(#sq5)" />
 
           {/* what is under the curve: the thin wedge you paid in, and everything else */}
           <g clipPath="url(#areaReveal)">
@@ -265,7 +263,6 @@ export const Sheet: React.FC = () => {
       {labels.map((l, i) => (
         <Label key={i} l={l} t={t} cam={cam} w={w} h={h} />
       ))}
-      <AbsoluteFill style={{backgroundImage: `url(${staticFile('paper/grain.png')})`, backgroundRepeat: 'repeat', opacity: 0.05, mixBlendMode: 'multiply', pointerEvents: 'none'}} />
     </AbsoluteFill>
   );
 };
