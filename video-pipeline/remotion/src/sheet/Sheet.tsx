@@ -65,7 +65,7 @@ const money = (n: number) => '£' + Math.round(n).toLocaleString('en-GB');
 type Pose = {cx: number; cy: number; s: number};
 type Key = {t: number; d: number} & (Pose | {ride: [number, number]; dy: number; s: number});
 const WIDE: Pose = {cx: 2500, cy: 1640, s: 0.315};
-const BARS: Pose = {cx: X(37.5), cy: 2640, s: 0.62};
+const BARS: Pose = {cx: X(38), cy: 2720, s: 0.66};
 const KEYS: Key[] = [
   {t: 0, d: 0, ...WIDE},
   {t: 3.0, d: 1.5, cx: 560, cy: 2948, s: 3.5}, // "you need about £329": down to the bar at 25
@@ -79,31 +79,30 @@ const KEYS: Key[] = [
   {t: 94.6, d: 2.6, ride: [40, 65.2], dy: -40, s: 1.25}, // up to the last one
   {t: 101.4, d: 2.0, ...WIDE},
   {t: 107.2, d: 2.2, cx: X(74), cy: 1000, s: 0.5}, // what a million pays, after 67
-  {t: 120.9, d: 2.4, cx: 640, cy: 2940, s: 3.2}, // "still a lot when you're 25"
-  {t: 127.6, d: 1.6, cx: 437, cy: 2948, s: 5.4}, // who pays
+  {t: 120.7, d: 3.0, cx: 640, cy: 2940, s: 3.2}, // "still a lot when you're 25"
+  {t: 127.6, d: 1.6, cx: 460, cy: 2948, s: 5.4}, // who pays
   {t: 156.2, d: 1.6, cx: 500, cy: 2940, s: 4.4}, // the match
   {t: 168.4, d: 2.2, cx: X(46), cy: 2700, s: 0.46}, // start lower: the staircase
-  {t: 183.6, d: 1.6, ...WIDE},
-  {t: 185.4, d: 1.8, cx: X(34), cy: 2880, s: 0.95}, // "you never see the money"
+  {t: 185.4, d: 1.8, cx: X(30.5), cy: 2830, s: 1.4}, // "you never see the money"
   {t: 193.9, d: 2.0, cx: 1650, cy: 800, s: 0.85}, // the ISA page
+  {t: 197.0, d: 11.0, cx: 1720, cy: 830, s: 0.96},
   {t: 208.9, d: 2.0, cx: X(44), cy: 1700, s: 0.62}, // one cheap tracker
   {t: 219.4, d: 2.0, cx: X(42), cy: 1750, s: 0.48}, // not 25
   {t: 228.2, d: 1.8, cx: X(52), cy: 2250, s: 0.42},
-  {t: 240.9, d: 1.8, cx: 5600, cy: 600, s: 1.15}, // the State Pension page
+  {t: 240.9, d: 1.8, cx: 5600, cy: 640, s: 0.95}, // the State Pension page
   {t: 253.9, d: 2.0, cx: X(68), cy: 1250, s: 0.46},
   {t: 264.3, d: 1.8, ...WIDE}, // the bit that ruins it
   {t: 276.4, d: 2.0, cx: X(64.5), cy: 900, s: 0.82},
-  {t: 285.4, d: 2.4, cx: X(30.2), cy: Y(24000) - 12, s: 4.2}, // at 30 the two lines look the same
-  {t: 290.6, d: 2.6, cx: X(52), cy: 1300, s: 0.48},
-  {t: 295.7, d: 1.8, cx: X(48), cy: 1420, s: 0.72}, // his fund, and the bumpy line
+  {t: 284.9, d: 2.0, ...WIDE}, // find the fee
+  {t: 290.2, d: 2.6, cx: X(40), cy: 1800, s: 0.62}, // at 30 the two lines look the same
+  {t: 295.7, d: 1.8, cx: X(48), cy: 1500, s: 0.72}, // his fund, and the bumpy line
   {t: 308.2, d: 2.0, cx: X(27.5), cy: 2160, s: 2.5}, // once a month, not every day
   {t: 319.2, d: 2.0, ...WIDE}, // the whole thing
   {t: 334.2, d: 1.8, cx: X(63.5), cy: 1150, s: 0.6}, // in today's money
-  {t: 351.2, d: 2.0, cx: X(24.6), cy: 2030, s: 1.5}, // mine: started at 22
-  {t: 366.2, d: 1.8, cx: X(26), cy: 2560, s: 0.85}, // 27 now, £500 a month
-  {t: 382.4, d: 2.2, cx: 2400, cy: 1500, s: 0.285}, // where that goes
-  {t: 392.3, d: 1.8, cx: X(61), cy: 480, s: 0.8}, // crossing a million at 63
-  {t: 396.6, d: 2.2, cx: X(24.6), cy: 2030, s: 1.5}, // what I did at 22
+  {t: 350.9, d: 3.0, cx: X(24.3), cy: 2110, s: 2.3}, // mine: started at 22
+  {t: 366.2, d: 1.8, cx: X(27.5), cy: 2560, s: 1.1}, // 27 now, £500 a month
+  {t: 382.4, d: 2.2, cx: 2600, cy: 1050, s: 0.4}, // where that goes
+  {t: 396.6, d: 2.2, cx: X(24.6), cy: 2100, s: 1.9}, // what I did at 22
   {t: 402.3, d: 2.0, ...WIDE},
   {t: 419.6, d: 2.4, cx: -1700, cy: 1000, s: 0.62}, // the end screen, on the clear side of the sheet
 ];
@@ -236,18 +235,20 @@ export const Sheet: React.FC = () => {
   const bumpyP = span(t, 49.5, 51.6) * (1 - span(t, 51.8, 52.6)) + (t > 290 ? span(t, 299.6, 304.6) : 0);
   const realP = t > 300 ? span(t, 337.0, 343.4) : 0;
   const mineP = span(t, 383.6, 390.6);
-  const areaO = t < 264 ? 1 : 1 - span(t, 264.2, 265.4) * (1 - span(t, 318.8, 320)) - span(t, 351, 352);
+  const areaO = t < 264 ? 1 : 1 - span(t, 264.2, 265.4);
 
   const ages = [25, 30, 35, 40, 45, 50, 55, 60, 65, 67];
   const L: LabelT[] = [
     // ---- 0:00 the opening: frame one carries both numbers; the line between them draws as he talks ----
     N(X(67), Y(1e6), -1, '£1 million', {size: 150, dx: -70, dy: -110, align: 'right', until: 13.0}),
-    N(X(25) + BW / 2, BASE - barH / 2, -1, '£329 a month', {fn: (tt) => `£${count(tt, 4.3, 0.8, 329)} a month`, size: 120, dx: 44, until: 12.9}),
+    N(X(25) + BW / 2, BASE - barH / 2, -1, '£329 a month', {size: 120, dx: 44, dy: cam.s < 1 ? -70 * (1 - (cam.s - 0.315) / 0.685) : 0, until: 12.9}),
     N(X(25), 2200, 2.85, 'start at 25', {italic: true, weight: 400, size: 50, dx: 22, dy: -44, until: 3.2}),
     T(X(25), BASE - barH - 46, 6.0, 'going in, every month', {size: 54, dx: 44, until: 9.4, weight: 600}),
     N(X(25) + BW / 2, BASE - barH + 28, 9.9, '£123 of it', {fn: (tt) => `£${count(tt, 9.85, 0.6, 123)} of it`, size: 110, color: GREEN, dx: 44, dy: -150, until: 13.0}),
     T(X(25) + BW / 2, BASE - barH + 28, 11.9, 'not from your pocket', {size: 60, color: GREEN, dx: 48, dy: -60, until: 13.0}),
-    N(X(67), Y(1e6), 15.2, '£1 million', {size: 150, dx: -70, dy: -110, align: 'right', until: 382.6}),
+    N(X(67), Y(1e6), 15.2, '£1 million', {size: 150, dx: -70, dy: -110, align: 'right', until: 318.9}),
+    N(X(67), Y(1e6), 334.4, '£1 million', {size: 150, dx: -70, dy: -110, align: 'right', until: 382.6}),
+    N(X(67), Y(1e6), 322.0, '£1 million', {size: 80, align: 'right', dx: -90, dy: -150, until: 333.9}),
     N(X(67), Y(1e6), 16.0, 'a lottery number?', {italic: true, weight: 400, size: 64, dx: -700, dy: 440, until: 19.3}),
     T(X(46), BASE + 70, 21.0, 'a direct debit, every month', {size: 42, align: 'center', dy: -150, until: 22.2, weight: 600}),
     N(X(46), 2200, 22.6, '42 years', {size: 54, align: 'center', dy: 104, until: 26.0}),
@@ -261,15 +262,15 @@ export const Sheet: React.FC = () => {
     // ---- 0:41 the number: 7% a year ----
     N(X(51), Y(pot(51)), 45.4, '7% a year', {size: 110, align: 'right', dx: -70, dy: -80, until: 51.4}),
     T(X(51), Y(pot(51)), 47.0, 'roughly what a global tracker has done', {size: 44, align: 'right', dx: -70, dy: 10, until: 51.4, weight: 600}),
-    T(X(57), Y(bumpy(58)), 49.9, 'not a promise', {size: 52, color: RED, dx: 40, dy: 110, until: 51.6}),
+    T(X(56), Y(bumpy(56)), 49.9, 'not a promise', {size: 52, align: 'right', dx: -40, dy: 120, until: 51.6}),
     // ---- 0:52 start at 25, 35, 45 ----
-    N(X(25), BASE - barH, 53.0, '£329', {align: 'center', dy: -56, until: 73.2, size: 70}),
-    N(X(35), BASE - 700 * BAR, 58.2, '£700', {fn: (tt) => money(count(tt, 58.1, 0.7, 700)), align: 'center', dy: -56, until: 73.2, size: 70}),
-    N(X(45), BASE - 1601 * BAR, 61.6, '£1,601', {fn: (tt) => money(count(tt, 61.4, 0.9, 1601)), align: 'center', dy: -56, until: 73.2, size: 70}),
-    T(X(45), BASE - 1601 * BAR, 62.6, 'a month', {size: 40, dx: 150, dy: -52, until: 73.2, weight: 600}),
-    N(X(30), BASE - 520 * BAR, 65.6, '×2', {size: 64, align: 'center', dy: -70, until: 73.0, color: RED}),
-    N(X(40), BASE - 1150 * BAR, 66.4, '×2', {size: 64, align: 'center', dy: -70, until: 73.0, color: RED}),
-    T(X(25), 2200, 71.4, 'early beats clever', {size: 60, dx: -30, dy: -150, until: 73.2}),
+    N(X(25), BASE - barH, 53.0, '£329', {align: 'center', dy: -70, until: 73.2, size: 110}),
+    N(X(35), BASE - 700 * BAR, 58.2, '£700', {fn: (tt) => money(count(tt, 58.1, 0.7, 700)), align: 'center', dy: -70, until: 73.2, size: 110}),
+    N(X(45) + BW / 2, BASE - 1601 * BAR + 150, 61.6, '£1,601', {fn: (tt) => money(count(tt, 61.4, 0.9, 1601)), dx: 40, until: 73.2, size: 110}),
+    T(X(45) + BW / 2, BASE - 1601 * BAR + 150, 62.6, 'a month', {size: 48, dx: 44, dy: 84, until: 73.2, weight: 600}),
+    N(X(30), BASE - 520 * BAR, 65.6, '×2', {size: 90, align: 'center', dy: -90, until: 73.0}),
+    N(X(40), BASE - 1150 * BAR, 66.4, '×2', {size: 90, align: 'center', dy: -100, until: 73.0}),
+    N(X(25), BASE - barH, 69.7, 'early, not clever', {size: 76, dx: -60, dy: -230, until: 73.2}),
     // ---- 1:13 what goes in, what grows ----
     N(X(58), Y(52000), 78.8, '£166,000 goes in', {fn: (tt) => `${money(count(tt, 78.8, 0.8, 166000))} goes in`, size: 58, align: 'center', dy: 4, until: 86.6, bg: true}),
     N(X(59), Y(380000), 81.3, '£834,000', {fn: (tt) => money(count(tt, 81.3, 1.0, 834000)), size: 130, color: GREEN, align: 'center', until: 86.6, bg: true}),
@@ -287,36 +288,37 @@ export const Sheet: React.FC = () => {
     // ---- 1:47 what a million pays ----
     N(X(70), Y(1e6), 111.4, '4% a year', {size: 84, dx: 0, dy: -210, until: 120.6}),
     N(X(70), Y(1e6), 113.3, '£40,000 a year', {fn: (tt) => `${money(count(tt, 113.2, 0.8, 40000))} a year`, size: 110, dx: 0, dy: 250, until: 120.6, color: GREEN}),
-    T(X(82), Y(1e6), 115.2, 'and the pot roughly lasts', {size: 48, align: 'center', dy: -60, until: 120.6, weight: 600}),
+    T(X(75.5), Y(1e6), 115.2, 'and the pot roughly lasts', {size: 48, align: 'center', dy: -60, until: 120.6, weight: 600}),
     T(X(88), Y(1e6), 118.9, 'the catch', {size: 48, align: 'center', dy: -130, until: 120.6}),
     // ---- 2:01 still a lot at 25 ----
     N(X(25) + BW / 2, BASE - barH / 2, 121.7, '£329 a month', {size: 110, dx: 50, until: 127.7}),
     T(X(25) + BW / 2, BASE - barH / 2, 123.6, 'a lot, at 25', {size: 54, dx: 54, dy: 96, until: 127.7, weight: 600}),
     // ---- 2:08 who pays it ----
-    T(X(25) - BW / 2, BASE - barH - 18, 129.0, 'on a £35,000 salary', {size: 46, dx: 0, dy: -40, until: 156.0, weight: 600}),
-    N(X(25) - BW / 2, BASE - 96 * BAR, 132.5, '£192', {size: 84, align: 'right', dx: -70, until: 146.6}),
-    T(X(25) - BW / 2, BASE - 96 * BAR, 132.9, 'workplace pension', {size: 38, align: 'right', dx: -70, dy: 64, until: 146.6, weight: 600}),
-    N(X(25) + BW / 2, segY(0) + 48 * BAR, 135.3, 'you: £96', {size: 76, dx: 50, until: 146.6}),
-    N(X(25) + BW / 2, segY(1) + 36 * BAR, 138.6, 'your employer: £72', {size: 76, dx: 50, color: GREEN, until: 146.6}),
-    N(X(25) + BW / 2, segY(2) + 12 * BAR, 141.0, 'the taxman: £24', {size: 76, dx: 50, color: GREEN, until: 146.6}),
-    T(X(25) + BW / 2, segY(3) + 55 * BAR, 142.9, 'your top-up', {size: 50, dx: 50, until: 146.6}),
-    T(X(25) + BW / 2, segY(4) + 13 * BAR, 145.4, '+ the taxman again', {size: 50, dx: 50, color: GREEN, until: 146.6}),
+    T(X(25) - BW / 2, BASE - barH - 18, 129.0, 'on a £35,000 salary', {size: 64, dx: -20, dy: -60, until: 156.0}),
+    N(X(25) - BW / 2, BASE - 96 * BAR, 132.5, '£192', {size: 96, align: 'right', dx: -160, until: 146.6}),
+    T(X(25) - BW / 2, BASE - 96 * BAR, 132.9, 'pension at work', {size: 32, align: 'right', dx: -160, dy: 72, until: 146.6, weight: 600}),
+    N(X(25) + BW / 2, segY(0) + 48 * BAR, 135.3, 'you: £96', {size: 96, dx: 50, until: 146.6}),
+    N(X(25) + BW / 2, segY(1) + 36 * BAR, 138.6, 'your employer: £72', {size: 96, dx: 50, color: GREEN, until: 146.6}),
+    N(X(25) + BW / 2, segY(2) + 12 * BAR, 141.0, 'the taxman: £24', {size: 96, dx: 50, color: GREEN, until: 146.6}),
+    T(X(25) + BW / 2, segY(3) + 55 * BAR, 142.9, 'your top-up', {size: 64, dx: 50, until: 146.6}),
+    T(X(25) + BW / 2, segY(4) + 13 * BAR, 145.4, '+ the taxman again', {size: 64, dx: 50, color: GREEN, until: 146.6}),
     N(X(25) - BW / 2, BASE - barH / 2, 147.7, '£329', {size: 96, align: 'right', dx: -70, until: 156.0}),
     T(X(25) - BW / 2, BASE - barH / 2, 148.0, 'going in', {size: 44, align: 'right', dx: -70, dy: 74, until: 156.0, weight: 600}),
-    N(X(25) + BW / 2, BASE - 103 * BAR, 150.1, '£206 from your pay', {fn: (tt) => `${money(count(tt, 150.0, 0.7, 206))} from your pay`, size: 84, dx: 50, until: 156.0}),
-    N(X(25) + BW / 2, BASE - 267 * BAR, 153.0, '£123 free', {fn: (tt) => `${money(count(tt, 152.9, 0.6, 123))} free`, size: 100, dx: 50, color: GREEN, until: 156.0}),
+    N(X(25) + BW / 2, BASE - 103 * BAR, 150.1, '£206 from your pay', {fn: (tt) => `${money(count(tt, 150.0, 0.7, 206))} from your pay`, size: 84, dx: 50, until: 161.2}),
+    N(X(25) + BW / 2, BASE - 267 * BAR, 153.0, '£123 free', {fn: (tt) => `${money(count(tt, 152.9, 0.6, 123))} free`, size: 100, dx: 50, color: GREEN, until: 161.2}),
     // ---- 2:36 the match ----
-    T(X(25) + BW / 2, BASE - 290 * BAR, 158.4, 'start with the pension at work', {size: 60, dx: 60, until: 161.4}),
+    N(X(25) - BW / 2, BASE - barH, 158.2, 'start with the pension at work', {size: 70, dx: -20, dy: -80, until: 168.0}),
     N(X(25) + BW / 2, BASE - 150 * BAR, 161.9, 'you put in more', {size: 66, dx: 60, dy: 70, until: 168.0}),
     N(X(25) + BW / 2, BASE - 150 * BAR, 162.6, 'they match it', {size: 66, dx: 60, dy: -40, color: GREEN, until: 168.0}),
     T(X(25) + BW / 2, BASE - 150 * BAR, 164.2, 'take every pound first', {size: 48, dx: 60, dy: -130, until: 168.0, weight: 600}),
+    T(X(25) + BW / 2, BASE - 150 * BAR, 165.9, 'nothing else you can buy does this', {size: 48, dx: 60, dy: 160, until: 168.0, weight: 600}),
     // ---- 2:48 start lower, raise it ----
     N(X(25), BASE - barH, 169.1, '£329', {size: 64, align: 'center', dy: -50, until: 176.0}),
     T(X(25), BASE - barH, 170.6, 'too much right now?', {size: 48, dx: 70, dy: -44, until: 176.0, weight: 600}),
-    N(X(46), BASE - 223 * Math.pow(1.03, 21) * BAR, 177.2, '+3% a year', {size: 96, align: 'center', dy: -215, until: 185.0}),
-    T(X(46), BASE - 223 * Math.pow(1.03, 21) * BAR, 178.6, 'every pay rise', {size: 46, align: 'center', dy: -140, until: 185.0, weight: 600}),
+    N(X(46), BASE - 223 * Math.pow(1.03, 21) * BAR, 177.2, '+3% a year', {size: 96, align: 'center', dy: -150, until: 185.0}),
+    T(X(46), BASE - 223 * Math.pow(1.03, 21) * BAR, 178.6, 'every pay rise', {size: 46, align: 'center', dy: -78, until: 185.0, weight: 600}),
     N(X(25), BASE - 223 * BAR, 181.4, 'start at £223', {fn: (tt) => `start at ${money(count(tt, 181.3, 0.7, 223))}`, size: 76, dx: -20, dy: -110, until: 193.8}),
-    T(X(67), Y(1e6), 184.0, 'same place', {size: 52, align: 'right', dx: -330, dy: -10, until: 185.3}),
+    N(X(61), BASE - 223 * Math.pow(1.03, 36) * BAR, 183.9, 'same £1 million', {size: 70, align: 'center', dy: -90, until: 185.3}),
     T(X(35), BASE - 223 * Math.pow(1.03, 10) * BAR, 187.3, 'you never see it, so you never miss it', {size: 50, align: 'center', dy: -90, until: 190.4}),
     N(X(35), BASE - 223 * Math.pow(1.03, 10) * BAR, 191.6, '2 minutes to change', {size: 70, align: 'center', dy: -100, until: 193.8}),
     // ---- 3:14 the ISA ----
@@ -330,15 +332,15 @@ export const Sheet: React.FC = () => {
     T(X(47), Y(60000), 216.2, 'picking winners: I tried that', {size: 48, dx: 20, dy: 20, until: 219.0, color: RED}),
     // ---- 3:39 not 25 ----
     T(X(35), 2200, 222.6, '35', {size: 60, align: 'center', dy: -130, until: 228.0}),
-    T(X(45), 2200, 223.7, 'or 45', {size: 60, align: 'center', dy: -130, until: 228.0}),
+    T(X(45), 2200, 223.7, 'or 45', {size: 60, align: 'center', dy: -130, until: 228.0, bg: true}),
     T(X(56), Y(600000), 225.4, '"that\'s me done"', {size: 60, align: 'center', italic: true, font: NUM, weight: 400, until: 228.2}),
-    N(X(45), BASE - 800 * BAR, 231.6, '£1,601 a month', {size: 70, dx: -60, dy: 0, align: 'right', until: 240.7}),
-    T(X(45), BASE - 800 * BAR, 233.2, 'a lot', {size: 46, dx: -60, dy: 62, align: 'right', until: 240.7, weight: 600}),
-    N(X(67), Y(500000), 234.9, '£500,000', {size: 96, dx: 40, dy: -80, until: 264.0}),
+    N(X(45) - BW / 2, BASE - 1601 * BAR + 90, 231.6, '£1,601 a month', {size: 54, dx: -30, align: 'right', until: 240.7}),
+    T(X(45) - BW / 2, BASE - 1601 * BAR + 90, 233.2, 'a lot', {size: 42, dx: -30, dy: 54, align: 'right', until: 240.7, weight: 600}),
+    N(X(67), Y(500000), 234.9, '£500,000', {size: 96, align: 'right', dx: -110, dy: -90, until: 264.0, bg: true}),
     N(X(45) + 110, BASE - 800 * BAR, 236.1, '£800 a month', {fn: (tt) => `${money(count(tt, 236.0, 0.7, 800))} a month`, size: 76, dx: 60, dy: 40, color: INK, until: 240.7}),
     T(X(45) + 110, BASE - 800 * BAR, 239.0, 'part of it not yours', {size: 46, dx: 60, dy: 116, color: GREEN, until: 240.7}),
     // ---- 4:01 the State Pension ----
-    T(SP.x, SP.y, 242.0, 'GOV.UK: the new State Pension', {size: 40, dy: -50, dx: 10, until: 253.8, weight: 600}),
+    T(SP.x, SP.y, 242.0, 'GOV.UK: the new State Pension, 2026/27', {size: 40, dy: -50, dx: 10, until: 253.8, weight: 600}),
     N(SP.x + SP.w / 2, SP.y + SP.h, 248.4, 'about £12,500 a year', {size: 90, align: 'center', dy: 96, color: GREEN, until: 253.8}),
     // ---- 4:14 half a million plus the State Pension ----
     T(X(74), Y(500000), 256.0, '+ the State Pension', {size: 60, color: GREEN, dx: 0, dy: 86, until: 264.0}),
@@ -351,14 +353,14 @@ export const Sheet: React.FC = () => {
     N(X(67), Y(746000), 277.9, '£746,000', {fn: (tt) => money(1e6 - (1e6 - 746000) * out((tt - 277.6) / 1.0)), size: 96, dx: 40, dy: 30, until: 284.6}),
     N(X(67), Y(873000), 280.8, '−£254,000', {size: 96, dx: 40, dy: -40, color: RED, until: 284.6}),
     // ---- 4:45 find the fee ----
-    T(X(30.2), Y(24000), 288.0, 'at 30 you can barely see it', {size: 60, align: 'center', dy: -220, until: 290.8}),
-    N(X(64), Y(873000), 292.0, 'find the fee', {size: 110, align: 'right', dx: -200, dy: -60, until: 295.5}),
-    T(X(64), Y(873000), 293.6, 'old workplace pensions, never checked', {size: 44, align: 'right', dx: -200, dy: 30, until: 295.5, weight: 600}),
+    N(X(46), Y(pot(46)), 288.3, 'find the fee', {size: 120, align: 'right', dx: -60, dy: -170, until: 295.5}),
+    T(X(46), Y(pot(46)), 291.2, 'old workplace pensions, never checked', {size: 44, align: 'right', dx: -60, dy: -80, until: 295.5, weight: 600}),
+    T(X(30.2), Y(24000), 292.8, 'at 30 you can barely see it', {size: 52, dx: 60, dy: -170, until: 295.5}),
     // ---- 4:56 the market drops ----
     T(PHONE.x, PHONE.y + 110, 297.0, "an S&P 500 fund's price,", {size: 36, align: 'right', dx: -30, until: 307.8, weight: 600}),
     T(PHONE.x, PHONE.y + 110, 297.0, 'not my balance', {size: 36, align: 'right', dx: -30, dy: 44, until: 307.8, weight: 600}),
-    N(X(44), Y(bumpy(44)), 301.0, 'it will drop', {size: 96, color: RED, align: 'center', dy: 70, dx: -160, until: 307.8}),
-    T(X(58), Y(bumpy(58)), 302.9, 'more than once', {size: 52, color: RED, align: 'center', dy: 110, until: 307.8}),
+    N(X(44), Y(bumpy(44)), 301.0, 'it will drop', {size: 96, color: RED, align: 'center', dy: 60, dx: -160, until: 307.8, bg: true}),
+    T(X(58), Y(bumpy(58)), 302.9, 'more than once', {size: 52, color: RED, align: 'center', dy: 150, until: 307.8, bg: true}),
     N(X(59.5), Y(pot(59.5)), 305.6, 'stay in', {size: 96, color: GREEN, align: 'right', dx: -60, dy: -90, until: 307.8}),
     // ---- 5:08 don't look ----
     N(X(27.5), 2200, 311.4, 'once a month', {size: 110, color: GREEN, align: 'center', dy: -200, until: 313.4}),
@@ -372,24 +374,26 @@ export const Sheet: React.FC = () => {
     T(X(44), Y(bumpy(44)), 328.7, "don't sell when it drops", {size: 52, align: 'center', dy: -130, until: 333.7, bg: true}),
     N(X(46), 2200, 331.6, '40 years of it', {size: 80, align: 'center', dy: 110, until: 333.7, bg: true}),
     // ---- 5:34 today's money ----
-    T(X(48), Y(pot(48)), 341.0, 'prices up about 2% a year', {size: 52, align: 'right', dx: -40, dy: -90, until: 350.6, weight: 600}),
+    T(X(58), Y(pot(58) / Math.pow(1.02, 33)), 341.0, 'prices up about 2% a year', {size: 52, align: 'center', dy: 80, until: 350.6, weight: 600, bg: true}),
     N(X(67), Y(435000), 343.5, '£435,000', {fn: (tt) => money(count(tt, 343.4, 0.9, 435000)), size: 110, dx: 40, dy: 10, until: 350.6}),
     T(X(67), Y(435000), 344.6, "in today's money", {size: 48, dx: 44, dy: 96, until: 350.6, weight: 600}),
     T(X(56), Y(250000), 347.2, 'still a really good retirement', {size: 52, align: 'center', color: GREEN, until: 350.6}),
     // ---- 5:51 mine ----
-    N(X(22), 2200, 357.4, '22', {size: 90, align: 'center', dy: 96, until: 366.0}),
-    T(X(22), 2200, 357.8, 'I started', {size: 46, align: 'center', dy: 170, until: 366.0, weight: 600}),
+    N(X(23.6), Y(0), 352.0, 'so where am I with this?', {size: 70, italic: true, weight: 400, align: 'center', dy: -330, until: 356.0}),
+    N(X(22), 2200, 356.6, '22', {size: 120, align: 'center', dy: 110, until: 366.0}),
+    T(X(22), 2200, 357.2, 'I started', {size: 52, align: 'center', dy: 200, until: 366.0, weight: 600}),
     N(X(25.4), Y(0), 359.6, 'bust', {size: 130, color: RED, dx: 40, dy: -150, until: 366.0}),
     T(X(25.4), Y(0), 360.7, 'I lost all of it', {size: 52, color: RED, dx: 44, dy: -50, until: 366.0}),
-    T(X(25.4), Y(0), 363.6, 'started again from zero', {size: 48, dx: 44, dy: 120, until: 366.0, weight: 600}),
-    N(X(27), 2200, 366.8, '27 now', {size: 84, align: 'center', dy: -170, until: 382.2}),
-    N(X(27) + BW / 2, BASE - 250 * BAR, 368.4, '£500 a month', {fn: (tt) => `${money(count(tt, 368.3, 0.7, 500))} a month`, size: 84, dx: 44, until: 382.2}),
-    T(X(27) + BW / 2, BASE - 250 * BAR, 370.2, 'into an S&P 500 fund', {size: 44, dx: 46, dy: 80, until: 382.2, weight: 600}),
-    N(X(27), Y(4000), 372.2, 'about £4,000 so far', {size: 60, dx: 40, dy: -70, until: 382.2}),
-    N(X(20.2), BASE - 500 * BAR, 377.6, '£1,000 a month', {size: 64, align: 'center', dy: -110, until: 382.2, color: GREY}),
-    T(X(20.2), BASE - 500 * BAR, 378.8, 'for a house, not this line', {size: 42, align: 'center', dy: -50, until: 382.2, color: GREY, weight: 600}),
-    T(X(40), Y(pot(40, 500, 27, 0.07, 4000)), 385.0, 'just the £500, if I keep it up', {size: 52, align: 'right', dx: -40, dy: -110, until: 392.0}),
-    N(X(67), Y(1380000), 389.3, '£1.38 million', {size: 130, align: 'right', dx: -260, dy: -60, until: 402.2}),
+    N(X(25.4), Y(0), 361.3, '£0', {size: 120, color: RED, dx: 30, dy: 110, until: 366.0}),
+    T(X(25.4), Y(0), 363.6, 'started again from zero', {size: 52, dx: 220, dy: 120, until: 366.0, weight: 600}),
+    N(X(27), 2200, 366.8, '27 now', {size: 84, align: 'center', dy: 110, until: 382.2}),
+    N(X(27) + BW / 2, BASE - 500 * BAR, 368.4, '£500 a month', {fn: (tt) => `${money(count(tt, 368.3, 0.7, 500))} a month`, size: 84, dx: 44, dy: 44, until: 382.2}),
+    T(X(27) + BW / 2, BASE - 500 * BAR, 370.2, 'into an S&P 500 fund', {size: 44, dx: 46, dy: 116, until: 382.2, weight: 600}),
+    N(X(27), Y(4000), 372.2, 'about £4,000 so far', {size: 64, dx: 40, dy: -56, until: 382.2, bg: true}),
+    N(X(20.2) + BW / 2, BASE - 700 * BAR, 377.6, '£1,000 a month', {size: 64, dx: 30, until: 382.2, color: GREY, bg: true}),
+    T(X(20.2) + BW / 2, BASE - 700 * BAR, 378.8, 'for a house, not this line', {size: 42, dx: 32, dy: 62, until: 382.2, color: GREY, weight: 600, bg: true}),
+    T(X(40), Y(pot(40, 500, 27, 0.07, 4000)), 385.0, 'just the £500, if I keep it up', {size: 52, align: 'center', dy: -140, until: 392.0}),
+    N(X(67), Y(1380000), 388.4, '£1.38 million', {fn: (tt) => `£${(1.38 * out((tt - 388.4) / 1.2)).toFixed(2)} million`, size: 130, align: 'right', dx: -260, dy: -60, until: 402.2}),
     T(X(67), Y(1380000), 390.4, 'by 67', {size: 56, align: 'right', dx: -260, dy: 50, until: 402.2}),
     N(X(62.8), Y(1e6), 394.0, 'a million at 63', {size: 90, align: 'right', dx: -70, dy: 30, until: 396.8, bg: true}),
     T(X(24.6), Y(60000), 398.2, "only if I don't do this again", {size: 60, color: RED, dx: 60, dy: -150, until: 402.2}),
@@ -402,7 +406,7 @@ export const Sheet: React.FC = () => {
   ];
 
   const stair = Array.from({length: 42}, (_, i) => 223 * Math.pow(1.03, i));
-  const commentAges = [19, 31, 24, 44, 38, 52, 28, 61, 35, 47];
+  const commentAges = [26, 31, 29, 44, 38, 52, 33, 61, 35, 47];
   const month = (i: number) => X(27) + (i / 12) * 100;
 
   return (
@@ -494,12 +498,12 @@ export const Sheet: React.FC = () => {
             </g>
           ) : null}
           {feeP > 0 && t < 352 ? (
-            <g clipPath="url(#feeReveal)" opacity={vis(t, 268.6, 333.8)}>
+            <g clipPath="url(#feeReveal)" opacity={vis(t, 268.6, 296.0)}>
               <path d={`${P(main)} L${[...fee].reverse().join(' L')} Z`} fill={RED} opacity={0.22} />
               <path d={P(fee)} fill="none" stroke={RED} strokeWidth={px(7)} strokeLinecap="round" />
             </g>
           ) : null}
-          {t > 286.4 && t < 291 ? <circle cx={X(30.2)} cy={Y(24000) - 2} r={46 * span(t, 286.6, 287.6)} fill="none" stroke={INK} strokeWidth={px(5)} opacity={vis(t, 286.6, 290.6)} /> : null}
+          {t > 292 && t < 296 ? <circle cx={X(30.2)} cy={Y(24000) - 2} r={110 * span(t, 292.2, 293.0)} fill="none" stroke={INK} strokeWidth={px(5)} opacity={vis(t, 292.2, 295.5)} /> : null}
 
           {/* in today's money */}
           {realP > 0 ? (
@@ -554,7 +558,7 @@ export const Sheet: React.FC = () => {
           {/* mine: started at 22, went bust, started again at 27 */}
           {t > 351 ? (
             <g>
-              <Draw d={bust} p={span(t, 356.6, 358.8)} w={px(10)} />
+              <Draw d={bust} p={span(t, 355.4, 358.6)} w={px(10)} />
               <Draw d={bustDrop} p={span(t, 359.2, 360.6)} w={px(10)} color={RED} />
               {t > 397.4 && t < 402.6 ? <ellipse cx={X(24.9)} cy={Y(30000)} rx={130} ry={110} fill="none" stroke={RED} strokeWidth={px(6)} pathLength={1} strokeDasharray={1} strokeDashoffset={1 - span(t, 397.6, 398.6)} /> : null}
               {t > 372 ? <circle cx={X(27)} cy={Y(4000)} r={px(13) * pop(t, 372.1)} fill={MARK} stroke={INK} strokeWidth={px(5)} /> : null}
@@ -625,8 +629,8 @@ export const Sheet: React.FC = () => {
               <rect x={X(45) - BW / 2} y={BASE - 1601 * BAR * (t < 100 ? span(t, 60.8, 62.2) : 1)} width={BW} height={1601 * BAR * (t < 100 ? span(t, 60.8, 62.2) : 1)} fill={SOFT} stroke={INK} strokeWidth={px(4)} />
               {t > 64.4 && t < 74 ? (
                 <g>
-                  <Draw d={`M${X(25) + 40},${BASE - barH - 20} Q${X(30)},${BASE - 520 * BAR - 120} ${X(35) - 44},${BASE - 700 * BAR - 14}`} p={span(t, 64.8, 65.8)} w={px(5)} color={RED} />
-                  <Draw d={`M${X(35) + 40},${BASE - 700 * BAR - 20} Q${X(40)},${BASE - 1150 * BAR - 150} ${X(45) - 44},${BASE - 1601 * BAR - 14}`} p={span(t, 65.7, 66.7)} w={px(5)} color={RED} />
+                  <Draw d={`M${X(25) + 40},${BASE - barH - 20} Q${X(30)},${BASE - 520 * BAR - 120} ${X(35) - 44},${BASE - 700 * BAR - 14}`} p={span(t, 64.8, 65.8)} w={px(5)} />
+                  <Draw d={`M${X(35) + 40},${BASE - 700 * BAR - 20} Q${X(40)},${BASE - 1150 * BAR - 150} ${X(45) - 44},${BASE - 1601 * BAR - 14}`} p={span(t, 65.7, 66.7)} w={px(5)} />
                 </g>
               ) : null}
               {t > 235 ? (
@@ -651,7 +655,7 @@ export const Sheet: React.FC = () => {
             <g opacity={vis(t, 421.2)}>
               <rect x={END.x - 1010} y={END.y - 200} width={960} height={540} fill="none" stroke={INK} strokeWidth={px(4)} rx={18} />
               <rect x={END.x + 50} y={END.y - 200} width={960} height={540} fill="none" stroke={INK} strokeWidth={px(4)} rx={18} />
-              <Draw d={`M${END.x - 1010},${END.y + 520} C${END.x - 300},${END.y + 500} ${END.x + 500},${END.y + 420} ${END.x + 1010},${END.y + 380 - 60 * Math.sin(t)}`} p={span(t, 421.6, 424)} w={px(6)} color={GREEN} />
+              <Draw d={`M${END.x - 1010},${END.y + 600} C${END.x - 300},${END.y + 590} ${END.x + 500},${END.y + 540} ${END.x + 1010},${END.y + 420}`} p={(t - 421.6) / 9.5} w={px(6)} color={GREEN} />
             </g>
           ) : null}
 
@@ -663,7 +667,7 @@ export const Sheet: React.FC = () => {
           <Pin x={X(35)} y={2200} t={t} at={222.6} until={228.0} n="?" s={cam.s} />
           <Pin x={X(45)} y={2200} t={t} at={223.7} until={228.0} n="?" s={cam.s} />
           <Pin x={X(25) + 60} y={BASE - barH} t={t} at={321.3} until={333.7} n={1} s={cam.s} />
-          <Pin x={ISA.x + ISA.w / 2} y={ISA.y + ISA.h - 30} t={t} at={323.3} until={333.7} n={2} s={cam.s} />
+          <Pin x={ISA.x - 50} y={ISA.y + ISA.h / 2} t={t} at={323.3} until={333.7} n={2} s={cam.s} />
           <Pin x={X(63)} y={Y(880000)} t={t} at={325.5} until={333.7} n={3} s={cam.s} />
           <Pin x={X(55)} y={BASE - 223 * Math.pow(1.03, 30) * BAR} t={t} at={327.1} until={333.7} n={4} s={cam.s} />
           <Pin x={X(44)} y={Y(bumpy(44))} t={t} at={328.5} until={333.7} n={5} s={cam.s} />
@@ -690,7 +694,7 @@ export const Sheet: React.FC = () => {
       </Tape>
 
       {ages.map((a) => (
-        <Label key={a} l={{x: X(a), y: 2200, t: -1, text: String(a), font: NUM, weight: 700, size: 26, align: 'center', dy: 58, color: INK}} t={t} cam={cam} w={w} h={h} />
+        <Label key={a} l={{x: X(a), y: 2200, t: -1, text: String(a), font: NUM, weight: 700, size: 34, align: 'center', dy: 62, color: INK}} t={t} cam={cam} w={w} h={h} />
       ))}
       {t > 108 && t < 121 ? [70, 75, 80, 85, 90].map((a) => <Label key={a} l={{x: X(a), y: 2200, t: 108.4, until: 120.8, text: String(a), font: NUM, weight: 700, size: 26, align: 'center', dy: 58}} t={t} cam={cam} w={w} h={h} />) : null}
       {L.map((l, i) => (
