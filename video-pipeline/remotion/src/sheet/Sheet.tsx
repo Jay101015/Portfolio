@@ -65,7 +65,7 @@ const money = (n: number) => '£' + Math.round(n).toLocaleString('en-GB');
 type Pose = {cx: number; cy: number; s: number};
 type Key = {t: number; d: number} & (Pose | {ride: [number, number]; dy: number; s: number});
 const WIDE: Pose = {cx: 2500, cy: 1640, s: 0.315};
-const BARS: Pose = {cx: X(38), cy: 2720, s: 0.66};
+const BARS: Pose = {cx: X(37), cy: 2720, s: 0.66};
 const KEYS: Key[] = [
   {t: 0, d: 0, ...WIDE},
   {t: 3.0, d: 1.5, cx: 560, cy: 2948, s: 3.5}, // "you need about £329": down to the bar at 25
@@ -319,8 +319,8 @@ export const Sheet: React.FC = () => {
     T(X(46), BASE - 223 * Math.pow(1.03, 21) * BAR, 178.6, 'every pay rise', {size: 46, align: 'center', dy: -78, until: 185.0, weight: 600}),
     N(X(25), BASE - 223 * BAR, 181.4, 'start at £223', {fn: (tt) => `start at ${money(count(tt, 181.3, 0.7, 223))}`, size: 76, dx: -20, dy: -110, until: 193.8}),
     N(X(61), BASE - 223 * Math.pow(1.03, 36) * BAR, 183.9, 'same £1 million', {size: 70, align: 'center', dy: -90, until: 185.3}),
-    T(X(35), BASE - 223 * Math.pow(1.03, 10) * BAR, 187.3, 'you never see it, so you never miss it', {size: 50, align: 'center', dy: -90, until: 190.4}),
-    N(X(35), BASE - 223 * Math.pow(1.03, 10) * BAR, 191.6, '2 minutes to change', {size: 70, align: 'center', dy: -100, until: 193.8}),
+    T(X(31.5), BASE - 223 * Math.pow(1.03, 10) * BAR, 187.3, 'you never see it, so you never miss it', {size: 50, align: 'center', dy: -90, until: 190.4}),
+    N(X(31.5), BASE - 223 * Math.pow(1.03, 10) * BAR, 191.6, '2 minutes to change', {size: 70, align: 'center', dy: -100, until: 193.8}),
     // ---- 3:14 the ISA ----
     T(ISA.x, ISA.y + ISA.h, 196.0, 'Stocks and shares ISA', {size: 56, dy: 70, dx: 10, until: 208.7}),
     T(ISA.x + ISA.w, ISA.y + 200, 198.1, 'nothing on the way in', {size: 46, dx: 40, until: 208.7, weight: 600}),
