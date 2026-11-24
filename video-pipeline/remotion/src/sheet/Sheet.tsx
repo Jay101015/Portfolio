@@ -25,6 +25,13 @@ const pot = (age: number, monthly = 329, from = 25) => {
   const n = Math.max(0, (age - from) * 12);
   return (monthly * (Math.pow(1 + r, n) - 1)) / r;
 };
+const feePts: string[] = [];
+for (let a = 25; a <= 67 + 1e-6; a += 0.5) {
+  const r = 0.06 / 12;
+  const n = (a - 25) * 12;
+  feePts.push(`${(400 + (a - 25) * 100).toFixed(1)},${(2200 - (((329 * (Math.pow(1 + r, n) - 1)) / r) / 1e6) * 1600).toFixed(1)}`);
+}
+const fee = 'M' + feePts.join(' L');
 const curve = (from: number, to: number, monthly = 329, start = 25) => {
   const pts: string[] = [];
   for (let a = from; a <= to + 1e-6; a += 0.5) pts.push(`${X(a).toFixed(1)},${Y(pot(a, monthly, start)).toFixed(1)}`);
@@ -43,13 +50,13 @@ const pop = (t: number, at: number, d = 0.35) => {
 
 // the camera: where it looks (world) and how close; it holds on a key until the next one starts moving
 type Key = {t: number; d: number; cx: number; cy: number; s: number};
-const WIDE = {cx: 2500, cy: 1760, s: 0.315};
+const WIDE = {cx: 2500, cy: 1640, s: 0.315};
 const KEYS: Key[] = [
   {t: 0, d: 0, ...WIDE},
-  {t: 3.0, d: 1.5, cx: 980, cy: 2800, s: 1.15}, // "you need about £329": down to the bar at 25
-  {t: 7.4, d: 2.4, cx: 900, cy: 2790, s: 1.4}, // "the bit nobody tells you": closer
-  {t: 13.3, d: 2.1, cx: 4150, cy: 760, s: 0.95}, // "a million sounds like a lottery number": up the curve to the flag
-  {t: 18.7, d: 1.9, ...WIDE}, // "when you break it down": the whole sheet
+  {t: 3.0, d: 1.5, cx: 800, cy: 2800, s: 1.4}, // "you need about £329": down to the bar at 25
+  {t: 7.4, d: 2.4, cx: 725, cy: 2800, s: 1.6}, // "the bit nobody tells you": closer
+  {t: 13.1, d: 0.9, cx: X(30), cy: Y(pot(30)) - 120, s: 0.8}, // back to the line, then ride it (see camera)
+  {t: 19.2, d: 1.6, ...WIDE}, // "when you break it down": the whole sheet
   {t: 38.7, d: 2.6, cx: 1750, cy: 1950, s: 0.62}, // into the first chapter, on the left of the sheet
 ];
 const camera = (t: number) => {
@@ -61,10 +68,20 @@ const camera = (t: number) => {
     const far = Math.hypot(k.cx - c.cx, k.cy - c.cy) > 2000 ? 1 - 0.45 * Math.sin(p * Math.PI) : 1;
     c = {cx: c.cx + (k.cx - c.cx) * p, cy: c.cy + (k.cy - c.cy) * p, s: Math.exp(Math.log(c.s) + (Math.log(k.s) - Math.log(c.s)) * p) * far};
   }
+  // 14.0 to 16.0: the camera rides the curve up to the flag, so the travel is the picture ("a million sounds like...")
+  if (t > 14.0 && t <= 19.2 + 1.6) {
+    const p = span(t, 14.0, 16.0);
+    const age = 30 + (63 - 30) * p;
+    const ride = {cx: X(age), cy: Y(pot(age)) - 120 - 200 * p, s: 0.8 + 0.15 * p};
+    if (t <= 19.2) return ride;
+    const q = span(t, 19.2, 19.2 + 1.6);
+    return {cx: ride.cx + (WIDE.cx - ride.cx) * q, cy: ride.cy + (WIDE.cy - ride.cy) * q, s: Math.exp(Math.log(ride.s) + (Math.log(WIDE.s) - Math.log(ride.s)) * q)};
+  }
   return c;
 };
+const count = (t: number, at: number, d: number, n: number) => (t < at || t > at + d ? n : Math.round(n * out((t - at) / d)));
 
-type LabelT = {x: number; y: number; t: number; text: string; size?: number; color?: string; font?: string; weight?: number; italic?: boolean; dx?: number; dy?: number; align?: 'left' | 'right' | 'center'; until?: number; bg?: boolean};
+type LabelT = {x: number; y: number; t: number; text: string; fn?: (t: number) => string; size?: number; color?: string; font?: string; weight?: number; italic?: boolean; dx?: number; dy?: number; align?: 'left' | 'right' | 'center'; until?: number; bg?: boolean};
 
 // a label keeps its size on screen whatever the camera does, and stays pinned to its mark on the sheet
 const Label: React.FC<{l: LabelT; t: number; cam: {cx: number; cy: number; s: number}; w: number; h: number}> = ({l, t, cam, w, h}) => {
@@ -75,7 +92,7 @@ const Label: React.FC<{l: LabelT; t: number; cam: {cx: number; cy: number; s: nu
   const tx = l.align === 'right' ? '-100%' : l.align === 'center' ? '-50%' : '0';
   return (
     <div style={{position: 'absolute', left: sx, top: sy, transform: `translate(${tx}, -50%) scale(${0.9 + 0.1 * pop(t, l.t)})`, transformOrigin: l.align === 'right' ? 'right center' : 'left center', opacity: a, whiteSpace: 'nowrap', fontFamily: l.font ?? TXT, fontWeight: l.weight ?? 600, fontStyle: l.italic ? 'italic' : 'normal', fontSize: l.size ?? 40, color: l.color ?? INK, lineHeight: 1, letterSpacing: l.font === NUM ? -1 : 0, background: l.bg ? PAPER : 'transparent', padding: l.bg ? '6px 12px' : 0, borderRadius: 6}}>
-      {l.text}
+      {l.fn ? l.fn(t) : l.text}
     </div>
   );
 };
@@ -102,7 +119,7 @@ export const Sheet: React.FC = () => {
   const tr = `translate(${w / 2 - cam.cx * cam.s}, ${h / 2 - cam.cy * cam.s}) scale(${cam.s})`;
   const px = (n: number) => n / cam.s; // a stroke that keeps its weight on screen
 
-  const draw = span(t, 0.25, 1.75); // the curve reaches the flag as he says "million"
+  const draw = span(t, -0.2, 1.7); // the curve reaches the flag as he says "million"
   const LEN = 5400;
   const barH = 329 * BAR;
   const split = 123 * BAR;
@@ -114,32 +131,35 @@ export const Sheet: React.FC = () => {
   const years = span(t, 22.4, 23.2);
   const area = span(t, 23.4, 24.6);
   const mine = span(t, 24.5, 25.3);
-  const notch = span(t, 34.3, 35.2);
+  const notch = span(t, 33.4, 35.4);
+  const balls = [7, 14, 23, 31, 42];
 
   const ages = [25, 30, 35, 40, 45, 50, 55, 60, 65, 67];
   const labels: LabelT[] = [
     // frame one carries both numbers; the line between them draws as he talks
-    {x: X(67), y: Y(1e6), t: -1, text: '£1 million', font: NUM, weight: 900, size: 92, dx: -40, dy: -78, align: 'right'},
-    {x: X(25) + 80, y: BASE - barH / 2, t: -1, text: '£329 a month', font: NUM, weight: 900, size: 76, dx: 34},
-    {x: X(25), y: 2200, t: 2.85, text: 'start at 25', italic: true, font: NUM, weight: 400, size: 44, dx: 22, dy: -40, until: 12.9, bg: true},
-    {x: X(25), y: BASE - barH - 150, t: 6.0, text: 'going in, every month', weight: 600, size: 40, dx: 40, until: 9.4},
-    {x: X(25) + 80, y: BASE - barH + split / 2 - 8, t: 9.9, text: '£123 of it', font: NUM, weight: 900, size: 70, color: GREEN, dx: 34, dy: -30, until: 13.0},
-    {x: X(25) + 80, y: BASE - barH + split / 2 - 8, t: 11.9, text: 'not from your pocket', weight: 600, size: 44, color: GREEN, dx: 400, dy: -26, until: 13.0},
-    {x: X(67), y: Y(1e6), t: 16.0, text: 'a lottery number?', italic: true, font: NUM, weight: 400, size: 54, dx: -560, dy: 40, until: 18.6},
-    {x: X(46), y: BASE + 70, t: 21.0, text: 'a direct debit, every month', weight: 600, size: 42, align: 'center', dy: -150, bg: true, until: 26.0},
+    {x: X(67), y: Y(1e6), t: -1, text: '£1 million', font: NUM, weight: 900, size: 150, dx: -70, dy: -110, align: 'right'},
+    {x: X(25) + 80, y: BASE - barH / 2, t: -1, text: '£329 a month', fn: (tt) => `£${count(tt, 4.3, 0.8, 329)} a month`, font: NUM, weight: 900, size: 120, dx: 44},
+    {x: X(25), y: 2200, t: 2.85, text: 'start at 25', italic: true, font: NUM, weight: 400, size: 50, dx: 22, dy: -44, until: 3.2},
+    {x: X(25), y: BASE - barH - 150, t: 6.0, text: 'going in, every month', weight: 600, size: 54, dx: 44, until: 9.4},
+    {x: X(25) + 80, y: BASE - barH + split / 2 - 8, t: 9.9, text: '£123 of it', fn: (tt) => `£${count(tt, 9.85, 0.6, 123)} of it`, font: NUM, weight: 900, size: 110, color: GREEN, dx: 44, dy: -150, until: 13.0},
+    {x: X(25) + 80, y: BASE - barH + split / 2 - 8, t: 11.9, text: 'not from your pocket', weight: 700, size: 60, color: GREEN, dx: 48, dy: -60, until: 13.0},
+    {x: X(67), y: Y(1e6), t: 16.0, text: 'a lottery number?', italic: true, font: NUM, weight: 400, size: 64, dx: -700, dy: 440, until: 19.3},
+    {x: X(46), y: BASE + 70, t: 21.0, text: 'a direct debit, every month', weight: 600, size: 42, align: 'center', dy: -150, until: 22.2},
     {x: X(46), y: 2200, t: 22.6, text: '42 years', font: NUM, weight: 900, size: 54, align: 'center', dy: 104, until: 26.0, bg: true},
-    {x: X(60), y: Y(360000), t: 24.2, text: 'not your money', font: NUM, weight: 900, size: 60, color: GREEN, align: 'center', until: 26.2, bg: true},
-    {x: X(61), y: Y(60000), t: 24.9, text: 'what you put in', weight: 600, size: 36, align: 'center', dy: 4, until: 26.2},
+    {x: X(60), y: Y(360000), t: 24.2, text: 'growth', font: NUM, weight: 900, size: 84, color: GREEN, align: 'center', dy: 40, until: 26.2},
+    {x: X(60), y: Y(62000), t: 24.9, text: 'what goes in', weight: 700, size: 38, align: 'center', until: 26.2},
     // the four things coming, pinned where they happen on the sheet
-    {x: X(25), y: BASE - barH, t: 27.5, text: 'who pays the rest', weight: 700, size: 44, dx: 46, dy: -44, bg: true},
-    {x: X(35), y: 2200, t: 30.7, text: 'starting at 35', weight: 700, size: 44, align: 'center', dy: -124, bg: true},
-    {x: X(45), y: 2200, t: 31.5, text: 'or 45', weight: 700, size: 44, align: 'center', dy: -124, bg: true},
-    {x: X(64.5), y: Y(pot(64.5)), t: 34.5, text: '−£250,000', font: NUM, weight: 900, size: 56, color: RED, align: 'right', dx: -70, dy: -40, bg: true},
-    {x: X(27), y: Y(pot(27)), t: 37.75, text: 'where I am', weight: 700, size: 44, dx: -40, dy: -124, bg: true},
+    {x: X(25) + 80, y: BASE - barH / 2, t: 27.5, text: 'who pays the rest', weight: 700, size: 56, dx: 60, dy: -50, bg: true},
+    {x: X(35), y: 2200, t: 30.7, text: 'starting at 35', weight: 700, size: 52, align: 'center', dy: -128},
+    {x: X(45), y: 2200, t: 31.5, text: 'or 45', weight: 700, size: 52, align: 'center', dy: -128, dx: -40},
+    {x: X(62.5), y: Y(300000), t: 34.5, text: '−£250,000', font: NUM, weight: 900, size: 84, color: RED, align: 'center', bg: true},
+    {x: X(27), y: Y(pot(27)), t: 37.75, text: 'where I am', weight: 700, size: 52, dx: -60, dy: -210},
   ];
   // the two opening numbers step aside once the sheet starts filling with other marks
   labels[0].until = undefined;
-  labels[1].until = 18.4;
+  labels[1].until = 12.9;
+  labels[0].until = 13.0;
+  labels.push({x: X(67), y: Y(1e6), t: 15.2, text: '£1 million', font: NUM, weight: 900, size: 150, dx: -70, dy: -110, align: 'right'});
 
   return (
     <AbsoluteFill style={{background: PAPER}}>
@@ -185,16 +205,32 @@ export const Sheet: React.FC = () => {
           <path d={curve(25, 67)} fill="none" stroke={INK} strokeWidth={px(8)} strokeLinecap="round" strokeLinejoin="round" strokeDasharray={LEN} strokeDashoffset={LEN * (1 - draw)} />
           {notch > 0 ? (
             <g>
-              <path d={`M${X(62)},${Y(pot(62))} L${X(67)},${Y(746000 + (1e6 - 746000) * (1 - notch))}`} fill="none" stroke={RED} strokeWidth={px(7)} strokeLinecap="round" strokeDasharray={`${px(18)} ${px(14)}`} />
-              <path d={`${curve(62, 67)} L${X(67)},${Y(746000 + (1e6 - 746000) * (1 - notch))} Z`} fill={RED} opacity={0.18} />
+              <clipPath id="feeReveal"><rect x={X(25)} y={0} width={(X(67) - X(25)) * notch + 4} height={2300} /></clipPath>
+              <g clipPath="url(#feeReveal)">
+                <path d={`${curve(25, 67)} L${fee.slice(1).split(' L').reverse().join(' L')} Z`} fill={RED} opacity={0.2} />
+                <path d={fee} fill="none" stroke={RED} strokeWidth={px(7)} strokeLinecap="round" strokeDasharray={`${px(18)} ${px(14)}`} />
+              </g>
             </g>
           ) : null}
 
+          {t > 13.6 && t < 19.6 ? <circle cx={X(30 + 37 * span(t, 14.0, 16.0))} cy={Y(pot(30 + 37 * span(t, 14.0, 16.0)))} r={px(15)} fill={MARK} stroke={INK} strokeWidth={px(5)} /> : null}
           {/* the flag at a million */}
           <g transform={`translate(${X(67)}, ${Y(1e6)})`}>
-            <line x1={0} y1={0} x2={0} y2={-150} stroke={INK} strokeWidth={px(6)} strokeLinecap="round" />
-            <path d="M0,-150 L-120,-118 L0,-86 Z" fill={MARK} stroke={INK} strokeWidth={px(5)} strokeLinejoin="round" transform={`skewY(${Math.sin(t * 3.2) * 4})`} />
+            <line x1={0} y1={0} x2={0} y2={-260} stroke={INK} strokeWidth={px(6)} strokeLinecap="round" />
+            <path d="M0,-260 L-210,-205 L0,-150 Z" fill={MARK} stroke={INK} strokeWidth={px(5)} strokeLinejoin="round" transform={`skewY(${Math.sin(t * 3.2) * 4})`} />
             <circle r={px(9)} fill={INK} />
+          </g>
+          <g transform={`translate(${X(67) - 760}, ${Y(1e6) + 330})`} opacity={1 - span(t, 19.6, 20.2)}>
+            {balls.map((n, i) => {
+              const p = pop(t, 15.5 + i * 0.12, 0.4);
+              return p > 0 ? (
+                <g key={n} transform={`translate(${i * 135}, 0) scale(${p})`}>
+                  <circle r={58} fill={MARK} stroke={INK} strokeWidth={px(5)} />
+                  <text y={20} textAnchor="middle" fontFamily={NUM} fontWeight={900} fontSize={58} fill={INK}>{n}</text>
+                </g>
+              ) : null;
+            })}
+            {t > 18.85 ? <line x1={-80} y1={30} x2={-80 + 700 * span(t, 18.85, 19.25)} y2={-30} stroke={INK} strokeWidth={px(9)} strokeLinecap="round" /> : null}
           </g>
 
           {/* the monthly bar at 25, and its green top: the part that is not yours */}
@@ -215,7 +251,7 @@ export const Sheet: React.FC = () => {
             </g>
           ) : null}
           {cutline > 0 && green <= 0 ? <line x1={X(25) - 110} y1={BASE - barH + split} x2={X(25) - 110 + 220 * cutline} y2={BASE - barH + split} stroke={GREEN} strokeWidth={px(5)} strokeDasharray={`${px(14)} ${px(10)}`} /> : null}
-          <Pin x={X(25)} y={BASE - barH - lift} t={t} at={27.42} n={1} s={cam.s} />
+          <Pin x={X(25) + 80} y={BASE - barH / 2} t={t} at={27.42} n={1} s={cam.s} />
           <Pin x={X(35)} y={2200} t={t} at={30.61} n={2} s={cam.s} />
           <Pin x={X(45)} y={2200} t={t} at={31.42} n={2} s={cam.s} />
           <Pin x={X(64.5)} y={Y(pot(64.5))} t={t} at={34.42} n={3} s={cam.s} />
