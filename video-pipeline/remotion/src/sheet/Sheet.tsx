@@ -82,7 +82,7 @@ const KEYS: Key[] = [
   {t: 120.7, d: 3.0, cx: 640, cy: 2940, s: 3.2}, // "still a lot when you're 25"
   {t: 127.6, d: 1.6, cx: 460, cy: 2948, s: 5.4}, // who pays
   {t: 156.2, d: 1.6, cx: 500, cy: 2940, s: 4.4}, // the match
-  {t: 168.4, d: 2.2, cx: X(46), cy: 2700, s: 0.46}, // start lower: the staircase
+  {t: 168.4, d: 2.2, cx: X(48), cy: 2700, s: 0.42}, // start lower: the staircase
   {t: 185.4, d: 1.8, cx: X(30.5), cy: 2830, s: 1.4}, // "you never see the money"
   {t: 193.9, d: 2.0, cx: 1650, cy: 800, s: 0.85}, // the ISA page
   {t: 197.0, d: 11.0, cx: 1720, cy: 830, s: 0.96},
@@ -99,10 +99,10 @@ const KEYS: Key[] = [
   {t: 308.2, d: 2.0, cx: X(27.5), cy: 2160, s: 2.5}, // once a month, not every day
   {t: 319.2, d: 2.0, ...WIDE}, // the whole thing
   {t: 334.2, d: 1.8, cx: X(63.5), cy: 1150, s: 0.6}, // in today's money
-  {t: 350.9, d: 3.0, cx: X(24.3), cy: 2110, s: 2.3}, // mine: started at 22
+  {t: 350.9, d: 3.0, cx: X(24.8), cy: 2110, s: 2.3}, // mine: started at 22
   {t: 366.2, d: 1.8, cx: X(27.5), cy: 2560, s: 1.1}, // 27 now, £500 a month
   {t: 382.4, d: 2.2, cx: 2600, cy: 1050, s: 0.4}, // where that goes
-  {t: 396.6, d: 2.2, cx: X(24.6), cy: 2100, s: 1.9}, // what I did at 22
+  {t: 396.6, d: 2.2, cx: X(25.2), cy: 2100, s: 1.9}, // what I did at 22
   {t: 402.3, d: 2.0, ...WIDE},
   {t: 419.6, d: 2.4, cx: -1700, cy: 1000, s: 0.62}, // the end screen, on the clear side of the sheet
 ];
@@ -191,10 +191,55 @@ const Tape: React.FC<{x: number; y: number; w: number; h: number; t: number; at:
   );
 };
 
+const END = {x: -1700, y: 1000};
+// His character, standing on the sheet where the camera is close: feet at a world point, a height in world units,
+// and the poses he strikes on their words. A pose with in-between drawings (name-1, name-2) passes through them.
+type GuyT = {x: number; y: number; h: number; from: number; until: number; flip?: boolean; poses: [number, string][]};
+const INB = new Set(['facepalm', 'fist-pump', 'hand-over', 'point-board', 'shrug', 'thumbs-up', 'welcome']);
+const GUYS: GuyT[] = [
+  {x: 716, y: BASE, h: 180, from: 4.5, until: 12.9, poses: [[4.5, 'explain'], [6.0, 'count-notes'], [7.6, 'but-finger'], [9.9, 'idea'], [12.0, 'empty-pockets']]},
+  {x: 4900, y: 1260, h: 520, from: 15.5, until: 19.2, poses: [[15.5, 'confused'], [17.0, 'shrug']]},
+  {x: 850, y: BASE, h: 200, from: 121.9, until: 127.3, poses: [[121.9, 'bill-shock'], [123.6, 'worried'], [125.8, 'idea']]},
+  {x: 612, y: BASE, h: 120, from: 129.0, until: 155.9, poses: [[129.0, 'explain'], [135.3, 'count-fingers'], [138.6, 'point-board'], [141.0, 'thumbs-up'], [142.9, 'calculator'], [147.7, 'count-notes'], [153.0, 'fist-pump']]},
+  {x: 676, y: BASE, h: 150, from: 158.4, until: 168.0, poses: [[158.4, 'explain'], [161.9, 'hand-over'], [164.2, 'count-notes'], [166.6, 'smug']]},
+  {x: X(69.2), y: BASE, h: 760, from: 170.6, until: 185.2, flip: true, poses: [[170.6, 'ponder'], [173.9, 'idea'], [177.3, 'point-board'], [184.3, 'thumbs-up']]},
+  {x: 1530, y: BASE, h: 420, from: 187.2, until: 193.8, poses: [[187.2, 'relieved'], [191.0, 'phone-excited']]},
+  {x: 700, y: 2200, h: 800, from: 291.8, until: 295.6, poses: [[291.8, 'magnifier']]},
+  {x: 930, y: 2200, h: 220, from: 310.6, until: 318.9, poses: [[310.6, 'phone-chart-up'], [313.9, 'worried'], [315.5, 'shocked'], [317.3, 'facepalm']]},
+  {x: 700, y: 2200, h: 250, from: 352.0, until: 365.9, poses: [[352.0, 'welcome'], [356.6, 'phone-excited'], [359.4, 'shocked'], [360.7, 'facepalm'], [363.6, 'empty-pockets']]},
+  {x: 1400, y: BASE, h: 480, from: 367.0, until: 382.0, flip: true, poses: [[367.0, 'stand-3q'], [368.4, 'count-notes'], [372.4, 'thumbs-up'], [377.7, 'point-board']]},
+  {x: X(33), y: 2200, h: 900, from: 384.6, until: 396.4, poses: [[384.6, 'ponder'], [389.0, 'jump-crouch'], [389.3, 'jump-air'], [389.7, 'jump'], [390.4, 'arms-up'], [394.0, 'fist-pump']]},
+  {x: 860, y: 2200, h: 250, from: 398.0, until: 402.2, poses: [[398.0, 'stop']]},
+  {x: X(72), y: 2200, h: 1000, from: 411.5, until: 419.5, flip: true, poses: [[411.5, 'welcome']]},
+  {x: END.x - 1300, y: END.y + 340, h: 760, from: 422.4, until: 440, poses: [[422.4, 'thumbs-up']]},
+];
+const Guy: React.FC<{g: GuyT; t: number; cam: Pose; W: number; H: number}> = ({g, t, cam, W, H}) => {
+  if (t < g.from || t > g.until + 0.3) return null;
+  let pose = g.poses[0][1];
+  let at = g.poses[0][0];
+  for (const [pt, name] of g.poses) {
+    if (INB.has(name) && t >= pt - 0.27 && t < pt) {
+      pose = t < pt - 0.13 ? `${name}-1` : `${name}-2`;
+      at = pt - 0.27;
+      break;
+    }
+    if (t >= pt) {
+      pose = name;
+      at = pt;
+    }
+  }
+  const a = out((t - g.from) / 0.25) * (1 - out((t - g.until) / 0.25));
+  const k = 1 + 0.035 * (1 - out((t - at) / 0.18));
+  const sx = (g.x - cam.cx) * cam.s + W / 2;
+  const sy = (g.y - cam.cy) * cam.s + H / 2;
+  const hh = g.h * cam.s;
+  if (sx < -600 || sx > W + 600 || sy < -200 || sy - hh > H + 200) return null;
+  return <Img src={staticFile(`poses/${pose}.png`)} style={{position: 'absolute', left: sx, top: sy, height: hh, opacity: a, transform: `translate(-50%, -100%) scale(${(g.flip ? -1 : 1) * k}, ${k})`, transformOrigin: '50% 100%'}} />;
+};
+
 const ISA = {x: 650, y: 366, w: 1400, h: 788};
 const SP = {x: 4900, y: 180, w: 1400, h: 788};
 const PHONE = {x: 2250, y: 740, w: 640, h: 877};
-const END = {x: -1700, y: 1000};
 
 export const Sheet: React.FC = () => {
   const frame = useCurrentFrame();
@@ -241,7 +286,7 @@ export const Sheet: React.FC = () => {
   const L: LabelT[] = [
     // ---- 0:00 the opening: frame one carries both numbers; the line between them draws as he talks ----
     N(X(67), Y(1e6), -1, '£1 million', {size: 150, dx: -70, dy: -110, align: 'right', until: 13.0}),
-    N(X(25) + BW / 2, BASE - barH / 2, -1, '£329 a month', {size: 120, dx: 44, dy: cam.s < 1 ? -70 * (1 - (cam.s - 0.315) / 0.685) : 0, until: 12.9}),
+    N(X(25) + BW / 2, BASE - barH / 2, -1, '£329 a month', {size: 100, dx: 44, dy: cam.s < 1 ? -70 * (1 - (cam.s - 0.315) / 0.685) : 0, until: 12.9}),
     N(X(25), 2200, 2.85, 'start at 25', {italic: true, weight: 400, size: 50, dx: 22, dy: -44, until: 3.2}),
     T(X(25), BASE - barH - 46, 6.0, 'going in, every month', {size: 54, dx: 44, until: 9.4, weight: 600}),
     N(X(25) + BW / 2, BASE - barH + 28, 9.9, '£123 of it', {fn: (tt) => `£${count(tt, 9.85, 0.6, 123)} of it`, size: 110, color: GREEN, dx: 44, dy: -150, until: 13.0}),
@@ -297,21 +342,21 @@ export const Sheet: React.FC = () => {
     T(X(25) - BW / 2, BASE - barH - 18, 129.0, 'on a £35,000 salary', {size: 64, dx: -20, dy: -60, until: 156.0}),
     N(X(25) - BW / 2, BASE - 96 * BAR, 132.5, '£192', {size: 96, align: 'right', dx: -160, until: 146.6}),
     T(X(25) - BW / 2, BASE - 96 * BAR, 132.9, 'pension at work', {size: 32, align: 'right', dx: -160, dy: 72, until: 146.6, weight: 600}),
-    N(X(25) + BW / 2, segY(0) + 48 * BAR, 135.3, 'you: £96', {size: 96, dx: 50, until: 146.6}),
-    N(X(25) + BW / 2, segY(1) + 36 * BAR, 138.6, 'your employer: £72', {size: 96, dx: 50, color: GREEN, until: 146.6}),
-    N(X(25) + BW / 2, segY(2) + 12 * BAR, 141.0, 'the taxman: £24', {size: 96, dx: 50, color: GREEN, until: 146.6}),
+    N(X(25) + BW / 2, segY(0) + 48 * BAR, 135.3, 'you: £96', {size: 80, dx: 50, until: 146.6}),
+    N(X(25) + BW / 2, segY(1) + 36 * BAR, 138.6, 'your employer: £72', {size: 80, dx: 50, color: GREEN, until: 146.6}),
+    N(X(25) + BW / 2, segY(2) + 12 * BAR, 141.0, 'the taxman: £24', {size: 80, dx: 50, color: GREEN, until: 146.6}),
     T(X(25) + BW / 2, segY(3) + 55 * BAR, 142.9, 'your top-up', {size: 64, dx: 50, until: 146.6}),
     T(X(25) + BW / 2, segY(4) + 13 * BAR, 145.4, '+ the taxman again', {size: 64, dx: 50, color: GREEN, until: 146.6}),
     N(X(25) - BW / 2, BASE - barH / 2, 147.7, '£329', {size: 96, align: 'right', dx: -70, until: 156.0}),
     T(X(25) - BW / 2, BASE - barH / 2, 148.0, 'going in', {size: 44, align: 'right', dx: -70, dy: 74, until: 156.0, weight: 600}),
-    N(X(25) + BW / 2, BASE - 103 * BAR, 150.1, '£206 from your pay', {fn: (tt) => `${money(count(tt, 150.0, 0.7, 206))} from your pay`, size: 84, dx: 50, until: 161.2}),
+    N(X(25) + BW / 2, BASE - 103 * BAR, 150.1, '£206 from your pay', {fn: (tt) => `${money(count(tt, 150.0, 0.7, 206))} from your pay`, size: 70, dx: 50, until: 161.2}),
     N(X(25) + BW / 2, BASE - 267 * BAR, 153.0, '£123 free', {fn: (tt) => `${money(count(tt, 152.9, 0.6, 123))} free`, size: 100, dx: 50, color: GREEN, until: 161.2}),
     // ---- 2:36 the match ----
     N(X(25) - BW / 2, BASE - barH, 158.2, 'start with the pension at work', {size: 70, dx: -20, dy: -80, until: 168.0}),
     N(X(25) + BW / 2, BASE - 150 * BAR, 161.9, 'you put in more', {size: 66, dx: 60, dy: 70, until: 168.0}),
     N(X(25) + BW / 2, BASE - 150 * BAR, 162.6, 'they match it', {size: 66, dx: 60, dy: -40, color: GREEN, until: 168.0}),
     T(X(25) + BW / 2, BASE - 150 * BAR, 164.2, 'take every pound first', {size: 48, dx: 60, dy: -130, until: 168.0, weight: 600}),
-    T(X(25) + BW / 2, BASE - 150 * BAR, 165.9, 'nothing else you can buy does this', {size: 48, dx: 60, dy: 160, until: 168.0, weight: 600}),
+    T(X(25) + BW / 2, BASE - 150 * BAR, 165.9, 'nothing else you can buy does this', {size: 40, dx: 60, dy: 160, until: 168.0, weight: 600}),
     // ---- 2:48 start lower, raise it ----
     N(X(25), BASE - barH, 169.1, '£329', {size: 64, align: 'center', dy: -50, until: 176.0}),
     T(X(25), BASE - barH, 170.6, 'too much right now?', {size: 48, dx: 70, dy: -44, until: 176.0, weight: 600}),
@@ -319,8 +364,8 @@ export const Sheet: React.FC = () => {
     T(X(46), BASE - 223 * Math.pow(1.03, 21) * BAR, 178.6, 'every pay rise', {size: 46, align: 'center', dy: -78, until: 185.0, weight: 600}),
     N(X(25), BASE - 223 * BAR, 181.4, 'start at £223', {fn: (tt) => `start at ${money(count(tt, 181.3, 0.7, 223))}`, size: 76, dx: -20, dy: -110, until: 193.8}),
     N(X(61), BASE - 223 * Math.pow(1.03, 36) * BAR, 183.9, 'same £1 million', {size: 70, align: 'center', dy: -90, until: 185.3}),
-    T(X(31.5), BASE - 223 * Math.pow(1.03, 10) * BAR, 187.3, 'you never see it, so you never miss it', {size: 50, align: 'center', dy: -90, until: 190.4}),
-    N(X(31.5), BASE - 223 * Math.pow(1.03, 10) * BAR, 191.6, '2 minutes to change', {size: 70, align: 'center', dy: -100, until: 193.8}),
+    T(X(31.5), BASE - 223 * Math.pow(1.03, 10) * BAR, 187.3, 'you never see it, so you never miss it', {size: 50, align: 'center', dy: -170, until: 190.4}),
+    N(X(31.5), BASE - 223 * Math.pow(1.03, 10) * BAR, 191.6, '2 minutes to change', {size: 70, align: 'center', dy: -180, until: 193.8}),
     // ---- 3:14 the ISA ----
     T(ISA.x, ISA.y + ISA.h, 196.0, 'Stocks and shares ISA', {size: 56, dy: 70, dx: 10, until: 208.7}),
     T(ISA.x + ISA.w, ISA.y + 200, 198.1, 'nothing on the way in', {size: 46, dx: 40, until: 208.7, weight: 600}),
@@ -385,18 +430,18 @@ export const Sheet: React.FC = () => {
     N(X(25.4), Y(0), 359.6, 'bust', {size: 130, color: RED, dx: 40, dy: -150, until: 366.0}),
     T(X(25.4), Y(0), 360.7, 'I lost all of it', {size: 52, color: RED, dx: 44, dy: -50, until: 366.0}),
     N(X(25.4), Y(0), 361.3, '£0', {size: 120, color: RED, dx: 30, dy: 110, until: 366.0}),
-    T(X(25.4), Y(0), 363.6, 'started again from zero', {size: 52, dx: 220, dy: 120, until: 366.0, weight: 600}),
+    T(X(25.4), Y(0), 363.6, 'started again from zero', {size: 44, dx: 30, dy: 215, until: 366.0, weight: 600}),
     N(X(27), 2200, 366.8, '27 now', {size: 84, align: 'center', dy: 110, until: 382.2}),
     N(X(27) + BW / 2, BASE - 500 * BAR, 368.4, '£500 a month', {fn: (tt) => `${money(count(tt, 368.3, 0.7, 500))} a month`, size: 84, dx: 44, dy: 44, until: 382.2}),
     T(X(27) + BW / 2, BASE - 500 * BAR, 370.2, 'into an S&P 500 fund', {size: 44, dx: 46, dy: 116, until: 382.2, weight: 600}),
     N(X(27), Y(4000), 372.2, 'about £4,000 so far', {size: 64, dx: 40, dy: -56, until: 382.2, bg: true}),
     N(X(20.2) + BW / 2, BASE - 700 * BAR, 377.6, '£1,000 a month', {size: 64, dx: 30, until: 382.2, color: GREY, bg: true}),
     T(X(20.2) + BW / 2, BASE - 700 * BAR, 378.8, 'for a house, not this line', {size: 42, dx: 32, dy: 62, until: 382.2, color: GREY, weight: 600, bg: true}),
-    T(X(40), Y(pot(40, 500, 27, 0.07, 4000)), 385.0, 'just the £500, if I keep it up', {size: 52, align: 'center', dy: -140, until: 392.0}),
+    T(X(48), Y(pot(48, 500, 27, 0.07, 4000)), 385.0, 'just the £500, if I keep it up', {size: 52, align: 'center', dy: -150, until: 392.0, bg: true}),
     N(X(67), Y(1380000), 388.4, '£1.38 million', {fn: (tt) => `£${(1.38 * out((tt - 388.4) / 1.2)).toFixed(2)} million`, size: 130, align: 'right', dx: -260, dy: -60, until: 402.2}),
     T(X(67), Y(1380000), 390.4, 'by 67', {size: 56, align: 'right', dx: -260, dy: 50, until: 402.2}),
     N(X(62.8), Y(1e6), 394.0, 'a million at 63', {size: 90, align: 'right', dx: -70, dy: 30, until: 396.8, bg: true}),
-    T(X(24.6), Y(60000), 398.2, "only if I don't do this again", {size: 60, color: RED, dx: 60, dy: -150, until: 402.2}),
+    T(X(24.6), Y(60000), 398.2, "only if I don't do this again", {size: 60, color: RED, dx: -160, dy: -200, until: 402.2}),
     // ---- 6:42 the small print, the comments, the end ----
     T(2500, 2640, 402.9, "I'm not a financial adviser and this isn't advice.", {size: 40, align: 'center', weight: 600, until: 410.6, color: GREY}),
     T(2500, 2640, 404.6, 'Pensions have rules on when you can take the money and how it is taxed: check what applies to you.', {size: 34, align: 'center', weight: 600, until: 410.6, color: GREY, dy: 54}),
@@ -693,6 +738,9 @@ export const Sheet: React.FC = () => {
         </Sequence>
       </Tape>
 
+      {GUYS.map((gy, i) => (
+        <Guy key={i} g={gy} t={t} cam={cam} W={w} H={h} />
+      ))}
       {ages.map((a) => (
         <Label key={a} l={{x: X(a), y: 2200, t: -1, text: String(a), font: NUM, weight: 700, size: 34, align: 'center', dy: 62, color: INK}} t={t} cam={cam} w={w} h={h} />
       ))}
