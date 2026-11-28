@@ -386,6 +386,14 @@ under it.
 - The sticker is a claim or a comparison with the figure in it ("Chase the hottest stock: £30. Do nothing:
   £1,280"), never a label a cold viewer cannot place ("hype pot vs boring pot").
 
+## Topics the channel is pushed for (weekly review, 28 November 2026)
+
+YouTube shows this channel's long videos for UK personal money: a salary, a house, a pension, what to do with an
+amount. The Nvidia video (a US news story) held its viewers better than any other long video (34.9%) and reached 18
+people in 16 days; its Shorts did 21 and 32 views against 500 to 900 for the salary and house Shorts. So a long
+video's topic stays inside that lane unless Jeffrey chooses otherwise, and a news story goes out as a Short first:
+it gets a long video only if the Short travels.
+
 ## Length: 8 to 9 minutes
 
 Every long video over 10 minutes has averaged about 13% watched; every one under 8 has averaged 30% or more (three

@@ -26,8 +26,9 @@ one change at a time where possible, so a result can be read.
 | Short: Looking to purchase your first home? | 0:44 | 2026-10-27 | 5 (day 1) | | |
 | How Much House Can You Afford (Can You Afford a Home?) | 10:01 | ~2026-10-28 | 270 impressions, 4.8% CTR (4 days, Studio) | 1:21, 13% | 73% home feed, 14% search; 12-second title card at 0:05 the likely leak; busy photo thumbnail |
 | You'd Need £83,000 a Year… (Is the Dream Dead for Gen Z?) | 7:22 | ~2026-10-30 | 589 impressions, 5.6% CTR, curve accelerating (~3.5 days, Studio) | 2:14, 30%; 62% at 0:31 | taking off; 95% home feed; title card at 0:27 after the promises; one-number thumbnail; Jeffrey: 8/10 |
-| I Bought the Best Stock Every Year Since 2000 (chasing-winners) | 5:58 | 2026-11-01 | | | 3 footage scenes of 23 (Jeffrey noticed); 4 Shorts; numbers at the 7-day review |
-| Is £1 Million Enough to Retire in the UK? (retire-1-million-uk) | 13:32 | 2026-11-04 | 514 views, 2.6k impressions, 4.0% CTR (4 days, Studio); still climbing | 1:46, 13.1%; 39% at 0:30, then flat ~20% to the end | 99% home feed; 82 engaged of 445 views on day 2 (muted autoplay); ElevenLabs clone of Jeffrey's voice; hourglass + hopeful young man thumbnail; best start of any long video |
+| I Bought the Best Stock Every Year Since 2000 (chasing-winners) | 5:58 | 2026-11-01 | 236 views, 51 engaged (to 28 Nov) | 1:30, 25.2%; 51% at 0:36, 33% to 2:30, 18% at 4:45 | 3 footage scenes of 23 (Jeffrey noticed); 4 Shorts; numbers at the 7-day review |
+| Is £1 Million Enough to Retire in the UK? (retire-1-million-uk) | 13:32 | 2026-11-04 | 797 views, 175 engaged, 2:28 and 18.2% (to 28 Nov); 514 views, 2.6k impressions, 4.0% CTR (4 days, Studio); still climbing | 1:46, 13.1%; 39% at 0:30, then flat ~20% to the end | 99% home feed; 82 engaged of 445 views on day 2 (muted autoplay); ElevenLabs clone of Jeffrey's voice; hourglass + hopeful young man thumbnail; best start of any long video |
+| Nvidia's CEO Is Under Investigation (nvidia-400-billion) | 8:29 | 2026-11-12 | 18 views, 17 engaged (16 days) | 2:57, 34.9%; 41% at 0:51, then flat ~30 to 35% to the end | not pushed at all: the best-held long video and the least seen. 2 Shorts: 32 and 21 views |
 
 ## Lessons so far
 - Weekly review, 2026-11-02 (Jeffrey's Studio screenshots; vidIQ at 0 credits until 27 Nov, so no retention
@@ -383,11 +384,15 @@ one change at a time where possible, so a result can be read.
    every video over 10 minutes sits at 13%, every one under 8 sits at 30%+. Still confounded by the openings, but
    the pattern is strong enough to act on: the next long video is 8 to 9 minutes, with the muted-opening rules.
    CONFIRMED (provisionally).
+   2026-11-28: the 8:29 Nvidia video held 34.9% and the 5:58 chasing-winners 25.2%; the 13:32 retirement video
+   settled at 18.2%. Four of four under 9 minutes hold 25% or more. CONFIRMED (the Nvidia figure is 17 viewers).
 2. Thumbnail: a face (Jeffrey) vs no face, once Canva thumbnails are in use. 2026-11-09: a drawn face (the hopeful
    young man, retirement) held 4.0% CTR as reach widened to 2.6k impressions; the one-number no-face thumbnail (Gen Z)
    did 5.6% at 589 impressions. Not comparable yet (different reach); keep both styles in Test & Compare on the
    next video. OPEN.
 3. Shorts: open on the number ("£250 free from the government") vs a question.
+   2026-11-28: by views, the Shorts with a salary or a house in the title lead (£25K salary 908, £250k home 616,
+   £83k parents 494); the Nvidia Shorts did 21 and 32. That is topic, not the opening line: STILL OPEN.
 4. Recordings cleaned in Descript (fillers and long pauses cut, sound left natural) vs not: compare retention in
    the first 60 seconds.
 
@@ -629,3 +634,36 @@ Review, two rounds: editor 4 then 7, animator 5 then 7, retention 5.5 then 6.5, 
   auto-enrolment thresholds were not re-checked on GOV.UK.
 - Jeffrey on this video, 23 November 2026: "remove those stupid sound effects". Sound effects are now off by default
   (`sfx: off`); `sfx: light` or `sfx: on` only when he asks for them.
+
+## Weekly review, 2026-11-28 (vidIQ, 25 of 150 credits; the 23 November review was skipped for lack of credits)
+
+Channel, 31 Oct to 28 Nov: about 2,200 views. By source: home and subscriptions feed 1,211 (229 engaged, 17.9% watched),
+Shorts feed 723, search 135 (32.9% watched, 2:28 a view), suggested 12 (50% watched). Five subscribers gained in the
+period. Search is small but it is the audience that stays; the feed is large and mostly leaves.
+
+- **nvidia-400-billion (published 12 November, 8:29): 18 views in 16 days, 17 of them engaged.**
+  - What worked: the people who watched stayed. 34.9% average, 2:57 a view, the best of any long video; after 0:51
+    the curve is flat at 30 to 35% to the end credits. The made voice and the 8 to 9 minute length did not cost
+    anything with the viewers it had.
+  - What did not: reach. YouTube never pushed it: the views are subscribers and the channel page. A US news story
+    about one company is outside what this channel has been shown for (UK salaries, houses, pensions), and its two
+    Shorts did 21 and 32 views against 500 to 900 for the salary and house Shorts.
+  - Where viewers left (timing.json): 88% to 41% between 0:00 and 0:51: the footage hook, the chart, the stat, the
+    teaser list and the title card at 0:46. Nothing after the title card loses anyone. Same shape as the
+    retirement video: the loss is before the title card.
+  - Rule it changes (EDITOR.md, "Topics the channel is pushed for"): a long video's topic stays inside UK personal
+    money (salary, house, pension, what to do with an amount) unless Jeffrey chooses otherwise; a news story goes
+    out as a Short first, and gets a long video only if the Short travels.
+- **chasing-winners (published 1 November, 5:58): 236 views, 51 engaged, 1:30 a view, 25.2%.**
+  - What worked: the middle. From 0:57 to 2:30 it holds 33 to 37%; the footage scene at 3:16 lifts the curve.
+  - What did not: the opening and the second half. 82% to 51% by 0:36, the end of the title card (0:32 to 0:36).
+    From 3:30 it slides without a floor, 31% to 18% by 4:45, through a stat, a text board, a pie and two lists:
+    the "takeaway, list, recap" run reads as winding down, and viewers go.
+  - Rule it confirms: no title card before the answer (already the rule); and the back half needs its own turn, a
+    new question or the personal section, not a recap run. The one-sheet retirement video has no title card and
+    no recap pages, so it is the first test of both.
+- Tests: 1 (length) CONFIRMED; 3 (Shorts) still open. See the list above.
+- The scoreboard has the three updated rows.
+- One change for the next video: none to make before it goes out. "The Cheapest Way to Retire a Millionaire" is in
+  the channel's lane, opens on its number with no title card and has no recap run; publish it and read its curve at
+  day 7 against these two.
